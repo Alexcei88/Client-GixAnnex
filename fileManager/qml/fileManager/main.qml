@@ -3,49 +3,64 @@ import QtQuick.Controls 1.0
 import QtQuick.Window 2.0
 import QtQuick.Layouts 1.0
 
+// окно с отображением контента
+
 Rectangle
 {
-    width: 460
-    height: 360
+    id: mainRectangle
+    width: 900
+    height:570
 
-    ColumnLayout{
+    Column{
 
         spacing: 5
+
         width: parent.width
         height: parent.height
         anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.right: parent.right
+        anchors.bottom: parent.bottom
         // сверху панелька
 
         ToolBar{
             id: toolBar
-            anchors.top: parent.top
-            anchors.left: parent.left
             width: parent.width
+
             RowLayout{
+                width: parent.width
                 ToolButton{
                     text: "fff"
                 }
                 ToolButton{
                     text: "111"
                 }
+                ToolButton{
+                    text: "аав1"
+                }
+
             }
         }
 
-        Rectangle{
-            anchors.top: toolBar.bottom
-            height: 230
+        WindowContent{
+            // здесь будет отображаться контент
+
+//            anchors.top: toolBar.bottom
+//            anchors.bottom: statusBar.top
             width: parent.width
-            //color: "#FF3001"
+            height: parent.height - toolBar.height - statusBar.height - 2 * parent.spacing
+            color: "white"
         }
 
         StatusBar{
             id: statusBar
-            anchors.bottom: parent.bottom
             width: parent.width
+            RowLayout {
+                    width: parent.width
+                    Label {
+                        width: parent.width
+                        text: "Read OnlyRead"}
+                    }
+
         }
     }
-
 
 }
