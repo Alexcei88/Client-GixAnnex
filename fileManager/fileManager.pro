@@ -25,4 +25,5 @@ include(qtquick2applicationviewer/qtquick2applicationviewer.pri)
 qtcAddDeployment()
 
 OTHER_FILES += \
-    qml/fileManager/WindowContent.qml
+    qml/fileManager/WindowContent.qml \
+    qml/fileManager/DirectoryView.qml

@@ -15,8 +15,10 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainWidget.cpp \
     tshell.cpp \
-    shellcommand.cpp
+    shellcommand.cpp \
+    tfilesystem.cpp
 
 HEADERS  += mainWidget.h \
     tshell.h \
-    shellcommand.h
+    shellcommand.h \
+    tfilesystem.h

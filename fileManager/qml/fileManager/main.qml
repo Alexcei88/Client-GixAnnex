@@ -11,17 +11,19 @@ Rectangle
     width: 900
     height:570
 
-    Column{
+    Column
+    {
+        Keys.forwardTo: [windowContent]
 
         spacing: 5
-
         width: parent.width
         height: parent.height
         anchors.top: parent.top
         anchors.bottom: parent.bottom
-        // сверху панелька
 
-        ToolBar{
+        // сверху панелька
+        ToolBar
+        {
             id: toolBar
             width: parent.width
 
@@ -36,31 +38,31 @@ Rectangle
                 ToolButton{
                     text: "аав1"
                 }
-
             }
         }
 
-        WindowContent{
+        WindowContent
+        {
             // здесь будет отображаться контент
-
-//            anchors.top: toolBar.bottom
-//            anchors.bottom: statusBar.top
+            id: windowContent
             width: parent.width
             height: parent.height - toolBar.height - statusBar.height - 2 * parent.spacing
-            color: "white"
+            focus: true
         }
 
-        StatusBar{
+        StatusBar
+        {
+
             id: statusBar
             width: parent.width
-            RowLayout {
+            RowLayout
+            {
+                width: parent.width
+                Label {
                     width: parent.width
-                    Label {
-                        width: parent.width
-                        text: "Read OnlyRead"}
-                    }
-
+                    text: "Read OnlyRead"
+                }
+            }
         }
     }
-
 }
