@@ -1,9 +1,12 @@
 import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
+import Qt.labs.folderlistmodel 1.0
 
 Rectangle
 {
+
+
     ContextMenu{
         id: menudirectory
     }
@@ -16,7 +19,7 @@ Rectangle
     focus: true
 
     // модель, содержащая список текущих директорий
-    ListModel
+    /*ListModel
     {
        id: dirModel
        ListElement{ text: "Dir1"
@@ -47,7 +50,15 @@ Rectangle
        ListElement{ text: "Dir3"
                     color: "yellow"}
 
+    }*/
+
+    // FolderListModel
+    FolderListModel
+    {
+        id: dirModel
+        folder: "/home"
     }
+
 
     GridView
     {
@@ -75,6 +86,7 @@ Rectangle
        {
            property var view: GridView.view
            property var isCurrent: GridView.isCurrentItem
+           property var curModel: GridView.model
 
            width: view.cellWidth
            height: view.cellHeight
@@ -84,7 +96,6 @@ Rectangle
 
                anchors.margins: 5
                anchors.fill: parent
-               color: model.color
                border {
                    color: "black"
                    width: 1
@@ -95,7 +106,7 @@ Rectangle
                {
                    anchors.centerIn: parent
                    renderType: Text.NativeRendering
-                   text: "%1%2".arg(model.text).arg(isCurrent ? " *" : "")
+                   text: "%1%2".arg(fileName).arg(isCurrent ? " *" : "")
                }
 
                MouseArea
@@ -108,12 +119,12 @@ Rectangle
                                     menudirectory.popup()
                                 }
                    onDoubleClicked: {/* открытие файла(или вход в директорию, и перерисовка всего*/
-                                        console.log("DoubleClick")
+
+                                        dirModel.folder = dirModel.folder +"/"+fileName;
                                 }
 
                }
            }
         }
     }
-
 }

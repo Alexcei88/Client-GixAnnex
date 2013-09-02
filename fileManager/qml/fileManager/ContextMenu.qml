@@ -17,7 +17,7 @@ Menu
     {
         id: getContentAction
         text: "&Get Content"
-        shortcut: "Ctrl+O"
+        shortcut: "Ctrl+G"
         //       iconSource: "images/document-open.png"
         onTriggered: { console.log("GetContentDirectory") }
         //       tooltip: "Open an image"
@@ -27,7 +27,7 @@ Menu
     {
         id: dropContentAction
         text: "&Drop Content"
-        shortcut: "Ctrl+O"
+        shortcut: "Ctrl+D"
         //       iconSource: "images/document-open.png"
         onTriggered: { console.log("DropContentDirectory") }
         //       tooltip: "Open an image"
