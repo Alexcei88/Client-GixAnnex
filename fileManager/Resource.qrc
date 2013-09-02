@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file alias="folder">folder.png</file>
+        <file alias="back">cursorL.jpeg</file>
+        <file alias="forward">cursorR.jpeg</file>
+    </qresource>
+</RCC>

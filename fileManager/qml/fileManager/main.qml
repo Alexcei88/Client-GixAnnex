@@ -22,22 +22,29 @@ Rectangle
         anchors.bottom: parent.bottom
 
         // сверху панелька
-        ToolBar
-        {
-            id: toolBar
-            width: parent.width
+        RowLayout{
+            ToolBar
+            {
+                id: toolBar
+//                width: parent.width/5
 
-            RowLayout{
-                width: parent.width
-                ToolButton{
-                    text: "fff"
+                RowLayout{
+                    width: parent.width
+                    ToolButton{
+                        iconSource:"qrc:back"
+    //                    text: "fff"
+                    }
+                    ToolButton{
+                        iconSource: "qrc:forward"
+    //                    text: "111"
+                    }
+
+                    ToolButton{
+                        text: "аав1"
+                    }
                 }
-                ToolButton{
-                    text: "111"
-                }
-                ToolButton{
-                    text: "аав1"
-                }
+
+
             }
         }
 

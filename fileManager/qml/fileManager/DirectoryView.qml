@@ -5,8 +5,6 @@ import Qt.labs.folderlistmodel 1.0
 
 Rectangle
 {
-
-
     ContextMenu{
         id: menudirectory
     }
@@ -15,42 +13,7 @@ Rectangle
     height: 62
 
     Keys.forwardTo: [view]
-
     focus: true
-
-    // модель, содержащая список текущих директорий
-    /*ListModel
-    {
-       id: dirModel
-       ListElement{ text: "Dir1"
-                    color: "red"}
-       ListElement{ text: "Dir2"
-                    color: "white"}
-       ListElement{ text: "Dir3"
-                    color: "yellow"}
-
-       ListElement{ text: "Dir3"
-                    color: "yellow"}
-       ListElement{ text: "Dir3"
-                    color: "yellow"}
-       ListElement{ text: "Dir3"
-                    color: "yellow"}
-       ListElement{ text: "Dir3"
-                    color: "yellow"}
-       ListElement{ text: "Dir3"
-                    color: "yellow"}
-       ListElement{ text: "Dir3"
-                    color: "yellow"}
-       ListElement{ text: "Dir3"
-                    color: "yellow"}
-       ListElement{ text: "Dir3"
-                    color: "yellow"}
-       ListElement{ text: "Dir3"
-                    color: "yellow"}
-       ListElement{ text: "Dir3"
-                    color: "yellow"}
-
-    }*/
 
     // FolderListModel
     FolderListModel
@@ -58,7 +21,6 @@ Rectangle
         id: dirModel
         folder: "/home"
     }
-
 
     GridView
     {
@@ -69,8 +31,8 @@ Rectangle
        anchors.fill: parent
        anchors.margins: 20
 
-       cellHeight: 80
-       cellWidth: 80
+       cellHeight: 40
+       cellWidth: 50
 
 //       keyNavigationWraps: true
        highlight: Rectangle {
@@ -91,16 +53,9 @@ Rectangle
            width: view.cellWidth
            height: view.cellHeight
 
-           Rectangle
-           {
-
-               anchors.margins: 5
-               anchors.fill: parent
-               border {
-                   color: "black"
-                   width: 1
-
-               }
+           Image{
+               source: "qrc:/folder"; anchors.horizontalCenter: parent.horizontalCenter
+           }
 
                Text
                {
@@ -125,6 +80,5 @@ Rectangle
 
                }
            }
-        }
     }
 }
