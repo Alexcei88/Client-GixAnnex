@@ -4,6 +4,9 @@ import QtQuick.Layouts 1.0
 
 Rectangle
 {
+    ContextMenu{
+        id: menudirectory
+    }
 
     width: 100
     height: 62
@@ -11,6 +14,7 @@ Rectangle
     Keys.forwardTo: [view]
 
     focus: true
+
     // модель, содержащая список текущих директорий
     ListModel
     {
@@ -75,16 +79,6 @@ Rectangle
            width: view.cellWidth
            height: view.cellHeight
 
-           focus: true
-           Keys.onPressed: {
-                   console.log("press Key");
-                   if (event.key == Qt.Key_Left) {
-                       console.log("move left");
-                       event.accepted = true;
-                       view.moveCurrentIndexLeft()
-                   }
-               }
-
            Rectangle
            {
 
@@ -106,8 +100,14 @@ Rectangle
 
                MouseArea
                {
+                   id: contextMenu
                    anchors.fill: parent
-                   onClicked: view.currentIndex = model.index
+                   acceptedButtons: Qt.LeftButton | Qt.RightButton
+                   onClicked: { view.currentIndex = model.index
+                                if(mouse.button == Qt.RightButton)
+                                    menudirectory.popup()
+                                }
+
                }
            }
         }

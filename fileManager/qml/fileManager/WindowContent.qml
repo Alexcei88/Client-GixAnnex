@@ -18,7 +18,6 @@ Rectangle {
         focus: true
         Keys.forwardTo: [contenItem]
 
-
         Rectangle {
             width: parent.width/5
             Layout.minimumWidth: parent.width/8
