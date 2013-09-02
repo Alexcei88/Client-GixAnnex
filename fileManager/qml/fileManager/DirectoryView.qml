@@ -107,6 +107,9 @@ Rectangle
                                 if(mouse.button == Qt.RightButton)
                                     menudirectory.popup()
                                 }
+                   onDoubleClicked: {/* открытие файла(или вход в директорию, и перерисовка всего*/
+                                        console.log("DoubleClick")
+                                }
 
                }
            }
