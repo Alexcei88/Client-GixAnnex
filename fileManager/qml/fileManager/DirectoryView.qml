@@ -41,12 +41,14 @@ Rectangle
        cellHeight: 80
        cellWidth: 70
 
-//       keyNavigationWraps: true
+       keyNavigationWraps: true
        highlight: Rectangle {
                    color: "skyblue"
                    radius: 5
                    z: 50
-                   height: 20
+                   anchors.margins: 20
+                   height: 30
+                   width: 30
                }
 
        highlightFollowsCurrentItem: true

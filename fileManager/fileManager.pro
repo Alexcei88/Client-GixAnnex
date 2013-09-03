@@ -15,7 +15,10 @@ QML_IMPORT_PATH =
 # MOBILITY +=
 
 # The .cpp file which was generated for your project. Feel free to hack it.
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    shell/tshell.cpp \
+    shell/shellcommand.cpp \
+    repository/trepository.cpp
 
 # Installation path
 # target.path =
@@ -30,3 +33,9 @@ OTHER_FILES += \
 
 RESOURCES += \
     Resource.qrc
+
+HEADERS += \
+    shell/tshell.h \
+    shell/shellcommand.h \
+    repository/trepository.h \
+    repository/irepository.h

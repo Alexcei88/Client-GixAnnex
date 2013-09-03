@@ -16,6 +16,7 @@ Rectangle
         Keys.forwardTo: [windowContent]
 
         spacing: 5
+        visible: parent.visible
         width: parent.width
         height: parent.height
         anchors.top: parent.top
@@ -60,6 +61,7 @@ Rectangle
 
         WindowContent
         {
+            visible: parent.visible
             // здесь будет отображаться контент
             id: windowContent
             width: parent.width
@@ -69,7 +71,7 @@ Rectangle
 
         StatusBar
         {
-
+            visible: parent.visible
             id: statusBar
             width: parent.width
             RowLayout
