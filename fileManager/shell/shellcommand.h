@@ -7,21 +7,23 @@ class ShellCommand
 {
 public:
     ShellCommand();
+    ~ShellCommand();
 
     // 1. Инициализация репозитория
     RESULT_EXEC_PROCESS InitRepositories(const QString& nameRepo);
 
     /**
-     * @brief CD - переход в текущую директорию
+     * @brief SetWorkingDirectory - переход в директорию, откуда запускаем команды
      * @return 0 - нет ошибок
      */
-    RESULT_EXEC_PROCESS CD(const QString& localURL);
+    RESULT_EXEC_PROCESS SetWorkingDirectory(const QString& localURL);
 
     /**
      * @brief Clone Repositories - клонирование репозитория
+     * @param folderClone - папка, куда был скопирован репозиторий
      * @return 0 - нет ошибок
      */
-    RESULT_EXEC_PROCESS CloneRepositories(const QString& remoteURL, const QString& localURL);
+    RESULT_EXEC_PROCESS CloneRepositories(const QString& remoteURL, QString &folderClone);
 
     // 2. Добавление каталога/файла в репозиторий
     RESULT_EXEC_PROCESS AddFile(const QString& path);
@@ -37,7 +39,7 @@ public:
     RESULT_EXEC_PROCESS WhereisFiles(const QString& path, QString& result);
 
 private:
-    boost::shared_ptr<TShell> shell;
+    const TShell*  shell;
     const QString& baseCommand;
 };
 

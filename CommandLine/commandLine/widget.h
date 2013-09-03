@@ -40,29 +40,7 @@ public slots:
         strCommand += m_ptxtCommand->text();
 
         static bool first = false;
-
-        if(!first)
-        {
-            QString cd = "cd '\'/ ";
-            QString arg = "file:///";
-            QStringList listArg;
-            listArg <<arg;
-//            m_process->start(cd, listArg);
-            m_process->start(cd);
-
-//            if(!m_process->waitForStarted(1000));
-
-            QByteArray stdError = m_process->readAllStandardError();
-            QByteArray stdOut = m_process->readAllStandardOutput();
-//            std::cout<<"Error: "<<stdError.to<<std::endl<<"Out: "<<stdOut<<std::endl;
-
-            first = true;
-        }
-        else
-        {
-            m_process->start(strCommand);
-        }
-
+        m_process->start(strCommand);
     }
 };
 

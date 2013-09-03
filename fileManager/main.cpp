@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
     viewer.showExpanded();
 
     TRepository rep;
-    rep.CloneRepository("MyRepo", "https://github.com/Alexcei88/Employer.git", "~/Copy/");
+    rep.CloneRepository("MyRepo", "https://github.com/Alexcei88/Employer.git", "/home/alexcei/Copy/");
 
     flush(std::cout);
     return app.exec();

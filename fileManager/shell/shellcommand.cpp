@@ -2,9 +2,14 @@
 
 //----------------------------------------------------------------------------------------/
 ShellCommand::ShellCommand():
-    baseCommand("git-annex ")
+     baseCommand("git-annex ")
+    ,shell(TShell::GetInstance())
 {
-    shell = boost::make_shared<TShell>();
+}
+//----------------------------------------------------------------------------------------/
+ShellCommand::~ShellCommand()
+{
+    TShell::RemoveInstance();
 }
 //----------------------------------------------------------------------------------------/
 RESULT_EXEC_PROCESS ShellCommand::InitRepositories(const QString& nameRepo)
@@ -13,16 +18,19 @@ RESULT_EXEC_PROCESS ShellCommand::InitRepositories(const QString& nameRepo)
     return shell->ExecuteProcess(strCommand);
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS ShellCommand::CD(const QString &localURL)
+RESULT_EXEC_PROCESS ShellCommand::SetWorkingDirectory(const QString &localURL)
 {
-    const QString strCommand = "cd " + localURL;
-    return shell->ExecuteProcess(strCommand);
+    shell->SetWorkingDirectory(localURL);
+    return NO_ERROR;
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS ShellCommand::CloneRepositories(const QString& remoteURL, const QString &localURL)
+RESULT_EXEC_PROCESS ShellCommand::CloneRepositories(const QString& remoteURL, QString& folderClone)
 {
-    const QString strCommand = "git clone " + remoteURL +" localURL";
-    return shell->ExecuteProcess(strCommand);
+    QStringList stdOut;
+    const QString strCommand = "git clone " + remoteURL;
+    RESULT_EXEC_PROCESS result = shell->ExecuteProcess(strCommand, stdOut);
+    if(result != NO_ERROR)
+        return result;
 }
 //----------------------------------------------------------------------------------------/
 RESULT_EXEC_PROCESS ShellCommand::AddFile(const QString& path)
