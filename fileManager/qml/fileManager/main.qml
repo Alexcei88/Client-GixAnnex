@@ -36,17 +36,16 @@ Rectangle
                         onClicked: {
                             console.log("Back folder");
                             toolBar.folderModel.folder = toolBar.folderModel.parentFolder;
-                            console.log(toolBar.folderModel.folder);
-//                            toolBar.folderView.currentIndex = toolBar.folderModel.index;
+                            toolBar.folderView.currentIndex = -1;
                         }
                     }
                     ToolButton{
                         iconSource: "qrc:forward"
                         onClicked: {
-
                             console.log("Forward folder");
-                            toolBar.folderModel.folder = toolBar.folderModel.folder +"/" + toolBar.folderView.currentItem.fileName;
-                            console.log(toolBar.folderModel.folder);
+                            var fileName = toolBar.folderView.currentItem.curFileName;
+                            toolBar.folderModel.folder = toolBar.folderModel.folder == "file:///" ? toolBar.folderModel.folder + fileName : toolBar.folderModel.folder +"/" + fileName;
+                            toolBar.folderView.currentIndex = -1;
                         }
                     }
 

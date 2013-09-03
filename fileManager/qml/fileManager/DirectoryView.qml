@@ -22,25 +22,31 @@ Rectangle
     {
         id: dirModel
         folder: "/home"
+        showDirs: true
+        showOnlyReadable: false
+        showDirsFirst: true
     }
 
     GridView
     {
+
        id: view
        model: dirModel
        width: parent.width
 
        anchors.fill: parent
        anchors.margins: 20
+       currentIndex: -1
 
-       cellHeight: 70
+       cellHeight: 80
        cellWidth: 70
 
 //       keyNavigationWraps: true
        highlight: Rectangle {
                    color: "skyblue"
                    radius: 5
-                   z: 50                  
+                   z: 50
+                   height: 20
                }
 
        highlightFollowsCurrentItem: true
@@ -50,6 +56,7 @@ Rectangle
        delegate: Item
        {
            property var isCurrent: GridView.isCurrentItem
+           property var curFileName: fileName
 
            width: view.cellWidth
            height: view.cellHeight
@@ -64,7 +71,7 @@ Rectangle
                Text
                {
                    renderType: Text.NativeRendering
-                   text: "%1%2".arg(fileName).arg(isCurrent ? " *" : "")
+                   text: "%1%2".arg(curFileName).arg(isCurrent ? "\*" : "")
                }
            }
            MouseArea
@@ -79,12 +86,13 @@ Rectangle
                        menudirectory.popup()
                 }
                onDoubleClicked:
-               {// открытие файла(или вход в директорию, и перерисовка всего
+               {
                    if(dirModel.isFolder(model.index))
                    {
-                       dirModel.folder = dirModel.folder == "/" ? dirModel.folder + fileName : dirModel.folder +"/" + fileName;
+                       dirModel.folder = dirModel.folder == "file:///" ? dirModel.folder + curFileName : dirModel.folder +"/" + curFileName;
                        console.log(dirModel.folder);
-                       view.currentIndex = model.index;
+                       view.currentIndex = -1;
+
                    }
                }
 
