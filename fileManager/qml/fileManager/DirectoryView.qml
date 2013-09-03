@@ -37,6 +37,8 @@ Rectangle
 //       keyNavigationWraps: true
        highlight: Rectangle {
                    color: "skyblue"
+                   radius: 5
+                   z: 50
                }
 
        highlightFollowsCurrentItem: true
@@ -59,26 +61,25 @@ Rectangle
 
                Text
                {
-                   anchors.centerIn: parent
                    renderType: Text.NativeRendering
                    text: "%1%2".arg(fileName).arg(isCurrent ? " *" : "")
+                   anchors.horizontalCenter: parent.horizontalCenter
+               }
+           }
+           MouseArea
+           {
+               id: contextMenu
+               anchors.fill: parent
+               acceptedButtons: Qt.LeftButton | Qt.RightButton
+               onClicked: { view.currentIndex = model.index
+                   if(mouse.button == Qt.RightButton)
+                       menudirectory.popup()
+               }
+               onDoubleClicked: {// открытие файла(или вход в директорию, и перерисовка всего
+
+                   dirModel.folder = dirModel.folder +"/" + fileName;
                }
 
-               MouseArea
-               {
-                   id: contextMenu
-                   anchors.fill: parent
-                   acceptedButtons: Qt.LeftButton | Qt.RightButton
-                   onClicked: { view.currentIndex = model.index
-                                if(mouse.button == Qt.RightButton)
-                                    menudirectory.popup()
-                                }
-                   onDoubleClicked: {/* открытие файла(или вход в директорию, и перерисовка всего*/
-
-                                        dirModel.folder = dirModel.folder +"/"+fileName;
-                                }
-
-               }
            }
     }
 }
