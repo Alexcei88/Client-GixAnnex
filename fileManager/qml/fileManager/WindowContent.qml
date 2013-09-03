@@ -7,6 +7,9 @@ Rectangle {
     width: 100
     height: 62
 
+    property var folderModel:   contenItem.folderModel
+    property var folderView:    contenItem.folderView
+
     Keys.forwardTo: [split]
 
     SplitView

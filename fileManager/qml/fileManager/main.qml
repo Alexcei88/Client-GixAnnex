@@ -2,7 +2,7 @@ import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Window 2.0
 import QtQuick.Layouts 1.0
-
+import Qt.labs.folderlistmodel 1.0
 // окно с отображением контента
 
 Rectangle
@@ -26,17 +26,28 @@ Rectangle
             ToolBar
             {
                 id: toolBar
-//                width: parent.width/5
+                property var folderModel: windowContent.folderModel
+                property var folderView: windowContent.folderView
 
                 RowLayout{
                     width: parent.width
                     ToolButton{
                         iconSource:"qrc:back"
-    //                    text: "fff"
+                        onClicked: {
+                            console.log("Back folder");
+                            toolBar.folderModel.folder = toolBar.folderModel.parentFolder;
+                            console.log(toolBar.folderModel.folder);
+//                            toolBar.folderView.currentIndex = toolBar.folderModel.index;
+                        }
                     }
                     ToolButton{
                         iconSource: "qrc:forward"
-    //                    text: "111"
+                        onClicked: {
+
+                            console.log("Forward folder");
+                            toolBar.folderModel.folder = toolBar.folderModel.folder +"/" + toolBar.folderView.currentItem.fileName;
+                            console.log(toolBar.folderModel.folder);
+                        }
                     }
 
                     ToolButton{

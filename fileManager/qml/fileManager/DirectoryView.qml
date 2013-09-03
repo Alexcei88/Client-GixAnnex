@@ -5,6 +5,9 @@ import Qt.labs.folderlistmodel 1.0
 
 Rectangle
 {
+    property var folderModel: dirModel
+    property var folderView: view
+
     ContextMenu{
         id: menudirectory
     }
@@ -15,7 +18,6 @@ Rectangle
     Keys.forwardTo: [view]
     focus: true
 
-    // FolderListModel
     FolderListModel
     {
         id: dirModel
@@ -31,39 +33,38 @@ Rectangle
        anchors.fill: parent
        anchors.margins: 20
 
-       cellHeight: 40
-       cellWidth: 50
+       cellHeight: 70
+       cellWidth: 70
 
 //       keyNavigationWraps: true
        highlight: Rectangle {
                    color: "skyblue"
                    radius: 5
-                   z: 50
+                   z: 50                  
                }
 
        highlightFollowsCurrentItem: true
        highlightMoveDuration: 1
        focus: true
-       enabled: true
 
        delegate: Item
        {
-           property var view: GridView.view
            property var isCurrent: GridView.isCurrentItem
-           property var curModel: GridView.model
 
            width: view.cellWidth
            height: view.cellHeight
 
-           Image{
-               source: "qrc:/folder"; anchors.horizontalCenter: parent.horizontalCenter
-           }
+           Column
+           {
+               spacing: 8
+               Image{
+                   source: "qrc:/folder"; /*anchors.horizontalCenter: parent.horizontalCenter*/
+               }
 
                Text
                {
                    renderType: Text.NativeRendering
                    text: "%1%2".arg(fileName).arg(isCurrent ? " *" : "")
-                   anchors.horizontalCenter: parent.horizontalCenter
                }
            }
            MouseArea
@@ -71,15 +72,23 @@ Rectangle
                id: contextMenu
                anchors.fill: parent
                acceptedButtons: Qt.LeftButton | Qt.RightButton
-               onClicked: { view.currentIndex = model.index
+               onClicked:
+               {
+                   view.currentIndex = model.index
                    if(mouse.button == Qt.RightButton)
                        menudirectory.popup()
-               }
-               onDoubleClicked: {// открытие файла(или вход в директорию, и перерисовка всего
-
-                   dirModel.folder = dirModel.folder +"/" + fileName;
+                }
+               onDoubleClicked:
+               {// открытие файла(или вход в директорию, и перерисовка всего
+                   if(dirModel.isFolder(model.index))
+                   {
+                       dirModel.folder = dirModel.folder == "/" ? dirModel.folder + fileName : dirModel.folder +"/" + fileName;
+                       console.log(dirModel.folder);
+                       view.currentIndex = model.index;
+                   }
                }
 
            }
+        }
     }
 }
