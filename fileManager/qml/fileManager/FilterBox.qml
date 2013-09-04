@@ -42,6 +42,14 @@ import QtQuick 2.1
 FocusScope {
     id: focusScope
     width: 250; height: 30
+
+    // сигнал на изменение значения поля фильтра
+    signal filterChanges()
+
+    onFilterChanges: {
+    }
+    property alias textFilter: textInput.text
+
     BorderImage {
         source: "qrc:images/lineedit_bg.png"
         width: parent.width; height: parent.height
@@ -66,11 +74,16 @@ FocusScope {
         onClicked: { focusScope.focus = true; }
     }
 
+
     TextInput {
         id: textInput
         anchors { left: parent.left; leftMargin: 8; right: clear.left; rightMargin: 8; verticalCenter: parent.verticalCenter }
         focus: true
         selectByMouse: true
+
+        Keys.onReleased: {
+            filterChanges();
+        }
     }
     Image {
         id: clear
@@ -79,7 +92,11 @@ FocusScope {
         opacity: 0
         MouseArea {
             anchors.fill: parent
-            onClicked: { textInput.text = ''; focusScope.focus = true; }
+            onClicked: {
+                textInput.text = '';
+                focusScope.focus = true;
+                filterChanges();
+            }
         }
     }
     states: State {

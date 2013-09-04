@@ -23,7 +23,6 @@ Rectangle
         id: dirModel
         folder: "/home"
         showDirs: true
-        showOnlyReadable: false
         showDirsFirst: true
     }
 

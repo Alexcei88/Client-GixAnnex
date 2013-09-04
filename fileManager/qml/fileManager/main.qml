@@ -13,7 +13,7 @@ Rectangle
 
     Column
     {
-        Keys.forwardTo: [windowContent]
+        Keys.forwardTo: [windowContent, toolBar]
 
         spacing: 5
         visible: parent.visible
@@ -55,10 +55,16 @@ Rectangle
                     }
                 }
             }
+            // фильтр вывода директорий
             FilterBox
             {
-                id: filterFile;
-                focus: true
+                id: filterDir;
+                onFilterChanges: {
+                    toolBar.folderModel.nameFilters = textFilter.toString() + "*";
+                    toolBar.folderView.currentIndex = -1;
+                    toolBar.folderView.update();
+
+                }
             }
         }
 
