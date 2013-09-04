@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/pics">
+        <file>startHandle.png</file>
+        <file>startHandle.sci</file>
+        <file>endHandle.png</file>
+        <file>endHandle.sci</file>
+    </qresource>
+</RCC>
