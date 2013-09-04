@@ -54,8 +54,11 @@ Rectangle
                         text: "аав1"
                     }
                 }
-
-
+            }
+            FilterBox
+            {
+                id: filterFile;
+                focus: true
             }
         }
 

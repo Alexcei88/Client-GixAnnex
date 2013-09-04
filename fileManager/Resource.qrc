@@ -3,5 +3,8 @@
         <file alias="folder">folder.png</file>
         <file alias="back">cursorL.jpeg</file>
         <file alias="forward">cursorR.jpeg</file>
+        <file alias="images/clear.png">resource/images/clear.png</file>
+        <file alias="images/lineedit_bg_focus.png">resource/images/lineedit-bg-focus.png</file>
+        <file alias="images/lineedit_bg.png">resource/images/lineedit-bg.png</file>
     </qresource>
 </RCC>
