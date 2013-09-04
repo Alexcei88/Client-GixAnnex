@@ -23,14 +23,16 @@ Rectangle
         anchors.bottom: parent.bottom
 
         // сверху панелька
-        RowLayout{
+        RowLayout
+        {
             ToolBar
             {
                 id: toolBar
                 property var folderModel: windowContent.folderModel
                 property var folderView: windowContent.folderView
 
-                RowLayout{
+                RowLayout
+                {
                     width: parent.width
                     ToolButton{
                         iconSource:"qrc:back"
@@ -55,7 +57,7 @@ Rectangle
                     }
                 }
             }
-            // фильтр вывода директорий
+            // фильтр вывода файлов(директории к сож нет)
             FilterBox
             {
                 id: filterDir;
@@ -63,7 +65,6 @@ Rectangle
                     toolBar.folderModel.nameFilters = textFilter.toString() + "*";
                     toolBar.folderView.currentIndex = -1;
                     toolBar.folderView.update();
-
                 }
             }
         }

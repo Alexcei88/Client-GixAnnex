@@ -29,7 +29,8 @@ qtcAddDeployment()
 
 OTHER_FILES += \
     qml/fileManager/WindowContent.qml \
-    qml/fileManager/DirectoryView.qml
+    qml/fileManager/DirectoryView.qml \
+    qml/fileManager/propertyFile/PropertyFile.qml
 
 RESOURCES += \
     Resource.qrc

@@ -2,6 +2,8 @@ import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
 
+// our stuff
+import "propertyFile"
 
 Rectangle {
     width: 100
@@ -10,12 +12,10 @@ Rectangle {
     property var folderModel:   contenItem.folderModel
     property var folderView:    contenItem.folderView
 
-
     Keys.forwardTo: [split]
 
     SplitView
     {
-
         id: split
         anchors.fill: parent
         orientation: Qt.Horizontal
@@ -37,12 +37,13 @@ Rectangle {
             focus: true
         }
 
-        Rectangle{
-            id: option
+        // Вывод информации о файле,директории
+        PropertyFile{
+            id: prorertyFile
             width: parent.width/5
             Layout.minimumWidth: parent.width/5
             Layout.maximumWidth: 3 * parent.width/5
-            color: "green"
+            color: '#116062'
         }
     }
 

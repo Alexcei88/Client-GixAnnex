@@ -46,8 +46,7 @@ FocusScope {
     // сигнал на изменение значения поля фильтра
     signal filterChanges()
 
-    onFilterChanges: {
-    }
+    onFilterChanges: {}
     property alias textFilter: textInput.text
 
     BorderImage {
