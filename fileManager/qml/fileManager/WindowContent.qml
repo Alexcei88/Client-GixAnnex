@@ -6,11 +6,12 @@ import QtQuick.Layouts 1.0
 import "propertyFile"
 
 Rectangle {
+    id: windowContent
     width: 100
     height: 62
 
-    property var folderModel:   contenItem.folderModel
-    property var folderView:    contenItem.folderView
+    property var folderModel: contenItem.folderModel
+    property var folderView:  contenItem.folderView
 
     Keys.forwardTo: [split]
 
@@ -37,7 +38,7 @@ Rectangle {
             color: "darkgray"
             width: 3 * parent.width/5
             focus: true
-            onShowPropertyFile: { propertyFile.updateData() }
+            onShowPropertyFile: { propertyFile.updateData(currentName) }
         }
 
         // Вывод информации о файле,директории
@@ -48,6 +49,9 @@ Rectangle {
             Layout.minimumWidth: parent.width/5
             Layout.maximumWidth: 3 * parent.width/5
             color: '#116062'
+
+            // нициализация представления
+            folderView: windowContent.folderView
         }
     }
 

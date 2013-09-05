@@ -5,16 +5,14 @@ import QtQuick.Layouts 1.0
 Item
 {
     property alias nameOption: option.text
+    property alias widthFieldOption: option.width
     property alias valueOption: value.text
 
-    width: parent.width
-    height: parent.height
-    anchors.horizontalCenter:parent.horizontalCenter
-
+    anchors.horizontalCenter: parent.horizontalCenter
     Text
     {
         id: option
-        text: qsTr("SDFGDFfdfdf:")
+        text: qsTr("SDFGDFfdfdf:")        
     }
 
     Text

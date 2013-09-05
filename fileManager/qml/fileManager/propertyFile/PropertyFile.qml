@@ -1,19 +1,26 @@
 import QtQuick 2.1
+import QtQuick.Layouts 1.0
 
 Rectangle
 {
     id: propertyRect
 
+    property var folderView: null
+
     width: parent.width
     height: parent.height
 
     // сигнал, которые говорит, что нужно обновить данные
-    signal updateData()
+    signal updateData(var currentName)
 
     // обработчик сигнала updateData
     onUpdateData:
     {
-        propertyWhereis.nameOption = "New Data";
+        if(folderView) // проверка, инициализировали ли представление
+        {
+            name.text = currentName;
+            propertyWhereis.nameOption = "New Data";
+        }
     }
 
     //    BorderImage {
@@ -24,20 +31,32 @@ Rectangle
     border.color: "black"
     border.width: 1
     radius: 5
-    Column
+    Text
+    {
+        id: name
+        text: "FileName"
+        anchors.horizontalCenter: parent.horizontalCenter
+    }
+
+    ColumnLayout
     {
         id:column
-        width: 2.8 * parent.width/3
         spacing: 5
+
+        property int maxWidthNameField: 60
+
 //        onWidthChanged: {console.log(column.width) }
-        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.top: name.bottom
+        anchors.topMargin: 5
+        anchors.horizontalCenter: name.horizontalCenter
+        anchors.horizontalCenterOffset: -maxWidthNameField
 
         PropertyValue
         {
             id: propertyWhereis
-            width: parent.width
             nameOption: "WhereIs: "
             valueOption: "here"
+            widthFieldOption: column.maxWidthNameField
             height: 20
 //            onWidthChanged: {console.log(property1.width) }
 
@@ -47,8 +66,24 @@ Rectangle
         {
             id: propertySize
             nameOption: "Size: "
-            width: parent.width
+            widthFieldOption: column.maxWidthNameField
             height: 20
         }
+    }
+
+    TextEdit {
+        id: text_edit1
+        x: -28
+        y: -103
+        width: 80
+        height: 20
+        text: qsTr("Text Edit")
+        font.pixelSize: 12
+    }
+
+    PropertyValue {
+        id: propertyvalue1
+        x: 265
+        y: -52
     }
 }

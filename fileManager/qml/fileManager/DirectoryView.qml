@@ -8,7 +8,7 @@ Rectangle
     property var folderModel: dirModel
     property var folderView: view
 
-    signal showPropertyFile()
+    signal showPropertyFile(var currentName)
 
     ContextMenu{
         id: menudirectory
@@ -58,8 +58,11 @@ Rectangle
 
        delegate: Item
        {
+           id: itemView
+
            property var isCurrent: GridView.isCurrentItem
            property var curFileName: fileName
+           property var itemHover: null
 
            width: view.cellWidth
            height: view.cellHeight
@@ -101,7 +104,8 @@ Rectangle
                hoverEnabled: true
                onEntered: {
                     // посылаем сигнал, что необходимо вывести свойства
-                   showPropertyFile()
+                   showPropertyFile(curFileName)
+                   itemView.itemHover = this;
                }
            }
         }
