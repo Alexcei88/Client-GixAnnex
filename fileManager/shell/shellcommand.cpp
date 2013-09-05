@@ -1,5 +1,8 @@
 #include "shellcommand.h"
 
+// parsing stuff
+#include "../parsing_command_out/parsingcommandclone.h"
+
 //----------------------------------------------------------------------------------------/
 ShellCommand::ShellCommand():
      shell(TShell::GetInstance())
@@ -7,10 +10,10 @@ ShellCommand::ShellCommand():
 {
     receiverParsing.resize(COUNT_TYPE_COMMAND);
     // нициализация массива соот классами парсинга
-    receiverParsing[0] = new IParsingCommandOut();
-    receiverParsing[1] = new IParsingCommandOut();
-    receiverParsing[2] = new IParsingCommandOut();
-    receiverParsing[3] = new IParsingCommandOut();
+    receiverParsing[INIT_REPO]  = new ParsingCommandClone();
+    receiverParsing[CLONE_REPO] = new ParsingCommandClone();
+    receiverParsing[ADD_FILE]   = new ParsingCommandClone();
+    receiverParsing[GET_CONTENT] = new ParsingCommandClone();
 
 }
 //----------------------------------------------------------------------------------------/

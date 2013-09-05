@@ -19,7 +19,8 @@ SOURCES += main.cpp \
     shell/tshell.cpp \
     shell/shellcommand.cpp \
     repository/trepository.cpp \
-    parsing_command_out/iparsingcommandout.cpp
+    parsing_command_out/iparsingcommandout.cpp \
+    parsing_command_out/parsingcommandclone.cpp
 
 # Installation path
 # target.path =
@@ -42,7 +43,8 @@ HEADERS += \
     shell/shellcommand.h \
     repository/trepository.h \
     repository/irepository.h \
-    parsing_command_out/iparsingcommandout.h
+    parsing_command_out/iparsingcommandout.h \
+    parsing_command_out/parsingcommandclone.h
 
 # Включаем поддержку С++11
 QMAKE_CXXFLAGS += -std=c++0x

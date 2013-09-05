@@ -27,9 +27,14 @@ void TShell::RemoveInstance()
 RESULT_EXEC_PROCESS TShell::ExecuteProcess(const QString &str, IParsingCommandOut *receiverParsing) const
 {
     // соединяем сигнал получения данных со стандартного потока вывода с соот классом
-    QMetaObject::Connection m_connection;
-    m_connection = QObject::connect(process.get(), &QProcess::readyReadStandardError, [=](){receiverParsing->GetNewDataStdOut(); });
-    QObject::disconnect(m_connection);
+    QMetaObject::Connection m_connection_readOut;
+    QMetaObject::Connection m_connection_started;
+    QMetaObject::Connection m_connection_finished;
+
+    m_connection_readOut  = QObject::connect(process.get(), &QProcess::readyReadStandardOutput, [=](){receiverParsing->GetNewDataStdOut(); });
+    m_connection_started  = QObject::connect(process.get(), &QProcess::started, [=](){receiverParsing->SetParamBeforeStartCommand(); });
+    m_connection_finished = QObject::connect(process.get(), &QProcess::finished, [=](int exitCode)
+    { receiverParsing->SetParamAfterEndCommand(exitCode); });
 
     QString strCommand = "";
     #ifdef Q_WS_WIN
@@ -41,9 +46,12 @@ RESULT_EXEC_PROCESS TShell::ExecuteProcess(const QString &str, IParsingCommandOu
 
     // ждем, пока процесс не запуститься
     // если процесс не запустился, возвращаем -1
-    if(!process->waitForStarted(1000))
+    if(!process->waitForStarted(5000))
     {
         printf("Process not started! \n");
+        QObject::disconnect(m_connection_readOut);
+        QObject::disconnect(m_connection_started);
+        QObject::disconnect(m_connection_finished);
         return ERROR_NO_STARTED;
     }
 
@@ -52,9 +60,15 @@ RESULT_EXEC_PROCESS TShell::ExecuteProcess(const QString &str, IParsingCommandOu
     if(!process->waitForFinished(-1))
     {
         printf("Process finished with error! \n");
+        QObject::disconnect(m_connection_readOut);
+        QObject::disconnect(m_connection_started);
+        QObject::disconnect(m_connection_finished);
         return ERROR_NO_FINISHED;
     }
 
+    QObject::disconnect(m_connection_readOut);
+    QObject::disconnect(m_connection_started);
+    QObject::disconnect(m_connection_finished);
     return NO_ERROR;
 }
 //----------------------------------------------------------------------------------------/
