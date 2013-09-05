@@ -4,11 +4,7 @@ import QtQuick.Layouts 1.0
 Rectangle
 {
     id: propertyRect
-
     property var folderView: null
-
-    width: parent.width
-    height: parent.height
 
     // сигнал, которые говорит, что нужно обновить данные
     signal updateData(var currentName)
@@ -28,6 +24,10 @@ Rectangle
 //            width: parent.width; height: parent.height
 //            border { left: 4; top: 4; right: 4; bottom: 4 }
 //        }
+
+    width: parent.width
+    height: parent.height
+
     border.color: "black"
     border.width: 1
     radius: 5

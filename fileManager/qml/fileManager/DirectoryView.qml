@@ -2,6 +2,7 @@ import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
 import Qt.labs.folderlistmodel 1.0
+import "utils.js" as UtilsScript
 
 Rectangle
 {
@@ -38,7 +39,7 @@ Rectangle
         anchors.margins: 20
         currentIndex: -1
 
-        cellHeight: 80
+        cellHeight: 70
         cellWidth: 70
 
         keyNavigationWraps: true
@@ -61,6 +62,7 @@ Rectangle
 
             property var isCurrent: GridView.isCurrentItem
             property var curFileName: fileName
+            property var maxLengthOneLine: 0.95 * view.cellWidth
 
             width: view.cellWidth
             height: view.cellHeight
@@ -68,9 +70,12 @@ Rectangle
             Column
             {
                 spacing: 8
-                Image{
-                    source: "qrc:/folder"; /*anchors.horizontalCenter: parent.horizontalCenter*/
+                width: view.cellWidth
 
+                Image{
+                    id: imgFolder
+                    source: "qrc:/folder";
+                    anchors.horizontalCenter: parent.horizontalCenter
 
                     Image{
                         id: dirSync
@@ -79,13 +84,25 @@ Rectangle
                         anchors.leftMargin: 5
                         source: "qrc:/images/ok.png"
                     }
-
                 }
 
                 Text
                 {
+                    id: nameFolder
                     renderType: Text.NativeRendering
-                    text: "%1%2".arg(curFileName).arg(isCurrent ? "\*" : "")
+//                    text: "%1%2".arg(curFileName).arg(isCurrent ? "*" : "")
+                    text: curFileName
+                    maximumLineCount: 1
+                    width: 0.95 * view.cellWidth
+                    elide: Text.ElideRight
+                    anchors.horizontalCenter: imgFolder.horizontalCenter
+                    Component.onCompleted: {
+                        var widthOneSymbol = 8 + nameFolder.font.wordSpacing;
+                        var widthComp = UtilsScript.lengthStr(itemView.curFileName, itemView.maxLengthOneLine/widthOneSymbol) * widthOneSymbol;
+                        if(itemView.curFileName == "TEMP")
+                            console.log("WidthComp = " + widthComp);
+                        nameFolder.width = widthComp;
+                    }
                 }
             }
             MouseArea
@@ -95,6 +112,7 @@ Rectangle
                 acceptedButtons: Qt.LeftButton | Qt.RightButton
                 onClicked:
                 {
+//                    console.log(nameFolder.font.pointSize);
                     view.currentIndex = model.index
                     if(mouse.button == Qt.RightButton)
                         menudirectory.popup()
