@@ -8,6 +8,8 @@ Rectangle
     property var folderModel: dirModel
     property var folderView: view
 
+    signal showPropertyFile()
+
     ContextMenu{
         id: menudirectory
     }
@@ -96,7 +98,11 @@ Rectangle
 
                    }
                }
-
+               hoverEnabled: true
+               onEntered: {
+                    // посылаем сигнал, что необходимо вывести свойства
+                   showPropertyFile()
+               }
            }
         }
     }

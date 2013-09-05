@@ -22,24 +22,28 @@ Rectangle {
         focus: true
         Keys.forwardTo: [contenItem]
 
-        Rectangle {
+        Rectangle
+        {
             width: parent.width/5
             Layout.minimumWidth: parent.width/8
             Layout.maximumWidth: 3 * parent.width/5
             color: "gray"
         }
-        DirectoryView {
+        DirectoryView
+        {
             id: contenItem
             Layout.minimumWidth: parent.width/5
             Layout.fillWidth: true
             color: "darkgray"
             width: 3 * parent.width/5
             focus: true
+            onShowPropertyFile: { propertyFile.updateData() }
         }
 
         // Вывод информации о файле,директории
-        PropertyFile{
-            id: prorertyFile
+        PropertyFile
+        {
+            id: propertyFile
             width: parent.width/5
             Layout.minimumWidth: parent.width/5
             Layout.maximumWidth: 3 * parent.width/5
