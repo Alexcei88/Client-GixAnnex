@@ -1,6 +1,6 @@
 #include "tshell.h"
 #include <stdio.h>
-
+     
 TShell* TShell::instance = 0;
 
 //----------------------------------------------------------------------------------------/
@@ -24,8 +24,13 @@ void TShell::RemoveInstance()
     instance = 0l;
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS TShell::ExecuteProcess(const QString &str) const
+RESULT_EXEC_PROCESS TShell::ExecuteProcess(const QString &str, IParsingCommandOut *receiverParsing) const
 {
+    // соединяем сигнал получения данных со стандартного потока вывода с соот классом
+    QMetaObject::Connection m_connection;
+    m_connection = QObject::connect(process.get(), &QProcess::readyReadStandardError, [=](){receiverParsing->GetNewDataStdOut(); });
+    QObject::disconnect(m_connection);
+
     QString strCommand = "";
     #ifdef Q_WS_WIN
             strCommand = "cmd /C ";
@@ -53,14 +58,14 @@ RESULT_EXEC_PROCESS TShell::ExecuteProcess(const QString &str) const
     return NO_ERROR;
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS TShell::ExecuteProcess(const QString &str, QStringList& retString) const
-{
-    //
-}
-//----------------------------------------------------------------------------------------/
 void TShell::SetWorkingDirectory(const QString& dir) const
 {
     process->setWorkingDirectory(dir);
+}
+//----------------------------------------------------------------------------------------/
+QByteArray TShell::readStandartOutput() const
+{
+    return process->readAllStandardOutput();
 }
 //----------------------------------------------------------------------------------------/
 

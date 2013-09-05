@@ -6,6 +6,16 @@
 class ShellCommand
 {
 public:
+    enum TYPE_COMMAND
+    {
+        INIT_REPO = 0
+       ,CLONE_REPO
+       ,ADD_FILE
+       ,GET_CONTENT
+        // всего различных парсингов
+       ,COUNT_TYPE_COMMAND
+    };
+
     ShellCommand();
     ~ShellCommand();
 
@@ -13,14 +23,14 @@ public:
     RESULT_EXEC_PROCESS InitRepositories(const QString& nameRepo);
 
     /**
-     * @brief SetWorkingDirectory - переход в директорию, откуда запускаем команды
+     * @brief SetWorkingDirectory - смена рабочего каталога
      * @return 0 - нет ошибок
      */
     RESULT_EXEC_PROCESS SetWorkingDirectory(const QString& localURL);
 
     /**
      * @brief Clone Repositories - клонирование репозитория
-     * @param folderClone - папка, куда был скопирован репозиторий
+     * @param folderClone - папка, куда будет скопирован репозиторий
      * @return 0 - нет ошибок
      */
     RESULT_EXEC_PROCESS CloneRepositories(const QString& remoteURL, QString &folderClone);
@@ -40,7 +50,10 @@ public:
 
 private:
     const TShell*  shell;
-    const QString& baseCommand;
+    const QString  baseCommand;
+    // массив векторов, которые будут выполнять парсинг текста со стандартного потока вывода, во время выполнения команды
+    std::vector<IParsingCommandOut*> receiverParsing;
+
 };
 
 #endif // SHELLCOMMAND_H

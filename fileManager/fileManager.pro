@@ -18,7 +18,8 @@ QML_IMPORT_PATH =
 SOURCES += main.cpp \
     shell/tshell.cpp \
     shell/shellcommand.cpp \
-    repository/trepository.cpp
+    repository/trepository.cpp \
+    parsing_command_out/iparsingcommandout.cpp
 
 # Installation path
 # target.path =
@@ -40,4 +41,8 @@ HEADERS += \
     shell/tshell.h \
     shell/shellcommand.h \
     repository/trepository.h \
-    repository/irepository.h
+    repository/irepository.h \
+    parsing_command_out/iparsingcommandout.h
+
+# Включаем поддержку С++11
+QMAKE_CXXFLAGS += -std=c++0x
