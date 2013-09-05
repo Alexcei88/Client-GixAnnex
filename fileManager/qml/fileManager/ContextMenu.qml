@@ -4,14 +4,19 @@ import QtQuick.Layouts 1.0
 
 Menu
 {
+    // Меню будет отправлять соот сигналы, а в файле приемнике будет обработка нужной функцией
+    signal openDirectory()
+
     Action
     {
         id: openAction
         text: "&Open"
         shortcut: "Ctrl+O"
         //       iconSource: "images/document-open.png"
-        onTriggered: { console.log("Open directory") }
-        //       tooltip: "Open an image"
+        onTriggered: {
+            // посылаем сигнал открыть директорию
+            openDirectory()
+        }
     }
     Action
     {
@@ -19,7 +24,9 @@ Menu
         text: "&Get Content"
         shortcut: "Ctrl+G"
         //       iconSource: "images/document-open.png"
-        onTriggered: { console.log("GetContentDirectory") }
+        onTriggered: {
+            console.log("GetContentDirectory")
+        }
         //       tooltip: "Open an image"
     }
 
@@ -39,7 +46,7 @@ Menu
     MenuItem { action: openAction }
     MenuItem { action: getContentAction }
     MenuItem { action: dropContentAction }
-    MenuItem { text: "AutoGet Content" }
+    MenuItem { text: "On/O`ff autoget content" }
     MenuItem { text: "Close" }
 }
 

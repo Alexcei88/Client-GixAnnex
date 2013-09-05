@@ -9,10 +9,20 @@ Rectangle
     property var folderModel: dirModel
     property var folderView: view
 
+    // сигнал, что нужно показать свойства у директории
     signal showPropertyFile(var currentName)
 
     ContextMenu{
         id: menudirectory
+        onOpenDirectory: {
+            if(dirModel.isFolder(dirModel.index) && view.currentItem)
+            {
+                var fileName = view.currentItem.curFileName;
+                dirModel.folder = dirModel.folder == "file:///" ? dirModel.folder + fileName : dirModel.folder +"/" + fileName;
+                view.currentIndex = -1;
+            }
+        }
+
     }
 
     width: 100
@@ -27,6 +37,7 @@ Rectangle
         folder: "/home"
         showDirs: true
         showDirsFirst: true
+        showOnlyReadable: true
     }
 
     GridView
@@ -97,6 +108,11 @@ Rectangle
                         var contentWidth = nameFolder.contentWidth;
                         var widthComp = contentWidth > itemView.maxLengthOneLine ? itemView.maxLengthOneLine : contentWidth;
                         nameFolder.width = widthComp;
+//                        if(UtilsScript.lengthStr(curFileName, 500) > 10 )
+//                        {
+//                            console.log("length > 50");
+//                            return;
+//                        }
                     }
                 }
             }
@@ -105,6 +121,8 @@ Rectangle
                 id: contextMenu
                 anchors.fill: parent
                 acceptedButtons: Qt.LeftButton | Qt.RightButton
+                hoverEnabled: true
+
                 onClicked:
                 {
                     view.currentIndex = model.index
@@ -121,7 +139,6 @@ Rectangle
 
                     }
                 }
-                hoverEnabled: true
                 onEntered: {
                     // посылаем сигнал, что необходимо вывести свойства объекта, на который навели
                     showPropertyFile(curFileName)
@@ -146,7 +163,7 @@ Rectangle
 //                        PropertyChanges { target: arrowIcon; rotation: 0 }
                     },
 
-                    // 3. Имеются символичеcкие ссылки, некоторые с контентом
+                    // 3. Имеются символичеcкие ссылки, некоторые из них с контентом
                     State {
                         name: "SYMBOL_LINK_AND_SOME_CONTENT"
     //                        PropertyChanges { target: menuBar; y: -height; }
@@ -155,10 +172,12 @@ Rectangle
     //                        PropertyChanges { target: arrowIcon; rotation: 0 }
                     },
 
-                    // 4. Символическая ссылка с контекнтом
+                    // 4. Символическая ссылка с контенктом
                     State {
                         name: "SYMBOL_LINK_AND_CONTENT"
                     }
+
+                    // папка с автосинхронизацией контента(посмотреть, это будет отдельным состоянием, или просто как)
                 ]
         }
     }
