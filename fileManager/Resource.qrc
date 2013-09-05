@@ -6,5 +6,6 @@
         <file alias="images/clear.png">resource/images/clear.png</file>
         <file alias="images/lineedit_bg_focus.png">resource/images/lineedit-bg-focus.png</file>
         <file alias="images/lineedit_bg.png">resource/images/lineedit-bg.png</file>
+        <file alias="images/ok.png">resource/images/oksmall.png</file>
     </qresource>
 </RCC>

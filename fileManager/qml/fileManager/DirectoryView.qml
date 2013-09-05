@@ -30,84 +30,124 @@ Rectangle
 
     GridView
     {
+        id: view
+        model: dirModel
+        width: parent.width
 
-       id: view
-       model: dirModel
-       width: parent.width
+        anchors.fill: parent
+        anchors.margins: 20
+        currentIndex: -1
 
-       anchors.fill: parent
-       anchors.margins: 20
-       currentIndex: -1
+        cellHeight: 80
+        cellWidth: 70
 
-       cellHeight: 80
-       cellWidth: 70
+        keyNavigationWraps: true
+        highlight: Rectangle {
+            color: "skyblue"
+            radius: 5
+            z: 50
+            anchors.margins: 20
+            height: 30
+            width: 30
+        }
 
-       keyNavigationWraps: true
-       highlight: Rectangle {
-                   color: "skyblue"
-                   radius: 5
-                   z: 50
-                   anchors.margins: 20
-                   height: 30
-                   width: 30
-               }
+        highlightFollowsCurrentItem: true
+        highlightMoveDuration: 1
+        focus: true
 
-       highlightFollowsCurrentItem: true
-       highlightMoveDuration: 1
-       focus: true
+        delegate: Item
+        {
+            id: itemView
 
-       delegate: Item
-       {
-           id: itemView
+            property var isCurrent: GridView.isCurrentItem
+            property var curFileName: fileName
 
-           property var isCurrent: GridView.isCurrentItem
-           property var curFileName: fileName
-           property var itemHover: null
+            width: view.cellWidth
+            height: view.cellHeight
 
-           width: view.cellWidth
-           height: view.cellHeight
+            Column
+            {
+                spacing: 8
+                Image{
+                    source: "qrc:/folder"; /*anchors.horizontalCenter: parent.horizontalCenter*/
 
-           Column
-           {
-               spacing: 8
-               Image{
-                   source: "qrc:/folder"; /*anchors.horizontalCenter: parent.horizontalCenter*/
-               }
 
-               Text
-               {
-                   renderType: Text.NativeRendering
-                   text: "%1%2".arg(curFileName).arg(isCurrent ? "\*" : "")
-               }
-           }
-           MouseArea
-           {
-               id: contextMenu
-               anchors.fill: parent
-               acceptedButtons: Qt.LeftButton | Qt.RightButton
-               onClicked:
-               {
-                   view.currentIndex = model.index
-                   if(mouse.button == Qt.RightButton)
-                       menudirectory.popup()
+                    Image{
+                        id: dirSync
+                        anchors.bottom: parent.bottom
+                        anchors.left: parent.left
+                        anchors.leftMargin: 5
+                        source: "qrc:/images/ok.png"
+                    }
+
                 }
-               onDoubleClicked:
-               {
-                   if(dirModel.isFolder(model.index))
-                   {
-                       dirModel.folder = dirModel.folder == "file:///" ? dirModel.folder + curFileName : dirModel.folder +"/" + curFileName;
-                       console.log(dirModel.folder);
-                       view.currentIndex = -1;
 
-                   }
-               }
-               hoverEnabled: true
-               onEntered: {
-                    // посылаем сигнал, что необходимо вывести свойства
-                   showPropertyFile(curFileName)
-                   itemView.itemHover = this;
-               }
-           }
+                Text
+                {
+                    renderType: Text.NativeRendering
+                    text: "%1%2".arg(curFileName).arg(isCurrent ? "\*" : "")
+                }
+            }
+            MouseArea
+            {
+                id: contextMenu
+                anchors.fill: parent
+                acceptedButtons: Qt.LeftButton | Qt.RightButton
+                onClicked:
+                {
+                    view.currentIndex = model.index
+                    if(mouse.button == Qt.RightButton)
+                        menudirectory.popup()
+                }
+                onDoubleClicked:
+                {
+                    if(dirModel.isFolder(model.index))
+                    {
+                        dirModel.folder = dirModel.folder == "file:///" ? dirModel.folder + curFileName : dirModel.folder +"/" + curFileName;
+                        console.log(dirModel.folder);
+                        view.currentIndex = -1;
+
+                    }
+                }
+                hoverEnabled: true
+                onEntered: {
+                    // посылаем сигнал, что необходимо вывести свойства объекта, на который навели
+                    showPropertyFile(curFileName)
+                }
+            }
+            // различные состояния, в которых может находиться директория
+            states:[
+                    State {
+                        // 1. Идет синхронизация
+                        name: "SYNCING"
+//                        PropertyChanges { target: menuBar; y: 0 }
+//                        PropertyChanges { target: textArea; y: partition + drawer.height }
+//                        PropertyChanges { target: drawer; y: partition }
+//                        PropertyChanges { target: arrowIcon; rotation: 180 }
+                    },
+                    // 2. Имеются только символичеcкие ссылки
+                    State {
+                        name: "SYMBOL_LINK"
+//                        PropertyChanges { target: menuBar; y: -height; }
+//                        PropertyChanges { target: textArea; y: drawer.height; height: screen.height - drawer.height }
+//                        PropertyChanges { target: drawer; y: 0 }
+//                        PropertyChanges { target: arrowIcon; rotation: 0 }
+                    },
+
+                    // 3. Имеются символичеcкие ссылки, некоторые с контентом
+                    State {
+                        name: "SYMBOL_LINK_AND_SOME_CONTENT"
+    //                        PropertyChanges { target: menuBar; y: -height; }
+    //                        PropertyChanges { target: textArea; y: drawer.height; height: screen.height - drawer.height }
+    //                        PropertyChanges { target: drawer; y: 0 }
+    //                        PropertyChanges { target: arrowIcon; rotation: 0 }
+                    },
+
+                    // 4. Символическая ссылка с контекнтом
+                    State {
+                        name: "SYMBOL_LINK_AND_CONTENT"
+                    }
+                ]
         }
     }
 }

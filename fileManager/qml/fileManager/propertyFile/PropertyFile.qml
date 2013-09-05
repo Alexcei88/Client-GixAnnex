@@ -23,11 +23,11 @@ Rectangle
         }
     }
 
-    //    BorderImage {
-//        source: "qrc:images/lineedit_bg.png"
-//        width: parent.width; height: parent.height
-//        border { left: 4; top: 4; right: 4; bottom: 4 }
-//    }
+//        BorderImage {
+//            source: "qrc:images/lineedit_bg.png"
+//            width: parent.width; height: parent.height
+//            border { left: 4; top: 4; right: 4; bottom: 4 }
+//        }
     border.color: "black"
     border.width: 1
     radius: 5
@@ -43,9 +43,9 @@ Rectangle
         id:column
         spacing: 5
 
-        property int maxWidthNameField: 60
+        property int maxWidthNameField: 74
 
-//        onWidthChanged: {console.log(column.width) }
+        //        onWidthChanged: {console.log(column.width) }
         anchors.top: name.bottom
         anchors.topMargin: 5
         anchors.horizontalCenter: name.horizontalCenter
@@ -58,7 +58,7 @@ Rectangle
             valueOption: "here"
             widthFieldOption: column.maxWidthNameField
             height: 20
-//            onWidthChanged: {console.log(property1.width) }
+            //            onWidthChanged: {console.log(property1.width) }
 
         }
 
@@ -66,6 +66,14 @@ Rectangle
         {
             id: propertySize
             nameOption: "Size: "
+            widthFieldOption: column.maxWidthNameField
+            height: 20
+        }
+
+        PropertyValue
+        {
+            id: propertyLastModified
+            nameOption: "LastModified: "
             widthFieldOption: column.maxWidthNameField
             height: 20
         }

@@ -37,7 +37,6 @@ Rectangle
                     ToolButton{
                         iconSource:"qrc:back"
                         onClicked: {
-                            console.log("Back folder");
                             toolBar.folderModel.folder = toolBar.folderModel.parentFolder;
                             toolBar.folderView.currentIndex = -1;
                         }
@@ -45,10 +44,13 @@ Rectangle
                     ToolButton{
                         iconSource: "qrc:forward"
                         onClicked: {
-                            console.log("Forward folder");
-                            var fileName = toolBar.folderView.currentItem.curFileName;
-                            toolBar.folderModel.folder = toolBar.folderModel.folder == "file:///" ? toolBar.folderModel.folder + fileName : toolBar.folderModel.folder +"/" + fileName;
-                            toolBar.folderView.currentIndex = -1;
+                            // проверка, есть ли выделенная папка
+                            if(toolBar.folderView.currentItem)
+                            {
+                                var fileName = toolBar.folderView.currentItem.curFileName;
+                                toolBar.folderModel.folder = toolBar.folderModel.folder == "file:///" ? toolBar.folderModel.folder + fileName : toolBar.folderModel.folder +"/" + fileName;
+                                toolBar.folderView.currentIndex = -1;
+                            }
                         }
                     }
 
