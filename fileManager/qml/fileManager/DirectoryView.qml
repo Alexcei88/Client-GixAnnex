@@ -48,8 +48,6 @@ Rectangle
             radius: 5
             z: 50
             anchors.margins: 20
-            height: 30
-            width: 30
         }
 
         highlightFollowsCurrentItem: true
@@ -90,17 +88,14 @@ Rectangle
                 {
                     id: nameFolder
                     renderType: Text.NativeRendering
-//                    text: "%1%2".arg(curFileName).arg(isCurrent ? "*" : "")
                     text: curFileName
                     maximumLineCount: 1
-                    width: 0.95 * view.cellWidth
                     elide: Text.ElideRight
                     anchors.horizontalCenter: imgFolder.horizontalCenter
-                    Component.onCompleted: {
-                        var widthOneSymbol = 8 + nameFolder.font.wordSpacing;
-                        var widthComp = UtilsScript.lengthStr(itemView.curFileName, itemView.maxLengthOneLine/widthOneSymbol) * widthOneSymbol;
-                        if(itemView.curFileName == "TEMP")
-                            console.log("WidthComp = " + widthComp);
+                    Component.onCompleted:
+                    {
+                        var contentWidth = nameFolder.contentWidth;
+                        var widthComp = contentWidth > itemView.maxLengthOneLine ? itemView.maxLengthOneLine : contentWidth;
                         nameFolder.width = widthComp;
                     }
                 }
@@ -112,7 +107,6 @@ Rectangle
                 acceptedButtons: Qt.LeftButton | Qt.RightButton
                 onClicked:
                 {
-//                    console.log(nameFolder.font.pointSize);
                     view.currentIndex = model.index
                     if(mouse.button == Qt.RightButton)
                         menudirectory.popup()
