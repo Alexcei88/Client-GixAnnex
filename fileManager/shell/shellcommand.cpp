@@ -2,6 +2,8 @@
 
 // parsing stuff
 #include "../parsing_command_out/parsingcommandclone.h"
+#include "../parsing_command_out/parsingcommandwhereis.h"
+#include "../parsing_command_out/parsingcommandget.h"
 
 //----------------------------------------------------------------------------------------/
 ShellCommand::ShellCommand():
@@ -9,11 +11,12 @@ ShellCommand::ShellCommand():
     ,baseCommand("git-annex ")
 {
     receiverParsing.resize(COUNT_TYPE_COMMAND);
-    // нициализация массива соот классами парсинга
+    // инициализация массива соот классами парсинга
     receiverParsing[INIT_REPO]  = new ParsingCommandClone();
     receiverParsing[CLONE_REPO] = new ParsingCommandClone();
     receiverParsing[ADD_FILE]   = new ParsingCommandClone();
     receiverParsing[GET_CONTENT] = new ParsingCommandClone();
+    receiverParsing[WHEREIS_COMMAND] = new ParsingCommandClone();
 
 }
 //----------------------------------------------------------------------------------------/
@@ -44,9 +47,12 @@ RESULT_EXEC_PROCESS ShellCommand::CloneRepositories(const QString& remoteURL, QS
     QStringList stdOut;
     const QString strCommand = "git clone " + remoteURL;
     RESULT_EXEC_PROCESS result = shell->ExecuteProcess(strCommand, receiverParsing[CLONE_REPO]);
+    QStringList parsingData = receiverParsing[CLONE_REPO]->GetParsingData();
     if(result != NO_ERROR)
         return result;
-    folderClone = receiverParsing[CLONE_REPO]->GetParsingData().at(0);
+    if(!parsingData.empty())
+        return  IGNORE_COMMAND;
+    folderClone = parsingData.at(0);
 }
 //----------------------------------------------------------------------------------------/
 RESULT_EXEC_PROCESS ShellCommand::AddFile(const QString& path)

@@ -12,6 +12,7 @@ public:
     virtual int     CloneRepository(const QString& localURL, const QString& nameRepo, const QString& remoteURL) = 0;
     // 2. Удаление репозитория
     virtual int     DeleteRepository(const QString& localURL) = 0;
+    // 3.
 
 protected:
     boost::shared_ptr<ShellCommand> shellCommand;

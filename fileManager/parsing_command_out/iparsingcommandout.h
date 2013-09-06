@@ -36,6 +36,9 @@ protected:
     /** @brief список обработанных парсингом данных */
     QStringList         dataAfterParsing;
 
+    /** @brief список регулярных выражений для парсинга данных */
+    QStringList         listRegExpPossible;
+
     /** @brief команда стартовала */
     bool                commandStart;
     /** @brief команда завершилась */

@@ -9,9 +9,10 @@ public:
     enum TYPE_COMMAND
     {
         INIT_REPO = 0
-       ,CLONE_REPO
-       ,ADD_FILE
-       ,GET_CONTENT
+       ,CLONE_REPO = 1
+       ,ADD_FILE = 2
+       ,GET_CONTENT = 3
+       ,WHEREIS_COMMAND = 4
         // всего различных парсингов
        ,COUNT_TYPE_COMMAND
     };

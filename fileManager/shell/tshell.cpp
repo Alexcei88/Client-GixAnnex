@@ -8,6 +8,7 @@ TShell::TShell(QObject* parent):
     QObject(parent)
 {
     process = boost::make_shared<QProcess>(this);
+    process->setProcessChannelMode(QProcess::MergedChannels);
 }
 //----------------------------------------------------------------------------------------/
 TShell::~TShell(){}

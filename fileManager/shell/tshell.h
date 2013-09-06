@@ -21,7 +21,8 @@
 enum RESULT_EXEC_PROCESS {
      NO_ERROR = 0
     ,ERROR_NO_STARTED = 1
-    ,ERROR_NO_FINISHED = 1
+    ,ERROR_NO_FINISHED = 2
+    ,IGNORE_COMMAND = 3
 };
 
 class TShell: public QObject
