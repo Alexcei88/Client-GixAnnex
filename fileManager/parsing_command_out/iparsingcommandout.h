@@ -25,7 +25,7 @@ public:
     virtual void        SetParamAfterEndCommand(int exitCode);
 
     /** @brief функция парсинга, у каждого класса будет своя реализация */
-    virtual void        ParsingData() const = 0;
+    virtual void        ParsingData() = 0;
 
     /** @brief взятие данных после парсинга по требованию */
     virtual QStringList GetParsingData() const;
@@ -33,7 +33,6 @@ public:
 protected:
     /** @brief список данных, поступивших на входной поток данных */
     QStringList         dataStdOut;
-
     /** @brief список обработанных парсингом данных */
     QStringList         dataAfterParsing;
 
@@ -43,6 +42,9 @@ protected:
     bool                commandEnd;
     /** @brief код завершения процесса 0 - нет ошибок, иначе с ошибкой */
     int                 exitCodeCommand;
+
+    /** @brief класс парсинга*/
+    QRegExp             regExp;
 
 signals:
     // сигнал, которым сообщаем, что новые данные готовы после парсинга

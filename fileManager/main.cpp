@@ -15,11 +15,11 @@ int main(int argc, char *argv[])
     viewer.setMinimumHeight(500);
     viewer.setMinimumWidth(400);
 //    viewer.hide();
-    viewer.showExpanded();
+    viewer.setTitle("Git-Annex Client");
+    viewer.show();
 
-    TRepository rep;
-    rep.CloneRepository("MyRepo", "https://github.com/Alexcei88/Employer.git", "/home/alexcei/Copy/");
-
-    flush(std::cout);
+//    TRepository rep;
+//    rep.CloneRepository("MyRepo", "https://github.com/Alexcei88/Employer.git", "/home/alexcei/Copy/");
+//    flush(std::cout);
     return app.exec();
 }

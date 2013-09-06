@@ -46,6 +46,7 @@ RESULT_EXEC_PROCESS ShellCommand::CloneRepositories(const QString& remoteURL, QS
     RESULT_EXEC_PROCESS result = shell->ExecuteProcess(strCommand, receiverParsing[CLONE_REPO]);
     if(result != NO_ERROR)
         return result;
+    folderClone = receiverParsing[CLONE_REPO]->GetParsingData().at(0);
 }
 //----------------------------------------------------------------------------------------/
 RESULT_EXEC_PROCESS ShellCommand::AddFile(const QString& path)

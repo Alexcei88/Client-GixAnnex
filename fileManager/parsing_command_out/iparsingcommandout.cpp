@@ -33,6 +33,10 @@ void IParsingCommandOut::SetParamAfterEndCommand(int exitCode)
     commandEnd      = true;
     commandStart    = false;
     exitCodeCommand = exitCode;
+
+    // выполняем парсинг после выполнения команды
+    ParsingData();
+
 }
 //----------------------------------------------------------------------------------------/
 QStringList IParsingCommandOut::GetParsingData() const

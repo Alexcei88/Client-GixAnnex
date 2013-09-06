@@ -7,7 +7,7 @@ class ParsingCommandClone : public IParsingCommandOut
 {
 public:
     ParsingCommandClone();
-    virtual void        ParsingData() const;
+    virtual void        ParsingData();
 
 
 };

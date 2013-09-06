@@ -33,8 +33,7 @@ RESULT_EXEC_PROCESS TShell::ExecuteProcess(const QString &str, IParsingCommandOu
 
     m_connection_readOut  = QObject::connect(process.get(), &QProcess::readyReadStandardOutput, [=](){receiverParsing->GetNewDataStdOut(); });
     m_connection_started  = QObject::connect(process.get(), &QProcess::started, [=](){receiverParsing->SetParamBeforeStartCommand(); });
-    m_connection_finished = QObject::connect(process.get(), &QProcess::finished, [=](int exitCode)
-    { receiverParsing->SetParamAfterEndCommand(exitCode); });
+    m_connection_finished = QObject::connect(process.get(), &QProcess::finished, [=](int exitCode){ receiverParsing->SetParamAfterEndCommand(exitCode); });
 
     QString strCommand = "";
     #ifdef Q_WS_WIN
