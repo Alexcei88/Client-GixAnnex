@@ -55,40 +55,46 @@ RESULT_EXEC_PROCESS ShellCommand::CloneRepositories(const QString& remoteURL, QS
     folderClone = parsingData.at(0);
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS ShellCommand::AddFile(const QString& path)
+RESULT_EXEC_PROCESS ShellCommand::AddFile(const QString& path) const
 {
     const QString strCommand = baseCommand + "add " + path;
     return shell->ExecuteProcess(strCommand, receiverParsing[ADD_FILE]);
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS ShellCommand::GetContentFile(const QString& path)
+RESULT_EXEC_PROCESS ShellCommand::GetContentFile(const QString& path) const
 {
     const QString strCommand = baseCommand + "get " + path;
 //    return shell->ExecuteProcess(strCommand);
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS ShellCommand::DropContentFile(const QString& path)
+RESULT_EXEC_PROCESS ShellCommand::DropContentFile(const QString& path) const
 {
     const QString strCommand = baseCommand + "drop " + path;
 //    return shell->ExecuteProcess(strCommand);
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS ShellCommand::RemoveFile(const QString& path)
+RESULT_EXEC_PROCESS ShellCommand::RemoveFile(const QString& path) const
 {
     const QString strCommand = "git rm" + path;
 //    return shell->ExecuteProcess(strCommand);
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS ShellCommand::Sync()
+RESULT_EXEC_PROCESS ShellCommand::Sync() const
 {
     const QString strCommand = baseCommand + "sync";
 //    return shell->ExecuteProcess(strCommand);
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS ShellCommand::WhereisFiles(const QString& path, QString& result)
+RESULT_EXEC_PROCESS ShellCommand::WhereisFiles(const QString& path) const
 {
     const QString strCommand = baseCommand + "whereis " + path;
 //    return shell->ExecuteProcess(strCommand);
+}
+//----------------------------------------------------------------------------------------/
+RESULT_EXEC_PROCESS PullRepositories() const
+{
+    const QString strCommand = "git pull";
+
 }
 //----------------------------------------------------------------------------------------/
 

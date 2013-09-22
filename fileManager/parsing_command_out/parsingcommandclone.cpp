@@ -20,8 +20,6 @@ void ParsingCommandClone::ParsingData()
     if(!commandStart && commandEnd && !dataStdOut.empty())
     {
         // выполняем парсинг
-        dataAfterParsing.clear();
-
         // 1. проверка, есть ли ошибки
         regExp.setPattern(listRegExpPossible[1]);
         for(int i = 0; i < dataStdOut.size(); ++i)

@@ -24,30 +24,37 @@ public:
     RESULT_EXEC_PROCESS InitRepositories(const QString& nameRepo);
 
     /**
-     * @brief SetWorkingDirectory - смена рабочего каталога
-     * @return 0 - нет ошибок
-     */
+     @brief SetWorkingDirectory - смена рабочего каталога
+     @return 0 - нет ошибок
+    */
     RESULT_EXEC_PROCESS SetWorkingDirectory(const QString& localURL);
 
     /**
-     * @brief Clone Repositories - клонирование репозитория
-     * @param folderClone - папка, куда будет скопирован репозиторий
-     * @return 0 - нет ошибок
-     */
+    @brief Clone Repositories - клонирование репозитория
+    @param folderClone - папка, куда будет скопирован репозиторий
+    @return 0 - нет ошибок
+    */
     RESULT_EXEC_PROCESS CloneRepositories(const QString& remoteURL, QString &folderClone);
 
     // 2. Добавление каталога/файла в репозиторий
-    RESULT_EXEC_PROCESS AddFile(const QString& path);
+    RESULT_EXEC_PROCESS AddFile(const QString& path) const;
     // 3. закачать контент у файлов((директории)
-    RESULT_EXEC_PROCESS GetContentFile(const QString& path);
+    RESULT_EXEC_PROCESS GetContentFile(const QString& path) const;
     // 4. удалить контент у файлов((директории)
-    RESULT_EXEC_PROCESS DropContentFile(const QString& path);
+    RESULT_EXEC_PROCESS DropContentFile(const QString& path) const;
     // 5. Удалить файл(директорию) из репозитория вместе с контентом
-    RESULT_EXEC_PROCESS RemoveFile(const QString& path);
+    RESULT_EXEC_PROCESS RemoveFile(const QString& path) const;
     // 6. Синхронизация с главным репозиторием
-    RESULT_EXEC_PROCESS Sync();
+    RESULT_EXEC_PROCESS Sync() const;
     // 7. оказывает местонахождение файла в других репозиториях
-    RESULT_EXEC_PROCESS WhereisFiles(const QString& path, QString& result);
+    RESULT_EXEC_PROCESS WhereisFiles(const QString& path) const;
+
+    /**
+    @brief Pull Repositories - послать изменения в удаленный репозитрий
+    @return 0 - нет ошибок
+    */
+    RESULT_EXEC_PROCESS PullRepositories() const;
+
 
 private:
     const TShell*  shell;

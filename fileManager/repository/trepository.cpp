@@ -38,8 +38,40 @@ int TRepository::DeleteRepository(const QString &localURL)
     this->nameRepo = "";
     this->localURL = "";
     this->remoteURL = "";
+
     return 0;
 }
 //----------------------------------------------------------------------------------------/
+int TRepository::GetContentFile(const QString& file) const
+{
+    int result = shellCommand->GetContentFile(file);
+    if(result != NO_ERROR)
+    {
+        printf("Error git-annex get content of file: %s \n", file.toStdString().c_str());
+        return result;
+    }
+    return result;
+}
 //----------------------------------------------------------------------------------------/
+int TRepository::DropContentFile(const QString& file) const
+{
+    int result = shellCommand->DropContentFile(file);
+    if(result != NO_ERROR)
+    {
+        printf("Error git-annex drop content of file: %s \n", file.toStdString().c_str());
+        return result;
+    }
+    return result;
+}
+//----------------------------------------------------------------------------------------/
+int TRepository::WhereisFile(const QString& file) const
+{
+    int result = shellCommand->WhereisFiles(file);
+    if(result != NO_ERROR)
+    {
+        printf("Error git-annex drop content of file: %s \n", file.toStdString().c_str());
+        return result;
+    }
+    return result;
+}
 //----------------------------------------------------------------------------------------/

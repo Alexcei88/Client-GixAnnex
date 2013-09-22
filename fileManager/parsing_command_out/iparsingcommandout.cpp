@@ -13,6 +13,7 @@ IParsingCommandOut::~IParsingCommandOut(){};
 void IParsingCommandOut::SetParamBeforeStartCommand()
 {
     dataStdOut.clear();
+    dataAfterParsing.clear();
     commandStart    = true;
     commandEnd      = false;
 }
@@ -36,7 +37,6 @@ void IParsingCommandOut::SetParamAfterEndCommand(int exitCode)
 
     // выполняем парсинг после выполнения команды
     ParsingData();
-
 }
 //----------------------------------------------------------------------------------------/
 QStringList IParsingCommandOut::GetParsingData() const
