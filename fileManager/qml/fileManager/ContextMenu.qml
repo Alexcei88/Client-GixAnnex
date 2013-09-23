@@ -46,7 +46,7 @@ Menu
     MenuItem { action: openAction }
     MenuItem { action: getContentAction }
     MenuItem { action: dropContentAction }
-    MenuItem { text: "On/O`ff autoget content" }
+    MenuItem { text: "On/Off autoget content" }
     MenuItem { text: "Close" }
 }
 

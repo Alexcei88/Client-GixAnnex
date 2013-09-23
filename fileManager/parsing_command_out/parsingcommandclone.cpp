@@ -44,6 +44,7 @@ void ParsingCommandClone::ParsingData()
         }
         // если нет, то ищем директорию, куда скопировали
         const QString str = dataStdOut.at(0);
+        regExp.setPattern(listRegExpPossible[0]);
         if(regExp.indexIn(str) != -1)
         {
             const QString nameFolder = regExp.cap(2);

@@ -50,7 +50,7 @@ RESULT_EXEC_PROCESS ShellCommand::CloneRepositories(const QString& remoteURL, QS
     QStringList parsingData = receiverParsing[CLONE_REPO]->GetParsingData();
     if(result != NO_ERROR)
         return result;
-    if(!parsingData.empty())
+    if(parsingData.empty())
         return  IGNORE_COMMAND;
     folderClone = parsingData.at(0);
 }
@@ -91,7 +91,7 @@ RESULT_EXEC_PROCESS ShellCommand::WhereisFiles(const QString& path) const
 //    return shell->ExecuteProcess(strCommand);
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS PullRepositories() const
+RESULT_EXEC_PROCESS ShellCommand::PullRepositories() const
 {
     const QString strCommand = "git pull";
 

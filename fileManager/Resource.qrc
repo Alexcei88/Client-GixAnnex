@@ -7,5 +7,9 @@
         <file alias="images/lineedit_bg_focus.png">resource/images/lineedit-bg-focus.png</file>
         <file alias="images/lineedit_bg.png">resource/images/lineedit-bg.png</file>
         <file alias="images/ok.png">resource/images/oksmall.png</file>
+        <file alias="heart.ico">heart.ico</file>
+    </qresource>
+    <qresource prefix="/image_files">
+        <file alias="word.png">resource/file_images/word.png</file>
     </qresource>
 </RCC>

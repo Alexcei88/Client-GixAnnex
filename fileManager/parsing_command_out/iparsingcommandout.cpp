@@ -21,6 +21,7 @@ void IParsingCommandOut::SetParamBeforeStartCommand()
 void IParsingCommandOut::GetNewDataStdOut()
 {
     QString newData(TShell::GetInstance()->readStandartOutput());
+
     dataStdOut << newData;
     std::cout<<"1. "<<newData.toStdString()<<std::endl;
 

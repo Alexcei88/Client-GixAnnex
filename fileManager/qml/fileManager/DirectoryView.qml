@@ -83,7 +83,7 @@ Rectangle
 
                 Image{
                     id: imgFolder
-                    source: "qrc:/folder";
+                    source: dirModel.isFolder(model.index) ? "qrc:/folder" : "qrc:/image_files/word.png";
                     anchors.horizontalCenter: parent.horizontalCenter
 
                     Image{
