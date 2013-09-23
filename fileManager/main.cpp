@@ -14,23 +14,40 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-    // создаем нам нужные вьюверы
-    QtQuick2ApplicationViewer viewer;
-    viewer.setMainQmlFile(QStringLiteral("qml/fileManager/main.qml"));
-    viewer.setMinimumHeight(500);
-    viewer.setMinimumWidth(400);
-    viewer.setTitle("Git-Annex Client");
-    viewer.show();
-
     if(!QSystemTrayIcon::isSystemTrayAvailable()) {
         printf("System Tray Icon not avaible!!! Programma will close!");
         flush(std::cout);
         return 1;
     }
-    // при закрытии последнего окна приложение работу не завершает, она будет висеть в трее
+    // при закрытии последнего окна приложение работу не завершает, оно будет висеть в трее
     QApplication::setQuitOnLastWindowClosed(false);
 
+    //=========================================================================== /
+    // создаем нам нужные вьюверы
+    // главный viewer
+    QtQuick2ApplicationViewer mainViewer;
+    mainViewer.setMainQmlFile(QStringLiteral("qml/fileManager/main.qml"));
+    mainViewer.setMinimumHeight(500);
+    mainViewer.setMinimumWidth(400);
+    mainViewer.setTitle("Git-Annex Client");
+
+    // viewer копирования репозитория
+    QtQuick2ApplicationViewer cloneRepoViewer;
+    cloneRepoViewer.setMainQmlFile(QStringLiteral("qml/fileManager/repository/clone.qml"));
+    cloneRepoViewer.setMinimumHeight(60);
+    cloneRepoViewer.setMinimumWidth(300);
+    cloneRepoViewer.setX(600);
+    cloneRepoViewer.setY(300);
+
+    cloneRepoViewer.setTitle("Git-Annex Clone Repository");
+
+    //=========================================================================== /
+
+    // создаем классы трея и передаем нужные viewer-ы
     SystemTray windowTray;
+    windowTray.SetMainView(&mainViewer);
+    windowTray.SetCloneRepoView(&cloneRepoViewer);
+
 
     TRepository rep;
 //    rep.CloneRepository("MyRepo", "https://github.com/Alexcei88/Employer.git", "/home/alexcei/Copy/");

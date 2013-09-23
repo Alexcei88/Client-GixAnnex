@@ -2,23 +2,31 @@
 #include <iostream>
 
 //----------------------------------------------------------------------------------------/
-SystemTray::SystemTray()
+SystemTray::SystemTray():
+    mainView(0l)
+   ,cloneRepoView(0l)
 {
-    addRepoAction = new QAction(tr("&New repository"), this);
-    cloneRepoAction = new QAction(tr("&Clone Repository"), this);
+    //=================================================================================== /
+    addRepoAction   = new QAction(tr("&New repository"), this);
 
-    quitAction = new QAction(tr("&Quit"), this);
+    cloneRepoAction = new QAction(tr("&Clone Repository"), this);
+    connect(cloneRepoAction, SIGNAL(triggered()), this, SLOT(CloneRepository()));
+
+    quitAction      = new QAction(tr("&Quit"), this);
     connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
 
-    trayIconMenu = new QMenu(this);
+    //=================================================================================== /
+
+    trayIconMenu    = new QMenu(this);
     trayIconMenu->addAction(addRepoAction);
     trayIconMenu->addAction(cloneRepoAction);
     trayIconMenu->addSeparator();
     trayIconMenu->addAction(quitAction);
 
-    trayIcon = new QSystemTrayIcon(QIcon("qrc:/heart.ico"), this);
+    trayIcon    = new QSystemTrayIcon(QIcon("qrc:/heart.ico"), this);
     trayIcon->setContextMenu(trayIconMenu);
     trayIcon->show();
+
     connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(ActivateTray(QSystemTrayIcon::ActivationReason)));
 }
 //----------------------------------------------------------------------------------------/
@@ -29,13 +37,24 @@ void SystemTray::ActivateTray(QSystemTrayIcon::ActivationReason reason)
     {
         case QSystemTrayIcon::Context:
             trayIcon->contextMenu()->show();
-        break;
+            break;
 
         case QSystemTrayIcon::Trigger:
-        break;
+            if(mainView)
+            {
+                mainView->show();
+            }
+            break;
         default: break;
     }
 }
 //----------------------------------------------------------------------------------------/
+void SystemTray::CloneRepository()
+{
+    if(cloneRepoView)
+    {
+        cloneRepoView->show();
+    }
+}
 //----------------------------------------------------------------------------------------/
 
