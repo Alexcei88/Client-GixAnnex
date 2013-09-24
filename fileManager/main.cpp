@@ -26,6 +26,12 @@ int main(int argc, char *argv[])
     QApplication::setQuitOnLastWindowClosed(false);
 
     //=========================================================================== /
+    // Фасад приложения
+    FacadeApplication* facadeApp = FacadeApplication::getInstance();
+    facadeApp->SaveRepository(QString("Vacz"), QString("OTpEty"), QString("Friend"));
+    //=========================================================================== /
+
+    //=========================================================================== /
     // создаем нам нужные вьюверы
     // главный viewer
     QtQuick2ApplicationViewer mainViewer;
@@ -51,13 +57,8 @@ int main(int argc, char *argv[])
     windowTray.SetMainView(&mainViewer);
     windowTray.SetCloneRepoView(&cloneRepoViewer);
 
-    //=========================================================================== /
-    // Фасад приложения
-    FacadeApplication* facadeApp = FacadeApplication::getInstance();
-    facadeApp->SaveRepository(QString("Vacz"), QString("OTpEty"), QString("Friend"));
 
-
-    TRepository rep;
+//    TRepository rep;
 //    rep.CloneRepository("MyRepo", "https://github.com/Alexcei88/Employer.git", "/home/alexcei/Copy/");
 //    flush(std::cout);
     return app.exec();

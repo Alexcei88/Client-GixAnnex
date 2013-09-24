@@ -23,13 +23,17 @@
 
 class FacadeApplication
 {
+
 public:
     static FacadeApplication* getInstance();
+
 private:
     FacadeApplication();
     FacadeApplication(const FacadeApplication& facade);
     FacadeApplication& operator = (const FacadeApplication& facade);
     static boost::shared_ptr<FacadeApplication> instance;
+
+    void            InitClassCAndQML();
 
     /** @brief загрузка репозиториев из сохраненных конфигов */
     void            LoadRepositories();
@@ -44,7 +48,6 @@ public:
     const QString   pathFileRepoConfig;
 
     QFile           fileRepoConfig;
-
 
 };
 

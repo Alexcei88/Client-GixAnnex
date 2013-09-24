@@ -1,4 +1,8 @@
 #include "facadeapplication.h"
+#include "MVC/Controller/controller_repository.h"
+
+#include <QQmlEngine>
+#include <QQmlComponent>
 
 boost::shared_ptr<FacadeApplication> FacadeApplication::instance = boost::shared_ptr<FacadeApplication>();
 //----------------------------------------------------------------------------------------/
@@ -7,6 +11,8 @@ FacadeApplication::FacadeApplication() :
   pathFileRepoConfig("ganx-repository.xml")
 {
     fileRepoConfig.setFileName(pathFileRepoConfig);
+    // инициализируем связь C и QML
+    InitClassCAndQML();
 }
 //----------------------------------------------------------------------------------------/
 FacadeApplication* FacadeApplication::getInstance()
@@ -32,6 +38,10 @@ void FacadeApplication::SaveRepository(const QString& localURL, const QString& r
     }
     // ожержимое тега зарегистрированных репозитория
     QDomElement listRepo;
-
+}
+//----------------------------------------------------------------------------------------/
+void FacadeApplication::InitClassCAndQML()
+{
+    qmlRegisterType<GANN_MVC::ControllerRepository>("Repository", 1, 0, "ControllerRepository");
 }
 //----------------------------------------------------------------------------------------/

@@ -2,9 +2,14 @@ import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Window 2.1
 import QtQuick.Layouts 1.0
+import Repository 1.0
 
 Rectangle
 {
+    ControllerRepository {
+        id: repository
+    }
+
     id: rect
     x: 0
     y: 0
@@ -35,7 +40,7 @@ Rectangle
 
         Row{
 
-            id: buttonRow;
+            id: buttonRow
 //            anchors.left: parent.left
 //            anchors.right: parent.right
             width: parent.width
@@ -48,7 +53,7 @@ Rectangle
                     anchors.fill: parent
                     onClicked: {
                         console.log("Start Clone")
-                        //rect.close();
+                        repository.StartCloneRepository()
                     }
                 }
             }

@@ -28,7 +28,9 @@ SOURCES += main.cpp \
     parsing_command_out/parsingcommandwhereis.cpp \
     systemtray.cpp \
     repository/irepository.cpp \
-    facadeapplication.cpp
+    facadeapplication.cpp \
+    MVC/Controller/controller_repository.cpp \
+    MVC/Model/model_repository.cpp
 
 # Installation path
 # target.path =
@@ -56,7 +58,9 @@ HEADERS += \
     parsing_command_out/parsingcommandget.h \
     parsing_command_out/parsingcommandwhereis.h \
     systemtray.h \
-    facadeapplication.h
+    facadeapplication.h \
+    MVC/Controller/controller_repository.h \
+    MVC/Model/model_repository.h
 
 # Включаем поддержку С++11
 QMAKE_CXXFLAGS += -std=c++0x
