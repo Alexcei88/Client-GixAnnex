@@ -5,7 +5,10 @@
 #include <QApplication>
 
 // системное меню
-#include <systemtray.h>
+#include "systemtray.h"
+
+// фасад приложения
+#include "facadeapplication.h"
 
 // ради теста
 #include "repository/trepository.h"
@@ -43,10 +46,15 @@ int main(int argc, char *argv[])
 
     //=========================================================================== /
 
-    // создаем классы трея и передаем нужные viewer-ы
+    // создаем классы трея и передаем нужные для управления viewer-ы
     SystemTray windowTray;
     windowTray.SetMainView(&mainViewer);
     windowTray.SetCloneRepoView(&cloneRepoViewer);
+
+    //=========================================================================== /
+    // Фасад приложения
+    FacadeApplication* facadeApp = FacadeApplication::getInstance();
+    facadeApp->SaveRepository(QString("Vacz"), QString("OTpEty"), QString("Friend"));
 
 
     TRepository rep;

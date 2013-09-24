@@ -27,9 +27,11 @@ public:
         // автосинхронизация контента
         bool autosync;
 
-    } ParamSaveFile;
+    } ParamContentFile;
 
-    IRepository() { shellCommand = boost::make_shared<ShellCommand>(); };
+    IRepository() { InitClass(); };
+    IRepository(const QString& localUrl, const QString& remoteUrl, const QString& nameRepo);
+
     virtual ~IRepository() {};
 
     /**
@@ -78,6 +80,9 @@ protected:
     QString         localURL;
     // название репозитория Git-Annex
     QString         nameRepo;
+
+private:
+    void            InitClass();
 };
 
 #endif // IREPOSITORY_H

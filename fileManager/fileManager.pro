@@ -5,7 +5,8 @@ DEPLOYMENTFOLDERS = folder_01
 
 
 QT += qml quick \
-        widgets
+        widgets \
+        xml
 
 
 # Additional import path used to resolve QML modules in Creator's code model
@@ -25,7 +26,9 @@ SOURCES += main.cpp \
     parsing_command_out/parsingcommandclone.cpp \
     parsing_command_out/parsingcommandget.cpp \
     parsing_command_out/parsingcommandwhereis.cpp \
-    systemtray.cpp
+    systemtray.cpp \
+    repository/irepository.cpp \
+    facadeapplication.cpp
 
 # Installation path
 # target.path =
@@ -52,7 +55,8 @@ HEADERS += \
     parsing_command_out/parsingcommandclone.h \
     parsing_command_out/parsingcommandget.h \
     parsing_command_out/parsingcommandwhereis.h \
-    systemtray.h
+    systemtray.h \
+    facadeapplication.h
 
 # Включаем поддержку С++11
 QMAKE_CXXFLAGS += -std=c++0x

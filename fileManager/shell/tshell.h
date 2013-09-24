@@ -29,10 +29,6 @@ class TShell: public QObject
 {
     Q_OBJECT
 
-private:
-    TShell(QObject* parent = 0);
-    ~TShell();
-
 public:
     static TShell*      GetInstance();
     static void         RemoveInstance();
@@ -47,6 +43,9 @@ public:
     QByteArray          readStandartOutput() const;
 
 private:
+    TShell(QObject* parent = 0);
+    ~TShell();
+
     boost::shared_ptr<QProcess> process;
     static TShell*      instance;
 

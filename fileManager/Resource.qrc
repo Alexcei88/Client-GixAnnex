@@ -12,4 +12,7 @@
     <qresource prefix="/image_files">
         <file alias="word.png">resource/file_images/word.png</file>
     </qresource>
+    <qresource prefix="/config">
+        <file alias="config_repo">ganx-repository.xml</file>
+    </qresource>
 </RCC>
