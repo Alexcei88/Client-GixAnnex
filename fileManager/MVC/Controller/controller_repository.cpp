@@ -9,6 +9,11 @@ ControllerRepository::ControllerRepository( ):
 
 }
 //----------------------------------------------------------------------------------------/
+QVariantList ControllerRepository::GetListRepository()
+{
+    return model->GetListRepository();
+}
+//----------------------------------------------------------------------------------------/
 void ControllerRepository::StartCloneRepository()
 {
     std::cout<<"StartClone"<<std::endl;
@@ -19,4 +24,3 @@ void ControllerRepository::CancelCloneRepository()
     std::cout<<"CancelClone"<<std::endl;
 }
 //----------------------------------------------------------------------------------------/
-

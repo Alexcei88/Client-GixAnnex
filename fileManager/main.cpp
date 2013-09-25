@@ -39,6 +39,7 @@ int main(int argc, char *argv[])
     mainViewer.setMinimumHeight(500);
     mainViewer.setMinimumWidth(400);
     mainViewer.setTitle("Git-Annex Client");
+    mainViewer.show();
 
     // viewer копирования репозитория
     QtQuick2ApplicationViewer cloneRepoViewer;

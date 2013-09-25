@@ -32,7 +32,7 @@ SystemTray::SystemTray():
 //----------------------------------------------------------------------------------------/
 void SystemTray::ActivateTray(QSystemTrayIcon::ActivationReason reason)
 {
-    std::cout<<"Reason = "<<reason<<std::endl;
+//    std::cout<<"Reason = "<<reason<<std::endl;
     switch(reason)
     {
         case QSystemTrayIcon::Context:

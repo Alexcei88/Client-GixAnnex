@@ -16,7 +16,7 @@ FacadeApplication::FacadeApplication() :
     InitClassCAndQML();
 
     // загружаем из конфигов репозитории
-    LoadRepositories();
+//    LoadRepositories();
 }
 //----------------------------------------------------------------------------------------/
 FacadeApplication* FacadeApplication::getInstance()

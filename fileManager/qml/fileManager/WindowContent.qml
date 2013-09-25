@@ -23,12 +23,12 @@ Rectangle {
         focus: true
         Keys.forwardTo: [contenItem]
 
-        Rectangle
+        ListRepository
         {
             width: parent.width/5
             Layout.minimumWidth: parent.width/8
             Layout.maximumWidth: 3 * parent.width/5
-            color: "gray"
+            color: "#E6E6FA"
         }
         DirectoryView
         {

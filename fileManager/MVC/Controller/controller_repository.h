@@ -1,8 +1,9 @@
 #pragma once
 
+// Qt stuff
 #include <QObject>
 #include <QSharedPointer>
-
+#include <QVariantList>
 
 #include "../Model/model_repository.h"
 namespace GANN_MVC
@@ -14,6 +15,9 @@ class ControllerRepository: public QObject
 
 public:
     ControllerRepository( );
+
+    /** @brief Получить список репозиториев */
+    Q_INVOKABLE QVariantList GetListRepository();
 
 
     /** @brief Начать клонирование репозитория */

@@ -22,6 +22,7 @@
 #include <QDomDocument>
 
 class IRepository;
+//class ModelQmlAndCRepository;
 
 class FacadeApplication
 {
@@ -29,6 +30,8 @@ class FacadeApplication
 public:
     static FacadeApplication* getInstance();
 
+    // класс модели MVC объявим другом
+    friend class ModelQmlAndCRepository;
 private:
     FacadeApplication();
     FacadeApplication(const FacadeApplication& facade);

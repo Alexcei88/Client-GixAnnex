@@ -43,7 +43,8 @@ OTHER_FILES += \
     qml/fileManager/WindowContent.qml \
     qml/fileManager/DirectoryView.qml \
     qml/fileManager/propertyFile/PropertyFile.qml \
-    qml/fileManager/getContent/GetContent.qml
+    qml/fileManager/getContent/GetContent.qml \
+    qml/fileManager/repository/Clone.qml
 
 RESOURCES += \
     Resource.qrc
