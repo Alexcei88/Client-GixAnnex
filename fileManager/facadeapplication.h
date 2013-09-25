@@ -10,7 +10,7 @@
  */
 
 // std stuff
-#include <vector>
+#include <map>
 
 // boost stuff
 #include <boost/shared_ptr.hpp>
@@ -20,6 +20,8 @@
 #include <QString>
 #include <QFile>
 #include <QDomDocument>
+
+class IRepository;
 
 class FacadeApplication
 {
@@ -34,20 +36,23 @@ private:
     static boost::shared_ptr<FacadeApplication> instance;
 
     void            InitClassCAndQML();
-
-    /** @brief загрузка репозиториев из сохраненных конфигов */
-    void            LoadRepositories();
-
 #warning PUBLIC_FIELD_CLASS
     // временно публичный
 public:
+    /** @brief загрузка репозиториев из сохраненных конфигов */
+    void            LoadRepositories();
+
     /** @brief сохранения репозитория в конфигах */
     void            SaveRepository(const QString& localURL, const QString& remoteURL, const QString& nameRepo);
 
-    /** @brief файл конфигов репозитория, формат xml*/
+    /** @brief путь к файлу конфигов репозитория, формат xml*/
     const QString   pathFileRepoConfig;
 
     QFile           fileRepoConfig;
+
+    /** @brief вектор репозиториев, хранящиеся на клиенте*/
+    std::map<QString, boost::shared_ptr<IRepository>> repository;
+
 
 };
 

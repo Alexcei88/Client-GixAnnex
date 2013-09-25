@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
     //=========================================================================== /
     // Фасад приложения
     FacadeApplication* facadeApp = FacadeApplication::getInstance();
-    facadeApp->SaveRepository(QString("Vacz"), QString("OTpEty"), QString("Friend"));
+
     //=========================================================================== /
 
     //=========================================================================== /

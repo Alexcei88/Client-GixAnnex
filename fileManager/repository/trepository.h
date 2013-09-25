@@ -6,6 +6,8 @@ class TRepository : public IRepository
 {
 public:
     TRepository();
+    TRepository(const QString& localUrl, const QString& remoteUrl, const QString& nameRepo);
+
     virtual ~TRepository();
 
     virtual int         CloneRepository(const QString &nameRepo, const QString &remoteURL, const QString &localURL);
