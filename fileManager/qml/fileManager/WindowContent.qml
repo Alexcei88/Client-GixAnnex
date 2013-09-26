@@ -25,10 +25,12 @@ Rectangle {
 
         ListRepository
         {
+            id: listRepository
             width: parent.width/5
             Layout.minimumWidth: parent.width/8
             Layout.maximumWidth: 3 * parent.width/5
             color: "#E6E6FA"
+            onSelectNewRepository: { contenItem.changeParentFolder(path) }
         }
         DirectoryView
         {
@@ -50,7 +52,7 @@ Rectangle {
             Layout.maximumWidth: 3 * parent.width/5
             color: '#116062'
 
-            // нициализация представления
+            // инициализация представления
             folderView: windowContent.folderView
         }
     }

@@ -1,4 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <reporegistry>
- <repo localUrl="Vacz" nameRepo="Friend" remoteUrl="OTpEty"/>
-</reporegistry>
+ <repo localUrl="/home/alexcei/" nameRepo="Home Directory" remoteUrl="OTpEty"/>
+ <repo localUrl="/bin/" nameRepo="Bin Directory" remoteUrl="OTpEty"/>
+ </reporegistry>

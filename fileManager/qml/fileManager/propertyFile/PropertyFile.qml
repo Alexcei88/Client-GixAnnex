@@ -4,12 +4,13 @@ import QtQuick.Layouts 1.0
 Rectangle
 {
     id: propertyRect
+
+    // СВО-ВА И СИГНАЛЫ
+    //-------------------------------------------------------------------------/
     property var folderView: null
 
-    // сигнал, которые говорит, что нужно обновить данные
+    // сигнал, которые говорит, что нужно обновить данные о свойствах папки(файла)
     signal updateData(var currentName)
-
-    // обработчик сигнала updateData
     onUpdateData:
     {
         if(folderView) // проверка, инициализировали ли представление
@@ -18,6 +19,7 @@ Rectangle
             propertyWhereis.nameOption = "New Data";
         }
     }
+    //-------------------------------------------------------------------------/
 
 //        BorderImage {
 //            source: "qrc:images/lineedit_bg.png"

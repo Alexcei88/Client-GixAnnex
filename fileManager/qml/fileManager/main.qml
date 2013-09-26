@@ -15,7 +15,7 @@ Rectangle
     {
         Keys.forwardTo: [windowContent, toolBar]
 
-        spacing: 5
+        spacing: 1
         visible: parent.visible
         width: parent.width
         height: parent.height

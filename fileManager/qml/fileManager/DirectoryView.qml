@@ -6,11 +6,23 @@ import "utils.js" as UtilsScript
 
 Rectangle
 {
+
+    // СВО-ВА И СИГНАЛЫ
+    //-------------------------------------------------------------------------/
     property var folderModel: dirModel
     property var folderView: view
 
     // сигнал, что нужно показать свойства у директории
     signal showPropertyFile(var currentName)
+
+    // сигнал о смене родительской директории
+    signal changeParentFolder(string path)
+    onChangeParentFolder:
+    {
+        // меняем рабочую директорию у модели
+        dirModel.folder = path;
+    }
+    //-------------------------------------------------------------------------/
 
     ContextMenu{
         id: menudirectory
@@ -61,8 +73,8 @@ Rectangle
             anchors.margins: 20
         }
 
-        highlightFollowsCurrentItem: true
-        highlightMoveDuration: 1
+//        highlightFollowsCurrentItem: true
+        highlightMoveDuration: 0
         focus: true
 
         delegate: Item
