@@ -22,4 +22,11 @@ QVariantList ModelQmlAndCRepository::GetListRepository()
     }
     return repoRegistry;
 }
+//----------------------------------------------------------------------------------------/
+ int ModelQmlAndCRepository::CloneRepository(const QString& localUlr, const QString& remoteURL, const QString& nameRepo)
+{
+     std::cout<<localUlr.toStdString().c_str()<<" "<<remoteURL.toStdString().c_str()<<" "<<nameRepo.toStdString().c_str()<<std::endl;
+}
+//----------------------------------------------------------------------------------------/
+
 

@@ -17,13 +17,8 @@
 #define foreach BOOST_FOREACH
 
 #include "../parsing_command_out/iparsingcommandout.h"
+#include "../define.h"
 
-enum RESULT_EXEC_PROCESS {
-     NO_ERROR = 0
-    ,ERROR_NO_STARTED = 1
-    ,ERROR_NO_FINISHED = 2
-    ,IGNORE_COMMAND = 3
-};
 
 class TShell: public QObject
 {
@@ -34,7 +29,7 @@ public:
     static void         RemoveInstance();
 
     // выполнение команды без аргументов
-    RESULT_EXEC_PROCESS ExecuteProcess(const QString& str, IParsingCommandOut *receiverParsing) const;
+    GANN_DEFINE::RESULT_EXEC_PROCESS ExecuteProcess(const QString& str, IParsingCommandOut *receiverParsing) const;
 
     // смена рабочего каталога
     void                SetWorkingDirectory(const QString& dir) const;

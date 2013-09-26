@@ -17,14 +17,14 @@ public:
     ControllerRepository( );
 
     /** @brief Получить список репозиториев */
-    Q_INVOKABLE QVariantList GetListRepository();
+    Q_INVOKABLE QVariantList GetListRepository() const;
 
 
     /** @brief Начать клонирование репозитория */
-    Q_INVOKABLE void        StartCloneRepository();
+    Q_INVOKABLE QVariant    StartCloneRepository(QVariant localUlr, QVariant remoteURL, QVariant nameRepo) const;
 
     /** @brief Отмена клонирования репозитория */
-    Q_INVOKABLE void        CancelCloneRepository();
+    Q_INVOKABLE void        CancelCloneRepository() const;
 
 
     /*Q_INVOKABLE void        Add( );

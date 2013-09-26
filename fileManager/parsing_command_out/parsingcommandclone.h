@@ -8,8 +8,6 @@ class ParsingCommandClone : public IParsingCommandOut
 public:
     ParsingCommandClone();
     virtual void        ParsingData();
-
-
 };
 
 #endif // PARSINGCOMMANDCLONE_H

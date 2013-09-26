@@ -1,4 +1,6 @@
 #include "trepository.h"
+
+using namespace GANN_DEFINE;
 //----------------------------------------------------------------------------------------/
 TRepository::TRepository(): IRepository()
 {

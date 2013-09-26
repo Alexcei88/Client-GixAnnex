@@ -29,6 +29,7 @@ void ParsingCommandClone::ParsingData()
             {
                 // была ошибка, формируем сообщение об ошибке
                 dataAfterParsing<<regExp.cap(1)<<regExp.cap(2);
+
                 // если есть, то попытка найти причину ошибки
                 regExp.setPattern(listRegExpPossible[2]);
                 for(int j = 0; j < dataStdOut.size(); ++j)
@@ -39,6 +40,7 @@ void ParsingCommandClone::ParsingData()
                         dataAfterParsing<<regExp.cap(1)<<regExp.cap(2);
                     }
                 }
+                wasErrorCommand = true;
                 return;
             }
         }
@@ -50,6 +52,7 @@ void ParsingCommandClone::ParsingData()
             const QString nameFolder = regExp.cap(2);
             dataAfterParsing << nameFolder;
         }
+        wasErrorCommand = false;
     }
     else
     {

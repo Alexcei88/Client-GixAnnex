@@ -13,5 +13,9 @@ public:
     /** @brief Получить список репозиториев */
     QVariantList        GetListRepository();
 
+    /** @brief Клонировать репозиторий */
+    int                 CloneRepository(const QString& localUlr, const QString& remoteURL, const QString& nameRepo);
+
+
 };
 }

@@ -5,6 +5,7 @@
 #include "../parsing_command_out/parsingcommandwhereis.h"
 #include "../parsing_command_out/parsingcommandget.h"
 
+using namespace GANN_DEFINE;
 //----------------------------------------------------------------------------------------/
 ShellCommand::ShellCommand():
      shell(TShell::GetInstance())
@@ -47,11 +48,15 @@ RESULT_EXEC_PROCESS ShellCommand::CloneRepositories(const QString& remoteURL, QS
     QStringList stdOut;
     const QString strCommand = "git clone " + remoteURL;
     RESULT_EXEC_PROCESS result = shell->ExecuteProcess(strCommand, receiverParsing[CLONE_REPO]);
-    QStringList parsingData = receiverParsing[CLONE_REPO]->GetParsingData();
     if(result != NO_ERROR)
         return result;
-    if(parsingData.empty())
-        return  IGNORE_COMMAND;
+
+    RESULT_EXEC_PROCESS codeError = receiverParsing[CLONE_REPO]->GetCodeError();
+    if(codeError != NO_ERROR)
+        return codeError;
+
+    QStringList parsingData = receiverParsing[CLONE_REPO]->GetParsingData();
+    // иначе нет ошибок
     folderClone = parsingData.at(0);
 }
 //----------------------------------------------------------------------------------------/

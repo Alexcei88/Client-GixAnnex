@@ -9,17 +9,17 @@ ControllerRepository::ControllerRepository( ):
 
 }
 //----------------------------------------------------------------------------------------/
-QVariantList ControllerRepository::GetListRepository()
+QVariantList ControllerRepository::GetListRepository() const
 {
     return model->GetListRepository();
 }
 //----------------------------------------------------------------------------------------/
-void ControllerRepository::StartCloneRepository()
+QVariant ControllerRepository::StartCloneRepository(QVariant localUlr, QVariant remoteURL, QVariant nameRepo) const
 {
-    std::cout<<"StartClone"<<std::endl;
+    return model->CloneRepository(localUlr.toString(), remoteURL.toString(), nameRepo.toString());
 }
 //----------------------------------------------------------------------------------------/
-void ControllerRepository::CancelCloneRepository()
+void ControllerRepository::CancelCloneRepository() const
 {
     std::cout<<"CancelClone"<<std::endl;
 }

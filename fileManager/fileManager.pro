@@ -61,7 +61,8 @@ HEADERS += \
     systemtray.h \
     facadeapplication.h \
     MVC/Controller/controller_repository.h \
-    MVC/Model/model_repository.h
+    MVC/Model/model_repository.h \
+    define.h
 
 # Включаем поддержку С++11
 QMAKE_CXXFLAGS += -std=c++0x

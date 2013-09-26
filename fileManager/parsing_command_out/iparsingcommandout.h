@@ -5,6 +5,8 @@
 #include <QStringList>
 #include <QRegExp>
 
+#include "../define.h"
+
 class IParsingCommandOut
 {
 public:
@@ -27,6 +29,9 @@ public:
     /** @brief функция парсинга, у каждого класса будет своя реализация */
     virtual void        ParsingData() = 0;
 
+    /** @brief возвращает код ошибки, полученной в результате парсинга */
+    virtual GANN_DEFINE::RESULT_EXEC_PROCESS GetCodeError() const;
+
     /** @brief взятие данных после парсинга по требованию */
     virtual QStringList GetParsingData() const;
 
@@ -48,6 +53,9 @@ protected:
 
     /** @brief класс парсинга*/
     QRegExp             regExp;
+
+    /** @brief ошибка при выполнении всей команды */
+    bool                wasErrorCommand;
 
 signals:
     // сигнал, которым сообщаем, что новые данные готовы после парсинга

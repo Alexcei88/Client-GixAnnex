@@ -1,6 +1,8 @@
 #include "tshell.h"
 #include <stdio.h>
-     
+
+using namespace GANN_DEFINE;
+
 TShell* TShell::instance = 0;
 
 //----------------------------------------------------------------------------------------/

@@ -23,7 +23,6 @@ Rectangle {
     border.color: "black"
     radius: 2
 
-
     XmlListModel{
         id: modelRepoXML
 //        source: "../../ganx-repository.xml"
@@ -32,7 +31,6 @@ Rectangle {
 
         XmlRole { name: "localPath"; query: "@localUrl/string()" }
         XmlRole { name: "nameRepo"; query: "@nameRepo/string()" }
-
     }
 
     GridView {
