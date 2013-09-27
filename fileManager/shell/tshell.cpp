@@ -31,12 +31,12 @@ RESULT_EXEC_PROCESS TShell::ExecuteProcess(const QString &str, IParsingCommandOu
 {
     // соединяем сигнал получения данных со стандартного потока вывода с соот классом
     QMetaObject::Connection m_connection_readOut;
-    QMetaObject::Connection m_connection_readOut1;
+//    QMetaObject::Connection m_connection_readOut1;
     QMetaObject::Connection m_connection_started;
     QMetaObject::Connection m_connection_finished;
 
     m_connection_readOut  = QObject::connect(process.get(), &QProcess::readyReadStandardOutput, [=](){receiverParsing->GetNewDataStdOut(); });
-    m_connection_readOut1  = QObject::connect(process.get(), &QProcess::readyRead, [=](){receiverParsing->GetNewDataStdOut(); });
+//    m_connection_readOut1  = QObject::connect(process.get(), &QProcess::readyRead, [=](){receiverParsing->GetNewDataStdOut(); });
     m_connection_started  = QObject::connect(process.get(), &QProcess::started, [=](){receiverParsing->SetParamBeforeStartCommand(); });
     m_connection_finished = QObject::connect(process.get(), &QProcess::finished, [=](int exitCode){ receiverParsing->SetParamAfterEndCommand(exitCode); });
 

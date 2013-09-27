@@ -33,10 +33,13 @@ int TRepository::CloneRepository(const QString &nameRepo, const QString &remoteU
         printf("Error git-annex init repositories: %s \n", localURL.toStdString().c_str());
         return result;
     }
+
+    // переходим в директорию
     this->nameRepo = nameRepo;
     this->remoteURL = remoteURL;
     this->localURL  = localURL + folderToClone;
 
+    result = shellCommand->SetWorkingDirectory(this->localURL);
     return result;
 }
 //----------------------------------------------------------------------------------------/
@@ -51,6 +54,7 @@ int TRepository::DeleteRepository(const QString &localURL)
 //----------------------------------------------------------------------------------------/
 int TRepository::GetContentFile(const QString& file) const
 {
+    shellCommand->SetWorkingDirectory(this->localURL);
     int result = shellCommand->GetContentFile(file);
     if(result != NO_ERROR)
     {

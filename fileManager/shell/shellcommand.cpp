@@ -69,6 +69,14 @@ RESULT_EXEC_PROCESS ShellCommand::AddFile(const QString& path) const
 RESULT_EXEC_PROCESS ShellCommand::GetContentFile(const QString& path) const
 {
     const QString strCommand = baseCommand + "get " + path;
+
+    RESULT_EXEC_PROCESS result = shell->ExecuteProcess(strCommand, receiverParsing[GET_CONTENT]);
+    if(result != NO_ERROR)
+        return result;
+    RESULT_EXEC_PROCESS codeError = receiverParsing[GET_CONTENT]->GetCodeError();
+
+    if(codeError != NO_ERROR)
+        return codeError;
 //    return shell->ExecuteProcess(strCommand);
 }
 //----------------------------------------------------------------------------------------/

@@ -8,6 +8,9 @@ ParsingCommandGet::ParsingCommandGet()
     QString unsucces = "(get)(.*)(not available)";
     // причина ошибки
     QString error = "(error: )(.*)";
+    // процесс скачивания ресурса из интернета
+    QString processDownLoad = "()"
+
 
     // итоговый результат копирования
     // количество файлов, которые не удалось скопировать-
@@ -30,6 +33,7 @@ void ParsingCommandGet::ParsingData()
         if(regExp.indexIn(str) != -1)
         {
             dataAfterParsing << regExp.cap(2) << regExp.cap(3);
+            wasErrorCommand = true;
             return;
         }
 
@@ -38,10 +42,18 @@ void ParsingCommandGet::ParsingData()
         if(regExp.indexIn(str) != -1)
         {
             dataAfterParsing << regExp.cap(2) << regExp.cap(4);
+            wasErrorCommand = false;
         }
+        else
+        {
+            // неизвестная ошибка, которая непропарсилась
+            wasErrorCommand = true;
+        }
+
     }
     else if(!commandStart && commandEnd)
     {
+//        wasErrorCommand = false;
         // команда завершилась
     }
     else

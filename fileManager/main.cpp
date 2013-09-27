@@ -61,8 +61,9 @@ int main(int argc, char *argv[])
     windowTray.SetCloneRepoView(&cloneRepoViewer);
 
 
-//    TRepository rep;
-//    rep.CloneRepository("MyRepo", "https://github.com/Alexcei88/Employer.git", "/home/alexcei/Copy/");
-//    flush(std::cout);
+    TRepository rep;
+    rep.CloneRepository("MyRepo", "gituser@192.168.0.5:project", "/home/alexcei/Copy/");
+    rep.GetContentFile(".");
+    flush(std::cout);
     return app.exec();
 }
