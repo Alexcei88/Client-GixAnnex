@@ -25,11 +25,10 @@ Rectangle {
 
     XmlListModel{
         id: modelRepoXML
-//        source: "../../ganx-repository.xml"
         source: "qrc:/config/config_repo"
         query: "/reporegistry/repo"
 
-        XmlRole { name: "localPath"; query: "@localUrl/string()" }
+        XmlRole { name: "localPath"; query: "@localURL/string()" }
         XmlRole { name: "nameRepo"; query: "@nameRepo/string()" }
     }
 

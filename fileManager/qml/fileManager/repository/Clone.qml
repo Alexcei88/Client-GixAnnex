@@ -10,66 +10,115 @@ Rectangle
         id: repository
     }
 
+
     id: rect
     x: 0
     y: 0
     width: 100
     height: 62
-    //        title: "Processing get content "
-    //        modality: Qt.ApplicationModal
-    //        flags: Qt.CustomizeWindowHint | Qt.WindowTitleHint | Qt.BypassWindowManagerHint | Qt.BypassGraphicsProxyWidget | Qt.WindowStaysOnTopHint | Qt.X11BypassWindowManagerHint | Qt.Tool | Qt.WindowCloseButtonHint
-    //        flags: Qt.Dialog | Qt.WindowStaysOnTopHint | Qt.X11BypassWindowManagerHint
-    Column
+
+    ColumnLayout
     {
+        id: columnOptionClone
+        width: parent.width
+        spacing: 10
+
+        property int widthText: 110
+
         RowLayout{
+            anchors.leftMargin: 10
+            anchors.left: parent.left
+            width: parent.width
 
             Text{
-                id: nameFile
-                text:"Repository URL:"
+                id: sourcePath
+                text:"Source URL: "
+                width: 110
             }
 
             TextField{
-                id: urlRepo
-                width: parent.width
+                id: soureURL
+                implicitWidth: 300
                 height: 20
                 focus: true
-                text: "cloneRepo"
+                text: "cRedssssssffffffffffffffffffpo"
+                anchors.left: sourcePath.right
             }
 
-        }
-
-        Row{
-
-            id: buttonRow
-//            anchors.left: parent.left
-//            anchors.right: parent.right
-            width: parent.width
-            anchors.horizontalCenter: parent.horizontalCenter
-
-            Button{
-                id: cloneButton
-                text: "Clone"
-                MouseArea{
-                    anchors.fill: parent
-                    onClicked: {
-                        console.log("Start Clone")
-                        repository.StartCloneRepository()
-                    }
+            Button {
+                id: buttonSourceBrowser
+                text: "Browser"
+                onClicked:  {
+                    console.log("dsdfd")
                 }
             }
+        }
 
-            Button{
-                id: cancelButton
-                text: "Cancel"
-                MouseArea{
-                    anchors.fill: parent
-                    onClicked: {
-                        console.log("Cancel Clone")
-                        //rect.close();
-                    }
+        RowLayout{
+            anchors.leftMargin: 10
+            anchors.left: parent.left
+            width: parent.width
+
+            Text{
+                id: destPath
+                text:"Destinition URL: "
+                width: 110
+            }
+
+            TextField{
+                id: destURL
+                implicitWidth: 300
+                height: 20
+                focus: true
+                text: "home"
+                anchors.left: destPath.right
+            }
+
+            Button {
+                id: buttonDestBrowser
+                text: "Browser"
+                onClicked:  {
+                    console.log("dsdfd")
+                }
+
+            }
+        }
+    } // end Column
+
+    RowLayout{
+
+        id: buttonRow
+        anchors.topMargin: 15
+        anchors.top: columnOptionClone.bottom
+
+        width: parent.width
+        spacing: 20
+        anchors.horizontalCenter: parent.horizontalCenter
+
+        Button{
+
+            id: cloneButton
+            text: "Clone"
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    console.log("Start Clone")
+                    repository.StartCloneRepository()
+                }
+            }
+        }
+
+        Button{
+            id: cancelButton
+            text: "Cancel"
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    console.log("Cancel Clone")
                 }
             }
         }
     }
+
 }
 

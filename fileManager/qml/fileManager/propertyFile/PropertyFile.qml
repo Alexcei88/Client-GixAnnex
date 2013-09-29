@@ -60,8 +60,6 @@ Rectangle
             valueOption: "here"
             widthFieldOption: column.maxWidthNameField
             height: 20
-            //            onWidthChanged: {console.log(property1.width) }
-
         }
 
         PropertyValue
