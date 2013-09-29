@@ -44,13 +44,10 @@ int main(int argc, char *argv[])
     // viewer копирования репозитория
     QtQuick2ApplicationViewer cloneRepoViewer;
     cloneRepoViewer.setMainQmlFile(QStringLiteral("qml/fileManager/repository/Clone.qml"));
-    cloneRepoViewer.setMinimumHeight(60);
-    cloneRepoViewer.setMinimumWidth(300);
+    cloneRepoViewer.setMinimumHeight(150);
+    cloneRepoViewer.setMinimumWidth(540);
     cloneRepoViewer.setX(600);
-    cloneRepoViewer.setY(300);
-    cloneRepoViewer.setMaximumHeight(cloneRepoViewer.minimumHeight());
-    cloneRepoViewer.setMaximumWidth(cloneRepoViewer.minimumWidth());
-
+    cloneRepoViewer.setY(300);    
     cloneRepoViewer.setTitle("Git-Annex Clone Repository");
 
     //=========================================================================== /
@@ -60,10 +57,11 @@ int main(int argc, char *argv[])
     windowTray.SetMainView(&mainViewer);
     windowTray.SetCloneRepoView(&cloneRepoViewer);
 
+    facadeApp->SetSystemTray(&windowTray);
 
     TRepository rep;
-    rep.CloneRepository("MyRepo", "gituser@192.168.0.5:project", "/home/alexcei/Copy/");
-    rep.GetContentFile(".");
+//    rep.CloneRepository("MyRepo", "gituser@192.168.0.5:project", "/home/alexcei88/");
+//    rep.GetContentFile(".");
     flush(std::cout);
     return app.exec();
 }

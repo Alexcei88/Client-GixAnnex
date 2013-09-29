@@ -52,9 +52,13 @@ void SystemTray::ActivateTray(QSystemTrayIcon::ActivationReason reason)
 void SystemTray::CloneRepository()
 {
     if(cloneRepoView)
-    {
         cloneRepoView->show();
-    }
+}
+//----------------------------------------------------------------------------------------/
+void SystemTray::CancelCloneRepository()
+{
+    if(cloneRepoView)
+        cloneRepoView->hide();
 }
 //----------------------------------------------------------------------------------------/
 

@@ -21,6 +21,6 @@ QVariant ControllerRepository::StartCloneRepository(QVariant localUlr, QVariant 
 //----------------------------------------------------------------------------------------/
 void ControllerRepository::CancelCloneRepository() const
 {
-    std::cout<<"CancelClone"<<std::endl;
+    model->CancelCloneRepository();
 }
 //----------------------------------------------------------------------------------------/

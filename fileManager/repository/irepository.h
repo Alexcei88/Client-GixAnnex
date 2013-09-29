@@ -41,21 +41,21 @@ public:
     @param remoteURL - адрес репозитория, откуда копируем
     @return 0 - нет ошибок
     */
-    virtual int         CloneRepository(const QString& localURL, const QString& nameRepo, const QString& remoteURL) = 0;
+    virtual GANN_DEFINE::RESULT_EXEC_PROCESS CloneRepository(const QString& localURL, const QString& nameRepo, const QString& remoteURL) = 0;
 
     /**
     @brief удаление репозитория
     @param localURL -
     @return 0 - нет ошибок
     */
-    virtual int         DeleteRepository(const QString& localURL) = 0;
+    virtual GANN_DEFINE::RESULT_EXEC_PROCESS DeleteRepository(const QString& localURL) = 0;
 
     /**
     @brief получение контента у файла из репозитория
     @param file - имя файла(папки) назначения
     @return 0 - нет ошибок
     */
-    virtual int         GetContentFile(const QString& file = " ") const = 0;
+    virtual GANN_DEFINE::RESULT_EXEC_PROCESS GetContentFile(const QString& file = " ") const = 0;
 
     /**
     @brief удаление контента у файла из репозитория

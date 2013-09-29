@@ -6,17 +6,20 @@
 #include <QQmlComponent>
 #include <QTextStream>
 
+using namespace GANN_DEFINE;
+
 boost::shared_ptr<FacadeApplication> FacadeApplication::instance = boost::shared_ptr<FacadeApplication>();
 //----------------------------------------------------------------------------------------/
 FacadeApplication::FacadeApplication() :
-    pathFileRepoConfig("ganx-repository.xml")
+//    pathFileRepoConfig("ganx-repository.xml")
+    pathFileRepoConfig(":/config/config_repo")
 {
     fileRepoConfig.setFileName(pathFileRepoConfig);
     // инициализируем связь C и QML
     InitClassCAndQML();
 
     // загружаем из конфигов репозитории
-//    LoadRepositories();
+    LoadRepositories();
 }
 //----------------------------------------------------------------------------------------/
 FacadeApplication* FacadeApplication::getInstance()
@@ -60,6 +63,7 @@ void FacadeApplication::LoadRepositories()
         boost::shared_ptr<IRepository> tempRepo(new TRepository(localUrl, remoteUrl, nameRepo));
         repository[localUrl] = tempRepo;
     }
+    fileRepoConfig.close();
 }
 //----------------------------------------------------------------------------------------/
 void FacadeApplication::SaveRepository(const QString& localURL, const QString& remoteURL, const QString& nameRepo)
@@ -100,6 +104,24 @@ void FacadeApplication::SaveRepository(const QString& localURL, const QString& r
 
     QTextStream(&fileRepoConfig) << doc.toString();
     fileRepoConfig.close();
+
+}
+//----------------------------------------------------------------------------------------/
+GANN_DEFINE::RESULT_EXEC_PROCESS FacadeApplication::StartCloneRepository(const QString &localURL, const QString &remoteURL, const QString &nameRepo)
+{
+    TRepository newRepo;
+    RESULT_EXEC_PROCESS result = newRepo.CloneRepository(localURL, nameRepo, remoteURL);
+    if(result == NO_ERROR)
+    {
+        boost::shared_ptr<IRepository> tempRepo(&newRepo);
+        repository[localURL] = tempRepo;
+    }
+    return result;
+}
+//----------------------------------------------------------------------------------------/
+void FacadeApplication::CancelCloneRepository(const bool breakCommand)
+{
+    systemTray->CancelCloneRepository();
 }
 //----------------------------------------------------------------------------------------/
 void FacadeApplication::InitClassCAndQML()

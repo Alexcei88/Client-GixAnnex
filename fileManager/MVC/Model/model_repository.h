@@ -14,8 +14,10 @@ public:
     QVariantList        GetListRepository();
 
     /** @brief Клонировать репозиторий */
-    int                 CloneRepository(const QString& localUlr, const QString& remoteURL, const QString& nameRepo);
+    GANN_DEFINE::RESULT_EXEC_PROCESS CloneRepository(const QString& localUlr, const QString& remoteURL, const QString& nameRepo);
 
+    /** @brief Остановить клонирование */
+    void                CancelCloneRepository(bool breakCommand = true);
 
 };
 }

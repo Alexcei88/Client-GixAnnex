@@ -2,6 +2,7 @@ import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Window 2.1
 import QtQuick.Layouts 1.0
+import QtQuick.Dialogs 1.0
 import Repository 1.0
 
 Rectangle
@@ -10,90 +11,142 @@ Rectangle
         id: repository
     }
 
+    FileDialog {
+        id: fileDialogSource
+        title: "Please choose a source folder"
+        selectFolder: true
+        onAccepted: {
+            sourсeUrl.text = fileDialogSource.folder;
+        }
+        onRejected: {
+        }
+    }
+
+    FileDialog {
+        id: fileDialogDestinition
+        title: "Please choose a destinotion folder"
+        selectFolder: true
+        onAccepted: {
+            destUrl.text = fileDialogDestinition.folder;
+        }
+        onRejected: {
+        }
+    }
 
     id: rect
     x: 0
     y: 0
-    width: 100
+    width: 500
     height: 62
 
-    ColumnLayout
+    Column
     {
         id: columnOptionClone
+
+        property int widthText: 110
         width: parent.width
         spacing: 10
 
-        property int widthText: 110
+        anchors.top: parent.top
+        anchors.topMargin: 15
+        anchors.horizontalCenter: parent.horizontalCenter
 
-        RowLayout{
+        Row{
+            id: rowSourceURL
             anchors.leftMargin: 10
             anchors.left: parent.left
+            anchors.horizontalCenter: parent.horizontalCenter
             width: parent.width
+            spacing: 15
 
             Text{
                 id: sourcePath
                 text:"Source URL: "
-                width: 110
+                width: columnOptionClone.widthText
             }
 
             TextField{
-                id: soureURL
+                id: sourсeUrl
                 implicitWidth: 300
                 height: 20
                 focus: true
                 text: "cRedssssssffffffffffffffffffpo"
-                anchors.left: sourcePath.right
             }
 
             Button {
                 id: buttonSourceBrowser
                 text: "Browser"
                 onClicked:  {
-                    console.log("dsdfd")
+                    fileDialogSource.visible = true;
                 }
             }
         }
 
-        RowLayout{
+        Row{
             anchors.leftMargin: 10
             anchors.left: parent.left
+            anchors.horizontalCenter: parent.horizontalCenter
             width: parent.width
+            spacing: 15
 
             Text{
                 id: destPath
                 text:"Destinition URL: "
-                width: 110
+                width: columnOptionClone.widthText
             }
 
             TextField{
-                id: destURL
+                id: destUrl
                 implicitWidth: 300
                 height: 20
                 focus: true
                 text: "home"
-                anchors.left: destPath.right
             }
 
             Button {
                 id: buttonDestBrowser
                 text: "Browser"
                 onClicked:  {
-                    console.log("dsdfd")
+                    fileDialogDestinition.visible = true;
                 }
 
             }
         }
+
+        Row{
+            anchors.leftMargin: 10
+            anchors.left: parent.left
+            anchors.horizontalCenter: parent.horizontalCenter
+            width: parent.width
+            spacing: 15
+
+
+            Text{
+                id: nameRepo
+                text:"Name: "
+                width: columnOptionClone.widthText
+            }
+
+            TextField{
+                id: valueNameRepo
+                implicitWidth: 300
+                height: 20
+                focus: true
+                text: "Repo"
+            }
+        }
     } // end Column
 
-    RowLayout{
+    Row{
 
         id: buttonRow
-        anchors.topMargin: 15
-        anchors.top: columnOptionClone.bottom
-
-        width: parent.width
         spacing: 20
+
+        anchors.top: columnOptionClone.bottom
+        anchors.topMargin: 15
         anchors.horizontalCenter: parent.horizontalCenter
+        anchors.horizontalCenterOffset: width/2 - 74
+        width: parent.width
 
         Button{
 
@@ -102,8 +155,7 @@ Rectangle
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    console.log("Start Clone")
-                    repository.StartCloneRepository()
+                    repository.StartCloneRepository(destUrl.text, sourсeUrl.text, valueNameRepo.text)
                 }
             }
         }
@@ -114,7 +166,7 @@ Rectangle
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    console.log("Cancel Clone")
+                    repository.CancelCloneRepository()
                 }
             }
         }

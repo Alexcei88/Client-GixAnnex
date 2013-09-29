@@ -10,9 +10,9 @@ public:
 
     virtual ~TRepository();
 
-    virtual int         CloneRepository(const QString &nameRepo, const QString &remoteURL, const QString &localURL);
-    virtual int         DeleteRepository(const QString &localURL);
-    virtual int         GetContentFile(const QString& file = " ") const;
+    virtual GANN_DEFINE::RESULT_EXEC_PROCESS CloneRepository(const QString& localURL, const QString& nameRepo, const QString& remoteURL);
+    virtual GANN_DEFINE::RESULT_EXEC_PROCESS DeleteRepository(const QString &localURL);
+    virtual GANN_DEFINE::RESULT_EXEC_PROCESS GetContentFile(const QString& file = " ") const;
     virtual int         DropContentFile(const QString& file = " ") const;
     virtual int         WhereisFile(const QString& file = " ") const;
 

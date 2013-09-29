@@ -7,6 +7,12 @@
 #include <QApplication>
 #include <QQuickView>
 
+/*
+ * КЛАСС, УПРАВЛЯЮЩИЙ ОКНАМИ ПРИЛОЖЕНИЯ:
+ * ПОКАЗ, СКРЫТИЕ ФОРМ
+
+*/
+
 class SystemTray : public QWidget
 {
     Q_OBJECT
@@ -16,6 +22,7 @@ public:
 
     inline void     SetMainView(QQuickView* view) { this->mainView = view; };
     inline void     SetCloneRepoView(QQuickView* view) { this->cloneRepoView = view; };
+    void            CancelCloneRepository();
 
 public slots:
     // слот, отвечающий за обработку нажатия по иконке мышью

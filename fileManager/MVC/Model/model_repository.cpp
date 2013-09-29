@@ -3,6 +3,7 @@
 #include <QVariantList>
 
 using namespace GANN_MVC;
+using namespace GANN_DEFINE;
 
 //----------------------------------------------------------------------------------------/
 ModelQmlAndCRepository::ModelQmlAndCRepository()
@@ -23,9 +24,18 @@ QVariantList ModelQmlAndCRepository::GetListRepository()
     return repoRegistry;
 }
 //----------------------------------------------------------------------------------------/
- int ModelQmlAndCRepository::CloneRepository(const QString& localUlr, const QString& remoteURL, const QString& nameRepo)
+GANN_DEFINE::RESULT_EXEC_PROCESS ModelQmlAndCRepository::CloneRepository(const QString& localURL, const QString& remoteURL, const QString& nameRepo)
 {
-     std::cout<<localUlr.toStdString().c_str()<<" "<<remoteURL.toStdString().c_str()<<" "<<nameRepo.toStdString().c_str()<<std::endl;
+     if(FacadeApplication::getInstance()->StartCloneRepository(localURL, remoteURL, nameRepo) == NO_ERROR)
+     {
+        FacadeApplication::getInstance()->SaveRepository(localURL, remoteURL, nameRepo);
+        FacadeApplication::getInstance()->CancelCloneRepository();
+     }
+}
+//----------------------------------------------------------------------------------------/
+void ModelQmlAndCRepository::CancelCloneRepository(bool breakCommand)
+{
+    FacadeApplication::getInstance()->CancelCloneRepository(breakCommand);
 }
 //----------------------------------------------------------------------------------------/
 

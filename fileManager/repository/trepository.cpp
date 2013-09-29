@@ -13,13 +13,14 @@ TRepository::TRepository(const QString& localUrl, const QString& remoteUrl, cons
 //----------------------------------------------------------------------------------------/
 TRepository::~TRepository() {}
 //----------------------------------------------------------------------------------------/
-int TRepository::CloneRepository(const QString &nameRepo, const QString &remoteURL, const QString &localURL)
+RESULT_EXEC_PROCESS TRepository::CloneRepository(const QString& localURL, const QString& nameRepo, const QString& remoteURL)
 {
     // здесь должны переходить в текущую директорию
-    int result = shellCommand->SetWorkingDirectory(localURL);
+    RESULT_EXEC_PROCESS result = shellCommand->SetWorkingDirectory(localURL);
 
     QString folderToClone = "";
     result = shellCommand->CloneRepositories(remoteURL, folderToClone);
+    folderToClone = "/" + folderToClone;
     if(result != int(NO_ERROR))
     {
         printf("Error clone repositories: %s \n", remoteURL.toStdString().c_str());
@@ -43,19 +44,19 @@ int TRepository::CloneRepository(const QString &nameRepo, const QString &remoteU
     return result;
 }
 //----------------------------------------------------------------------------------------/
-int TRepository::DeleteRepository(const QString &localURL)
+RESULT_EXEC_PROCESS TRepository::DeleteRepository(const QString &localURL)
 {
     this->nameRepo = "";
     this->localURL = "";
     this->remoteURL = "";
 
-    return 0;
+    return NO_ERROR;
 }
 //----------------------------------------------------------------------------------------/
-int TRepository::GetContentFile(const QString& file) const
+RESULT_EXEC_PROCESS TRepository::GetContentFile(const QString& file) const
 {
     shellCommand->SetWorkingDirectory(this->localURL);
-    int result = shellCommand->GetContentFile(file);
+    RESULT_EXEC_PROCESS result = shellCommand->GetContentFile(file);
     if(result != NO_ERROR)
     {
         printf("Error git-annex get content of file: %s \n", file.toStdString().c_str());

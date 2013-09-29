@@ -21,14 +21,18 @@
 #include <QFile>
 #include <QDomDocument>
 
+// our stuff
+#include "systemtray.h"
+#include "repository/irepository.h"
+
 class IRepository;
-//class ModelQmlAndCRepository;
 
 class FacadeApplication
 {
 
 public:
     static FacadeApplication* getInstance();
+    void            SetSystemTray(SystemTray* systemTray) { this->systemTray = systemTray; };
 
     // класс модели MVC объявим другом
     friend class ModelQmlAndCRepository;
@@ -48,14 +52,27 @@ public:
     /** @brief сохранения репозитория в конфигах */
     void            SaveRepository(const QString& localURL, const QString& remoteURL, const QString& nameRepo);
 
-    /** @brief путь к файлу конфигов репозитория, формат xml*/
+    /** @brief начать клонирование репозитория */
+    GANN_DEFINE::RESULT_EXEC_PROCESS StartCloneRepository(const QString& localURL, const QString& remoteURL, const QString& nameRepo);
+
+    /** @brief закрытие окна клонирования
+    @param 1 - прерывание команды
+           0 - просто закрыть окно
+    */
+    void            CancelCloneRepository(const bool breakCommand = false);
+
+
+
+    /** @brief путь к файлу конфигов репозитория, формат xml */
     const QString   pathFileRepoConfig;
 
     QFile           fileRepoConfig;
 
-    /** @brief вектор репозиториев, хранящиеся на клиенте*/
+    /** @brief вектор репозиториев, хранящиеся на клиенте */
     std::map<QString, boost::shared_ptr<IRepository>> repository;
 
+    /** @brief системный трей */
+    SystemTray*     systemTray;
 
 };
 

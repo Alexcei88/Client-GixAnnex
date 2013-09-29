@@ -28,7 +28,7 @@ Rectangle {
         source: "qrc:/config/config_repo"
         query: "/reporegistry/repo"
 
-        XmlRole { name: "localPath"; query: "@localURL/string()" }
+        XmlRole { name: "localPath"; query: "@localUrl/string()" }
         XmlRole { name: "nameRepo"; query: "@nameRepo/string()" }
     }
 
@@ -66,6 +66,7 @@ Rectangle {
                 onClicked: {
                     viewModel.currentIndex = model.index
                     // посылаем сигнал о выборе нового репозитория
+                    console.log(localPath)
                     selectNewRepository(localPath)
                 }
             }

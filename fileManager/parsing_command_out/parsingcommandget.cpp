@@ -9,12 +9,12 @@ ParsingCommandGet::ParsingCommandGet()
     // причина ошибки
     QString error = "(error: )(.*)";
     // процесс скачивания ресурса из интернета
-    QString processDownLoad = "()"
+    QString processDownLoad = "()";
 
 
     // итоговый результат копирования
     // количество файлов, которые не удалось скопировать-
-    QString summaryFailed = "";
+//    QString summaryFailed = "";
 
     listRegExpPossible.push_back(succes);
     listRegExpPossible.push_back(unsucces);
