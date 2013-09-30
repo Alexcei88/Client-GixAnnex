@@ -60,7 +60,7 @@ RESULT_EXEC_PROCESS TShell::ExecuteProcess(const QString &str, IParsingCommandOu
     }
 
     // иначе ждем, пока он не завершиться
-    // если процесс не завершился, то возвращаем -2
+    // если процесс не завершился, то возвращаем ошибку
     if(!process->waitForFinished(-1))
     {
         printf("Process finished with error! \n");

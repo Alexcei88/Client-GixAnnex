@@ -11,8 +11,8 @@ using namespace GANN_DEFINE;
 boost::shared_ptr<FacadeApplication> FacadeApplication::instance = boost::shared_ptr<FacadeApplication>();
 //----------------------------------------------------------------------------------------/
 FacadeApplication::FacadeApplication() :
-//    pathFileRepoConfig("ganx-repository.xml")
-    pathFileRepoConfig(":/config/config_repo")
+    pathFileRepoConfig("ganx-repository.xml")
+//    pathFileRepoConfig(":/config/config_repo")
 {
     fileRepoConfig.setFileName(pathFileRepoConfig);
     // инициализируем связь C и QML
@@ -40,6 +40,7 @@ void FacadeApplication::LoadRepositories()
     if(!doc.setContent(&fileRepoConfig))
     {
         printf("ERROR: file parsing error!!!");
+        fileRepoConfig.close();
         return;
     }
 
@@ -72,16 +73,16 @@ void FacadeApplication::SaveRepository(const QString& localURL, const QString& r
 
     if(!fileRepoConfig.open(QIODevice::ReadWrite))
     {
+        std::cout<<fileRepoConfig.errorString().toStdString().c_str()<<std::endl;
         printf("ERROR: Unable to open file. Repository was not save!!!");
         return;
     }
     if(!doc.setContent(&fileRepoConfig))
     {
         printf("ERROR: file parsing error!!!");
+        fileRepoConfig.close();
         return;
     }
-    fileRepoConfig.reset();
-
     // cодержимое тега зарегистрированных репозитория
     // создаем элемент
     QDomElement newRepo = doc.createElement("repo");
@@ -102,6 +103,7 @@ void FacadeApplication::SaveRepository(const QString& localURL, const QString& r
     QDomElement elReporegistry = doc.firstChildElement("reporegistry");
     elReporegistry.appendChild(newRepo);
 
+    fileRepoConfig.reset();
     QTextStream(&fileRepoConfig) << doc.toString();
     fileRepoConfig.close();
 

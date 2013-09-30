@@ -21,10 +21,14 @@ public:
 
 
     /** @brief Начать клонирование репозитория */
-    Q_INVOKABLE QVariant    StartCloneRepository(QVariant localUlr, QVariant remoteURL, QVariant nameRepo) const;
+    Q_INVOKABLE QVariant    StartCloneRepository(QVariant localUlr, QVariant remoteURL, QVariant nameRepo);
 
     /** @brief Отмена клонирования репозитория */
     Q_INVOKABLE void        CancelCloneRepository() const;
+
+signals:
+    /** @brief сигнал обновления списка репозиториев во viewer-e*/
+    void                    cppMethod();
 
 
     /*Q_INVOKABLE void        Add( );

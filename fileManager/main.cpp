@@ -56,11 +56,10 @@ int main(int argc, char *argv[])
     SystemTray windowTray;
     windowTray.SetMainView(&mainViewer);
     windowTray.SetCloneRepoView(&cloneRepoViewer);
-
     facadeApp->SetSystemTray(&windowTray);
 
     TRepository rep;
-//    rep.CloneRepository("MyRepo", "gituser@192.168.0.5:project", "/home/alexcei88/");
+//    rep.CloneRepository("/home/alexcei/Copy/copyproject", "MyRepo", "/home/alexcei/Copy/project");
 //    rep.GetContentFile(".");
     flush(std::cout);
     return app.exec();

@@ -2,18 +2,31 @@ import QtQuick 2.0
 import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
 import QtQuick.XmlListModel 2.0
-//import Repository 1.0
+import Repository 1.0
 
 Rectangle {
 
-    /*ControllerRepository {
+    ControllerRepository {
         id: repository
-    }*/
+    }
 
-    // СВО-ВА И СИГНАЛЫ
+    // ФУНКЦИИ, СВО-ВА И СИГНАЛЫ
     //-------------------------------------------------------------------------/
     // сигнал о выборе нового репозитория
     signal selectNewRepository(string path)
+
+    // функция перезагрузки XML модели
+    function reLoadModel(){
+        modelRepoXML.reload();
+    }
+
+    // связываем сигнал controller-a c функцией
+    Connections{
+        target: repository
+        onCppMethod: { console.log("i want update model");
+                            reLoadModel();
+            }
+    }
 
     //-------------------------------------------------------------------------/
 
@@ -25,7 +38,7 @@ Rectangle {
 
     XmlListModel{
         id: modelRepoXML
-        source: "qrc:/config/config_repo"
+        source: "../../ganx-repository.xml"
         query: "/reporegistry/repo"
 
         XmlRole { name: "localPath"; query: "@localUrl/string()" }
@@ -68,6 +81,7 @@ Rectangle {
                     // посылаем сигнал о выборе нового репозитория
                     console.log(localPath)
                     selectNewRepository(localPath)
+                    repository.CancelCloneRepository()
                 }
             }
         }
