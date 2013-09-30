@@ -30,8 +30,7 @@ SOURCES += main.cpp \
     repository/irepository.cpp \
     facadeapplication.cpp \
     MVC/Controller/controller_repository.cpp \
-    MVC/Model/model_repository.cpp
-
+    MVC/Model/model_repository.cpp \
 # Installation path
 # target.path =
 
@@ -62,7 +61,8 @@ HEADERS += \
     facadeapplication.h \
     MVC/Controller/controller_repository.h \
     MVC/Model/model_repository.h \
-    define.h
+    define.h \
+    MVC/Model/model_updateviewer.h
 
 # Включаем поддержку С++11
 QMAKE_CXXFLAGS += -std=c++0x

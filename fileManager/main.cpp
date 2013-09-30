@@ -1,8 +1,12 @@
 #include <QtGui/QGuiApplication>
+//#include <QtDeclarative/QDeclarativeItem>
+#include <QQuickItem>
 #include <QGuiApplication>
 #include "qtquick2applicationviewer.h"
 #include <QSystemTrayIcon>
 #include <QApplication>
+#include <QObject>
+#include <QMetaObject>
 
 // системное меню
 #include "systemtray.h"
@@ -57,6 +61,16 @@ int main(int argc, char *argv[])
     windowTray.SetMainView(&mainViewer);
     windowTray.SetCloneRepoView(&cloneRepoViewer);
     facadeApp->SetSystemTray(&windowTray);
+
+    QQuickItem* item = mainViewer.rootObject();
+    QVariant returnedValue;
+    QVariant msg = "Hello from C++";
+    QMetaObject::invokeMethod(item, "reloadModel");
+
+//    QObject* object = qobject_cast<QObject*>(mainViewer.rootObject());
+//    QDeclarativeItem* item = qobject_cast<QDeclarativeItem*>(mainViewer.rootObject());;
+    //object
+//    object
 
     TRepository rep;
 //    rep.CloneRepository("/home/alexcei/Copy/copyproject", "MyRepo", "/home/alexcei/Copy/project");

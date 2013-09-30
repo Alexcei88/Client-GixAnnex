@@ -19,7 +19,7 @@ FacadeApplication::FacadeApplication() :
     InitClassCAndQML();
 
     // загружаем из конфигов репозитории
-    LoadRepositories();
+    LoadRepositories();    
 }
 //----------------------------------------------------------------------------------------/
 FacadeApplication* FacadeApplication::getInstance()
@@ -111,11 +111,11 @@ void FacadeApplication::SaveRepository(const QString& localURL, const QString& r
 //----------------------------------------------------------------------------------------/
 GANN_DEFINE::RESULT_EXEC_PROCESS FacadeApplication::StartCloneRepository(const QString &localURL, const QString &remoteURL, const QString &nameRepo)
 {
-    TRepository newRepo;
-    RESULT_EXEC_PROCESS result = newRepo.CloneRepository(localURL, nameRepo, remoteURL);
+    TRepository* newRepo = new TRepository;
+    RESULT_EXEC_PROCESS result = newRepo->CloneRepository(localURL, nameRepo, remoteURL);
     if(result == NO_ERROR)
     {
-        boost::shared_ptr<IRepository> tempRepo(&newRepo);
+        boost::shared_ptr<IRepository> tempRepo(newRepo);
         repository[localURL] = tempRepo;
     }
     return result;

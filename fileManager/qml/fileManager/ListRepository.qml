@@ -15,17 +15,10 @@ Rectangle {
     // сигнал о выборе нового репозитория
     signal selectNewRepository(string path)
 
-    // функция перезагрузки XML модели
-    function reLoadModel(){
+    // сигнал о перегрузке модели в связи с изменениями
+    signal reloadModel()
+    onReloadModel: {
         modelRepoXML.reload();
-    }
-
-    // связываем сигнал controller-a c функцией
-    Connections{
-        target: repository
-        onCppMethod: { console.log("i want update model");
-                            reLoadModel();
-            }
     }
 
     //-------------------------------------------------------------------------/
@@ -81,7 +74,6 @@ Rectangle {
                     // посылаем сигнал о выборе нового репозитория
                     console.log(localPath)
                     selectNewRepository(localPath)
-                    repository.CancelCloneRepository()
                 }
             }
         }
