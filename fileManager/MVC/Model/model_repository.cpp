@@ -27,10 +27,11 @@ QVariantList ModelQmlAndCRepository::GetListRepository()
 GANN_DEFINE::RESULT_EXEC_PROCESS ModelQmlAndCRepository::CloneRepository(const QString& localURL, const QString& remoteURL, const QString& nameRepo)
 {
     FacadeApplication *facade = FacadeApplication::getInstance();
-    GANN_DEFINE::RESULT_EXEC_PROCESS result =  facade->StartCloneRepository(localURL, remoteURL, nameRepo);
+    QString localPath = localURL;
+    GANN_DEFINE::RESULT_EXEC_PROCESS result =  facade->StartCloneRepository(localPath, remoteURL, nameRepo);
     if(result == NO_ERROR)
     {
-        facade->SaveRepository(localURL, remoteURL, nameRepo);
+        facade->SaveRepository(localPath, remoteURL, nameRepo);
         facade->ReLoadListRepository();
         facade->CancelCloneRepository();
     }
@@ -40,6 +41,16 @@ GANN_DEFINE::RESULT_EXEC_PROCESS ModelQmlAndCRepository::CloneRepository(const Q
 void ModelQmlAndCRepository::CancelCloneRepository(bool breakCommand)
 {
     FacadeApplication::getInstance()->CancelCloneRepository(breakCommand);
+}
+//----------------------------------------------------------------------------------------/
+GANN_DEFINE::RESULT_EXEC_PROCESS ModelQmlAndCRepository::GetContentDirectory(const QString& dir) const
+{
+
+}
+//----------------------------------------------------------------------------------------/
+void ModelQmlAndCRepository::ChangeCurrentRepository(const QString& dir) const
+{
+    FacadeApplication::getInstance()->ChangeCurrentRepository(dir);
 }
 //----------------------------------------------------------------------------------------/
 

@@ -13,7 +13,7 @@ TRepository::TRepository(const QString& localUrl, const QString& remoteUrl, cons
 //----------------------------------------------------------------------------------------/
 TRepository::~TRepository() {}
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS TRepository::CloneRepository(const QString& localURL, const QString& nameRepo, const QString& remoteURL)
+RESULT_EXEC_PROCESS TRepository::CloneRepository(QString& localURL, const QString& nameRepo, const QString& remoteURL)
 {
     // здесь должны переходить в текущую директорию
     RESULT_EXEC_PROCESS result = shellCommand->SetWorkingDirectory(localURL);
@@ -40,6 +40,7 @@ RESULT_EXEC_PROCESS TRepository::CloneRepository(const QString& localURL, const 
     this->remoteURL = remoteURL;
     this->localURL  = localURL + folderToClone;
 
+    localURL +=folderToClone;
     result = shellCommand->SetWorkingDirectory(this->localURL);
     return result;
 }

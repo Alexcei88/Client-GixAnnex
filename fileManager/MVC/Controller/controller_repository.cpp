@@ -6,7 +6,7 @@ using namespace GANN_MVC;
 ControllerRepository::ControllerRepository( ):
     model(QSharedPointer<ModelQmlAndCRepository>(new ModelQmlAndCRepository()))
 {
-   // emit signalUpdateListRepository();
+    QObject::connect(this, &ControllerRepository::currentPathRepoChanged, [=](QString dir){model->ChangeCurrentRepository(dir); });
 }
 //----------------------------------------------------------------------------------------/
 QVariantList ControllerRepository::GetListRepository() const
@@ -22,7 +22,11 @@ QVariant ControllerRepository::StartCloneRepository(QVariant localUlr, QVariant 
 //----------------------------------------------------------------------------------------/
 void ControllerRepository::CancelCloneRepository() const
 {
-    std::cout<<"Cancel Clone Repository"<<std::endl;
     model->CancelCloneRepository();
+}
+//----------------------------------------------------------------------------------------/
+QVariant ControllerRepository::GetContentDirectory(QVariant dir) const
+{
+    return model->GetContentDirectory(dir.toString());
 }
 //----------------------------------------------------------------------------------------/

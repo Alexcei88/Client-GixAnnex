@@ -7,32 +7,23 @@ class IRepository
 {
 public:
 
-    /**
-    @brief Структура, описывающая параметры хранения файлов репозиторий
-    */
-    typedef struct PARAMETR_REPOSITORY_GI_ANNEX
-    {
-        // автосинхронизация с сервером
-        bool autosync;
-        // автосинхронизация контента репозитория
-        bool autosyncContent;
-
-    } ParamRepository;
-
-    /**
-    @brief Структура, описывающая параметры файла(папки), входящие в репозиторий
-    */
-    typedef struct PARAMETR_FILEFOLDER_GIT_ANNEX
-    {
-        // автосинхронизация контента
-        bool autosync;
-
-    } ParamContentFile;
-
-    IRepository() { InitClass(); };
+    IRepository();
     IRepository(const QString& localUrl, const QString& remoteUrl, const QString& nameRepo);
 
     virtual ~IRepository() {};
+
+    /**
+    @brief установка параметров автосинхронизации
+    @param autosync -
+    @param autosyncContent -
+    @return void
+    */
+    void                SetParamSyncRepository(const bool& autosync, const bool& autosyncContent);
+
+    /** @brief взятие параметров автосинхронизации репозитория*/
+    bool                GetParamSyncRepository() const { return paramSyncRepo.autosync; };
+    bool                GetParamSyncContentRepository() const { return paramSyncRepo.autosyncContent; };
+
 
     /**
     @brief клонирование репозитория
@@ -41,7 +32,7 @@ public:
     @param remoteURL - адрес репозитория, откуда копируем
     @return 0 - нет ошибок
     */
-    virtual GANN_DEFINE::RESULT_EXEC_PROCESS CloneRepository(const QString& localURL, const QString& nameRepo, const QString& remoteURL) = 0;
+    virtual GANN_DEFINE::RESULT_EXEC_PROCESS CloneRepository(QString& localURL, const QString& nameRepo, const QString& remoteURL) = 0;
 
     /**
     @brief удаление репозитория
@@ -71,6 +62,29 @@ public:
     */
     virtual int         WhereisFile(const QString& file = " ") const = 0;
 
+    /**
+    @brief Структура, описывающая параметры хранения файлов репозиторий
+    */
+    typedef struct PARAMETR_REPOSITORY_GI_ANNEX
+    {
+        // автосинхронизация с сервером
+        bool autosync;
+        // автосинхронизация контента репозитория
+        bool autosyncContent;
+
+    } ParamRepository;
+
+    /**
+    @brief Структура, описывающая параметры файла(папки), входящие в репозиторий
+    */
+    typedef struct PARAMETR_FILEFOLDER_GIT_ANNEX
+    {
+        // автосинхронизация контента
+        bool autosync;
+
+    } ParamContentFile;
+
+
 protected:
     boost::shared_ptr<ShellCommand> shellCommand;
 
@@ -83,6 +97,9 @@ protected:
 
 private:
     void            InitClass();
+
+    ParamRepository paramSyncRepo;
+
 };
 
 #endif // IREPOSITORY_H

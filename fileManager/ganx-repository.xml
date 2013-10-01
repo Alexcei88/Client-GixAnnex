@@ -1,5 +1,12 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <reporegistry>
- <repo localUrl="/home/alexcei88/" nameRepo="Home Directory" remoteUrl="OTpEty"/>
- <repo localUrl="/bin/" nameRepo="Bin Directory" remoteUrl="OTpEty"/>
- </reporegistry>
+  <repo localUrl="/home/alexcei/" remoteUrl="OTpEty" nameRepo="Friend">
+    <paramSync autosync="false" autosyncContent ="false"/>
+ </repo>
+ <repo localUrl="/bin/" remoteUrl="OTpEty" nameRepo="What is">
+ <paramSync autosync="false" autosyncContent ="false"/>
+ </repo>
+ <repo localUrl="/home/alexcei/Copy/copyproject" remoteUrl="/home/alexcei/Copy/project" nameRepo="RepoClone">
+ <paramSync autosync="false" autosyncContent ="false"/>
+ </repo> 
+</reporegistry>

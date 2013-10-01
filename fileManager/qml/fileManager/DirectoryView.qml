@@ -3,6 +3,7 @@ import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
 import Qt.labs.folderlistmodel 1.0
 import "utils.js" as UtilsScript
+import Repository 1.0
 
 Rectangle
 {
@@ -21,8 +22,14 @@ Rectangle
     {
         // меняем рабочую директорию у модели
         dirModel.folder = path;
+        repository.currentPathRepo = path;
     }
     //-------------------------------------------------------------------------/
+    ControllerRepository {
+        id: repository
+        currentPathRepo: dirModel.folder
+    }
+
 
     ContextMenu{
         id: menudirectory

@@ -53,7 +53,7 @@ public:
     void            SaveRepository(const QString& localURL, const QString& remoteURL, const QString& nameRepo);
 
     /** @brief начать клонирование репозитория */
-    GANN_DEFINE::RESULT_EXEC_PROCESS StartCloneRepository(const QString& localURL, const QString& remoteURL, const QString& nameRepo);
+    GANN_DEFINE::RESULT_EXEC_PROCESS StartCloneRepository(QString& localURL, const QString& remoteURL, const QString& nameRepo);
 
     /** @brief закрытие окна клонирования
     @param 1 - прерывание команды
@@ -64,8 +64,8 @@ public:
     /** @brief перезагрузить модель со списком репозиториев*/
     bool            ReLoadListRepository() const;
 
-
-
+    /** @brief Сменить итератор текущий репозиторий */
+    void            ChangeCurrentRepository(const QString &dir);
 
     /** @brief путь к файлу конфигов репозитория, формат xml */
     const QString   pathFileRepoConfig;
@@ -73,7 +73,10 @@ public:
     QFile           fileRepoConfig;
 
     /** @brief вектор репозиториев, хранящиеся на клиенте */
-    std::map<QString, boost::shared_ptr<IRepository>> repository;
+    std::map<QString, boost::shared_ptr<IRepository> > repository;
+
+    /** @brief итератор на текущий репозиторий */
+    std::map<QString, boost::shared_ptr<IRepository> >::iterator currentRepository;
 
     /** @brief системный трей */
     SystemTray*     systemTray;

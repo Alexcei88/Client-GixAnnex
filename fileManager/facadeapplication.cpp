@@ -109,7 +109,7 @@ void FacadeApplication::SaveRepository(const QString& localURL, const QString& r
 
 }
 //----------------------------------------------------------------------------------------/
-GANN_DEFINE::RESULT_EXEC_PROCESS FacadeApplication::StartCloneRepository(const QString &localURL, const QString &remoteURL, const QString &nameRepo)
+GANN_DEFINE::RESULT_EXEC_PROCESS FacadeApplication::StartCloneRepository(QString &localURL, const QString &remoteURL, const QString &nameRepo)
 {
     TRepository* newRepo = new TRepository;
     RESULT_EXEC_PROCESS result = newRepo->CloneRepository(localURL, nameRepo, remoteURL);
@@ -129,6 +129,11 @@ void FacadeApplication::CancelCloneRepository(const bool breakCommand)
 bool FacadeApplication::ReLoadListRepository() const
 {
     return systemTray->ReLoadListRepository();
+}
+//----------------------------------------------------------------------------------------/
+void FacadeApplication::ChangeCurrentRepository(const QString& dir)
+{
+
 }
 //----------------------------------------------------------------------------------------/
 void FacadeApplication::InitClassCAndQML()
