@@ -11,13 +11,6 @@ Rectangle
     width: 900
     height:570
 
-    signal updateModel();
-
-    function reloadModel()
-    {
-        console.log("dgfgfs");
-    }
-
     Column
     {
         Keys.forwardTo: [windowContent, toolBar]

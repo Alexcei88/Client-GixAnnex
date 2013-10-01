@@ -22,7 +22,10 @@ public:
 
     inline void     SetMainView(QQuickView* view) { this->mainView = view; };
     inline void     SetCloneRepoView(QQuickView* view) { this->cloneRepoView = view; };
-    void            CancelCloneRepository();
+    void            CancelCloneRepository() const;
+    /** @brief перезагрузить модель со списком репозиториев*/
+    bool            ReLoadListRepository() const;
+
 
 public slots:
     // слот, отвечающий за обработку нажатия по иконке мышью

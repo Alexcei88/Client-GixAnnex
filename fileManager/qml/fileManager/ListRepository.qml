@@ -6,23 +6,22 @@ import Repository 1.0
 
 Rectangle {
 
-    ControllerRepository {
-        id: repository
-    }
-
     // ФУНКЦИИ, СВО-ВА И СИГНАЛЫ
     //-------------------------------------------------------------------------/
     // сигнал о выборе нового репозитория
     signal selectNewRepository(string path)
 
-    // сигнал о перегрузке модели в связи с изменениями
-    signal reloadModel()
-    onReloadModel: {
+    function reloadModel()
+    {
+        console.log("reloadModel");
         modelRepoXML.reload();
     }
 
     //-------------------------------------------------------------------------/
 
+    ControllerRepository {
+        id: repository
+    }
     width: 100
     height: 62
     border.width: 1

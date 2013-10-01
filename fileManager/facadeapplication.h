@@ -61,6 +61,10 @@ public:
     */
     void            CancelCloneRepository(const bool breakCommand = false);
 
+    /** @brief перезагрузить модель со списком репозиториев*/
+    bool            ReLoadListRepository() const;
+
+
 
 
     /** @brief путь к файлу конфигов репозитория, формат xml */

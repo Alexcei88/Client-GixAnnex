@@ -1,4 +1,5 @@
 #include "systemtray.h"
+#include <QQuickItem>
 #include <iostream>
 
 //----------------------------------------------------------------------------------------/
@@ -55,10 +56,21 @@ void SystemTray::CloneRepository()
         cloneRepoView->show();
 }
 //----------------------------------------------------------------------------------------/
-void SystemTray::CancelCloneRepository()
+void SystemTray::CancelCloneRepository() const
 {
     if(cloneRepoView)
         cloneRepoView->hide();
 }
 //----------------------------------------------------------------------------------------/
-
+bool SystemTray::ReLoadListRepository() const
+{
+    if(mainView)
+    {
+        QObjectList parent = mainView->rootObject()->children();
+        QObjectList parentItem = parent[0]->children();
+        QObjectList itemChildren = parentItem[2]->children();
+        return QMetaObject::invokeMethod(itemChildren[0], "reloadModel");
+    }
+    return false;
+}
+//----------------------------------------------------------------------------------------/

@@ -126,6 +126,11 @@ void FacadeApplication::CancelCloneRepository(const bool breakCommand)
     systemTray->CancelCloneRepository();
 }
 //----------------------------------------------------------------------------------------/
+bool FacadeApplication::ReLoadListRepository() const
+{
+    return systemTray->ReLoadListRepository();
+}
+//----------------------------------------------------------------------------------------/
 void FacadeApplication::InitClassCAndQML()
 {
     qmlRegisterType<GANN_MVC::ControllerRepository>("Repository", 1, 0, "ControllerRepository");

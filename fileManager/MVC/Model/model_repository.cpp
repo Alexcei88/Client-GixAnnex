@@ -26,11 +26,13 @@ QVariantList ModelQmlAndCRepository::GetListRepository()
 //----------------------------------------------------------------------------------------/
 GANN_DEFINE::RESULT_EXEC_PROCESS ModelQmlAndCRepository::CloneRepository(const QString& localURL, const QString& remoteURL, const QString& nameRepo)
 {
-    GANN_DEFINE::RESULT_EXEC_PROCESS result =  FacadeApplication::getInstance()->StartCloneRepository(localURL, remoteURL, nameRepo);
+    FacadeApplication *facade = FacadeApplication::getInstance();
+    GANN_DEFINE::RESULT_EXEC_PROCESS result =  facade->StartCloneRepository(localURL, remoteURL, nameRepo);
     if(result == NO_ERROR)
     {
-        FacadeApplication::getInstance()->SaveRepository(localURL, remoteURL, nameRepo);
-        FacadeApplication::getInstance()->CancelCloneRepository();
+        facade->SaveRepository(localURL, remoteURL, nameRepo);
+        facade->ReLoadListRepository();
+        facade->CancelCloneRepository();
     }
     return result;
 }

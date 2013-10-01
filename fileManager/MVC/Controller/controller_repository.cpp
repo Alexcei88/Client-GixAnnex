@@ -17,11 +17,6 @@ QVariantList ControllerRepository::GetListRepository() const
 QVariant ControllerRepository::StartCloneRepository(QVariant localUlr, QVariant remoteURL, QVariant nameRepo)
 {
     QVariant result = model->CloneRepository(localUlr.toString(), remoteURL.toString(), nameRepo.toString());
-    if(result == 0)
-    {
-        std::cout<<"emit Cpp Method "<<std::endl;
-        emit cppMethod();
-    }
     return result;
 }
 //----------------------------------------------------------------------------------------/

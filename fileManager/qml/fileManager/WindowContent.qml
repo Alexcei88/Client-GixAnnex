@@ -23,6 +23,10 @@ Rectangle {
         focus: true
         Keys.forwardTo: [contenItem]
 
+        function reloadModel()
+        {
+            listRepository.reloadModel();
+        }
         ListRepository
         {
             id: listRepository

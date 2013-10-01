@@ -26,11 +26,6 @@ public:
     /** @brief Отмена клонирования репозитория */
     Q_INVOKABLE void        CancelCloneRepository() const;
 
-signals:
-    /** @brief сигнал обновления списка репозиториев во viewer-e*/
-    void                    cppMethod();
-
-
     /*Q_INVOKABLE void        Add( );
     Q_INVOKABLE void        Edit( );
     Q_INVOKABLE void        Remove( );
