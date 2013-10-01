@@ -53,14 +53,14 @@ public:
     @param file - имя файла(папки) назначения
     @return 0 - нет ошибок
     */
-    virtual int         DropContentFile(const QString& file = " ") const = 0;
+    virtual GANN_DEFINE::RESULT_EXEC_PROCESS DropContentFile(const QString& file = " ") const = 0;
 
     /**
     @brief получение информации, в каких репозиториях находиться файл
     @param file - имя файла(папки) назначения
     @return 0 - нет ошибок
     */
-    virtual int         WhereisFile(const QString& file = " ") const = 0;
+    virtual GANN_DEFINE::RESULT_EXEC_PROCESS WhereisFile(const QString& file = " ") const = 0;
 
     /**
     @brief Структура, описывающая параметры хранения файлов репозиторий

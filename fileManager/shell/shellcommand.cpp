@@ -90,8 +90,8 @@ RESULT_EXEC_PROCESS ShellCommand::DropContentFile(const QString& path) const
 
     if(codeError != NO_ERROR)
         return codeError;
+
     return result;
-//    return shell->ExecuteProcess(strCommand);
 }
 //----------------------------------------------------------------------------------------/
 RESULT_EXEC_PROCESS ShellCommand::RemoveFile(const QString& path) const

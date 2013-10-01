@@ -60,8 +60,9 @@ GANN_DEFINE::RESULT_EXEC_PROCESS ModelQmlAndCRepository::GetContentDirectory(con
     if(iterRepo != FacadeApplication::instance->repository.end())
     {
         IRepository* curRepo = iterRepo->second.get();
-        curRepo->GetContentFile(dir);
+        return curRepo->GetContentFile(dir);
     }
+    return NO_ERROR;
 }
 //----------------------------------------------------------------------------------------/
 GANN_DEFINE::RESULT_EXEC_PROCESS ModelQmlAndCRepository::DropContentDirectory(const QString& dir) const
@@ -70,9 +71,9 @@ GANN_DEFINE::RESULT_EXEC_PROCESS ModelQmlAndCRepository::DropContentDirectory(co
     if(iterRepo != FacadeApplication::instance->repository.end())
     {
         IRepository* curRepo = iterRepo->second.get();
-        std::cout<<"Drop directory = "<<dir.toStdString().c_str()<<std::endl;
-        curRepo->DropContentFile(dir);
+        return curRepo->DropContentFile(dir);
     }
+    return NO_ERROR;
 }
 //----------------------------------------------------------------------------------------/
 void ModelQmlAndCRepository::ChangeCurrentRepository(const QString& dir) const

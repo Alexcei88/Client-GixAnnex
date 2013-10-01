@@ -65,9 +65,9 @@ RESULT_EXEC_PROCESS TRepository::GetContentFile(const QString& file) const
     return result;
 }
 //----------------------------------------------------------------------------------------/
-int TRepository::DropContentFile(const QString& file) const
+RESULT_EXEC_PROCESS TRepository::DropContentFile(const QString& file) const
 {
-    int result = shellCommand->DropContentFile(file);
+    RESULT_EXEC_PROCESS result = shellCommand->DropContentFile(file);
     if(result != NO_ERROR)
     {
         printf("Error git-annex drop content of file: %s \n", file.toStdString().c_str());
@@ -76,9 +76,9 @@ int TRepository::DropContentFile(const QString& file) const
     return result;
 }
 //----------------------------------------------------------------------------------------/
-int TRepository::WhereisFile(const QString& file) const
+RESULT_EXEC_PROCESS TRepository::WhereisFile(const QString& file) const
 {
-    int result = shellCommand->WhereisFiles(file);
+    RESULT_EXEC_PROCESS result = shellCommand->WhereisFiles(file);
     if(result != NO_ERROR)
     {
         printf("Error git-annex drop content of file: %s \n", file.toStdString().c_str());

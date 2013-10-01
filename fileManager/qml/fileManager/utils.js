@@ -9,6 +9,8 @@ function lengthStr(inputStr, maxLength) {
         return maxLength;
 }
 
+// функция, которая обрезает начальный префикс file:// в LINUX системе
+// на остальных опер системах позже
 function GetFullStrPath(inputStr)
 {
     var from = 7;
@@ -17,14 +19,21 @@ function GetFullStrPath(inputStr)
     return returnStr;
 }
 
-//function GetRelativeStrPath(parentPathRepoStr, fullPathStr)
-//{
-//    // 1. находим строку parentPatRepoStr в подстроке fullPathStr
-//    var to = fullPathStr.find(fullPathStr)
+// получить относительный путь от полного пути относительно корневого пути репозитория
+function GetRelativeStrPath(parentPathRepoStr, fullPathStr)
+{
+    // 1. находим строку parentPatRepoStr в подстроке fullPathStr
+    if(parentPathRepoStr == fullPathStr)
+        return "";
 
-////    var returnStr = inputStr.substring(from, to);
-//    return parentPathRepoStr;
-//}
+    var from = fullPathStr.indexOf(fullPathStr);
+    var to   = fullPathStr.length;
+    if(from == -1)
+        // не нашли вхождения
+        return fullPathStr;
+    var relativeStr = fullPathStr.substring(from + parentPathRepoStr.length + 1, to);
+    return relativeStr;
+}
 
 function GetOS(){
   var OperationSystem; // переменная для хранения названия ОСи
