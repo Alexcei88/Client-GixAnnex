@@ -31,6 +31,9 @@ public:
     /** @brief взять контент у файла(директории)*/
     GANN_DEFINE::RESULT_EXEC_PROCESS GetContentDirectory(const QString& dir) const;
 
+    /** @brief удалить контент у файла(директории)*/
+    GANN_DEFINE::RESULT_EXEC_PROCESS DropContentDirectory(const QString& dir) const;
+
     /** @brief Сменить текущий репозиторий */
     void                ChangeCurrentRepository(const QString &dir) const;
 

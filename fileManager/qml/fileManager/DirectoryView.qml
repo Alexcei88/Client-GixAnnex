@@ -7,7 +7,6 @@ import Repository 1.0
 
 Rectangle
 {
-
     // СВО-ВА И СИГНАЛЫ
     //-------------------------------------------------------------------------/
     property var folderModel: dirModel
@@ -31,7 +30,8 @@ Rectangle
     }
 
 
-    ContextMenu{
+    ContextMenu
+    {
         id: menudirectory
         onOpenDirectory: {
             if(dirModel.isFolder(dirModel.index) && view.currentItem)
@@ -41,7 +41,18 @@ Rectangle
                 view.currentIndex = -1;
             }
         }
-
+        onGetContentDirectory:
+        {
+            var fileName = view.currentItem.curFileName;
+            var path = (dirModel.folder + "/" + fileName).toString();
+            repository.GetContentDirectory(UtilsScript.GetFullStrPath(path));
+        }
+        onDropContentDirectory:
+        {
+            var fileName = view.currentItem.curFileName;
+            var path = (dirModel.folder + "/" + fileName).toString();
+            repository.DropContentDirectory(UtilsScript.GetFullStrPath(path));
+        }
     }
 
     width: 100

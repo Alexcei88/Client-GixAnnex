@@ -35,3 +35,8 @@ QVariant ControllerRepository::GetContentDirectory(QVariant dir) const
     return model->GetContentDirectory(dir.toString());
 }
 //----------------------------------------------------------------------------------------/
+QVariant ControllerRepository::DropContentDirectory(QVariant dir) const
+{
+    return model->DropContentDirectory(dir.toString());
+}
+//----------------------------------------------------------------------------------------/

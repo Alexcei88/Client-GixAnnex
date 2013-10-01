@@ -6,6 +6,8 @@ Menu
 {
     // Меню будет отправлять соот сигналы, а в файле приемнике будет обработка нужной функцией
     signal openDirectory()
+    signal getContentDirectory()
+    signal dropContentDirectory()
 
     Action
     {
@@ -25,7 +27,7 @@ Menu
         shortcut: "Ctrl+G"
         //       iconSource: "images/document-open.png"
         onTriggered: {
-            console.log("GetContentDirectory")
+            getContentDirectory()
         }
         //       tooltip: "Open an image"
     }
@@ -36,7 +38,9 @@ Menu
         text: "&Drop Content"
         shortcut: "Ctrl+D"
         //       iconSource: "images/document-open.png"
-        onTriggered: { console.log("DropContentDirectory") }
+        onTriggered: {
+            dropContentDirectory()
+        }
         //       tooltip: "Open an image"
     }
 

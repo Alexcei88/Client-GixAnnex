@@ -17,6 +17,15 @@ function GetFullStrPath(inputStr)
     return returnStr;
 }
 
+//function GetRelativeStrPath(parentPathRepoStr, fullPathStr)
+//{
+//    // 1. находим строку parentPatRepoStr в подстроке fullPathStr
+//    var to = fullPathStr.find(fullPathStr)
+
+////    var returnStr = inputStr.substring(from, to);
+//    return parentPathRepoStr;
+//}
+
 function GetOS(){
   var OperationSystem; // переменная для хранения названия ОСи
   if(navigator.userAgent.indexOf('UNIX')!=-1) OperationSystem = "UNIX";

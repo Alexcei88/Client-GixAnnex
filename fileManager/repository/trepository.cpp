@@ -8,7 +8,6 @@ TRepository::TRepository(): IRepository()
 TRepository::TRepository(const QString& localUrl, const QString& remoteUrl, const QString& nameRepo) :
     IRepository(localUrl, remoteUrl, nameRepo)
 {
-
 }
 //----------------------------------------------------------------------------------------/
 TRepository::~TRepository() {}

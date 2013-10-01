@@ -16,6 +16,8 @@ IRepository::IRepository(const QString& localUrl, const QString& remoteUrl, cons
     InitClass();
     paramSyncRepo.autosync = false;
     paramSyncRepo.autosyncContent = false;
+    // устанавливаем shellComand в директорию, откуда будем запускать команды
+    shellCommand->SetWorkingDirectory(localUrl);
 }
 //----------------------------------------------------------------------------------------/
 void IRepository::InitClass()

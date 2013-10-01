@@ -1,6 +1,7 @@
 #include "model_repository.h"
 
 #include "../facadeapplication.h"
+#include "../repository/irepository.h"
 
 using namespace GANN_MVC;
 using namespace GANN_DEFINE;
@@ -55,7 +56,23 @@ void ModelQmlAndCRepository::CancelCloneRepository(bool breakCommand) const
 //----------------------------------------------------------------------------------------/
 GANN_DEFINE::RESULT_EXEC_PROCESS ModelQmlAndCRepository::GetContentDirectory(const QString& dir) const
 {
-
+    auto iterRepo = FacadeApplication::instance->currentRepository;
+    if(iterRepo != FacadeApplication::instance->repository.end())
+    {
+        IRepository* curRepo = iterRepo->second.get();
+        curRepo->GetContentFile(dir);
+    }
+}
+//----------------------------------------------------------------------------------------/
+GANN_DEFINE::RESULT_EXEC_PROCESS ModelQmlAndCRepository::DropContentDirectory(const QString& dir) const
+{
+    auto iterRepo = FacadeApplication::instance->currentRepository;
+    if(iterRepo != FacadeApplication::instance->repository.end())
+    {
+        IRepository* curRepo = iterRepo->second.get();
+        std::cout<<"Drop directory = "<<dir.toStdString().c_str()<<std::endl;
+        curRepo->DropContentFile(dir);
+    }
 }
 //----------------------------------------------------------------------------------------/
 void ModelQmlAndCRepository::ChangeCurrentRepository(const QString& dir) const
