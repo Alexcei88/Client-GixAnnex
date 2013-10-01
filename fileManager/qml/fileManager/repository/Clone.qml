@@ -4,6 +4,7 @@ import QtQuick.Window 2.1
 import QtQuick.Layouts 1.0
 import QtQuick.Dialogs 1.0
 import Repository 1.0
+import "../utils.js" as UtilsScript
 
 Rectangle
 {
@@ -16,7 +17,8 @@ Rectangle
         title: "Please choose a source folder"
         selectFolder: true
         onAccepted: {
-            sourсeUrl.text = fileDialogSource.folder;
+            var path = fileDialogSource.folder.toString();
+            sourсeUrl.text = UtilsScript.GetFullStrPath(path);
         }
         onRejected: {
         }
@@ -27,7 +29,8 @@ Rectangle
         title: "Please choose a destinotion folder"
         selectFolder: true
         onAccepted: {
-            destUrl.text = fileDialogDestinition.folder;
+            var path = fileDialogDestinition.folder.toString();
+            destUrl.text = UtilsScript.GetFullStrPath(path);
         }
         onRejected: {
         }

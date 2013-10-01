@@ -27,7 +27,7 @@ Rectangle
     //-------------------------------------------------------------------------/
     ControllerRepository {
         id: repository
-        currentPathRepo: dirModel.folder
+        currentPathRepo: UtilsScript.GetFullStrPath(dirModel.folder.toString())
     }
 
 
@@ -53,7 +53,7 @@ Rectangle
     FolderListModel
     {
         id: dirModel
-        folder: "/home"
+        folder: repository.GetDefaultRepositoryPath()
         showDirs: true
         showDirsFirst: true
         showOnlyReadable: true

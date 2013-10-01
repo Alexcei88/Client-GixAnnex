@@ -46,7 +46,7 @@ Rectangle {
         cellHeight: 15
         cellWidth: parent.width
 
-        currentIndex: -1
+        currentIndex: 0
         anchors.fill: parent
 
         keyNavigationWraps: true
@@ -55,6 +55,11 @@ Rectangle {
             radius: 1
             anchors.margins: 20
         }
+        /*Component.onCompleted:
+        {
+            changeParentFolder(viewModel.currentItem.localPath);
+        }*/
+
         highlightMoveDuration: 0
         delegate:
             Item{

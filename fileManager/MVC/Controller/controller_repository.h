@@ -26,11 +26,15 @@ public:
     /** @brief Получить список репозиториев */
     Q_INVOKABLE QVariantList GetListRepository() const;
 
+    /** @brief путь до репозитория по умолчанию */
+    Q_INVOKABLE QVariant     GetDefaultRepositoryPath() const;
+
     /** @brief Начать клонирование репозитория */
     Q_INVOKABLE QVariant    StartCloneRepository(QVariant localUlr, QVariant remoteURL, QVariant nameRepo);
 
     /** @brief Отмена клонирования репозитория */
     Q_INVOKABLE void        CancelCloneRepository() const;
+
 
     /** @brief взять контент у файла(директории)*/
     Q_INVOKABLE QVariant    GetContentDirectory(QVariant dir) const;

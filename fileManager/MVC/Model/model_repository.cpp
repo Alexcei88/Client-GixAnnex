@@ -1,6 +1,6 @@
 #include "model_repository.h"
 
-#include <QVariantList>
+#include "../facadeapplication.h"
 
 using namespace GANN_MVC;
 using namespace GANN_DEFINE;
@@ -24,6 +24,16 @@ QVariantList ModelQmlAndCRepository::GetListRepository()
     return repoRegistry;
 }
 //----------------------------------------------------------------------------------------/
+const QString ModelQmlAndCRepository::GetDefaultRepository() const
+{
+    QString localPath = "";
+    if(FacadeApplication::instance->currentRepository != FacadeApplication::instance->repository.end())
+    {
+        localPath = FacadeApplication::instance->currentRepository->first;
+    }
+    return localPath;
+}
+//----------------------------------------------------------------------------------------/
 GANN_DEFINE::RESULT_EXEC_PROCESS ModelQmlAndCRepository::CloneRepository(const QString& localURL, const QString& remoteURL, const QString& nameRepo)
 {
     FacadeApplication *facade = FacadeApplication::getInstance();
@@ -32,15 +42,15 @@ GANN_DEFINE::RESULT_EXEC_PROCESS ModelQmlAndCRepository::CloneRepository(const Q
     if(result == NO_ERROR)
     {
         facade->SaveRepository(localPath, remoteURL, nameRepo);
-        facade->ReLoadListRepository();
-        facade->CancelCloneRepository();
+        facade->systemTray->ReLoadListRepository();
+        facade->systemTray->CancelCloneRepository();
     }
     return result;
 }
 //----------------------------------------------------------------------------------------/
-void ModelQmlAndCRepository::CancelCloneRepository(bool breakCommand)
+void ModelQmlAndCRepository::CancelCloneRepository(bool breakCommand) const
 {
-    FacadeApplication::getInstance()->CancelCloneRepository(breakCommand);
+    FacadeApplication::instance->systemTray->CancelCloneRepository();
 }
 //----------------------------------------------------------------------------------------/
 GANN_DEFINE::RESULT_EXEC_PROCESS ModelQmlAndCRepository::GetContentDirectory(const QString& dir) const
@@ -50,7 +60,7 @@ GANN_DEFINE::RESULT_EXEC_PROCESS ModelQmlAndCRepository::GetContentDirectory(con
 //----------------------------------------------------------------------------------------/
 void ModelQmlAndCRepository::ChangeCurrentRepository(const QString& dir) const
 {
-    FacadeApplication::getInstance()->ChangeCurrentRepository(dir);
+    FacadeApplication::instance->ChangeCurrentRepository(dir);
 }
 //----------------------------------------------------------------------------------------/
 

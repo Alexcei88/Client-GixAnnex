@@ -14,6 +14,11 @@ QVariantList ControllerRepository::GetListRepository() const
     return model->GetListRepository();
 }
 //----------------------------------------------------------------------------------------/
+QVariant ControllerRepository::GetDefaultRepositoryPath() const
+{
+    return model->GetDefaultRepository();
+}
+//----------------------------------------------------------------------------------------/
 QVariant ControllerRepository::StartCloneRepository(QVariant localUlr, QVariant remoteURL, QVariant nameRepo)
 {
     QVariant result = model->CloneRepository(localUlr.toString(), remoteURL.toString(), nameRepo.toString());

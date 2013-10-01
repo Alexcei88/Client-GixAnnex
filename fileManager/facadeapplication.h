@@ -23,6 +23,7 @@
 
 // our stuff
 #include "systemtray.h"
+#include "MVC/Model/model_repository.h"
 #include "repository/irepository.h"
 
 class IRepository;
@@ -35,7 +36,8 @@ public:
     void            SetSystemTray(SystemTray* systemTray) { this->systemTray = systemTray; };
 
     // класс модели MVC объявим другом
-    friend class ModelQmlAndCRepository;
+    friend class GANN_MVC::ModelQmlAndCRepository;
+
 private:
     FacadeApplication();
     FacadeApplication(const FacadeApplication& facade);
@@ -45,7 +47,7 @@ private:
     void            InitClassCAndQML();
 #warning PUBLIC_FIELD_CLASS
     // временно публичный
-public:
+
     /** @brief загрузка репозиториев из сохраненных конфигов */
     void            LoadRepositories();
 
@@ -55,31 +57,21 @@ public:
     /** @brief начать клонирование репозитория */
     GANN_DEFINE::RESULT_EXEC_PROCESS StartCloneRepository(QString& localURL, const QString& remoteURL, const QString& nameRepo);
 
-    /** @brief закрытие окна клонирования
-    @param 1 - прерывание команды
-           0 - просто закрыть окно
-    */
-    void            CancelCloneRepository(const bool breakCommand = false);
-
-    /** @brief перезагрузить модель со списком репозиториев*/
-    bool            ReLoadListRepository() const;
-
     /** @brief Сменить итератор текущий репозиторий */
     void            ChangeCurrentRepository(const QString &dir);
 
+
     /** @brief путь к файлу конфигов репозитория, формат xml */
     const QString   pathFileRepoConfig;
-
-    QFile           fileRepoConfig;
-
     /** @brief вектор репозиториев, хранящиеся на клиенте */
     std::map<QString, boost::shared_ptr<IRepository> > repository;
-
     /** @brief итератор на текущий репозиторий */
     std::map<QString, boost::shared_ptr<IRepository> >::iterator currentRepository;
 
     /** @brief системный трей */
     SystemTray*     systemTray;
+    QFile           fileRepoConfig;
+
 
 };
 

@@ -12,6 +12,7 @@ boost::shared_ptr<FacadeApplication> FacadeApplication::instance = boost::shared
 //----------------------------------------------------------------------------------------/
 FacadeApplication::FacadeApplication() :
     pathFileRepoConfig("ganx-repository.xml")
+  , currentRepository(repository.end())
 //    pathFileRepoConfig(":/config/config_repo")
 {
     fileRepoConfig.setFileName(pathFileRepoConfig);
@@ -62,7 +63,24 @@ void FacadeApplication::LoadRepositories()
         const QString nameRepo = attrNameRepo.value();
 
         boost::shared_ptr<IRepository> tempRepo(new TRepository(localUrl, remoteUrl, nameRepo));
+
+        // читаем список параметров автосинхронизации
+        {
+            QDomNodeList nodeSync = listRepo.at(countRepo).childNodes();
+            assert(nodeSync.size() == 1);
+            QDomNamedNodeMap nodeSyncMap = nodeSync.at(0).attributes();
+            assert(nodeSyncMap.count() == 2);
+
+            QDomAttr attrSyncRepo = nodeSyncMap.namedItem("autosync").toAttr();
+            const bool autosync = attrSyncRepo.value().toInt();
+            QDomAttr attrSyncRepoContent = nodeSyncMap.namedItem("autosyncContent").toAttr();
+            const bool autosyncContent = attrSyncRepoContent.value().toInt();
+            tempRepo->SetParamSyncRepository(autosync, autosyncContent);
+        }
+
         repository[localUrl] = tempRepo;
+        if(countRepo == 0)
+            currentRepository = repository.begin();
     }
     fileRepoConfig.close();
 }
@@ -106,7 +124,6 @@ void FacadeApplication::SaveRepository(const QString& localURL, const QString& r
     fileRepoConfig.reset();
     QTextStream(&fileRepoConfig) << doc.toString();
     fileRepoConfig.close();
-
 }
 //----------------------------------------------------------------------------------------/
 GANN_DEFINE::RESULT_EXEC_PROCESS FacadeApplication::StartCloneRepository(QString &localURL, const QString &remoteURL, const QString &nameRepo)
@@ -121,19 +138,14 @@ GANN_DEFINE::RESULT_EXEC_PROCESS FacadeApplication::StartCloneRepository(QString
     return result;
 }
 //----------------------------------------------------------------------------------------/
-void FacadeApplication::CancelCloneRepository(const bool breakCommand)
-{
-    systemTray->CancelCloneRepository();
-}
-//----------------------------------------------------------------------------------------/
-bool FacadeApplication::ReLoadListRepository() const
-{
-    return systemTray->ReLoadListRepository();
-}
-//----------------------------------------------------------------------------------------/
 void FacadeApplication::ChangeCurrentRepository(const QString& dir)
 {
-
+    if(!repository.empty())
+    {
+        auto iterator = repository.find(dir);
+        assert(iterator != repository.end());
+        currentRepository = iterator;
+    }
 }
 //----------------------------------------------------------------------------------------/
 void FacadeApplication::InitClassCAndQML()
