@@ -3,6 +3,25 @@
 
 #include "tshell.h"
 
+// Qt stuff
+#include <QRunnable>
+#include <QThreadPool>
+
+class GetContentTask: public QRunnable
+{
+public:
+    GetContentTask(const QString& strCommand, IParsingCommandOut* parsingCommand) : command(strCommand), parsing(parsingCommand) {};
+    void run()
+    {
+        std::cout<<"New Task execute"<<std::endl;
+//        usleep(5);
+        GANN_DEFINE::RESULT_EXEC_PROCESS result = TShell::GetInstance()->ExecuteProcess(command, parsing);
+    }
+private:
+    const QString command;
+    IParsingCommandOut* parsing;
+};
+
 
 class ShellCommand
 {

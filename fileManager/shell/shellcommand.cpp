@@ -70,6 +70,7 @@ RESULT_EXEC_PROCESS ShellCommand::GetContentFile(const QString& path) const
 {
     const QString strCommand = baseCommand + "get " + path;
 
+#if 0
     RESULT_EXEC_PROCESS result = shell->ExecuteProcess(strCommand, receiverParsing[GET_CONTENT]);
     if(result != NO_ERROR)
         return result;
@@ -78,6 +79,14 @@ RESULT_EXEC_PROCESS ShellCommand::GetContentFile(const QString& path) const
     if(codeError != NO_ERROR)
         return codeError;
     return result;
+#else
+    GetContentTask* task = new GetContentTask(strCommand, receiverParsing[GET_CONTENT]);
+    GetContentTask* task1 = new GetContentTask(strCommand, receiverParsing[GET_CONTENT]);
+
+    QThreadPool::globalInstance()->setMaxThreadCount(1);
+    QThreadPool::globalInstance()->start(task);
+    QThreadPool::globalInstance()->start(task1);
+#endif
 }
 //----------------------------------------------------------------------------------------/
 RESULT_EXEC_PROCESS ShellCommand::DropContentFile(const QString& path) const
