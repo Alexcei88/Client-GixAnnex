@@ -4,11 +4,12 @@
 using namespace GANN_DEFINE;
 
 //----------------------------------------------------------------------------------------/
-IParsingCommandOut::IParsingCommandOut():
+IParsingCommandOut::IParsingCommandOut(const TShell *shell):
   commandStart(false)
  ,commandEnd(false)
  ,exitCodeCommand(0)
  ,wasErrorCommand(false)
+ ,shell(shell)
 {}
 //----------------------------------------------------------------------------------------/
 IParsingCommandOut::~IParsingCommandOut(){};
@@ -23,7 +24,7 @@ void IParsingCommandOut::SetParamBeforeStartCommand()
 //----------------------------------------------------------------------------------------/
 void IParsingCommandOut::GetNewDataStdOut()
 {
-    QString newData(TShell::GetInstance()->readStandartOutput());
+    QString newData(shell->readStandartOutput());
 
     dataStdOut << newData;
     std::cout<<"1. "<<newData.toStdString()<<std::endl;

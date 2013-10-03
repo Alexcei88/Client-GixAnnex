@@ -1,5 +1,10 @@
 #include "trepository.h"
 
+// parsing stuff
+#include "../parsing_command_out/parsingcommandclone.h"
+#include "../parsing_command_out/parsingcommandwhereis.h"
+#include "../parsing_command_out/parsingcommandget.h"
+
 using namespace GANN_DEFINE;
 //----------------------------------------------------------------------------------------/
 TRepository::TRepository(): IRepository()
@@ -14,20 +19,22 @@ TRepository::~TRepository() {}
 //----------------------------------------------------------------------------------------/
 RESULT_EXEC_PROCESS TRepository::CloneRepository(QString& localURL, const QString& nameRepo, const QString& remoteURL)
 {
+    boost::shared_ptr<TShell> shell(new TShell());
+
     // здесь должны переходить в текущую директорию
-    RESULT_EXEC_PROCESS result = shellCommand->SetWorkingDirectory(localURL);
+    RESULT_EXEC_PROCESS result = shellCommand->SetWorkingDirectory(localURL, shell.get());
 
     QString folderToClone = "";
-    result = shellCommand->CloneRepositories(remoteURL, folderToClone);
+    result = shellCommand->CloneRepositories(remoteURL, folderToClone, shell);
     folderToClone = "/" + folderToClone;
     if(result != int(NO_ERROR))
     {
         printf("Error clone repositories: %s \n", remoteURL.toStdString().c_str());
         return result;
     }
-    shellCommand->SetWorkingDirectory(localURL + folderToClone);
+    shellCommand->SetWorkingDirectory(localURL + folderToClone, shell.get());
 
-    result = shellCommand->InitRepositories(nameRepo);
+    result = shellCommand->InitRepositories(nameRepo, shell.get());
     if(result != int(NO_ERROR))
     {
         printf("Error git-annex init repositories: %s \n", localURL.toStdString().c_str());
@@ -40,7 +47,6 @@ RESULT_EXEC_PROCESS TRepository::CloneRepository(QString& localURL, const QStrin
     this->localURL  = localURL + folderToClone;
 
     localURL +=folderToClone;
-    result = shellCommand->SetWorkingDirectory(this->localURL);
     return result;
 }
 //----------------------------------------------------------------------------------------/
@@ -55,8 +61,9 @@ RESULT_EXEC_PROCESS TRepository::DeleteRepository(const QString &localURL)
 //----------------------------------------------------------------------------------------/
 RESULT_EXEC_PROCESS TRepository::GetContentFile(const QString& file) const
 {
-    shellCommand->SetWorkingDirectory(this->localURL);
-    RESULT_EXEC_PROCESS result = shellCommand->GetContentFile(file);
+    boost::shared_ptr<TShell> shell(new TShell());
+    shellCommand->SetWorkingDirectory(this->localURL, shell.get());
+    RESULT_EXEC_PROCESS result = shellCommand->GetContentFile(file, shell);
     if(result != NO_ERROR)
     {
         printf("Error git-annex get content of file: %s \n", file.toStdString().c_str());
@@ -67,7 +74,9 @@ RESULT_EXEC_PROCESS TRepository::GetContentFile(const QString& file) const
 //----------------------------------------------------------------------------------------/
 RESULT_EXEC_PROCESS TRepository::DropContentFile(const QString& file) const
 {
-    RESULT_EXEC_PROCESS result = shellCommand->DropContentFile(file);
+    boost::shared_ptr<TShell> shell(new TShell());
+    shellCommand->SetWorkingDirectory(this->localURL, shell.get());
+    RESULT_EXEC_PROCESS result = shellCommand->DropContentFile(file, shell.get());
     if(result != NO_ERROR)
     {
         printf("Error git-annex drop content of file: %s \n", file.toStdString().c_str());
@@ -78,7 +87,9 @@ RESULT_EXEC_PROCESS TRepository::DropContentFile(const QString& file) const
 //----------------------------------------------------------------------------------------/
 RESULT_EXEC_PROCESS TRepository::WhereisFile(const QString& file) const
 {
-    RESULT_EXEC_PROCESS result = shellCommand->WhereisFiles(file);
+    boost::shared_ptr<TShell> shell(new TShell());
+    shellCommand->SetWorkingDirectory(this->localURL, shell.get());
+    RESULT_EXEC_PROCESS result = shellCommand->WhereisFiles(file, shell.get());
     if(result != NO_ERROR)
     {
         printf("Error git-annex drop content of file: %s \n", file.toStdString().c_str());

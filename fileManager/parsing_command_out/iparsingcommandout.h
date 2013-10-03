@@ -7,10 +7,12 @@
 
 #include "../define.h"
 
+class TShell;
+
 class IParsingCommandOut
 {
 public:
-    IParsingCommandOut();
+    IParsingCommandOut(const TShell* shell);
     virtual ~IParsingCommandOut();
 
     /** @brief действия перед запуском команды */
@@ -56,6 +58,9 @@ protected:
 
     /** @brief ошибка при выполнении всей команды */
     bool                wasErrorCommand;
+
+    /** @brief класс, выполняющий команду shell*/
+    const TShell*       shell;
 
 signals:
     // сигнал, которым сообщаем, что новые данные готовы после парсинга

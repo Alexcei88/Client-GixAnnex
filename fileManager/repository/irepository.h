@@ -94,11 +94,12 @@ protected:
     QString         localURL;
     // название репозитория Git-Annex
     QString         nameRepo;
+    // параметры синхронизации репозитория
+    ParamRepository paramSyncRepo;
 
 private:
     void            InitClass();
 
-    ParamRepository paramSyncRepo;
 
 };
 

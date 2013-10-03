@@ -1,6 +1,6 @@
 #include "parsingcommandget.h"
 
-ParsingCommandGet::ParsingCommandGet()
+ParsingCommandGet::ParsingCommandGet(const TShell* shell) : IParsingCommandOut(shell)
 {
     // регулярное выражение в случаи успешного парсинга
     QString succes = "(get)(.*)(\\(.*\\))(.*)";

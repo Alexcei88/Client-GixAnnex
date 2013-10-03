@@ -5,7 +5,7 @@
 
 using namespace GANN_DEFINE;
 //----------------------------------------------------------------------------------------/
-ShellTask::ShellTask(const QString& strCommand, IParsingCommandOut* parsingCommand, const TShell* shell):
+ShellTask::ShellTask(const QString strCommand, boost::shared_ptr<IParsingCommandOut> parsingCommand, const boost::shared_ptr<TShell> shell):
     command(strCommand)
   , parsingCommand(parsingCommand)
   , shell(shell)
@@ -14,7 +14,7 @@ ShellTask::ShellTask(const QString& strCommand, IParsingCommandOut* parsingComma
 //----------------------------------------------------------------------------------------/
 void ShellTask::run()
 {
-    RESULT_EXEC_PROCESS result = shell->ExecuteProcess(command, parsingCommand);
+    RESULT_EXEC_PROCESS result = shell->ExecuteProcess(command, parsingCommand.get());
     if(result != NO_ERROR)
     {
 //        return result;
