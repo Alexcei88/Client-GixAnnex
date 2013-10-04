@@ -37,7 +37,7 @@ void IParsingCommandOut::GetNewDataStdOut()
 void IParsingCommandOut::SetParamAfterEndCommand(int exitCode)
 {
     commandEnd      = true;
-    commandStart    = false;
+    commandStart    = true;
     exitCodeCommand = exitCode;
 
     // выполняем парсинг после выполнения команды
@@ -51,14 +51,22 @@ QStringList IParsingCommandOut::GetParsingData() const
 //----------------------------------------------------------------------------------------/
 RESULT_EXEC_PROCESS IParsingCommandOut::GetCodeError() const
 {
-    if(commandEnd == true && commandStart == false)
+    if(commandEnd == true && commandStart == true)
     {
+        // команда была запущена и выполнена до конца
         if(wasErrorCommand || exitCodeCommand)
             return ERROR_EXECUTE;
         else
             return NO_ERROR;
     }
     else
+    {
+        if(!commandStart)
+            return ERROR_NO_STARTED;
+        else if(!commandEnd)
+            return ERROR_NO_FINISHED;
         return NO_ERROR;
+    }
 }
+//----------------------------------------------------------------------------------------/
 

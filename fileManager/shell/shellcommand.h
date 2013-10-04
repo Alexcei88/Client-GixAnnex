@@ -34,19 +34,19 @@ public:
     // 3. закачать контент у файлов((директории)
     GANN_DEFINE::RESULT_EXEC_PROCESS GetContentFile(const QString& path, const boost::shared_ptr<TShell> shell) const;
     // 4. удалить контент у файлов((директории)
-    GANN_DEFINE::RESULT_EXEC_PROCESS DropContentFile(const QString& path, const TShell *shell) const;
+    GANN_DEFINE::RESULT_EXEC_PROCESS DropContentFile(const QString& path, const boost::shared_ptr<TShell> shell) const;
     // 5. Удалить файл(директорию) из репозитория вместе с контентом
-    GANN_DEFINE::RESULT_EXEC_PROCESS RemoveFile(const QString& path, const TShell* shell) const;
+    GANN_DEFINE::RESULT_EXEC_PROCESS RemoveFile(const QString& path, const boost::shared_ptr<TShell> shell) const;
     // 6. Синхронизация с главным репозиторием
-    GANN_DEFINE::RESULT_EXEC_PROCESS Sync(const TShell *shell) const;
+    GANN_DEFINE::RESULT_EXEC_PROCESS Sync(const boost::shared_ptr<TShell> shell) const;
     // 7. оказывает местонахождение файла в других репозиториях
-    GANN_DEFINE::RESULT_EXEC_PROCESS WhereisFiles(const QString& path, const TShell* shell) const;
+    GANN_DEFINE::RESULT_EXEC_PROCESS WhereisFiles(const QString& path, const boost::shared_ptr<TShell> shell) const;
 
     /**
     @brief Pull Repositories - послать изменения в удаленный репозитрий
     @return 0 - нет ошибок
     */
-    GANN_DEFINE::RESULT_EXEC_PROCESS PullRepositories(const TShell* shell) const;
+    GANN_DEFINE::RESULT_EXEC_PROCESS PullRepositories(const boost::shared_ptr<TShell> shell) const;
 
 private:
     const QString  baseCommand;

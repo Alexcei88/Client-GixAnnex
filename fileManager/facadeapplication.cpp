@@ -5,6 +5,8 @@
 #include <QQmlEngine>
 #include <QQmlComponent>
 #include <QTextStream>
+#include <QThreadPool>
+
 
 using namespace GANN_DEFINE;
 
@@ -20,7 +22,18 @@ FacadeApplication::FacadeApplication() :
     InitClassCAndQML();
 
     // загружаем из конфигов репозитории
-    LoadRepositories();    
+    LoadRepositories();
+
+    // разрешаем выполнять задачу только в одном потоке
+    // больше 1 процесса git-annex создать все равно нельзя
+    QThreadPool::globalInstance()->setMaxThreadCount(1);
+
+    // делаем таймер, и запускаем его
+    QObject::connect(&timeSync, &QTimer::timeout, [=](){this->TimeOutTimeSync();});
+    // интервал срабатывания тайминга(в миллисек)
+    const int timeInterval = 30000;
+    timeSync.setInterval(30000);
+    timeSync.start(timeInterval);
 }
 //----------------------------------------------------------------------------------------/
 FacadeApplication* FacadeApplication::getInstance()
@@ -146,6 +159,32 @@ void FacadeApplication::ChangeCurrentRepository(const QString& dir)
         assert(iterator != repository.end());
         currentRepository = iterator;
     }
+}
+//----------------------------------------------------------------------------------------/
+void FacadeApplication::TimeOutTimeSync()
+{
+    // идем по все репозиториям, и выполняем синхронизацию
+    std::cout<<"Timer Signal End"<<std::endl;
+    if(currentRepository != repository.end())
+    {
+        // выполняем синхронизацию активного репозитория
+        IRepository *repository = currentRepository->second.get();
+        if(repository->GetParamSyncRepository())
+            repository->SyncRepository();
+    }
+    // теперь всех остальных
+    for(auto iterator = repository.begin(); iterator != repository.end(); ++iterator)
+    {
+        // текущий репозитирой мы уже синхронизировали
+        if(iterator != currentRepository)
+        {
+            // выполняем синхронизацию активного репозитория
+            IRepository *repository = currentRepository->second.get();
+            if(repository->GetParamSyncRepository())
+                repository->SyncRepository();
+        }
+    }
+
 }
 //----------------------------------------------------------------------------------------/
 void FacadeApplication::InitClassCAndQML()

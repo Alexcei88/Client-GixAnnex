@@ -24,7 +24,6 @@ public:
     bool                GetParamSyncRepository() const { return paramSyncRepo.autosync; };
     bool                GetParamSyncContentRepository() const { return paramSyncRepo.autosyncContent; };
 
-
     /**
     @brief клонирование репозитория
     @param localURL -
@@ -63,26 +62,31 @@ public:
     virtual GANN_DEFINE::RESULT_EXEC_PROCESS WhereisFile(const QString& file = " ") const = 0;
 
     /**
+    @brief синхрнизация с удаленным репозиторием
+    */
+    virtual GANN_DEFINE::RESULT_EXEC_PROCESS SyncRepository() const = 0;
+
+    /**
     @brief Структура, описывающая параметры хранения файлов репозиторий
     */
-    typedef struct PARAMETR_REPOSITORY_GI_ANNEX
+    struct PARAMETR_REPOSITORY_GI_ANNEX
     {
         // автосинхронизация с сервером
         bool autosync;
         // автосинхронизация контента репозитория
         bool autosyncContent;
 
-    } ParamRepository;
+    };
 
     /**
     @brief Структура, описывающая параметры файла(папки), входящие в репозиторий
     */
-    typedef struct PARAMETR_FILEFOLDER_GIT_ANNEX
+    struct PARAMETR_FILEFOLDER_GIT_ANNEX
     {
         // автосинхронизация контента
         bool autosync;
 
-    } ParamContentFile;
+    };
 
 
 protected:
@@ -95,7 +99,7 @@ protected:
     // название репозитория Git-Annex
     QString         nameRepo;
     // параметры синхронизации репозитория
-    ParamRepository paramSyncRepo;
+    PARAMETR_REPOSITORY_GI_ANNEX paramSyncRepo;
 
 private:
     void            InitClass();

@@ -20,6 +20,7 @@
 #include <QString>
 #include <QFile>
 #include <QDomDocument>
+#include <QTimer>
 
 // our stuff
 #include "systemtray.h"
@@ -45,8 +46,6 @@ private:
     static boost::shared_ptr<FacadeApplication> instance;
 
     void            InitClassCAndQML();
-#warning PUBLIC_FIELD_CLASS
-    // временно публичный
 
     /** @brief загрузка репозиториев из сохраненных конфигов */
     void            LoadRepositories();
@@ -60,6 +59,9 @@ private:
     /** @brief Сменить итератор текущий репозиторий */
     void            ChangeCurrentRepository(const QString &dir);
 
+    /** @brief Слот, срабатывающий при тайм-айте таймера(в основном синхронизация данных)*/
+    void            TimeOutTimeSync();
+
 
     /** @brief путь к файлу конфигов репозитория, формат xml */
     const QString   pathFileRepoConfig;
@@ -68,9 +70,14 @@ private:
     /** @brief итератор на текущий репозиторий */
     std::map<QString, boost::shared_ptr<IRepository> >::iterator currentRepository;
 
+    /** @brief таймер, отвественный за синхронизацию контента с другими репозиториями */
+    QTimer          timeSync;
+
     /** @brief системный трей */
     SystemTray*     systemTray;
     QFile           fileRepoConfig;
+
+
 
 
 };
