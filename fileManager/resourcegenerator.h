@@ -8,6 +8,7 @@
 #include <QIcon>
 #include <QResource>
 
+
 #include <boost/shared_ptr.hpp>
 
 class ResourceGenerator
@@ -22,6 +23,7 @@ private:
     QResource*          resourceFileIcon;
 
     void                GenerateResource();
+
 };
 
 #endif // RESOURCEGENERATOR_H

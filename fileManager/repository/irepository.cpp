@@ -21,6 +21,17 @@ IRepository::IRepository(const QString& localUrl, const QString& remoteUrl, cons
 void IRepository::InitClass()
 {
     shellCommand = boost::make_shared<ShellCommand>();
+
+    const QMetaObject &mo = staticMetaObject;
+    int enum_index = mo.indexOfEnumerator("STATE_REPOSITORY");
+    metaEnumState = mo.enumerator(enum_index);
+    // устанавливаем состояние по умолчанию
+    currentState = Disable_sinc;
+}
+//----------------------------------------------------------------------------------------/
+void IRepository::SetState(const STATE_REPOSITORY& state)
+{
+    currentState = state;
 }
 //----------------------------------------------------------------------------------------/
 void IRepository::SetParamSyncRepository(const bool& autosync, const bool& autosyncContent)

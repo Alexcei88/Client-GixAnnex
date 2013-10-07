@@ -94,6 +94,7 @@ void FacadeApplication::LoadRepositories()
             QDomAttr attrSyncRepoContent = nodeSyncMap.namedItem("autosyncContent").toAttr();
             const bool autosyncContent = attrSyncRepoContent.value().toInt();
             tempRepo->SetParamSyncRepository(autosync, autosyncContent);
+            autosync ? tempRepo->SetState(IRepository::Synced) : tempRepo->SetState(IRepository::Disable_sinc);
         }
 
         repository[localUrl] = std::move(tempRepo);

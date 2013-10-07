@@ -3,9 +3,22 @@
 
 #include "../shell/shellcommand.h"
 
-class IRepository
+#include <QObject>
+#include <QMetaObject>
+#include <QMetaEnum>
+
+class IRepository : public QObject
 {
+    Q_OBJECT
+    Q_ENUMS(STATE_REPOSITORY)
 public:
+
+    // состояние репозитория
+    enum STATE_REPOSITORY {
+            Syncing= 0, // идет синхронизация
+            Synced = 1, // синхронизация выполнена
+            Disable_sinc = 2 // синхронизация выключена
+    };
 
     IRepository();
     IRepository(const QString& localUrl, const QString& remoteUrl, const QString& nameRepo);
@@ -67,6 +80,11 @@ public:
     virtual GANN_DEFINE::RESULT_EXEC_PROCESS SyncRepository() const = 0;
 
     /**
+    @brief Установка состояния репозитория
+    */
+    virtual void        SetState(const STATE_REPOSITORY& state);
+
+    /**
     @brief Структура, описывающая параметры хранения файлов репозиторий
     */
     struct PARAMETR_REPOSITORY_GI_ANNEX
@@ -101,10 +119,12 @@ protected:
     // параметры синхронизации репозитория
     PARAMETR_REPOSITORY_GI_ANNEX paramSyncRepo;
 
+    // перечисление состояний, в которых мы находимся
+    QMetaEnum       metaEnumState;
+    STATE_REPOSITORY currentState;
+
 private:
     void            InitClass();
-
-
 };
 
 #endif // IREPOSITORY_H

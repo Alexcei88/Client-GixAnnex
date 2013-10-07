@@ -15,4 +15,5 @@
     <qresource prefix="/config">
         <file alias="config_repo">ganx-repository.xml</file>
     </qresource>
+    <qresource prefix="/icons"/>
 </RCC>

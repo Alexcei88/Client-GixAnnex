@@ -1,12 +1,15 @@
 #include "resourcegenerator.h"
 
+#include <QFile>
+
 boost::shared_ptr<ResourceGenerator> ResourceGenerator::instance = boost::shared_ptr<ResourceGenerator>();
 //----------------------------------------------------------------------------------------/
 ResourceGenerator::ResourceGenerator()
 {
-    resourceFileIcon = new QResource("icons.qrc");
+    // пока что бесполезный класс
+    /*resourceFileIcon = new QResource("icons.qrc");
     std::cout<<"AbsolutePath"<<resourceFileIcon->absoluteFilePath().toStdString().c_str()<<std::endl;
-    GenerateResource();
+    GenerateResource();*/
 }
 //----------------------------------------------------------------------------------------/
 ResourceGenerator::~ResourceGenerator()
@@ -25,6 +28,8 @@ void ResourceGenerator::GenerateResource()
 {
     if(QIcon::hasThemeIcon("application-msword"))
     {
+        QIcon icon = QIcon::fromTheme("application-msword");
+       // QFile tempFile(&icon);
         std::cout<<"Da, we finded"<<std::endl;
     }
     if(resourceFileIcon->registerResource("/home/alexcei/MyProject/Client-GixAnnex/fileManager/folder.png", "/folder"))

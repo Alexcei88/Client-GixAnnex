@@ -13,7 +13,6 @@ Rectangle {
 
     function reloadModel()
     {
-        console.log("reloadModel");
         modelRepoXML.reload();
     }
 
@@ -66,6 +65,15 @@ Rectangle {
             id: viewItem
             height: viewModel.cellHeight
             width: viewModel.cellWidth
+
+            Image{
+                id: repoSync
+                anchors.bottom: parent.bottom
+                anchors.left: parent.left
+                anchors.leftMargin: 5
+                source: "qrc:/folder"
+                state: "SYNCING"
+            }
             Text{
                 // anchors.horizontalCenter: parent.horizontalCenter
                 text: nameRepo
@@ -82,4 +90,45 @@ Rectangle {
             }
         }
     }
+    // различные состояния, в которых может находиться репозиторий
+    states:[
+            // 1. Идет синхронизация
+            State {
+                name: "SYNCING"
+//                        PropertyChanges { target: menuBar; y: 0 }
+//                        PropertyChanges { target: textArea; y: partition + drawer.height }
+//                        PropertyChanges { target: drawer; y: partition }
+//                        PropertyChanges { target: arrowIcon; rotation: 180 }
+                when: { var curState = repository.GetListRepository[0];
+                            curState == "syncing"; }
+                PropertyChanges {
+                    target: repoSync
+                    source: "qrc:/images/ok.png"
+
+                }
+            },
+
+            // 2. Репозиторий сихронизирован
+            State {
+                name: "SYNCED"
+                when: repository.GetStateListRepository[0] == "Disdsdable_sync";
+                PropertyChanges {
+                    target: repoSync
+                    source: "qrc:/images/ok.png"
+                }
+            },
+
+            // 3. Репозиторий выключен
+            State {
+                name: "DISABLE SYNC"
+                when: repository.GetStateListRepository[0] == "Disable_sync";
+                PropertyChanges {
+                    target: repoSync
+                    source: "qrc:/folder"
+
+                }
+            }
+
+            // папка с автосинхронизацией контента(посмотреть, это будет отдельным состоянием, или просто как)
+        ]
 }

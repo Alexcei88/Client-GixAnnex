@@ -9,6 +9,14 @@ ControllerRepository::ControllerRepository( ):
     QObject::connect(this, &ControllerRepository::currentPathRepoChanged, [=](QString dir){model->ChangeCurrentRepository(dir); });
 }
 //----------------------------------------------------------------------------------------/
+QVariantList ControllerRepository::GetStateListRepository() const
+{
+    QVariantList list;
+    list<<"syncing";
+    list<<"Disable_sync"<<"syncing";
+    return list;
+}
+//----------------------------------------------------------------------------------------/
 QVariant ControllerRepository::GetDefaultRepositoryPath() const
 {
     return model->GetDefaultRepository();

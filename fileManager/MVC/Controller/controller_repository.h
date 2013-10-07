@@ -22,6 +22,8 @@ public:
     QString                 GetCurrentPathRepo() { return currentPathRepo; };
     void                    SetCurrentPathRepo(QString path) { currentPathRepo = path; emit currentPathRepoChanged(path);};
 
+    /** @brief берет состояние объекта */
+    Q_INVOKABLE QVariantList GetStateListRepository() const;
 
     /** @brief путь до репозитория по умолчанию */
     Q_INVOKABLE QVariant     GetDefaultRepositoryPath() const;
@@ -40,8 +42,7 @@ public:
 
 private:
     const QSharedPointer<ModelQmlAndCRepository>  model;
-    QString             currentPathRepo;
-
+    QString                 currentPathRepo;
 signals:
     void                currentPathRepoChanged(QString);
 };
