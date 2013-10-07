@@ -33,7 +33,8 @@ SOURCES += main.cpp \
     MVC/Model/model_repository.cpp \
 # Installation path
 # target.path =
-    shell/shelltask.cpp
+    shell/shelltask.cpp \
+    resourcegenerator.cpp
 
 # Please do not modify the following two lines. Required for deployment.
 include(qtquick2applicationviewer/qtquick2applicationviewer.pri)
@@ -64,7 +65,8 @@ HEADERS += \
     MVC/Model/model_repository.h \
     define.h \
     MVC/Model/model_updateviewer.h \
-    shell/shelltask.h
+    shell/shelltask.h \
+    resourcegenerator.h
 
 # Включаем поддержку С++11
 QMAKE_CXXFLAGS += -std=c++0x

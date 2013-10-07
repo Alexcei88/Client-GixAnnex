@@ -22,6 +22,7 @@ Rectangle
         // меняем рабочую директорию у модели
         dirModel.folder = path;
         repository.currentPathRepo = path;
+        folderView.currentIndex = -1;
     }
     //-------------------------------------------------------------------------/
     ControllerRepository {
@@ -141,6 +142,7 @@ Rectangle
                     maximumLineCount: 1
                     elide: Text.ElideRight
                     anchors.horizontalCenter: imgFolder.horizontalCenter
+
                     Component.onCompleted:
                     {
                         var contentWidth = nameFolder.contentWidth;

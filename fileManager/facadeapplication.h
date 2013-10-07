@@ -66,9 +66,9 @@ private:
     /** @brief путь к файлу конфигов репозитория, формат xml */
     const QString   pathFileRepoConfig;
     /** @brief вектор репозиториев, хранящиеся на клиенте */
-    std::map<QString, boost::shared_ptr<IRepository> > repository;
+    std::map<QString, std::unique_ptr<IRepository> > repository;
     /** @brief итератор на текущий репозиторий */
-    std::map<QString, boost::shared_ptr<IRepository> >::iterator currentRepository;
+    std::map<QString, std::unique_ptr<IRepository> >::iterator currentRepository;
 
     /** @brief таймер, отвественный за синхронизацию контента с другими репозиториями */
     QTimer          timeSync;

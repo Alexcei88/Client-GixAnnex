@@ -16,9 +16,6 @@ class ModelQmlAndCRepository
 public:
     ModelQmlAndCRepository();
 
-    /** @brief Получить список репозиториев */
-    QVariantList        GetListRepository();
-
     /** @brief Получить дефалтный репозиторий */
     const QString       GetDefaultRepository() const;
 

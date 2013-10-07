@@ -1,6 +1,7 @@
 #include "facadeapplication.h"
 #include "MVC/Controller/controller_repository.h"
 #include "repository/trepository.h"
+#include "resourcegenerator.h"
 
 #include <QQmlEngine>
 #include <QQmlComponent>
@@ -18,11 +19,15 @@ FacadeApplication::FacadeApplication() :
 //    pathFileRepoConfig(":/config/config_repo")
 {
     fileRepoConfig.setFileName(pathFileRepoConfig);
-    // инициализируем связь C и QML
-    InitClassCAndQML();
+
+    // загружаем ресурсные файлы
+    ResourceGenerator::getInstance();
 
     // загружаем из конфигов репозитории
     LoadRepositories();
+
+    // инициализируем связь C и QML
+    InitClassCAndQML();
 
     // разрешаем выполнять задачу только в одном потоке
     // больше 1 процесса git-annex создать все равно нельзя
@@ -33,7 +38,7 @@ FacadeApplication::FacadeApplication() :
     // интервал срабатывания тайминга(в миллисек)
     const int timeInterval = 30000;
     timeSync.setInterval(30000);
-    timeSync.start(timeInterval);
+    timeSync.start();
 }
 //----------------------------------------------------------------------------------------/
 FacadeApplication* FacadeApplication::getInstance()
@@ -75,7 +80,7 @@ void FacadeApplication::LoadRepositories()
         QDomAttr attrNameRepo = nodeMap.namedItem("nameRepo").toAttr();
         const QString nameRepo = attrNameRepo.value();
 
-        boost::shared_ptr<IRepository> tempRepo(new TRepository(localUrl, remoteUrl, nameRepo));
+        std::unique_ptr<IRepository> tempRepo(new TRepository(localUrl, remoteUrl, nameRepo));
 
         // читаем список параметров автосинхронизации
         {
@@ -91,7 +96,7 @@ void FacadeApplication::LoadRepositories()
             tempRepo->SetParamSyncRepository(autosync, autosyncContent);
         }
 
-        repository[localUrl] = tempRepo;
+        repository[localUrl] = std::move(tempRepo);
         if(countRepo == 0)
             currentRepository = repository.begin();
     }
@@ -145,8 +150,8 @@ GANN_DEFINE::RESULT_EXEC_PROCESS FacadeApplication::StartCloneRepository(QString
     RESULT_EXEC_PROCESS result = newRepo->CloneRepository(localURL, nameRepo, remoteURL);
     if(result == NO_ERROR)
     {
-        boost::shared_ptr<IRepository> tempRepo(newRepo);
-        repository[localURL] = tempRepo;
+        std::unique_ptr<IRepository> tempRepo(newRepo);
+        repository[localURL] = std::move(tempRepo);
     }
     return result;
 }
@@ -163,6 +168,7 @@ void FacadeApplication::ChangeCurrentRepository(const QString& dir)
 //----------------------------------------------------------------------------------------/
 void FacadeApplication::TimeOutTimeSync()
 {
+    timeSync.stop();
     // идем по все репозиториям, и выполняем синхронизацию
     std::cout<<"Timer Signal End"<<std::endl;
     if(currentRepository != repository.end())
@@ -171,6 +177,9 @@ void FacadeApplication::TimeOutTimeSync()
         IRepository *repository = currentRepository->second.get();
         if(repository->GetParamSyncRepository())
             repository->SyncRepository();
+        // синхронизацию контента
+        if(repository->GetParamSyncContentRepository())
+            repository->GetContentFile(".");
     }
     // теперь всех остальных
     for(auto iterator = repository.begin(); iterator != repository.end(); ++iterator)
@@ -179,12 +188,14 @@ void FacadeApplication::TimeOutTimeSync()
         if(iterator != currentRepository)
         {
             // выполняем синхронизацию активного репозитория
-            IRepository *repository = currentRepository->second.get();
+            IRepository *repository = iterator->second.get();
             if(repository->GetParamSyncRepository())
                 repository->SyncRepository();
+            if(repository->GetParamSyncContentRepository())
+                repository->GetContentFile(".");
         }
     }
-
+    timeSync.start();
 }
 //----------------------------------------------------------------------------------------/
 void FacadeApplication::InitClassCAndQML()

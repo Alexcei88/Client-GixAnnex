@@ -6,23 +6,12 @@
 using namespace GANN_MVC;
 using namespace GANN_DEFINE;
 
+#include <QIcon>
+#include <QStringList>
+
 //----------------------------------------------------------------------------------------/
 ModelQmlAndCRepository::ModelQmlAndCRepository()
 {
-    GetListRepository();
-}
-//----------------------------------------------------------------------------------------/
-QVariantList ModelQmlAndCRepository::GetListRepository()
-{
-    QVariantList repoRegistry;
-    std::map<QString, boost::shared_ptr<IRepository>> repository = FacadeApplication::getInstance()->repository;
-    // заполняем repoRegistry
-    for(auto i = repository.begin(); i != repository.end(); ++i)
-    {
-        const QVariant pathRepo = i->first;
-        repoRegistry.push_back(pathRepo);
-    }
-    return repoRegistry;
 }
 //----------------------------------------------------------------------------------------/
 const QString ModelQmlAndCRepository::GetDefaultRepository() const

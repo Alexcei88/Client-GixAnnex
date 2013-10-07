@@ -23,9 +23,6 @@ public:
     void                    SetCurrentPathRepo(QString path) { currentPathRepo = path; emit currentPathRepoChanged(path);};
 
 
-    /** @brief Получить список репозиториев */
-    Q_INVOKABLE QVariantList GetListRepository() const;
-
     /** @brief путь до репозитория по умолчанию */
     Q_INVOKABLE QVariant     GetDefaultRepositoryPath() const;
 
