@@ -144,11 +144,6 @@ Rectangle
                         var contentWidth = nameFolder.contentWidth;
                         var widthComp = contentWidth > itemView.maxLengthOneLine ? itemView.maxLengthOneLine : contentWidth;
                         nameFolder.width = widthComp;
-//                        if(UtilsScript.lengthStr(curFileName, 500) > 10 )
-//                        {
-//                            console.log("length > 50");
-//                            return;
-//                        }
                     }
                 }
             }
