@@ -54,6 +54,7 @@ Rectangle {
             color: "skyblue"
             radius: 2
             anchors.margins: 10
+            anchors.left: repoSync.right
         }
         highlightMoveDuration: 0
         delegate:
