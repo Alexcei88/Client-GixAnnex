@@ -66,6 +66,11 @@ Rectangle {
             height: viewModel.cellHeight
             width: viewModel.cellWidth
 
+            Row {
+
+            anchors.fill: parent
+            width: parent.width
+
             Image{
                 id: repoSync
                 anchors.bottom: parent.bottom
@@ -73,7 +78,23 @@ Rectangle {
                 anchors.leftMargin: 5
                 source: "qrc:/folder"
                 state: "SYNCING"
-
+                }
+                Text{
+                    text: nameRepo
+                }
+                MouseArea{
+                    id: mouseAreaItem
+                    anchors.fill: parent
+                    onClicked: {
+                        viewModel.currentIndex = model.index
+                        // посылаем сигнал о выборе нового репозитория
+                        console.log(localPath)
+                        selectNewRepository(localPath)
+                    }
+                }
+            }
+        }
+    }
                 // различные состояния, в которых может находиться репозиторий
                 states:[
                         // 1. Идет синхронизация
