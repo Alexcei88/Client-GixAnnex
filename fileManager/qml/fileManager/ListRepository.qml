@@ -95,7 +95,7 @@ Rectangle {
             color: "skyblue"
             radius: 1
             width: 10
-            anchors.left: repoSync.right
+            //anchors.left: repoSync.right
         }
         highlightMoveDuration: 0
 
