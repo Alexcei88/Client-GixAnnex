@@ -52,8 +52,7 @@ Rectangle {
         highlight: Rectangle
         {
             color: "skyblue"
-            radius: 2
-            anchors.margins: 10
+            radius: 1
             anchors.left: repoSync.right
         }
         highlightMoveDuration: 0
