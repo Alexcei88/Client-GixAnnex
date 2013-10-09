@@ -97,7 +97,7 @@ Rectangle {
                 color: "skyblue"
                 radius: 1
                 width: 100
-                height: parent.width
+                height: viewModel.cellHeight
                // anchors.left: repoSync.right
             }
         }
