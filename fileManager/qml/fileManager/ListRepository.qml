@@ -42,7 +42,7 @@ Rectangle {
 
         width: parent.width
 
-        cellHeight: 64
+        cellHeight: 48
         cellWidth: parent.width
 
         currentIndex: 0
