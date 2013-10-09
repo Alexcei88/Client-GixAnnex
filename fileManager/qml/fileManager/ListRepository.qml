@@ -90,15 +90,15 @@ Rectangle {
                 }
             }
         }
-        highlight: Rectangle
-        {
-            color: "skyblue"
-            radius: 1
-            width: 10
-            //anchors.left: repoSync.right
+        highlight:
+        Item {
+            Rectangle {
+                color: "skyblue"
+                radius: 1
+                width: 10
+            }
         }
         highlightMoveDuration: 0
-
     }
                 // различные состояния, в которых может находиться репозиторий
                 states:[
