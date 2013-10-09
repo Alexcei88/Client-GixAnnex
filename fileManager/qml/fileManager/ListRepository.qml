@@ -52,13 +52,8 @@ Rectangle {
         highlight: Rectangle {
             color: "skyblue"
             radius: 1
-            anchors.margins: 20
+            anchors.margins: 5
         }
-        /*Component.onCompleted:
-        {
-            changeParentFolder(viewModel.currentItem.localPath);
-        }*/
-
         highlightMoveDuration: 0
         delegate:
             Item{
@@ -74,7 +69,7 @@ Rectangle {
                 Image{
                     id: repoSync
                     anchors.leftMargin: 5
-                    source: "qrc:/folder"
+                    source: "qrc:/repo_on.png"
                     state: "SYNCING"
                 }
                 Text{
