@@ -78,7 +78,8 @@ Rectangle {
                     elide: Text.ElideRight
                     maximumLineCount: 1
                     renderType: Text.NativeRendering
-                    width: parent.width - viewModel.cellWidth
+                    width: /*parent.width - viewModel.cellWidth*/  20
+                    anchors.centerIn: parent
                 }
 
                 MouseArea{
