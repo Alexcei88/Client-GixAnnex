@@ -83,15 +83,15 @@ Rectangle {
                         width: /*parent.width - viewModel.cellWidth*/  80
                     }
                 }
-                MouseArea{
-                    id: mouseAreaItem
-                    anchors.fill: parent
-                    onClicked: {
-                        viewModel.currentIndex = model.index
-                        // посылаем сигнал о выборе нового репозитория
-                        console.log(localPath)
-                        selectNewRepository(localPath)
-                    }
+            }
+            MouseArea{
+                id: mouseAreaItem
+                anchors.fill: parent
+                onClicked: {
+                    viewModel.currentIndex = model.index
+                    // посылаем сигнал о выборе нового репозитория
+                    console.log(localPath)
+                    selectNewRepository(localPath)
                 }
             }
         }
