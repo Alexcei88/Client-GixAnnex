@@ -81,6 +81,9 @@ Rectangle {
                         maximumLineCount: 1
                         renderType: Text.NativeRendering
                         width: /*parent.width - viewModel.cellWidth*/  80
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.left: parent.left
+                        anchors.leftMargin: 4
                     }
                 }
             }
