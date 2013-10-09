@@ -49,10 +49,11 @@ Rectangle {
         anchors.fill: parent
 
         keyNavigationWraps: true
-        highlight: Rectangle {
+        highlight: Rectangle
+        {
             color: "skyblue"
-            radius: 1
-            anchors.margins: 5
+            radius: 2
+            anchors.margins: 10
         }
         highlightMoveDuration: 0
         delegate:
@@ -92,8 +93,6 @@ Rectangle {
                 anchors.fill: parent
                 onClicked: {
                     viewModel.currentIndex = model.index
-                    // посылаем сигнал о выборе нового репозитория
-                    console.log(localPath)
                     selectNewRepository(localPath)
                 }
             }
