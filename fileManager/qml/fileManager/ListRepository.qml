@@ -66,18 +66,16 @@ Rectangle {
             height: viewModel.cellHeight
             width: viewModel.cellWidth
 
-            Row {
+            RowLayout {
 
             anchors.fill: parent
             width: parent.width
 
-            Image{
-                id: repoSync
-                anchors.bottom: parent.bottom
-                anchors.left: parent.left
-                anchors.leftMargin: 5
-                source: "qrc:/folder"
-                state: "SYNCING"
+                Image{
+                    id: repoSync
+                    anchors.leftMargin: 5
+                    source: "qrc:/folder"
+                    state: "SYNCING"
                 }
                 Text{
                     text: nameRepo
