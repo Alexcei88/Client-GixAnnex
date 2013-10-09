@@ -74,12 +74,13 @@ Rectangle {
                 }
 
                 Item{
+                    width: parent.width - viewModel.cellWidth
                     Text{
                         text: nameRepo
                         elide: Text.ElideRight
                         maximumLineCount: 1
                         renderType: Text.NativeRendering
-                        width: /*parent.width - viewModel.cellWidth*/  20
+                        width: /*parent.width - viewModel.cellWidth*/  80
                     }
                 }
                 MouseArea{
