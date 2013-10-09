@@ -72,6 +72,7 @@ Rectangle {
                     source: "qrc:/repo_on.png"
                     state: "SYNCING"
                 }
+
                 Text{
                     text: nameRepo
                     elide: Text.ElideRight
@@ -79,6 +80,7 @@ Rectangle {
                     renderType: Text.NativeRendering
                     width: parent.width - viewModel.cellWidth
                 }
+
                 MouseArea{
                     id: mouseAreaItem
                     anchors.fill: parent
