@@ -49,14 +49,6 @@ Rectangle {
         anchors.fill: parent
 
         keyNavigationWraps: true
-        highlight: Rectangle
-        {
-            color: "skyblue"
-            radius: 1
-            width: 10
-            anchors.left: repoSync.right
-        }
-        highlightMoveDuration: 0
         delegate:
             Item{
             id: viewItem
@@ -98,6 +90,15 @@ Rectangle {
                 }
             }
         }
+        highlight: Rectangle
+        {
+            color: "skyblue"
+            radius: 1
+            width: 10
+            anchors.left: repoSync.right
+        }
+        highlightMoveDuration: 0
+
     }
                 // различные состояния, в которых может находиться репозиторий
                 states:[
