@@ -73,15 +73,15 @@ Rectangle {
                     state: "SYNCING"
                 }
 
-                Text{
-                    text: nameRepo
-                    elide: Text.ElideRight
-                    maximumLineCount: 1
-                    renderType: Text.NativeRendering
-                    width: /*parent.width - viewModel.cellWidth*/  20
-                    anchors.centerIn: parent
+                Item{
+                    Text{
+                        text: nameRepo
+                        elide: Text.ElideRight
+                        maximumLineCount: 1
+                        renderType: Text.NativeRendering
+                        width: /*parent.width - viewModel.cellWidth*/  20
+                    }
                 }
-
                 MouseArea{
                     id: mouseAreaItem
                     anchors.fill: parent
