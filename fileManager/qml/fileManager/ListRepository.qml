@@ -92,10 +92,12 @@ Rectangle {
         }
         highlight:
         Item {
+
             Rectangle {
                 color: "skyblue"
                 radius: 1
-                width: 10
+                width: 100
+                anchors.fill: prent
             }
         }
         highlightMoveDuration: 0
