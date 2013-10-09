@@ -83,7 +83,7 @@ Rectangle {
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.left: parent.left
                         anchors.leftMargin: 4
-                        width: /*parent.width - viewModel.cellWidth*/  20
+                        width: parent.width - viewModel.cellHeight
                     }
                 }
             }
