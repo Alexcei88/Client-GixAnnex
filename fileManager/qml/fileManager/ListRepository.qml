@@ -74,7 +74,7 @@ Rectangle {
                 }
 
                 Item{
-                    width: parent.width - viewModel.cellWidth
+                    width: parent.width - viewModel.cellHeight
                     Text{
                         text: nameRepo
                         elide: Text.ElideRight
