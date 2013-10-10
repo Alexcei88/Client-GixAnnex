@@ -73,6 +73,44 @@ Rectangle {
                 anchors.leftMargin: 5
                 source: "qrc:/folder"
                 state: "SYNCING"
+
+                // различные состояния, в которых может находиться репозиторий
+                states:[
+                        // 1. Идет синхронизация
+                        State {
+                            name: "SYNCING"
+                            when: { repository.GetStateRepository(localPath) == "Syncing";}
+                            PropertyChanges {
+                                target: repoSync
+                                source: "qrc:/images/ok.png"
+
+                            }
+                        },
+
+                        // 2. Репозиторий сихронизирован
+                        State {
+                            name: "SYNCED"
+                            when: { repository.GetStateRepository(localPath) == "Synced";}
+                            PropertyChanges {
+                                target: repoSync
+                                source: "qrc:/images/ok.png"
+                            }
+                        },
+
+                        // 3. Репозиторий выключен
+                        State {
+                            name: "DISABLE SYNC"
+                            when: { repository.GetStateRepository(localPath) == "Disable_sincing";}
+                            PropertyChanges {
+                                target: repoSync
+                                source: "qrc:/images/clear.png"
+
+                            }
+                        }
+
+                        // папка с автосинхронизацией контента(посмотреть, это будет отдельным состоянием, или просто как)
+                    ]
+
             }
             Text{
                 // anchors.horizontalCenter: parent.horizontalCenter
@@ -90,45 +128,4 @@ Rectangle {
             }
         }
     }
-    // различные состояния, в которых может находиться репозиторий
-    states:[
-            // 1. Идет синхронизация
-            State {
-                name: "SYNCING"
-//                        PropertyChanges { target: menuBar; y: 0 }
-//                        PropertyChanges { target: textArea; y: partition + drawer.height }
-//                        PropertyChanges { target: drawer; y: partition }
-//                        PropertyChanges { target: arrowIcon; rotation: 180 }
-                when: { var curState = repository.GetListRepository[0];
-                            curState == "syncing"; }
-                PropertyChanges {
-                    target: repoSync
-                    source: "qrc:/images/ok.png"
-
-                }
-            },
-
-            // 2. Репозиторий сихронизирован
-            State {
-                name: "SYNCED"
-                when: repository.GetStateListRepository[0] == "Disdsdable_sync";
-                PropertyChanges {
-                    target: repoSync
-                    source: "qrc:/images/ok.png"
-                }
-            },
-
-            // 3. Репозиторий выключен
-            State {
-                name: "DISABLE SYNC"
-                when: repository.GetStateListRepository[0] == "Disable_sync";
-                PropertyChanges {
-                    target: repoSync
-                    source: "qrc:/folder"
-
-                }
-            }
-
-            // папка с автосинхронизацией контента(посмотреть, это будет отдельным состоянием, или просто как)
-        ]
 }

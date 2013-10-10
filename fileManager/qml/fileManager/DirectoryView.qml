@@ -46,11 +46,8 @@ Rectangle
         {
             var fileName = view.currentItem.curFileName;
             var currentPathRepo = UtilsScript.GetFullStrPath(dirModel.folder.toString());
-            console.log(currentPathRepo);
-            console.log(repository.currentPathRepo.toString());
             var relativePath = UtilsScript.GetRelativeStrPath(repository.currentPathRepo.toString(), currentPathRepo);
             var addFile =  relativePath == "" ? fileName : relativePath + "/" + fileName;
-            console.log(addFile);
             repository.GetContentDirectory(addFile);
         }
         onDropContentDirectory:
@@ -59,7 +56,6 @@ Rectangle
             var currentPathRepo = UtilsScript.GetFullStrPath(dirModel.folder.toString());
             var relativePath = UtilsScript.GetRelativeStrPath(repository.currentPathRepo.toString(), currentPathRepo);
             var addFile =  relativePath == "" ? fileName : relativePath + "/" + fileName;
-            console.log(addFile);
             repository.DropContentDirectory(addFile);
         }
     }

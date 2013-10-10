@@ -37,7 +37,7 @@ FacadeApplication::FacadeApplication() :
     QObject::connect(&timeSync, &QTimer::timeout, [=](){this->TimeOutTimeSync();});
     // интервал срабатывания тайминга(в миллисек)
     const int timeInterval = 30000;
-    timeSync.setInterval(30000);
+    timeSync.setInterval(timeInterval);
     timeSync.start();
 }
 //----------------------------------------------------------------------------------------/
@@ -94,7 +94,7 @@ void FacadeApplication::LoadRepositories()
             QDomAttr attrSyncRepoContent = nodeSyncMap.namedItem("autosyncContent").toAttr();
             const bool autosyncContent = attrSyncRepoContent.value().toInt();
             tempRepo->SetParamSyncRepository(autosync, autosyncContent);
-            autosync ? tempRepo->SetState(IRepository::Synced) : tempRepo->SetState(IRepository::Disable_sinc);
+            autosync ? tempRepo->SetState(IRepository::Synced) : tempRepo->SetState(IRepository::Disable_sincing);
         }
 
         repository[localUrl] = std::move(tempRepo);
@@ -175,7 +175,7 @@ void FacadeApplication::TimeOutTimeSync()
     if(currentRepository != repository.end())
     {
         // выполняем синхронизацию активного репозитория
-        IRepository *repository = currentRepository->second.get();
+        const IRepository *repository = currentRepository->second.get();
         if(repository->GetParamSyncRepository())
             repository->SyncRepository();
         // синхронизацию контента

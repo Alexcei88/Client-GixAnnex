@@ -24,6 +24,14 @@ const QString ModelQmlAndCRepository::GetDefaultRepository() const
     return localPath;
 }
 //----------------------------------------------------------------------------------------/
+const QString ModelQmlAndCRepository::GetStateRepository(const QString& path) const
+{
+    auto iterator = FacadeApplication::instance->repository.find(path);
+    assert(iterator != FacadeApplication::instance->repository.end());
+    const IRepository* repository = iterator->second.get();
+    return repository->GetState();
+}
+//----------------------------------------------------------------------------------------/
 GANN_DEFINE::RESULT_EXEC_PROCESS ModelQmlAndCRepository::CloneRepository(const QString& localURL, const QString& remoteURL, const QString& nameRepo)
 {
     FacadeApplication *facade = FacadeApplication::getInstance();

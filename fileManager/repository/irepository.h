@@ -14,10 +14,11 @@ class IRepository : public QObject
 public:
 
     // состояние репозитория
-    enum STATE_REPOSITORY {
-            Syncing= 0, // идет синхронизация
-            Synced = 1, // синхронизация выполнена
-            Disable_sinc = 2 // синхронизация выключена
+    enum STATE_REPOSITORY
+    {
+            Syncing = 0,        // идет синхронизация
+            Synced = 1,         // синхронизация выполнена
+            Disable_sincing = 2 // синхронизация выключена
     };
 
     IRepository();
@@ -83,6 +84,11 @@ public:
     @brief Установка состояния репозитория
     */
     virtual void        SetState(const STATE_REPOSITORY& state);
+
+    /**
+    @brief Взятие состояния репозитория
+    */
+    virtual QString     GetState() const;
 
     /**
     @brief Структура, описывающая параметры хранения файлов репозиторий
