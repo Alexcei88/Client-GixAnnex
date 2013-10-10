@@ -21,8 +21,8 @@ Rectangle {
     ControllerRepository {
         id: repository
     }
-    width: 100
-    height: 62
+    width: parent.width
+    height: parent.width
     border.width: 1
     border.color: "black"
     radius: 2
@@ -68,7 +68,7 @@ Rectangle {
                 }
 
                 Item{
-                    width: parent.width - viewModel.cellHeight
+                    width: parent.width - repoSync.width
                     Text{
                         text: nameRepo
                         elide: Text.ElideRight
@@ -77,10 +77,47 @@ Rectangle {
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.left: parent.left
                         anchors.leftMargin: 4
-                        width: parent.width - viewModel.cellHeight
+                        width: parent.width
                     }
                 }
             }
+            // различные состояния, в которых может находиться репозиторий
+            states:[
+                    // 1. Идет синхронизация
+                    State {
+                        name: "SYNCING"
+                        when: { repository.GetStateRepository(localPath) == "Syncing";}
+                        PropertyChanges {
+                            target: repoSync
+                            source: "qrc:/repo_on.png"
+
+                        }
+                    },
+
+                    // 2. Репозиторий сихронизирован
+                    State {
+                        name: "SYNCED"
+                        when: { repository.GetStateRepository(localPath) == "Synced";}
+                        PropertyChanges {
+                            target: repoSync
+                            source: "qrc:/repo_on.png"
+                        }
+                    },
+
+                    // 3. Репозиторий выключен
+                    State {
+                        name: "DISABLE SYNC"
+                        when: { repository.GetStateRepository(localPath) == "Disable_sincing";}
+                        PropertyChanges {
+                            target: repoSync
+                            source: "qrc:/images/clear.png"
+
+                        }
+                    }
+
+                    // папка с автосинхронизацией контента(посмотреть, это будет отдельным состоянием, или просто как)
+                ]
+
             MouseArea{
                 id: mouseAreaItem
                 anchors.fill: parent
@@ -92,69 +129,17 @@ Rectangle {
         }
         highlight:
         Item {
-
+            anchors.left: parent.left
+            anchors.leftMargin: viewModel.cellHeight
+            width: parent.width - 10
             Rectangle {
                 color: "skyblue"
                 radius: 1
-                width: 100
+                width: parent.width
                 height: viewModel.cellHeight
-               // anchors.left: repoSync.right
             }
         }
-        highlightMoveDuration: 0
-    }
-                // различные состояния, в которых может находиться репозиторий
-                states:[
-                        // 1. Идет синхронизация
-                        State {
-                            name: "SYNCING"
-                            when: { repository.GetStateRepository(localPath) == "Syncing";}
-                            PropertyChanges {
-                                target: repoSync
-                                source: "qrc:/images/ok.png"
+        highlightMoveDuration: 0           
 
-                            }
-                        },
-
-                        // 2. Репозиторий сихронизирован
-                        State {
-                            name: "SYNCED"
-                            when: { repository.GetStateRepository(localPath) == "Synced";}
-                            PropertyChanges {
-                                target: repoSync
-                                source: "qrc:/images/ok.png"
-                            }
-                        },
-
-                        // 3. Репозиторий выключен
-                        State {
-                            name: "DISABLE SYNC"
-                            when: { repository.GetStateRepository(localPath) == "Disable_sincing";}
-                            PropertyChanges {
-                                target: repoSync
-                                source: "qrc:/images/clear.png"
-
-                            }
-                        }
-
-                        // папка с автосинхронизацией контента(посмотреть, это будет отдельным состоянием, или просто как)
-                    ]
-
-            }
-            Text{
-                // anchors.horizontalCenter: parent.horizontalCenter
-                text: nameRepo
-            }
-            MouseArea{
-                id: mouseAreaItem
-                anchors.fill: parent
-                onClicked: {
-                    viewModel.currentIndex = model.index
-                    // посылаем сигнал о выборе нового репозитория
-                    console.log(localPath)
-                    selectNewRepository(localPath)
-                }
-            }
-        }
     }
 }
