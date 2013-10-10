@@ -25,8 +25,8 @@ class TShell: public QObject
     Q_OBJECT
 
 public:
-    static TShell*      GetInstance();
-    static void         RemoveInstance();
+    TShell(QObject* parent = 0);
+    ~TShell();
 
     // выполнение команды без аргументов
     GANN_DEFINE::RESULT_EXEC_PROCESS ExecuteProcess(const QString& str, IParsingCommandOut *receiverParsing) const;
@@ -37,13 +37,8 @@ public:
     // чтение стандартного потока данных
     QByteArray          readStandartOutput() const;
 
-private:
-    TShell(QObject* parent = 0);
-    ~TShell();
-
+private:    
     boost::shared_ptr<QProcess> process;
-    static TShell*      instance;
-
 };
 
 #endif // TSHELL_H

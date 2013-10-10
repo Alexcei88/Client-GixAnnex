@@ -22,6 +22,7 @@ Rectangle
         // меняем рабочую директорию у модели
         dirModel.folder = path;
         repository.currentPathRepo = path;
+        folderView.currentIndex = -1;
     }
     //-------------------------------------------------------------------------/
     ControllerRepository {
@@ -45,11 +46,8 @@ Rectangle
         {
             var fileName = view.currentItem.curFileName;
             var currentPathRepo = UtilsScript.GetFullStrPath(dirModel.folder.toString());
-            console.log(currentPathRepo);
-            console.log(repository.currentPathRepo.toString());
             var relativePath = UtilsScript.GetRelativeStrPath(repository.currentPathRepo.toString(), currentPathRepo);
             var addFile =  relativePath == "" ? fileName : relativePath + "/" + fileName;
-            console.log(addFile);
             repository.GetContentDirectory(addFile);
         }
         onDropContentDirectory:
@@ -58,7 +56,6 @@ Rectangle
             var currentPathRepo = UtilsScript.GetFullStrPath(dirModel.folder.toString());
             var relativePath = UtilsScript.GetRelativeStrPath(repository.currentPathRepo.toString(), currentPathRepo);
             var addFile =  relativePath == "" ? fileName : relativePath + "/" + fileName;
-            console.log(addFile);
             repository.DropContentDirectory(addFile);
         }
     }
@@ -141,16 +138,12 @@ Rectangle
                     maximumLineCount: 1
                     elide: Text.ElideRight
                     anchors.horizontalCenter: imgFolder.horizontalCenter
+
                     Component.onCompleted:
                     {
                         var contentWidth = nameFolder.contentWidth;
                         var widthComp = contentWidth > itemView.maxLengthOneLine ? itemView.maxLengthOneLine : contentWidth;
                         nameFolder.width = widthComp;
-//                        if(UtilsScript.lengthStr(curFileName, 500) > 10 )
-//                        {
-//                            console.log("length > 50");
-//                            return;
-//                        }
                     }
                 }
             }
@@ -182,7 +175,7 @@ Rectangle
                     showPropertyFile(curFileName)
                 }
             }
-            // различные состояния, в которых может находиться директория
+            // различные состояния, в которых может находиться директория(или файл)
             states:[
                     State {
                         // 1. Идет синхронизация

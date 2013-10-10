@@ -6,7 +6,7 @@
 class ParsingCommandGet : public IParsingCommandOut
 {
 public:
-    ParsingCommandGet();
+    ParsingCommandGet(const TShell *shell);
     virtual void        ParsingData();
 };
 

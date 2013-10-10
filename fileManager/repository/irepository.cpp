@@ -16,13 +16,28 @@ IRepository::IRepository(const QString& localUrl, const QString& remoteUrl, cons
     InitClass();
     paramSyncRepo.autosync = false;
     paramSyncRepo.autosyncContent = false;
-    // устанавливаем shellComand в директорию, откуда будем запускать команды
-    shellCommand->SetWorkingDirectory(localUrl);
 }
 //----------------------------------------------------------------------------------------/
 void IRepository::InitClass()
 {
     shellCommand = boost::make_shared<ShellCommand>();
+
+    const QMetaObject &mo = staticMetaObject;
+    int enum_index = mo.indexOfEnumerator("STATE_REPOSITORY");
+    metaEnumState = mo.enumerator(enum_index);
+    // устанавливаем состояние по умолчанию
+    currentState = Disable_sincing;
+}
+//----------------------------------------------------------------------------------------/
+void IRepository::SetState(const STATE_REPOSITORY& state)
+{
+    currentState = state;
+}
+//----------------------------------------------------------------------------------------/
+QString IRepository::GetState() const
+{
+    QByteArray str = metaEnumState.valueToKey(currentState);
+    return QString(str);
 }
 //----------------------------------------------------------------------------------------/
 void IRepository::SetParamSyncRepository(const bool& autosync, const bool& autosyncContent)

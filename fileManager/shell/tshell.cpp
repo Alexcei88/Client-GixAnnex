@@ -3,8 +3,6 @@
 
 using namespace GANN_DEFINE;
 
-TShell* TShell::instance = 0;
-
 //----------------------------------------------------------------------------------------/
 TShell::TShell(QObject* parent):
     QObject(parent)
@@ -14,18 +12,6 @@ TShell::TShell(QObject* parent):
 }
 //----------------------------------------------------------------------------------------/
 TShell::~TShell(){}
-//----------------------------------------------------------------------------------------/
-TShell* TShell::GetInstance()
-{
-    if(!instance)
-        instance = new TShell();
-    return instance;
-}
-void TShell::RemoveInstance()
-{
-    delete instance;
-    instance = 0l;
-}
 //----------------------------------------------------------------------------------------/
 RESULT_EXEC_PROCESS TShell::ExecuteProcess(const QString &str, IParsingCommandOut *receiverParsing) const
 {
@@ -50,7 +36,7 @@ RESULT_EXEC_PROCESS TShell::ExecuteProcess(const QString &str, IParsingCommandOu
 
     // ждем, пока процесс не запуститься
     // если процесс не запустился, возвращаем -1
-    if(!process->waitForStarted(5000))
+    if(!process->waitForStarted(10000))
     {
         printf("Process not started! \n");
         QObject::disconnect(m_connection_readOut);

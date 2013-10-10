@@ -22,12 +22,11 @@ public:
     QString                 GetCurrentPathRepo() { return currentPathRepo; };
     void                    SetCurrentPathRepo(QString path) { currentPathRepo = path; emit currentPathRepoChanged(path);};
 
-
-    /** @brief Получить список репозиториев */
-    Q_INVOKABLE QVariantList GetListRepository() const;
+    /** @brief берет состояние репозитория */
+    Q_INVOKABLE QVariant    GetStateRepository(QVariant path) const;
 
     /** @brief путь до репозитория по умолчанию */
-    Q_INVOKABLE QVariant     GetDefaultRepositoryPath() const;
+    Q_INVOKABLE QVariant    GetDefaultRepositoryPath() const;
 
     /** @brief Начать клонирование репозитория */
     Q_INVOKABLE QVariant    StartCloneRepository(QVariant localUlr, QVariant remoteURL, QVariant nameRepo);
@@ -43,8 +42,7 @@ public:
 
 private:
     const QSharedPointer<ModelQmlAndCRepository>  model;
-    QString             currentPathRepo;
-
+    QString                 currentPathRepo;
 signals:
     void                currentPathRepoChanged(QString);
 };

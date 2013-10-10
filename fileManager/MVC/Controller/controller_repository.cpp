@@ -9,9 +9,9 @@ ControllerRepository::ControllerRepository( ):
     QObject::connect(this, &ControllerRepository::currentPathRepoChanged, [=](QString dir){model->ChangeCurrentRepository(dir); });
 }
 //----------------------------------------------------------------------------------------/
-QVariantList ControllerRepository::GetListRepository() const
+QVariant ControllerRepository::GetStateRepository(QVariant path) const
 {
-    return model->GetListRepository();
+    return model->GetStateRepository(path.toString());
 }
 //----------------------------------------------------------------------------------------/
 QVariant ControllerRepository::GetDefaultRepositoryPath() const

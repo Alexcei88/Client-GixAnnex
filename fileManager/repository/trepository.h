@@ -15,6 +15,8 @@ public:
     virtual GANN_DEFINE::RESULT_EXEC_PROCESS GetContentFile(const QString& file = " ") const;
     virtual GANN_DEFINE::RESULT_EXEC_PROCESS DropContentFile(const QString& file = " ") const;
     virtual GANN_DEFINE::RESULT_EXEC_PROCESS WhereisFile(const QString& file = " ") const;
+    virtual GANN_DEFINE::RESULT_EXEC_PROCESS SyncRepository() const;
+
 
 };
 

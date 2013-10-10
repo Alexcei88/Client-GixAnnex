@@ -13,7 +13,6 @@ Rectangle {
 
     function reloadModel()
     {
-        console.log("reloadModel");
         modelRepoXML.reload();
     }
 
@@ -22,8 +21,8 @@ Rectangle {
     ControllerRepository {
         id: repository
     }
-    width: 100
-    height: 62
+    width: parent.width
+    height: parent.width
     border.width: 1
     border.color: "black"
     radius: 2
@@ -43,43 +42,104 @@ Rectangle {
 
         width: parent.width
 
-        cellHeight: 15
+        cellHeight: 32
         cellWidth: parent.width
 
         currentIndex: 0
         anchors.fill: parent
 
         keyNavigationWraps: true
-        highlight: Rectangle {
-            color: "skyblue"
-            radius: 1
-            anchors.margins: 20
-        }
-        /*Component.onCompleted:
-        {
-            changeParentFolder(viewModel.currentItem.localPath);
-        }*/
-
-        highlightMoveDuration: 0
         delegate:
             Item{
             id: viewItem
             height: viewModel.cellHeight
             width: viewModel.cellWidth
-            Text{
-                // anchors.horizontalCenter: parent.horizontalCenter
-                text: nameRepo
+
+            RowLayout {
+
+            anchors.fill: parent
+            width: parent.width
+
+                Image{
+                    id: repoSync
+                    anchors.leftMargin: 5
+                    source: "qrc:/repo_on.png"
+                    state: "SYNCING"
+                }
+
+                Item{
+                    width: parent.width - repoSync.width
+                    Text{
+                        text: nameRepo
+                        elide: Text.ElideRight
+                        maximumLineCount: 1
+                        renderType: Text.NativeRendering
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.left: parent.left
+                        anchors.leftMargin: 4
+                        width: parent.width
+                    }
+                }
             }
+            // различные состояния, в которых может находиться репозиторий
+            states:[
+                    // 1. Идет синхронизация
+                    State {
+                        name: "SYNCING"
+                        when: { repository.GetStateRepository(localPath) == "Syncing";}
+                        PropertyChanges {
+                            target: repoSync
+                            source: "qrc:/repo_on.png"
+
+                        }
+                    },
+
+                    // 2. Репозиторий сихронизирован
+                    State {
+                        name: "SYNCED"
+                        when: { repository.GetStateRepository(localPath) == "Synced";}
+                        PropertyChanges {
+                            target: repoSync
+                            source: "qrc:/repo_on.png"
+                        }
+                    },
+
+                    // 3. Репозиторий выключен
+                    State {
+                        name: "DISABLE SYNC"
+                        when: { repository.GetStateRepository(localPath) == "Disable_sincing";}
+                        PropertyChanges {
+                            target: repoSync
+                            source: "qrc:/images/clear.png"
+
+                        }
+                    }
+
+                    // папка с автосинхронизацией контента(посмотреть, это будет отдельным состоянием, или просто как)
+                ]
+
             MouseArea{
                 id: mouseAreaItem
                 anchors.fill: parent
                 onClicked: {
                     viewModel.currentIndex = model.index
-                    // посылаем сигнал о выборе нового репозитория
-                    console.log(localPath)
                     selectNewRepository(localPath)
                 }
             }
         }
+        highlight:
+        Item {
+            anchors.left: parent.left
+            anchors.leftMargin: viewModel.cellHeight
+            width: parent.width - 10
+            Rectangle {
+                color: "skyblue"
+                radius: 1
+                width: parent.width
+                height: viewModel.cellHeight
+            }
+        }
+        highlightMoveDuration: 0           
+
     }
 }

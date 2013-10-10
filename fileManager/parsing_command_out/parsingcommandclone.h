@@ -6,7 +6,7 @@
 class ParsingCommandClone : public IParsingCommandOut
 {
 public:
-    ParsingCommandClone();
+    ParsingCommandClone(const TShell* shell);
     virtual void        ParsingData();
 };
 

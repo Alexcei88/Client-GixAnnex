@@ -3,9 +3,23 @@
 
 #include "../shell/shellcommand.h"
 
-class IRepository
+#include <QObject>
+#include <QMetaObject>
+#include <QMetaEnum>
+
+class IRepository : public QObject
 {
+    Q_OBJECT
+    Q_ENUMS(STATE_REPOSITORY)
 public:
+
+    // состояние репозитория
+    enum STATE_REPOSITORY
+    {
+            Syncing = 0,        // идет синхронизация
+            Synced = 1,         // синхронизация выполнена
+            Disable_sincing = 2 // синхронизация выключена
+    };
 
     IRepository();
     IRepository(const QString& localUrl, const QString& remoteUrl, const QString& nameRepo);
@@ -23,7 +37,6 @@ public:
     /** @brief взятие параметров автосинхронизации репозитория*/
     bool                GetParamSyncRepository() const { return paramSyncRepo.autosync; };
     bool                GetParamSyncContentRepository() const { return paramSyncRepo.autosyncContent; };
-
 
     /**
     @brief клонирование репозитория
@@ -63,26 +76,41 @@ public:
     virtual GANN_DEFINE::RESULT_EXEC_PROCESS WhereisFile(const QString& file = " ") const = 0;
 
     /**
+    @brief синхрнизация с удаленным репозиторием
+    */
+    virtual GANN_DEFINE::RESULT_EXEC_PROCESS SyncRepository() const = 0;
+
+    /**
+    @brief Установка состояния репозитория
+    */
+    virtual void        SetState(const STATE_REPOSITORY& state);
+
+    /**
+    @brief Взятие состояния репозитория
+    */
+    virtual QString     GetState() const;
+
+    /**
     @brief Структура, описывающая параметры хранения файлов репозиторий
     */
-    typedef struct PARAMETR_REPOSITORY_GI_ANNEX
+    struct PARAMETR_REPOSITORY_GI_ANNEX
     {
         // автосинхронизация с сервером
         bool autosync;
         // автосинхронизация контента репозитория
         bool autosyncContent;
 
-    } ParamRepository;
+    };
 
     /**
     @brief Структура, описывающая параметры файла(папки), входящие в репозиторий
     */
-    typedef struct PARAMETR_FILEFOLDER_GIT_ANNEX
+    struct PARAMETR_FILEFOLDER_GIT_ANNEX
     {
         // автосинхронизация контента
         bool autosync;
 
-    } ParamContentFile;
+    };
 
 
 protected:
@@ -94,12 +122,15 @@ protected:
     QString         localURL;
     // название репозитория Git-Annex
     QString         nameRepo;
+    // параметры синхронизации репозитория
+    PARAMETR_REPOSITORY_GI_ANNEX paramSyncRepo;
+
+    // перечисление состояний, в которых мы находимся
+    QMetaEnum       metaEnumState;
+    STATE_REPOSITORY currentState;
 
 private:
     void            InitClass();
-
-    ParamRepository paramSyncRepo;
-
 };
 
 #endif // IREPOSITORY_H

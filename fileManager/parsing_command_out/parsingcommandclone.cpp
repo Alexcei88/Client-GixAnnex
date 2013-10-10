@@ -1,7 +1,7 @@
 #include "parsingcommandclone.h"
 
 //----------------------------------------------------------------------------------------/
-ParsingCommandClone::ParsingCommandClone(): IParsingCommandOut()
+ParsingCommandClone::ParsingCommandClone(const TShell* shell): IParsingCommandOut(shell)
 {
     // регулярное выражение в случаи успешного парсинга
     QString succes = "(Cloning into ')(.*)(')(.*)";

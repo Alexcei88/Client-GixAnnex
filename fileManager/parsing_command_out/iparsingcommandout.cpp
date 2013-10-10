@@ -4,11 +4,12 @@
 using namespace GANN_DEFINE;
 
 //----------------------------------------------------------------------------------------/
-IParsingCommandOut::IParsingCommandOut():
+IParsingCommandOut::IParsingCommandOut(const TShell *shell):
   commandStart(false)
  ,commandEnd(false)
  ,exitCodeCommand(0)
  ,wasErrorCommand(false)
+ ,shell(shell)
 {}
 //----------------------------------------------------------------------------------------/
 IParsingCommandOut::~IParsingCommandOut(){};
@@ -23,7 +24,7 @@ void IParsingCommandOut::SetParamBeforeStartCommand()
 //----------------------------------------------------------------------------------------/
 void IParsingCommandOut::GetNewDataStdOut()
 {
-    QString newData(TShell::GetInstance()->readStandartOutput());
+    QString newData(shell->readStandartOutput());
 
     dataStdOut << newData;
     std::cout<<"1. "<<newData.toStdString()<<std::endl;
@@ -36,7 +37,7 @@ void IParsingCommandOut::GetNewDataStdOut()
 void IParsingCommandOut::SetParamAfterEndCommand(int exitCode)
 {
     commandEnd      = true;
-    commandStart    = false;
+    commandStart    = true;
     exitCodeCommand = exitCode;
 
     // выполняем парсинг после выполнения команды
@@ -50,14 +51,22 @@ QStringList IParsingCommandOut::GetParsingData() const
 //----------------------------------------------------------------------------------------/
 RESULT_EXEC_PROCESS IParsingCommandOut::GetCodeError() const
 {
-    if(commandEnd == true && commandStart == false)
+    if(commandEnd == true && commandStart == true)
     {
+        // команда была запущена и выполнена до конца
         if(wasErrorCommand || exitCodeCommand)
             return ERROR_EXECUTE;
         else
             return NO_ERROR;
     }
     else
+    {
+        if(!commandStart)
+            return ERROR_NO_STARTED;
+        else if(!commandEnd)
+            return ERROR_NO_FINISHED;
         return NO_ERROR;
+    }
 }
+//----------------------------------------------------------------------------------------/
 
