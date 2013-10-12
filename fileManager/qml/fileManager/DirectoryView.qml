@@ -4,10 +4,24 @@ import QtQuick.Layouts 1.0
 import Qt.labs.folderlistmodel 1.0
 import "utils.js" as UtilsScript
 import Repository 1.0
+import Icons 1.0
 
 Rectangle
 {
-    // СВО-ВА И СИГНАЛЫ
+
+    //-------------------------------------------------------------------------/
+    // ПОЛЬЗОВАТЕЛЬСКИЕ КЛАССЫ MVC
+
+    ControllerRepository {
+        id: repository
+        currentPathRepo: UtilsScript.GetFullStrPath(dirModel.folder.toString())
+    }
+
+    ControllerIcons {
+        id: contrIcons
+    }
+
+    // СВО-ВА, ФУНКЦИИ И СИГНАЛЫ
     //-------------------------------------------------------------------------/
     property var folderModel: dirModel
     property var folderView: view
@@ -24,12 +38,14 @@ Rectangle
         repository.currentPathRepo = path;
         folderView.currentIndex = -1;
     }
-    //-------------------------------------------------------------------------/
-    ControllerRepository {
-        id: repository
-        currentPathRepo: UtilsScript.GetFullStrPath(dirModel.folder.toString())
+    function getResourceImage(fileName)
+    {
+        var currentPathRepo = UtilsScript.GetFullStrPath(dirModel.folder.toString());
+        var path = currentPathRepo + fileName;
+        return contrIcons.GetPathIconsFile(path);
     }
 
+    //-------------------------------------------------------------------------/
 
     ContextMenu
     {
@@ -47,7 +63,7 @@ Rectangle
             var fileName = view.currentItem.curFileName;
             var currentPathRepo = UtilsScript.GetFullStrPath(dirModel.folder.toString());
             var relativePath = UtilsScript.GetRelativeStrPath(repository.currentPathRepo.toString(), currentPathRepo);
-            var addFile =  relativePath == "" ? fileName : relativePath + "/" + fileName;
+            var addFile =  relativePath === "" ? fileName : relativePath + "/" + fileName;
             repository.GetContentDirectory(addFile);
         }
         onDropContentDirectory:
@@ -55,7 +71,7 @@ Rectangle
             var fileName = view.currentItem.curFileName;
             var currentPathRepo = UtilsScript.GetFullStrPath(dirModel.folder.toString());
             var relativePath = UtilsScript.GetRelativeStrPath(repository.currentPathRepo.toString(), currentPathRepo);
-            var addFile =  relativePath == "" ? fileName : relativePath + "/" + fileName;
+            var addFile =  relativePath === "" ? fileName : relativePath + "/" + fileName;
             repository.DropContentDirectory(addFile);
         }
     }
@@ -104,9 +120,9 @@ Rectangle
         {
             id: itemView
 
-            property var isCurrent: GridView.isCurrentItem
+            property bool isCurrent: GridView.isCurrentItem
             property var curFileName: fileName
-            property var maxLengthOneLine: 0.95 * view.cellWidth
+            property real maxLengthOneLine: 0.95 * view.cellWidth
 
             width: view.cellWidth
             height: view.cellHeight
@@ -118,7 +134,11 @@ Rectangle
 
                 Image{
                     id: imgFolder
-                    source: dirModel.isFolder(model.index) ? "qrc:/folder" : "qrc:/image_files/word.png";
+                    source: if(dirModel.isFolder(model.index)) {
+                                "qrc:/icons/folder.png" }
+                            else {
+                                getResourceImage(curFileName);
+                            }
                     anchors.horizontalCenter: parent.horizontalCenter
 
                     Image{
@@ -157,7 +177,7 @@ Rectangle
                 onClicked:
                 {
                     view.currentIndex = model.index
-                    if(mouse.button == Qt.RightButton)
+                    if(mouse.button === Qt.RightButton)
                         menudirectory.popup()
                 }
                 onDoubleClicked:

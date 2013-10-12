@@ -86,7 +86,7 @@ Rectangle {
                     // 1. Идет синхронизация
                     State {
                         name: "SYNCING"
-                        when: { repository.GetStateRepository(localPath) == "Syncing";}
+                        when: { repository.GetStateRepository(localPath) === "Syncing";}
                         PropertyChanges {
                             target: repoSync
                             source: "qrc:/repo_on.png"
@@ -97,7 +97,7 @@ Rectangle {
                     // 2. Репозиторий сихронизирован
                     State {
                         name: "SYNCED"
-                        when: { repository.GetStateRepository(localPath) == "Synced";}
+                        when: { repository.GetStateRepository(localPath) === "Synced";}
                         PropertyChanges {
                             target: repoSync
                             source: "qrc:/repo_on.png"
@@ -107,7 +107,7 @@ Rectangle {
                     // 3. Репозиторий выключен
                     State {
                         name: "DISABLE SYNC"
-                        when: { repository.GetStateRepository(localPath) == "Disable_sincing";}
+                        when: { repository.GetStateRepository(localPath) === "Disable_sincing";}
                         PropertyChanges {
                             target: repoSync
                             source: "qrc:/images/clear.png"

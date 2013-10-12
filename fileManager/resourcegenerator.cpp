@@ -7,9 +7,9 @@ boost::shared_ptr<ResourceGenerator> ResourceGenerator::instance = boost::shared
 ResourceGenerator::ResourceGenerator()
 {
     // пока что бесполезный класс
-    /*resourceFileIcon = new QResource("icons.qrc");
+    resourceFileIcon = new QResource("/home/alexcei88/GitAnnex/client/fileManager/Resource.qrc");
     std::cout<<"AbsolutePath"<<resourceFileIcon->absoluteFilePath().toStdString().c_str()<<std::endl;
-    GenerateResource();*/
+    GenerateResource();
 }
 //----------------------------------------------------------------------------------------/
 ResourceGenerator::~ResourceGenerator()
@@ -32,7 +32,8 @@ void ResourceGenerator::GenerateResource()
        // QFile tempFile(&icon);
         std::cout<<"Da, we finded"<<std::endl;
     }
-    if(resourceFileIcon->registerResource("/home/alexcei/MyProject/Client-GixAnnex/fileManager/folder.png", "/folder"))
+    const QString fileName = "/home/alexcei88/GitAnnex/client/fileManager/folder.png";
+    if(resourceFileIcon->registerResource(fileName, "/"))
     {
         std::cout<<"Resource File Add"<<std::endl;
     }

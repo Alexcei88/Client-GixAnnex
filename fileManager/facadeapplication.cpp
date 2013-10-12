@@ -1,5 +1,6 @@
 #include "facadeapplication.h"
 #include "MVC/Controller/controller_repository.h"
+#include "MVC/Controller/controller_icons.h"
 #include "repository/trepository.h"
 #include "resourcegenerator.h"
 
@@ -202,5 +203,7 @@ void FacadeApplication::TimeOutTimeSync()
 void FacadeApplication::InitClassCAndQML()
 {
     qmlRegisterType<GANN_MVC::ControllerRepository>("Repository", 1, 0, "ControllerRepository");
+    qmlRegisterType<GANN_MVC::ControllerIcons>("Icons", 1, 0, "ControllerIcons");
+
 }
 //----------------------------------------------------------------------------------------/

@@ -34,7 +34,8 @@ SOURCES += main.cpp \
 # Installation path
 # target.path =
     shell/shelltask.cpp \
-    resourcegenerator.cpp
+    resourcegenerator.cpp \
+    MVC/Controller/controller_icons.cpp
 
 # Please do not modify the following two lines. Required for deployment.
 include(qtquick2applicationviewer/qtquick2applicationviewer.pri)
@@ -48,7 +49,9 @@ OTHER_FILES += \
     qml/fileManager/repository/Clone.qml
 
 RESOURCES += \
-    Resource.qrc
+    Resource.qrc \
+    ResourceIcons.qrc
+
 
 HEADERS += \
     shell/tshell.h \
@@ -66,7 +69,8 @@ HEADERS += \
     define.h \
     MVC/Model/model_updateviewer.h \
     shell/shelltask.h \
-    resourcegenerator.h
+    resourcegenerator.h \
+    MVC/Controller/controller_icons.h
 
 # Включаем поддержку С++11
 QMAKE_CXXFLAGS += -std=c++0x
