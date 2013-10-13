@@ -46,7 +46,7 @@ GANN_DEFINE::RESULT_EXEC_PROCESS ModelQmlAndCRepository::CloneRepository(const Q
     return result;
 }
 //----------------------------------------------------------------------------------------/
-void ModelQmlAndCRepository::CancelCloneRepository(bool breakCommand) const
+void ModelQmlAndCRepository::CancelCloneRepository(const bool breakCommand) const
 {
     FacadeApplication::instance->systemTray->CancelCloneRepository();
 }

@@ -26,7 +26,7 @@ public:
     GANN_DEFINE::RESULT_EXEC_PROCESS CloneRepository(const QString& localUlr, const QString& remoteURL, const QString& nameRepo);
 
     /** @brief Остановить клонирование */
-    void                CancelCloneRepository(bool breakCommand = true) const;
+    void                CancelCloneRepository(const bool breakCommand = true) const;
 
     /** @brief взять контент у файла(директории)*/
     GANN_DEFINE::RESULT_EXEC_PROCESS GetContentDirectory(const QString& dir) const;
