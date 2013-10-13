@@ -2,9 +2,9 @@ import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
 import Qt.labs.folderlistmodel 1.0
-import "utils.js" as UtilsScript
 import Repository 1.0
 import Icons 1.0
+import "utils.js" as UtilsScript
 
 Rectangle
 {
@@ -19,6 +19,7 @@ Rectangle
 
     ControllerIcons {
         id: contrIcons
+
     }
 
     // СВО-ВА, ФУНКЦИИ И СИГНАЛЫ
@@ -133,6 +134,7 @@ Rectangle
                 width: view.cellWidth
 
                 Image{
+
                     id: imgFolder
                     source: if(dirModel.isFolder(model.index)) {
                                 "qrc:/icons/folder.png" }
@@ -140,14 +142,70 @@ Rectangle
                                 getResourceImage(curFileName);
                             }
                     anchors.horizontalCenter: parent.horizontalCenter
-
                     Image{
                         id: dirSync
                         anchors.bottom: parent.bottom
                         anchors.left: parent.left
-                        anchors.leftMargin: 5
-                        source: "qrc:/images/ok.png"
+                        anchors.leftMargin: 2
+                        source: "qrc:/synced.png"
+                        state: "SYMBOL_LINK"
                     }
+
+                    // различные состояния, в которых может находиться директория(или файл)
+                    states:[
+                            State {
+                                // 1. Идет синхронизация
+                                name: "SYNCING"
+                                when: { contrIcons.stateIconsFileSync[0] === "syncing" }
+                                PropertyChanges {
+                                    target: dirSync
+                                    source: "qrc:/synced.png"
+                                }
+                            },
+                            // 2. Имеются только символичеcкие ссылки
+                            State {
+                                name: "SYMBOL_LINK"
+                                when: { contrIcons.stateIconsFileSync[0] === "synced" }
+                                PropertyChanges {
+                                    target: dirSync
+                                    source: "qrc:/disable_sync.png"
+
+                                }
+                            },
+                            // 3. Имеются символичеcкие ссылки, некоторые из них с контентом
+                            State {
+                                name: "SYMBOL_LINK_AND_SOME_CONTENT"
+                                when: { contrIcons.stateIconsFileSync[0] === "sincsng"  }
+                                PropertyChanges {
+                                    target: dirSync
+                                    source: "qrc:/syncing.png"
+
+                                }
+                            },
+
+                            // 4. Символическая ссылка с контенктом
+                            State {
+                                when: { contrIcons.stateIconsFileSync[0] === "sinsdng"  }
+                                name: "SYMBOL_LINK_AND_CONTENT"
+                                PropertyChanges {
+                                    target: dirSync
+                                    source: "qrc:/syncing.png"
+
+                                }
+                            },
+                            // 5. Синхронизация выключена
+                            State {
+                                name: "DISABLE_SYNC"
+                                when: { contrIcons.stateIconsFileSync[0] === "sinssng"  }
+                                PropertyChanges {
+                                    target: dirSync
+                                    source: "qrc:/synced.png"
+
+                                }
+                            }
+
+                            // папка с автосинхронизацией контента(посмотреть, это будет отдельным состоянием, или просто как)
+                        ]
                 }
 
                 Text
@@ -195,41 +253,6 @@ Rectangle
                     showPropertyFile(curFileName)
                 }
             }
-            // различные состояния, в которых может находиться директория(или файл)
-            states:[
-                    State {
-                        // 1. Идет синхронизация
-                        name: "SYNCING"
-//                        PropertyChanges { target: menuBar; y: 0 }
-//                        PropertyChanges { target: textArea; y: partition + drawer.height }
-//                        PropertyChanges { target: drawer; y: partition }
-//                        PropertyChanges { target: arrowIcon; rotation: 180 }
-                    },
-                    // 2. Имеются только символичеcкие ссылки
-                    State {
-                        name: "SYMBOL_LINK"
-//                        PropertyChanges { target: menuBar; y: -height; }
-//                        PropertyChanges { target: textArea; y: drawer.height; height: screen.height - drawer.height }
-//                        PropertyChanges { target: drawer; y: 0 }
-//                        PropertyChanges { target: arrowIcon; rotation: 0 }
-                    },
-
-                    // 3. Имеются символичеcкие ссылки, некоторые из них с контентом
-                    State {
-                        name: "SYMBOL_LINK_AND_SOME_CONTENT"
-    //                        PropertyChanges { target: menuBar; y: -height; }
-    //                        PropertyChanges { target: textArea; y: drawer.height; height: screen.height - drawer.height }
-    //                        PropertyChanges { target: drawer; y: 0 }
-    //                        PropertyChanges { target: arrowIcon; rotation: 0 }
-                    },
-
-                    // 4. Символическая ссылка с контенктом
-                    State {
-                        name: "SYMBOL_LINK_AND_CONTENT"
-                    }
-
-                    // папка с автосинхронизацией контента(посмотреть, это будет отдельным состоянием, или просто как)
-                ]
         }
     }
 }

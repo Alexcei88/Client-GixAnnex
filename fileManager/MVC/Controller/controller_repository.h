@@ -7,6 +7,8 @@
 #include <QVariantList>
 
 #include "../Model/model_repository.h"
+#include "controller_icons.h"
+
 namespace GANN_MVC
 {
 
@@ -43,8 +45,9 @@ public:
 private:
     const QSharedPointer<ModelQmlAndCRepository>  model;
     QString                 currentPathRepo;
+
 signals:
-    void                currentPathRepoChanged(QString);
+    void                    currentPathRepoChanged(QString);
 };
 
 }

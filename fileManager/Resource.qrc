@@ -9,9 +9,9 @@
         <file alias="images/ok.png">resource/images/oksmall.png</file>
         <file alias="heart.ico">heart.ico</file>
         <file alias="repo_on.png">resource/images/repository_on.png</file>
-    </qresource>
-    <qresource prefix="/image_files">
-        <file alias="word.png">resource/file_images/word.png</file>
+        <file alias="disable_sync.png">resource/images/error.png</file>
+        <file alias="synced.png">resource/images/ok.png</file>
+        <file alias="syncing.png">resource/images/sync.png</file>
     </qresource>
     <qresource prefix="/config">
         <file alias="config_repo">ganx-repository.xml</file>

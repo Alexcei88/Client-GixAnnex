@@ -8,6 +8,7 @@
 
 #include <QObject>
 #include <QVariant>
+#include <QStringList>
 
 namespace GANN_MVC
 {
@@ -18,10 +19,28 @@ class ControllerIcons : public QObject
 public:
     ControllerIcons();
 
-    /** @brief возврашает путь иконки в зависимости от mimetype файла */
+    /** @brief текущий отображаемый путь */
+
+    /** @brief вектор состояний иконок */
+    Q_PROPERTY(QVariantList stateIconsFileSync READ GetStateIconsFileSync WRITE SetStateIconsFileSync NOTIFY stateIconsFileSyncChanged);
+
+    void                SetStateIconsFileSync (QVariantList stateIcons) { stateIconsFileSync = stateIcons; };
+    QVariantList        GetStateIconsFileSync() { return stateIconsFileSync; };
+
+    /** @brief возвращает путь иконки в зависимости от mimetype файла
+    @param file - путь к файлу */
     Q_INVOKABLE QVariant GetPathIconsFile(QVariant file) const;
 
+public slots:
+    void                OnChangeParrentDirectory(QString curDir);
+
 private:
+    /** @brief список текущего состояния иконок синхронизации
+    * в зависимости от текущего списка отображаемых иконок файлов(директорий) */
+    QVariantList        stateIconsFileSync;
+
+signals:
+    void                stateIconsFileSyncChanged(QVariantList);
 };
 
 }
