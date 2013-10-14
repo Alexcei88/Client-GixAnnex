@@ -14,16 +14,18 @@ using namespace GANN_MVC;
 //----------------------------------------------------------------------------------------/
 ControllerIcons::ControllerIcons()
 {
-    stateIconsFileSync.reserve(10);
-    stateIconsFileSync.push_back("syncing");
-    stateIconsFileSync.push_back("syncing");
-    stateIconsFileSync.push_back("synced");
-    stateIconsFileSync.push_back("synced");
-    stateIconsFileSync.push_back("synced");
-    stateIconsFileSync.push_back("syncing");
-    stateIconsFileSync.push_back("syncing");
-    stateIconsFileSync.push_back("syncing");
-    stateIconsFileSync.push_back("syncing");
+//    stateIconsFileSync.reserve(10);
+//    stateIconsFileSync.push_back("syncing");
+//    stateIconsFileSync.push_back("syncing");
+//    stateIconsFileSync.push_back("synced");
+//    stateIconsFileSync.push_back("synced");
+//    stateIconsFileSync.push_back("synced");
+//    stateIconsFileSync.push_back("syncing");
+//    stateIconsFileSync.push_back("syncing");
+//    stateIconsFileSync.push_back("syncing");
+//    stateIconsFileSync.push_back("syncing");
+
+    QObject::connect(this, &ControllerIcons::changedCurrentPath, this, &ControllerIcons::OnChangeParrentDirectory);
 }
 //----------------------------------------------------------------------------------------/
 QVariant ControllerIcons::GetPathIconsFile(QVariant file) const
@@ -46,6 +48,29 @@ QVariant ControllerIcons::GetPathIconsFile(QVariant file) const
 void ControllerIcons::OnChangeParrentDirectory(QString curDir)
 {
     std::cout<<"curDir = "<<curDir.toStdString().c_str()<<std::endl;
+    assert(dir.exists(curDir));
+
+    dir.setPath(curDir);
+
+    // обновляем полностю список, и обновляем представление
+    UpdateStateIconsFileSync();
+    UpdateView();
+}
+//----------------------------------------------------------------------------------------/
+void ControllerIcons::UpdateStateIconsFileSync()
+{
+    stateIconsFileSync.clear();
+    QStringList nameAllFilesAndDir = dir.entryList();
+    for(auto iterator = nameAllFilesAndDir.begin(); iterator !=  nameAllFilesAndDir.end(); ++iterator)
+    {
+        if(*iterator == "." || *iterator == "..") continue;
+        stateIconsFileSync[*iterator] = "synced";
+    }
+}
+//----------------------------------------------------------------------------------------/
+void ControllerIcons::UpdateView()
+{
+
 }
 //----------------------------------------------------------------------------------------/
 

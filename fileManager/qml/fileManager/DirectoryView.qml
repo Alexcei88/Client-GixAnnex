@@ -19,7 +19,7 @@ Rectangle
 
     ControllerIcons {
         id: contrIcons
-
+        currentPath: UtilsScript.GetFullStrPath(dirModel.folder.toString())
     }
 
     // СВО-ВА, ФУНКЦИИ И СИГНАЛЫ
@@ -39,6 +39,8 @@ Rectangle
         repository.currentPathRepo = path;
         folderView.currentIndex = -1;
     }
+
+    // функция взятия пути до иконки в зависимости от mymetype файла
     function getResourceImage(fileName)
     {
         var currentPathRepo = UtilsScript.GetFullStrPath(dirModel.folder.toString());
@@ -46,6 +48,14 @@ Rectangle
         return contrIcons.GetPathIconsFile(path);
     }
 
+    // функция обновления состояния иконок
+    function updateIconsStateFileSync()
+    {
+        contrIcons.stateIconsFileSync = contrIcons.makeNewList();
+        var folderTemp = dirModel.folder;
+        dirModel.folder = "";
+        dirModel.folder = folderTemp;
+    }
     //-------------------------------------------------------------------------/
 
     ContextMenu
@@ -74,6 +84,7 @@ Rectangle
             var relativePath = UtilsScript.GetRelativeStrPath(repository.currentPathRepo.toString(), currentPathRepo);
             var addFile =  relativePath === "" ? fileName : relativePath + "/" + fileName;
             repository.DropContentDirectory(addFile);
+            updateIconsStateFileSync();
         }
     }
 
@@ -148,7 +159,7 @@ Rectangle
                         anchors.left: parent.left
                         anchors.leftMargin: 2
                         source: "qrc:/synced.png"
-                        state: "SYMBOL_LINK"
+                        state: "SYNCING"
                     }
 
                     // различные состояния, в которых может находиться директория(или файл)
@@ -156,7 +167,7 @@ Rectangle
                             State {
                                 // 1. Идет синхронизация
                                 name: "SYNCING"
-                                when: { contrIcons.stateIconsFileSync[0] === "syncing" }
+                                when: { contrIcons.stateIconsFileSync[curFileName] === "syncing" }
                                 PropertyChanges {
                                     target: dirSync
                                     source: "qrc:/synced.png"
@@ -165,7 +176,7 @@ Rectangle
                             // 2. Имеются только символичеcкие ссылки
                             State {
                                 name: "SYMBOL_LINK"
-                                when: { contrIcons.stateIconsFileSync[0] === "synced" }
+                                when: { contrIcons.stateIconsFileSync[curFileName] === "synced" }
                                 PropertyChanges {
                                     target: dirSync
                                     source: "qrc:/disable_sync.png"
@@ -175,7 +186,7 @@ Rectangle
                             // 3. Имеются символичеcкие ссылки, некоторые из них с контентом
                             State {
                                 name: "SYMBOL_LINK_AND_SOME_CONTENT"
-                                when: { contrIcons.stateIconsFileSync[0] === "sincsng"  }
+                                when: { contrIcons.stateIconsFileSync[curFileName] === "sincsng"  }
                                 PropertyChanges {
                                     target: dirSync
                                     source: "qrc:/syncing.png"
@@ -185,7 +196,7 @@ Rectangle
 
                             // 4. Символическая ссылка с контенктом
                             State {
-                                when: { contrIcons.stateIconsFileSync[0] === "sinsdng"  }
+                                when: { contrIcons.stateIconsFileSync[curFileName] === "sinsdng"  }
                                 name: "SYMBOL_LINK_AND_CONTENT"
                                 PropertyChanges {
                                     target: dirSync
@@ -196,7 +207,7 @@ Rectangle
                             // 5. Синхронизация выключена
                             State {
                                 name: "DISABLE_SYNC"
-                                when: { contrIcons.stateIconsFileSync[0] === "sinssng"  }
+                                when: { contrIcons.stateIconsFileSync[curFileName] === "sinssng"  }
                                 PropertyChanges {
                                     target: dirSync
                                     source: "qrc:/synced.png"
