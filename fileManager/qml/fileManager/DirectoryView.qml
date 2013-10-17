@@ -8,7 +8,6 @@ import "utils.js" as UtilsScript
 
 Rectangle
 {
-
     //-------------------------------------------------------------------------/
     // ПОЛЬЗОВАТЕЛЬСКИЕ КЛАССЫ MVC
 
@@ -35,6 +34,7 @@ Rectangle
     onChangeParentFolder:
     {
         // меняем рабочую директорию у модели
+        contrIcons.currentPath = path;
         dirModel.folder = path;
         repository.currentPathRepo = path;
         folderView.currentIndex = -1;
@@ -48,7 +48,13 @@ Rectangle
         return contrIcons.GetPathIconsFile(path);
     }
 
-    // функция обновления состояния иконок
+    // функция обновления списка состояния иконок
+    function updateListStateFileSync(folder)
+    {
+        contrIcons.currentPath = UtilsScript.GetFullStrPath(folder.toString());
+    }
+
+    // функция обновления состояния иконок у текущего списка
     function updateIconsStateFileSync()
     {
         contrIcons.stateIconsFileSync = contrIcons.makeNewList();
@@ -65,7 +71,9 @@ Rectangle
             if(dirModel.isFolder(dirModel.index) && view.currentItem)
             {
                 var fileName = view.currentItem.curFileName;
-                dirModel.folder = dirModel.folder == "file:///" ? dirModel.folder + fileName : dirModel.folder +"/" + fileName;
+                var folder = dirModel.folder == "file:///" ? dirModel.folder + fileName : dirModel.folder +"/" + fileName;
+                updateListStateFileSync(folder);
+                dirModel.folder = folder;
                 view.currentIndex = -1;
             }
         }
@@ -253,7 +261,9 @@ Rectangle
                 {
                     if(dirModel.isFolder(model.index))
                     {
-                        dirModel.folder = dirModel.folder == "file:///" ? dirModel.folder + curFileName : dirModel.folder +"/" + curFileName;
+                        var folder = dirModel.folder == "file:///" ? dirModel.folder + curFileName : dirModel.folder +"/" + curFileName;
+                        updateListStateFileSync(folder);
+                        dirModel.folder = folder
                         console.log(dirModel.folder);
                         view.currentIndex = -1;
 

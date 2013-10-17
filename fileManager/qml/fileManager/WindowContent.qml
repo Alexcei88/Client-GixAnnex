@@ -6,6 +6,13 @@ import QtQuick.Layouts 1.0
 import "propertyFile"
 
 Rectangle {
+
+    // обновление списка состояния синхронизации файлов у DirectoryView
+    function updateListFileSync(folder)
+    {
+        contenItem.updateListStateFileSync(folder);
+    }
+
     id: windowContent
     width: 100
     height: 62

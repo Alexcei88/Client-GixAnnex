@@ -37,7 +37,9 @@ Rectangle
                     ToolButton{
                         iconSource:"qrc:back"
                         onClicked: {
-                            toolBar.folderModel.folder = toolBar.folderModel.parentFolder;
+                            var folder = toolBar.folderModel.parentFolder;
+                            windowContent.updateListFileSync(folder);
+                            toolBar.folderModel.folder = folder;
                             toolBar.folderView.currentIndex = -1;
                         }
                     }
@@ -48,12 +50,12 @@ Rectangle
                             if(toolBar.folderView.currentItem)
                             {
                                 var fileName = toolBar.folderView.currentItem.curFileName;
-                                toolBar.folderModel.folder = toolBar.folderModel.folder == "file:///" ? toolBar.folderModel.folder + fileName : toolBar.folderModel.folder +"/" + fileName;
+                                var folder = toolBar.folderModel.folder == "file:///" ? toolBar.folderModel.folder + fileName : toolBar.folderModel.folder +"/" + fileName;;
+                                toolBar.folderModel.folder = folder;
                                 toolBar.folderView.currentIndex = -1;
                             }
                         }
                     }
-
                     ToolButton{
                         text: "аав1"
                     }
