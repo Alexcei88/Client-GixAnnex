@@ -1,7 +1,5 @@
 #include "model_repository.h"
-
 #include "../facadeapplication.h"
-#include "../repository/irepository.h"
 
 using namespace GANN_MVC;
 using namespace GANN_DEFINE;
@@ -11,8 +9,7 @@ using namespace GANN_DEFINE;
 
 //----------------------------------------------------------------------------------------/
 ModelQmlAndCRepository::ModelQmlAndCRepository()
-{
-}
+{}
 //----------------------------------------------------------------------------------------/
 const QString ModelQmlAndCRepository::GetDefaultRepository() const
 {
@@ -77,6 +74,30 @@ void ModelQmlAndCRepository::ChangeCurrentRepository(const QString& dir) const
 {
     FacadeApplication::instance->ChangeCurrentRepository(dir);
 }
+//----------------------------------------------------------------------------------------/
+void ModelQmlAndCRepository::ChangeCurrentViewDirectory(const QString &dir) const
+{
+    auto iterRepo = FacadeApplication::instance->currentRepository;
+    if(iterRepo != FacadeApplication::instance->repository.end())
+    {
+        IRepository* curRepo = iterRepo->second.get();
+        curRepo->UpdateParamSyncFileDir(dir);
+    }
+}
+//----------------------------------------------------------------------------------------/
+const QMap<QString, IRepository::PARAMETR_FILEFOLDER_GIT_ANNEX>& ModelQmlAndCRepository::GetParamSyncFileDir() const
+{
+    auto iterRepo = FacadeApplication::instance->currentRepository;
+    if(iterRepo != FacadeApplication::instance->repository.end())
+    {
+        IRepository* curRepo = iterRepo->second.get();
+        return curRepo->GetStateFileDir();
+    }
+    else{
+        assert("CurrentRepo is NULL" && false);
+    }
+}
+
 //----------------------------------------------------------------------------------------/
 
 

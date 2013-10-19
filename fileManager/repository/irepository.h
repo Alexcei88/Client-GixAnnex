@@ -6,11 +6,14 @@
 #include <QObject>
 #include <QMetaObject>
 #include <QMetaEnum>
+#include <QDir>
+#include <QMap>
 
 class IRepository : public QObject
 {
     Q_OBJECT
     Q_ENUMS(STATE_REPOSITORY)
+    Q_ENUMS(STATE_FILE_AND_DIR)
 public:
 
     // состояние репозитория
@@ -19,6 +22,38 @@ public:
             Syncing = 0,        // идет синхронизация
             Synced = 1,         // синхронизация выполнена
             Disable_sincing = 2 // синхронизация выключена
+    };
+
+    // состояния файла
+    enum STATE_FILE_AND_DIR
+    {
+        SyncingF = 0,        // идет синхронизация
+        SyncedF = 1,         // синхронизация выполнена
+        Disable_sincingF = 2 // синхронизация выключена
+    };
+
+    /**
+    @brief Структура, описывающая параметры хранения файлов репозиторий
+    */
+    struct PARAMETR_REPOSITORY_GI_ANNEX
+    {
+        // автосинхронизация с сервером
+        bool autosync;
+        // автосинхронизация контента репозитория
+        bool autosyncContent;
+        // состояние, в котором щас находимся
+        QString currentState;
+    };
+
+    /**
+    @brief Структура, описывающая параметры файла(папки), входящие в репозиторий
+    */
+    struct PARAMETR_FILEFOLDER_GIT_ANNEX
+    {
+        // автосинхронизация контента
+        bool autosync;
+        // состояние, в котором находиться текущий файл
+        QString currentState;
     };
 
     IRepository();
@@ -34,7 +69,7 @@ public:
     */
     void                SetParamSyncRepository(const bool& autosync, const bool& autosyncContent);
 
-    /** @brief взятие параметров автосинхронизации репозитория*/
+    /** @brief взятие параметров автосинхронизации репозитория */
     bool                GetParamSyncRepository() const { return paramSyncRepo.autosync; };
     bool                GetParamSyncContentRepository() const { return paramSyncRepo.autosyncContent; };
 
@@ -83,35 +118,34 @@ public:
     /**
     @brief Установка состояния репозитория
     */
-    virtual void        SetState(const STATE_REPOSITORY& state);
+    void                SetState(const STATE_REPOSITORY& state);
 
     /**
     @brief Взятие состояния репозитория
     */
-    virtual QString     GetState() const;
+    QString             GetState() const;
 
     /**
-    @brief Структура, описывающая параметры хранения файлов репозиторий
+    @brief Установка состояния у файла(или директории)
+    @param fileDirName - название файла(директории), у которого меняем состояние
     */
-    struct PARAMETR_REPOSITORY_GI_ANNEX
-    {
-        // автосинхронизация с сервером
-        bool autosync;
-        // автосинхронизация контента репозитория
-        bool autosyncContent;
-
-    };
+    void                SetStateFileDir(const QString& fileDirName, const STATE_REPOSITORY& state);
 
     /**
-    @brief Структура, описывающая параметры файла(папки), входящие в репозиторий
+    @brief Взятие состояния синхронизации у конкретного файла(директории)
+    @param fileDirName - название файла(директории), у которого берем состояние
     */
-    struct PARAMETR_FILEFOLDER_GIT_ANNEX
-    {
-        // автосинхронизация контента
-        bool autosync;
+    QString             GetStateFileDir(const QString& fileDirName) const;
 
-    };
+    /**
+    @brief Взятие состояния синхронизации у всех файлов в текущей директории
+    */
+    inline const QMap<QString, PARAMETR_FILEFOLDER_GIT_ANNEX>& GetStateFileDir() const { return paramSyncFileDir; };
 
+    /**
+    @brief Получить новые параметры синхронизации
+    */
+    void                UpdateParamSyncFileDir(const QString& curDir);
 
 protected:
     boost::shared_ptr<ShellCommand> shellCommand;
@@ -125,12 +159,19 @@ protected:
     // параметры синхронизации репозитория
     PARAMETR_REPOSITORY_GI_ANNEX paramSyncRepo;
 
-    // перечисление состояний, в которых мы находимся
+    // перечисление состояний репозитория, в которых мы находимся
     QMetaEnum       metaEnumState;
-    STATE_REPOSITORY currentState;
+    QMetaEnum       metaEnumStateF;
+
+    // параметры состояния файлов, в которых находиться текущий файл(или директория)
+    QMap<QString, PARAMETR_FILEFOLDER_GIT_ANNEX> paramSyncFileDir;
+
+    // вспом класс для манипулированием файловой системой
+    QDir            dir;
 
 private:
     void            InitClass();
+
 };
 
 #endif // IREPOSITORY_H

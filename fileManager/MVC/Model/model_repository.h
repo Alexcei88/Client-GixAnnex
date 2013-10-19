@@ -4,7 +4,6 @@
 
 #include <boost/shared_ptr.hpp>
 #include <map>
-//#include "../../facadeapplication.h"
 #include "../define.h"
 #include "../repository/irepository.h"
 
@@ -28,15 +27,20 @@ public:
     /** @brief Остановить клонирование */
     void                CancelCloneRepository(const bool breakCommand = true) const;
 
-    /** @brief взять контент у файла(директории)*/
+    /** @brief Взять контент у файла(директории)*/
     GANN_DEFINE::RESULT_EXEC_PROCESS GetContentDirectory(const QString& dir) const;
 
-    /** @brief удалить контент у файла(директории)*/
+    /** @brief Удалить контент у файла(директории)*/
     GANN_DEFINE::RESULT_EXEC_PROCESS DropContentDirectory(const QString& dir) const;
 
     /** @brief Сменить текущий репозиторий */
     void                ChangeCurrentRepository(const QString &dir) const;
 
+    /** @brief Смена текущей отображаемой директории */
+    void                ChangeCurrentViewDirectory(const QString &dir) const;
+
+    /** @brief Вернуть массив параметров состояний синхронизации файлов и директории */
+    const QMap<QString, IRepository::PARAMETR_FILEFOLDER_GIT_ANNEX>& GetParamSyncFileDir() const;
 
 };
 }

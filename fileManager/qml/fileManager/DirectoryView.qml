@@ -13,7 +13,6 @@ Rectangle
 
     ControllerRepository {
         id: repository
-        currentPathRepo: UtilsScript.GetFullStrPath(dirModel.folder.toString())
     }
 
     ControllerIcons {
@@ -34,9 +33,9 @@ Rectangle
     onChangeParentFolder:
     {
         // меняем рабочую директорию у модели
+        repository.currentPathRepo = path;
         contrIcons.currentPath = path;
         dirModel.folder = path;
-        repository.currentPathRepo = path;
         folderView.currentIndex = -1;
     }
 
@@ -175,16 +174,16 @@ Rectangle
                             State {
                                 // 1. Идет синхронизация
                                 name: "SYNCING"
-                                when: { contrIcons.stateIconsFileSync[curFileName] === "syncing" }
+                                when: { contrIcons.stateIconsFileSync[curFileName] === "SyncingF" }
                                 PropertyChanges {
                                     target: dirSync
-                                    source: "qrc:/synced.png"
+                                    source: "qrc:/syncing.png"
                                 }
                             },
                             // 2. Имеются только символичеcкие ссылки
                             State {
                                 name: "SYMBOL_LINK"
-                                when: { contrIcons.stateIconsFileSync[curFileName] === "synced" }
+                                when: { contrIcons.stateIconsFileSync[curFileName] === "SyncedF" }
                                 PropertyChanges {
                                     target: dirSync
                                     source: "qrc:/disable_sync.png"
@@ -264,9 +263,7 @@ Rectangle
                         var folder = dirModel.folder == "file:///" ? dirModel.folder + curFileName : dirModel.folder +"/" + curFileName;
                         updateListStateFileSync(folder);
                         dirModel.folder = folder
-                        console.log(dirModel.folder);
                         view.currentIndex = -1;
-
                     }
                 }
                 onEntered: {

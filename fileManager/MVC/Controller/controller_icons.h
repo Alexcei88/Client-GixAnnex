@@ -10,10 +10,12 @@
 */
 
 #include <QObject>
+#include <QSharedPointer>
 #include <QVariant>
 #include <QStringList>
 #include <QDir>
 
+#include "../Model/model_repository.h"
 namespace GANN_MVC
 {
 
@@ -24,16 +26,16 @@ public:
     ControllerIcons();
 
     /** @brief текущий отображаемый путь */
-    Q_PROPERTY(QString currentPath READ GetCurrentPath WRITE SetCurrentPath NOTIFY changedCurrentPath);
+    Q_PROPERTY(QString currentPath READ GetCurrentPath WRITE SetCurrentPath NOTIFY changedParentDIrectory);
 
-    void                SetCurrentPath(QString curPath) { currentPathView = curPath; emit changedCurrentPath(curPath);};
+    void                SetCurrentPath(QString curPath) { currentPathView = curPath; emit changedParentDIrectory(curPath);};
     QString             GetCurrentPath() { return currentPathView; };
 
     /** @brief вектор состояний иконок */
     Q_PROPERTY(QVariantMap stateIconsFileSync READ GetStateIconsFileSync WRITE SetStateIconsFileSync NOTIFY changedStateIconsFileSync);
 
     void                SetStateIconsFileSync (QVariantMap stateIcons) { stateIconsFileSync = stateIcons;};
-    QVariantMap        GetStateIconsFileSync() { return stateIconsFileSync; };
+    QVariantMap         GetStateIconsFileSync() { return stateIconsFileSync; };
 
     /** @brief возвращает путь иконки в зависимости от mimetype файла
     @param file - путь к файлу */
@@ -46,6 +48,8 @@ public slots:
     void                OnChangeParrentDirectory(QString curDir);
 
 private:
+    const QSharedPointer<ModelQmlAndCRepository>  model;
+
     /** @brief список текущего состояния иконок синхронизации
     * в зависимости от текущего списка отображаемых иконок файлов(директорий) */
     QVariantMap        stateIconsFileSync;
@@ -60,9 +64,11 @@ private:
 
     // обновить представление
     void                UpdateView();
+
+
 signals:
     void                changedStateIconsFileSync(QVariantList);
-    void                changedCurrentPath(QString);
+    void                changedParentDIrectory(QString);
 };
 
 }
