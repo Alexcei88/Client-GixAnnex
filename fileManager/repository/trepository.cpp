@@ -58,7 +58,7 @@ RESULT_EXEC_PROCESS TRepository::DeleteRepository(const QString &localURL)
     return NO_ERROR;
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS TRepository::GetContentFile(const QString& file) const
+RESULT_EXEC_PROCESS TRepository::GetContentFile(const QString& file)
 {
     boost::shared_ptr<TShell> shell(new TShell());
     shellCommand->SetWorkingDirectory(this->localURL, shell.get());

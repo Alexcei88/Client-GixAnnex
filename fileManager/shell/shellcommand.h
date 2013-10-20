@@ -34,7 +34,7 @@ public:
     // 2. Добавление каталога/файла в репозиторий
     GANN_DEFINE::RESULT_EXEC_PROCESS AddFile(const QString& path, const boost::shared_ptr<TShell> shell) const;
     // 3. закачать контент у файлов((директории)
-    GANN_DEFINE::RESULT_EXEC_PROCESS GetContentFile(const QString& path, const boost::shared_ptr<TShell> shell, const IRepository* repository) const;
+    GANN_DEFINE::RESULT_EXEC_PROCESS GetContentFile(const QString& path, const boost::shared_ptr<TShell> shell, IRepository* repository) const;
     // 4. удалить контент у файлов((директории)
     GANN_DEFINE::RESULT_EXEC_PROCESS DropContentFile(const QString& path, const boost::shared_ptr<TShell> shell) const;
     // 5. Удалить файл(директорию) из репозитория вместе с контентом

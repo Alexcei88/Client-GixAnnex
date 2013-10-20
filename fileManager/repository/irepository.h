@@ -3,11 +3,13 @@
 
 #include "../shell/shellcommand.h"
 
+// Qt stuff
 #include <QObject>
 #include <QMetaObject>
 #include <QMetaEnum>
 #include <QDir>
 #include <QMap>
+#include <QVector>
 
 class IRepository : public QObject
 {
@@ -94,7 +96,7 @@ public:
     @param file - имя файла(папки) назначения
     @return 0 - нет ошибок
     */
-    virtual GANN_DEFINE::RESULT_EXEC_PROCESS GetContentFile(const QString& file = " ") const = 0;
+    virtual GANN_DEFINE::RESULT_EXEC_PROCESS GetContentFile(const QString& file = " ") = 0;
 
     /**
     @brief удаление контента у файла из репозитория
@@ -171,11 +173,20 @@ protected:
 
 private:
     void            InitClass();
+    // вектор, содержащий файлы, которые сейчас скачиваются(или дано задание на скачивание)
+    QVector<QString> gettingContentFile;
+    // вектор, содержащий файлы, которые сейчас удаляются(или дано задание на удаление)
+    QVector<QString> droppingContentFile;
 
 public slots:
     // слот, говорящий о начале получения контента у файла
-    void            StartGetContentFile(const QString&);
-    void            EndGetContentFile(const QString&);
+    void            OnStartGetContentFile(const QString&);
+    void            OnEndGetContentFile(const QString&);
+
+signals:
+    void            startGetContentFile(const QString&);
+    void            endGetContentFile(const QString&);
+
 };
 
 #endif // IREPOSITORY_H

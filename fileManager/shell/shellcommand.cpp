@@ -59,7 +59,7 @@ RESULT_EXEC_PROCESS ShellCommand::AddFile(const QString& path, const boost::shar
 //    return shell->ExecuteProcess(strCommand, receiverParsing[ADD_FILE]);
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS ShellCommand::GetContentFile(const QString& path, const boost::shared_ptr<TShell> shell, const IRepository* repository) const
+RESULT_EXEC_PROCESS ShellCommand::GetContentFile(const QString& path, const boost::shared_ptr<TShell> shell, IRepository* repository) const
 {
     const QString strCommand = baseCommand + "get " + path;
     boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandGet(shell.get(), repository));

@@ -29,18 +29,22 @@ void IRepository::InitClass()
 
     int enum_indexF = mo.indexOfEnumerator("STATE_FILE_AND_DIR");
     metaEnumStateF = mo.enumerator(enum_indexF);
+
+    QObject::connect(this, &IRepository::startGetContentFile, this, &IRepository::OnStartGetContentFile);
+    QObject::connect(this, &IRepository::endGetContentFile, this, &IRepository::OnEndGetContentFile);
 }
 //----------------------------------------------------------------------------------------/
 void IRepository::SetState(const STATE_REPOSITORY& state)
 {
-//    paramSyncRepo.currentState = state;
+    std::cout<<"State = "<<int(state)<<std::endl;
+    QByteArray str = metaEnumState.valueToKey(int(state));
+    std::cout<<"State = "<<QString(state).toStdString().c_str()<<std::endl;
+    paramSyncRepo.currentState = QString(state);
 }
 //----------------------------------------------------------------------------------------/
 QString IRepository::GetState() const
 {
-    //QByteArray str = metaEnumState.valueToKey(paramSyncRepo.currentState);
-    //return QString(str);
-    return "Synced";
+    return paramSyncRepo.currentState;
 }
 //----------------------------------------------------------------------------------------/
 void IRepository::SetStateFileDir(const QString& fileDirName, const STATE_REPOSITORY& state)
@@ -83,12 +87,12 @@ void IRepository::UpdateParamSyncFileDir(const QString& curDir)
 //----------------------------------------------------------------------------------------/
 //    СЛУЖЕБНЫЕ СЛОТЫ
 //----------------------------------------------------------------------------------------/
-void IRepository::StartGetContentFile(const QString& file)
+void IRepository::OnStartGetContentFile(const QString& file)
 {
 
 }
 //----------------------------------------------------------------------------------------/
-void IRepository::EndGetContentFile(const QString& file)
+void IRepository::OnEndGetContentFile(const QString& file)
 {
 
 }

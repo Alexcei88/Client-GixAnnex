@@ -176,7 +176,7 @@ void FacadeApplication::TimeOutTimeSync()
     if(currentRepository != repository.end())
     {
         // выполняем синхронизацию активного репозитория
-        const IRepository *repository = currentRepository->second.get();
+        IRepository *repository = currentRepository->second.get();
         if(repository->GetParamSyncRepository())
             repository->SyncRepository();
         // синхронизацию контента
