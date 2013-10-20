@@ -172,6 +172,10 @@ protected:
 private:
     void            InitClass();
 
+public slots:
+    // слот, говорящий о начале получения контента у файла
+    void            StartGetContentFile(const QString&);
+    void            EndGetContentFile(const QString&);
 };
 
 #endif // IREPOSITORY_H

@@ -62,7 +62,7 @@ RESULT_EXEC_PROCESS TRepository::GetContentFile(const QString& file) const
 {
     boost::shared_ptr<TShell> shell(new TShell());
     shellCommand->SetWorkingDirectory(this->localURL, shell.get());
-    RESULT_EXEC_PROCESS result = shellCommand->GetContentFile(file, shell);
+    RESULT_EXEC_PROCESS result = shellCommand->GetContentFile(file, shell, this);
     if(result != NO_ERROR)
     {
         printf("Error git-annex get content of file: %s \n", file.toStdString().c_str());

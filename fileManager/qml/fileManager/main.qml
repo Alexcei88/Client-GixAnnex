@@ -5,6 +5,7 @@ import QtQuick.Layouts 1.0
 import Qt.labs.folderlistmodel 1.0
 // окно с отображением контента
 import "getContent"
+
 Rectangle
 {
     id: mainRectangle
@@ -13,6 +14,7 @@ Rectangle
 
     Column
     {
+        id: mainColumn
         Keys.forwardTo: [windowContent, toolBar]
 
         spacing: 1
@@ -25,6 +27,7 @@ Rectangle
         // сверху панелька
         RowLayout
         {
+            id: rowToolBar
             ToolBar
             {
                 id: toolBar

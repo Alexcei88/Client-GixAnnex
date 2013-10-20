@@ -75,11 +75,21 @@ void IRepository::UpdateParamSyncFileDir(const QString& curDir)
         if(*iterator == "." || *iterator == "..") continue;
         PARAMETR_FILEFOLDER_GIT_ANNEX paramTemp;
         paramTemp.autosync = true;
-        QByteArray curState = rand() % 2 ? metaEnumStateF.valueToKey(SyncedF) : metaEnumStateF.valueToKey(SyncingF);
+        QByteArray curState = metaEnumStateF.valueToKey(SyncedF);
         paramTemp.currentState = QString(curState);
         paramSyncFileDir[*iterator] = paramTemp;
     }
 }
 //----------------------------------------------------------------------------------------/
+//    СЛУЖЕБНЫЕ СЛОТЫ
+//----------------------------------------------------------------------------------------/
+void IRepository::StartGetContentFile(const QString& file)
+{
 
+}
+//----------------------------------------------------------------------------------------/
+void IRepository::EndGetContentFile(const QString& file)
+{
 
+}
+//----------------------------------------------------------------------------------------/

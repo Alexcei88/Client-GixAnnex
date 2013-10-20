@@ -56,7 +56,7 @@ Rectangle
     // функция обновления состояния иконок у текущего списка
     function updateIconsStateFileSync()
     {
-        contrIcons.stateIconsFileSync = contrIcons.makeNewList();
+        console.log("updateIconsStateFileSync");
         var folderTemp = dirModel.folder;
         dirModel.folder = "";
         dirModel.folder = folderTemp;
@@ -186,8 +186,7 @@ Rectangle
                                 when: { contrIcons.stateIconsFileSync[curFileName] === "SyncedF" }
                                 PropertyChanges {
                                     target: dirSync
-                                    source: "qrc:/disable_sync.png"
-
+                                    source: "qrc:/synced.png"
                                 }
                             },
                             // 3. Имеются символичеcкие ссылки, некоторые из них с контентом

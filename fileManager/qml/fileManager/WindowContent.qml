@@ -46,6 +46,7 @@ Rectangle {
         DirectoryView
         {
             id: contenItem
+            objectName: "directoryView"
             Layout.minimumWidth: parent.width/5
             Layout.fillWidth: true
             color: "darkgray"

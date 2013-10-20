@@ -62,10 +62,6 @@ private:
     // полностью обновить список состояния иконок
     void                UpdateStateIconsFileSync();
 
-    // обновить представление
-    void                UpdateView();
-
-
 signals:
     void                changedStateIconsFileSync(QVariantList);
     void                changedParentDIrectory(QString);
