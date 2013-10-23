@@ -14,8 +14,11 @@
 #include <QVariant>
 #include <QStringList>
 #include <QDir>
+#include <QTimer>
 
 #include "../Model/model_repository.h"
+#include "../Model/model_icons.h"
+
 namespace GANN_MVC
 {
 
@@ -24,6 +27,7 @@ class ControllerIcons : public QObject
     Q_OBJECT
 public:
     ControllerIcons();
+    ~ControllerIcons();
 
     /** @brief текущий отображаемый путь */
     Q_PROPERTY(QString currentPath READ GetCurrentPath WRITE SetCurrentPath NOTIFY changedParentDIrectory);
@@ -34,21 +38,22 @@ public:
     /** @brief вектор состояний иконок */
     Q_PROPERTY(QVariantMap stateIconsFileSync READ GetStateIconsFileSync WRITE SetStateIconsFileSync NOTIFY changedStateIconsFileSync);
 
-    void                SetStateIconsFileSync (QVariantMap stateIcons) { stateIconsFileSync = stateIcons;};
+    void                SetStateIconsFileSync(QVariantMap stateIcons) { stateIconsFileSync = stateIcons;};
     QVariantMap         GetStateIconsFileSync() { return stateIconsFileSync; };
 
     /** @brief возвращает путь иконки в зависимости от mimetype файла
     @param file - путь к файлу */
     Q_INVOKABLE QVariant GetPathIconsFile(QVariant file) const;
 
-    // тестовая функция
-    Q_INVOKABLE QVariantList makeNewList() { QVariantList listNew; listNew.push_back("synced"); return listNew;};
+    /** @brief Возвращает новый список */
+    //Q_INVOKABLE QVariantList makeNewList() { QVariantList listNew; listNew.push_back("synced"); return listNew;};
 
 public slots:
     void                OnChangeParrentDirectory(QString curDir);
 
 private:
-    const QSharedPointer<ModelQmlAndCRepository>  model;
+    const QSharedPointer<ModelQmlAndCRepository>  mainModel;
+    const QSharedPointer<ModelQmlAndCIcons> modelIcons;
 
     /** @brief список текущего состояния иконок синхронизации
     * в зависимости от текущего списка отображаемых иконок файлов(директорий) */
@@ -56,15 +61,16 @@ private:
 
     /** @brief текущий отображаемый путь в модели QML FolderListModel */
     QString             currentPathView;
-
+    // вспомог класс
     QDir                dir;
 
-    // полностью обновить список состояния иконок
+    /** @brief полностью обновить список состояния иконок */
     void                UpdateStateIconsFileSync();
 
 signals:
     void                changedStateIconsFileSync(QVariantList);
     void                changedParentDIrectory(QString);
+    void                stopThread();
 };
 
 }

@@ -71,11 +71,11 @@ RESULT_EXEC_PROCESS TRepository::GetContentFile(const QString& file)
     return result;
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS TRepository::DropContentFile(const QString& file) const
+RESULT_EXEC_PROCESS TRepository::DropContentFile(const QString& file)
 {
     boost::shared_ptr<TShell> shell(new TShell());
     shellCommand->SetWorkingDirectory(this->localURL, shell.get());
-    RESULT_EXEC_PROCESS result = shellCommand->DropContentFile(file, shell);
+    RESULT_EXEC_PROCESS result = shellCommand->DropContentFile(file, shell, this);
     if(result != NO_ERROR)
     {
         printf("Error git-annex drop content of file: %s \n", file.toStdString().c_str());

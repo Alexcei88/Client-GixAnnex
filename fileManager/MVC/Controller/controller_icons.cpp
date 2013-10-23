@@ -1,11 +1,13 @@
 #include "controller_icons.h"
 
+// Qt stuff
 #include <QString>
 #include <iostream>
 #include <QFileInfo>
 #include <QMimeDatabase>
 #include <QMimeType>
 #include <QIcon>
+#include <QThread>
 
 #include <assert.h>
 #include <iostream>
@@ -13,9 +15,22 @@
 using namespace GANN_MVC;
 //----------------------------------------------------------------------------------------/
 ControllerIcons::ControllerIcons() :
-    model(QSharedPointer<ModelQmlAndCRepository>(new ModelQmlAndCRepository()))
+    mainModel(QSharedPointer<ModelQmlAndCRepository>(new ModelQmlAndCRepository()))
+  , modelIcons(QSharedPointer<ModelQmlAndCIcons>(new ModelQmlAndCIcons(this)))
 {
     QObject::connect(this, &ControllerIcons::changedParentDIrectory, this, &ControllerIcons::OnChangeParrentDirectory);
+
+    // запускаем поток обновления иконок синхронизации
+    QThread* thread = new QThread(this);
+    modelIcons->moveToThread(thread);
+    QObject::connect(thread, &QThread::started, [=] {modelIcons->UpdateFileSyncIcons(); });
+    QObject::connect(this, SIGNAL(stopThread()), thread, SLOT(quit()));
+    thread->start();
+}
+ControllerIcons::~ControllerIcons()
+{
+    // посылаем сигнал о завершении потока обнолвении иконок синхронизации
+    emit stopThread();
 }
 //----------------------------------------------------------------------------------------/
 QVariant ControllerIcons::GetPathIconsFile(QVariant file) const
@@ -39,7 +54,7 @@ void ControllerIcons::OnChangeParrentDirectory(QString curDir)
 {
     assert(dir.exists(curDir));
     // посылаем модели о смене текущей директории отображения в текущем репозитории
-    model->ChangeCurrentViewDirectory(curDir);
+    mainModel->ChangeCurrentViewDirectory(curDir);
 
     dir.setPath(curDir);
 
@@ -50,7 +65,7 @@ void ControllerIcons::OnChangeParrentDirectory(QString curDir)
 void ControllerIcons::UpdateStateIconsFileSync()
 {
     // получить мэп состояний
-    const QMap<QString, IRepository::PARAMETR_FILEFOLDER_GIT_ANNEX>& paramSync = model->GetParamSyncFileDir();
+    const QMap<QString, IRepository::PARAMETR_FILEFOLDER_GIT_ANNEX>& paramSync = mainModel->GetParamSyncFileDir();
     stateIconsFileSync.clear();
     QStringList nameAllFilesAndDir = dir.entryList();
     for(auto iterator = nameAllFilesAndDir.begin(); iterator !=  nameAllFilesAndDir.end(); ++iterator)
@@ -61,3 +76,5 @@ void ControllerIcons::UpdateStateIconsFileSync()
     }
 }
 //----------------------------------------------------------------------------------------/
+
+

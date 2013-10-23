@@ -91,7 +91,6 @@ Rectangle
             var relativePath = UtilsScript.GetRelativeStrPath(repository.currentPathRepo.toString(), currentPathRepo);
             var addFile =  relativePath === "" ? fileName : relativePath + "/" + fileName;
             repository.DropContentDirectory(addFile);
-            updateIconsStateFileSync();
         }
     }
 

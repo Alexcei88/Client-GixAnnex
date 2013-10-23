@@ -26,6 +26,7 @@ SOURCES += main.cpp \
     parsing_command_out/parsingcommandclone.cpp \
     parsing_command_out/parsingcommandget.cpp \
     parsing_command_out/parsingcommandwhereis.cpp \
+    parsing_command_out/parsingcommanddrop.cpp \
     systemtray.cpp \
     repository/irepository.cpp \
     facadeapplication.cpp \
@@ -35,7 +36,8 @@ SOURCES += main.cpp \
 # target.path =
     shell/shelltask.cpp \
     resourcegenerator.cpp \
-    MVC/Controller/controller_icons.cpp
+    MVC/Controller/controller_icons.cpp \
+    MVC/Model/model_icons.cpp
 
 # Please do not modify the following two lines. Required for deployment.
 include(qtquick2applicationviewer/qtquick2applicationviewer.pri)
@@ -62,6 +64,7 @@ HEADERS += \
     parsing_command_out/parsingcommandclone.h \
     parsing_command_out/parsingcommandget.h \
     parsing_command_out/parsingcommandwhereis.h \
+    parsing_command_out/parsingcommanddrop.h \
     systemtray.h \
     facadeapplication.h \
     MVC/Controller/controller_repository.h \
@@ -70,7 +73,8 @@ HEADERS += \
     MVC/Model/model_updateviewer.h \
     shell/shelltask.h \
     resourcegenerator.h \
-    MVC/Controller/controller_icons.h
+    MVC/Controller/controller_icons.h \
+    MVC/Model/model_icons.h
 
 # Включаем поддержку С++11
 QMAKE_CXXFLAGS += -std=c++0x

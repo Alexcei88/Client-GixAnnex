@@ -6,6 +6,7 @@
 #include "../parsing_command_out/parsingcommandclone.h"
 #include "../parsing_command_out/parsingcommandwhereis.h"
 #include "../parsing_command_out/parsingcommandget.h"
+#include "../parsing_command_out/parsingcommanddrop.h"
 
 #include <QThreadPool>
 
@@ -69,16 +70,14 @@ RESULT_EXEC_PROCESS ShellCommand::GetContentFile(const QString& path, const boos
     return NO_ERROR;
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS ShellCommand::DropContentFile(const QString& path, const boost::shared_ptr<TShell> shell) const
+RESULT_EXEC_PROCESS ShellCommand::DropContentFile(const QString& path, const boost::shared_ptr<TShell> shell, IRepository* repository) const
 {
-#if 0
     const QString strCommand = baseCommand + "drop " + path;
-    boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandGet(shell.get()));
+    boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandDrop(shell.get(), repository));
     ShellTask* shellTask = new ShellTask(strCommand, receiverParsing, shell);
 
     QThreadPool::globalInstance()->start(shellTask);
     return NO_ERROR;
-#endif
 }
 //----------------------------------------------------------------------------------------/
 RESULT_EXEC_PROCESS ShellCommand::RemoveFile(const QString& path, const boost::shared_ptr<TShell> shell) const
