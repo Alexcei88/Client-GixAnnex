@@ -83,11 +83,11 @@ void ModelQmlAndCRepository::ChangeCurrentViewDirectory(const QString &dir) cons
     if(iterRepo != FacadeApplication::instance->repository.end())
     {
         IRepository* curRepo = iterRepo->second.get();
-        curRepo->UpdateParamSyncFileDir(dir);
+        curRepo->UpdateParamSyncFileDirFull(dir);
     }
 }
 //----------------------------------------------------------------------------------------/
-const QMap<QString, IRepository::PARAMETR_FILEFOLDER_GIT_ANNEX>& ModelQmlAndCRepository::GetParamSyncFileDir() const
+const QMap<QString, IRepository::PARAMETR_FILEFOLDER_GIT_ANNEX> &ModelQmlAndCRepository::GetParamSyncFileDir() const
 {
     auto iterRepo = FacadeApplication::instance->currentRepository;
     if(iterRepo != FacadeApplication::instance->repository.end())

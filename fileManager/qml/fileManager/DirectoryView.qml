@@ -260,7 +260,6 @@ Rectangle
                     view.currentIndex = model.index
                     if(mouse.button === Qt.RightButton)
                         menudirectory.popup()
-                    view.model.refresh();
                 }
                 onDoubleClicked:
                 {

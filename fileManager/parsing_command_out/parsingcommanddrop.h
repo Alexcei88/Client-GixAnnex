@@ -15,9 +15,9 @@ public:
 
 private:
     IRepository*        repository;
-    // флаг начала скачивания ресурсов
-    bool                startGet;
-    // имя текущего скачиваемого ресурса
+    // флаг окончания скачивания ресурсов
+    bool                startDrop;
+    // имя текущего удаляемого ресурса
     QString             nameFileGetContent;
 };
 

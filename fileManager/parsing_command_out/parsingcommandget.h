@@ -19,6 +19,10 @@ private:
     bool                startGet;
     // имя текущего скачиваемого ресурса
     QString             nameFileGetContent;
+    //  начала скачивания файла
+    void                StartGetContentFile();
+    // конец скачивания файла
+    void                EndGetContentFile();
 };
 
 #endif // PARSINGCOMMANDGET_H

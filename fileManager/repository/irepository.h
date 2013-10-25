@@ -131,12 +131,6 @@ public:
     QString             GetState() const;
 
     /**
-    @brief Установка состояния у файла(или директории)
-    @param fileDirName - название файла(директории), у которого меняем состояние
-    */
-    void                SetStateFileDir(const QString& fileDirName, const STATE_REPOSITORY& state);
-
-    /**
     @brief Взятие состояния синхронизации у конкретного файла(директории)
     @param fileDirName - название файла(директории), у которого берем состояние
     */
@@ -144,15 +138,24 @@ public:
 
     /**
     @brief Взятие состояния у всех файлов в текущей директории
+    @return возвращаем константную ссылку на защищенное поле класса(для скорости, состояния файла часто анализируется)
     */
     inline const QMap<QString, PARAMETR_FILEFOLDER_GIT_ANNEX>& GetStateFileDir() const { return paramSyncFileDir; };
 
-    /**
-    @brief Получить новые параметры синхронизации
-    */
-    void                UpdateParamSyncFileDir(const QString& curDir);
+    /** @brief Получить полностью новые параметры синхронизации(при смене рабочей директории) */
+    void                UpdateParamSyncFileDirFull(const QString& curDir);
+
+    /** @brief Обновить параметры синхронизации у текущей директории */
+    void                UpdateParamSyncFileDir();
 
 protected:
+
+    /**
+    @brief Установка состояния у файла(или директории)
+    @param fileDirName - название файла(директории), у которого меняем состояние
+    */
+    void                SetStateFileDir(const QString& fileDirName, const STATE_FILE_AND_DIR& state);
+
     boost::shared_ptr<ShellCommand> shellCommand;
 
     // удаленный адрес репозитория
@@ -174,21 +177,37 @@ protected:
     // вспом класс для манипулированием файловой системой
     QDir                dir;
 
+    // вспом класс QDir, указывающий на путь к репозиторию
+    QDir                dirRepository;
+
 private:
     void                InitClass();
     // вектор, содержащий файлы, которые сейчас скачиваются(или дано задание на скачивание)
-    QVector<QString>    gettingContentFile;
+    QList<QString>      gettingContentFile;
     // вектор, содержащий файлы, которые сейчас удаляются(или дано задание на удаление)
-    QVector<QString>    droppingContentFile;
+    QList<QString>      droppingContentFile;
+
+    /** @brief идет ли в текущей директории(или сам текущий файл) получение контента в текущий момент времени */
+    bool                IsGettingContentFileDir(const QString& file);
+
+    /** @brief идет ли в текущей директории(или сам текущий файл) удаление контента в текущий момент времени */
+    bool                IsDroppingContentFileDir(const QString& file);
+
+    // содержит ли директория файл, в тч и в поддиректориях)
+    bool                DirContainsFile(const QString& dir, const QString& file) const;
 
 public slots:
     // слот, говорящий о начале получения контента у файла
     void                OnStartGetContentFile(const QString&);
     void                OnEndGetContentFile(const QString&);
+    void                OnStartDropContentFile(const QString&);
+    void                OnEndDropContentFile(const QString&);
 
 signals:
     void                startGetContentFile(const QString&);
     void                endGetContentFile(const QString&);
+    void                startDropContentFile(const QString&);
+    void                endDropContentFile(const QString&);
 
 };
 

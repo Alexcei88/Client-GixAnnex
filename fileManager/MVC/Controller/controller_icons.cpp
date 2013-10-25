@@ -21,7 +21,7 @@ ControllerIcons::ControllerIcons() :
     QObject::connect(this, &ControllerIcons::changedParentDIrectory, this, &ControllerIcons::OnChangeParrentDirectory);
 
     // запускаем поток обновления иконок синхронизации
-    QThread* thread = new QThread(this);
+    thread = new QThread(this);
     modelIcons->moveToThread(thread);
     QObject::connect(thread, &QThread::started, [=] {modelIcons->UpdateFileSyncIcons(); });
     QObject::connect(this, SIGNAL(stopThread()), thread, SLOT(quit()));
@@ -31,6 +31,7 @@ ControllerIcons::~ControllerIcons()
 {
     // посылаем сигнал о завершении потока обнолвении иконок синхронизации
     emit stopThread();
+    while(thread->isFinished());
 }
 //----------------------------------------------------------------------------------------/
 QVariant ControllerIcons::GetPathIconsFile(QVariant file) const
