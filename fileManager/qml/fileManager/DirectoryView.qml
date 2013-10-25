@@ -103,6 +103,13 @@ Rectangle
     FolderListModel
     {
         id: dirModel
+        objectName: "dirModel"
+
+        function updateIcons()
+        {
+            console.log("updateIcons")
+        }
+
         folder: repository.GetDefaultRepositoryPath()
         showDirs: true
         showDirsFirst: true
@@ -173,7 +180,7 @@ Rectangle
                             State {
                                 // 1. Идет синхронизация
                                 name: "SYNCING"
-                                when: { contrIcons.stateIconsFileSync[curFileName] === "SyncingF" }
+                                when: { contrIcons.stateIconsFileSyncQML[curFileName] === "SyncingF" }
                                 PropertyChanges {
                                     target: dirSync
                                     source: "qrc:/syncing.png"
@@ -182,7 +189,7 @@ Rectangle
                             // 2. Имеются только символичеcкие ссылки
                             State {
                                 name: "SYMBOL_LINK"
-                                when: { contrIcons.stateIconsFileSync[curFileName] === "SyncedF" }
+                                when: { contrIcons.stateIconsFileSyncQML[curFileName] === "SyncedF" }
                                 PropertyChanges {
                                     target: dirSync
                                     source: "qrc:/synced.png"
@@ -191,7 +198,7 @@ Rectangle
                             // 3. Имеются символичеcкие ссылки, некоторые из них с контентом
                             State {
                                 name: "SYMBOL_LINK_AND_SOME_CONTENT"
-                                when: { contrIcons.stateIconsFileSync[curFileName] === "sincsng"  }
+                                when: { contrIcons.stateIconsFileSyncQML[curFileName] === "sincsng"  }
                                 PropertyChanges {
                                     target: dirSync
                                     source: "qrc:/syncing.png"
@@ -201,7 +208,7 @@ Rectangle
 
                             // 4. Символическая ссылка с контенктом
                             State {
-                                when: { contrIcons.stateIconsFileSync[curFileName] === "sinsdng"  }
+                                when: { contrIcons.stateIconsFileSyncQML[curFileName] === "sinsdng"  }
                                 name: "SYMBOL_LINK_AND_CONTENT"
                                 PropertyChanges {
                                     target: dirSync
@@ -212,7 +219,7 @@ Rectangle
                             // 5. Синхронизация выключена
                             State {
                                 name: "DISABLE_SYNC"
-                                when: { contrIcons.stateIconsFileSync[curFileName] === "sinssng"  }
+                                when: { contrIcons.stateIconsFileSyncQML[curFileName] === "sinssng"  }
                                 PropertyChanges {
                                     target: dirSync
                                     source: "qrc:/synced.png"
@@ -253,6 +260,7 @@ Rectangle
                     view.currentIndex = model.index
                     if(mouse.button === Qt.RightButton)
                         menudirectory.popup()
+                    view.model.refresh();
                 }
                 onDoubleClicked:
                 {

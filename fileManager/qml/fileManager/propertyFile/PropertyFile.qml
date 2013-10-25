@@ -1,9 +1,19 @@
 import QtQuick 2.1
 import QtQuick.Layouts 1.0
+import Icons 1.0
 
 Rectangle
 {
     id: propertyRect
+
+    //-------------------------------------------------------------------------/
+    // ПОЛЬЗОВАТЕЛЬСКИЕ КЛАССЫ MVC
+
+    ControllerIcons {
+        id: repositoryIcons
+    }
+    //-------------------------------------------------------------------------/
+
 
     // СВО-ВА И СИГНАЛЫ
     //-------------------------------------------------------------------------/
@@ -17,6 +27,8 @@ Rectangle
         {
             name.text = currentName;
             propertyWhereis.nameOption = "New Data";
+            propertyLastModified.valueOption = repositoryIcons.GetLastModifiedFile(currentName);
+            propertySize.valueOption = repositoryIcons.GetSizeFile(currentName)
         }
     }
     //-------------------------------------------------------------------------/

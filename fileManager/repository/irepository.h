@@ -10,6 +10,7 @@
 #include <QDir>
 #include <QMap>
 #include <QVector>
+#include <QFileInfo>
 
 class IRepository : public QObject
 {
@@ -40,11 +41,11 @@ public:
     struct PARAMETR_REPOSITORY_GI_ANNEX
     {
         // автосинхронизация с сервером
-        bool autosync;
+        bool        autosync;
         // автосинхронизация контента репозитория
-        bool autosyncContent;
+        bool        autosyncContent;
         // состояние, в котором щас находимся
-        QString currentState;
+        QString     currentState;
     };
 
     /**
@@ -53,9 +54,11 @@ public:
     struct PARAMETR_FILEFOLDER_GIT_ANNEX
     {
         // автосинхронизация контента
-        bool autosync;
-        // состояние, в котором находиться текущий файл
-        QString currentState;
+        bool        autosync;
+        // состояние синхронизации, в котором находиться текущий файл
+        QString     currentState;
+        // свойства файла(директории)
+        QFileInfo   fileInfo;
     };
 
     IRepository();
@@ -140,7 +143,7 @@ public:
     QString             GetStateFileDir(const QString& fileDirName) const;
 
     /**
-    @brief Взятие состояния синхронизации у всех файлов в текущей директории
+    @brief Взятие состояния у всех файлов в текущей директории
     */
     inline const QMap<QString, PARAMETR_FILEFOLDER_GIT_ANNEX>& GetStateFileDir() const { return paramSyncFileDir; };
 
@@ -153,39 +156,39 @@ protected:
     boost::shared_ptr<ShellCommand> shellCommand;
 
     // удаленный адрес репозитория
-    QString         remoteURL;
+    QString             remoteURL;
     // локальный адрес репозитория
-    QString         localURL;
+    QString             localURL;
     // название репозитория Git-Annex
-    QString         nameRepo;
+    QString             nameRepo;
     // параметры синхронизации репозитория
     PARAMETR_REPOSITORY_GI_ANNEX paramSyncRepo;
 
     // перечисление состояний репозитория, в которых мы находимся
-    QMetaEnum       metaEnumState;
-    QMetaEnum       metaEnumStateF;
+    QMetaEnum           metaEnumState;
+    QMetaEnum           metaEnumStateF;
 
     // параметры состояния файлов, в которых находиться текущий файл(или директория)
     QMap<QString, PARAMETR_FILEFOLDER_GIT_ANNEX> paramSyncFileDir;
 
     // вспом класс для манипулированием файловой системой
-    QDir            dir;
+    QDir                dir;
 
 private:
-    void            InitClass();
+    void                InitClass();
     // вектор, содержащий файлы, которые сейчас скачиваются(или дано задание на скачивание)
-    QVector<QString> gettingContentFile;
+    QVector<QString>    gettingContentFile;
     // вектор, содержащий файлы, которые сейчас удаляются(или дано задание на удаление)
-    QVector<QString> droppingContentFile;
+    QVector<QString>    droppingContentFile;
 
 public slots:
     // слот, говорящий о начале получения контента у файла
-    void            OnStartGetContentFile(const QString&);
-    void            OnEndGetContentFile(const QString&);
+    void                OnStartGetContentFile(const QString&);
+    void                OnEndGetContentFile(const QString&);
 
 signals:
-    void            startGetContentFile(const QString&);
-    void            endGetContentFile(const QString&);
+    void                startGetContentFile(const QString&);
+    void                endGetContentFile(const QString&);
 
 };
 

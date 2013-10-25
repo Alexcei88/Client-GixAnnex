@@ -50,6 +50,16 @@ QVariant ControllerIcons::GetPathIconsFile(QVariant file) const
     return QVariant(pathIcons);
 }
 //----------------------------------------------------------------------------------------/
+QVariant ControllerIcons::GetLastModifiedFile(QVariant file) const
+{
+    return mainModel->GetLastModifiedFile(file.toString());
+}
+//----------------------------------------------------------------------------------------/
+QVariant ControllerIcons::GetSizeFile(QVariant file) const
+{
+    return mainModel->GetSizeFile(file.toString());
+}
+//----------------------------------------------------------------------------------------/
 void ControllerIcons::OnChangeParrentDirectory(QString curDir)
 {
     assert(dir.exists(curDir));

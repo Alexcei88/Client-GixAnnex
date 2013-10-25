@@ -36,7 +36,7 @@ public:
     QString             GetCurrentPath() { return currentPathView; };
 
     /** @brief вектор состояний иконок */
-    Q_PROPERTY(QVariantMap stateIconsFileSync READ GetStateIconsFileSync WRITE SetStateIconsFileSync NOTIFY changedStateIconsFileSync);
+    Q_PROPERTY(QVariantMap stateIconsFileSyncQML READ GetStateIconsFileSync WRITE SetStateIconsFileSync NOTIFY changedStateIconsFileSync);
 
     void                SetStateIconsFileSync(QVariantMap stateIcons) { stateIconsFileSync = stateIcons;};
     QVariantMap         GetStateIconsFileSync() { return stateIconsFileSync; };
@@ -44,6 +44,14 @@ public:
     /** @brief возвращает путь иконки в зависимости от mimetype файла
     @param file - путь к файлу */
     Q_INVOKABLE QVariant GetPathIconsFile(QVariant file) const;
+
+    /** @brief дата последней модификации файла(директории)
+    @param file - путь к файлу */
+    Q_INVOKABLE QVariant GetLastModifiedFile(QVariant file) const;
+
+    /** @brief размер файла(директории)
+    @param file - путь к файлу */
+    Q_INVOKABLE QVariant GetSizeFile(QVariant file) const;
 
     /** @brief Возвращает новый список */
     //Q_INVOKABLE QVariantList makeNewList() { QVariantList listNew; listNew.push_back("synced"); return listNew;};

@@ -23,7 +23,7 @@ void ModelQmlAndCIcons::UpdateFileSyncIcons()
         {
             std::cout<<"Обновляем представление с иконками"<<std::endl;
             FacadeApplication::getInstance()->systemTray->ReLoadDirectoryView();
-            sleep(2);
+            sleep(10);
         }
     }
 }

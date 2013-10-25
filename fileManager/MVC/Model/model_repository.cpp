@@ -6,6 +6,8 @@ using namespace GANN_DEFINE;
 
 #include <QIcon>
 #include <QStringList>
+#include <QFileInfo>
+#include <QDateTime>
 
 //----------------------------------------------------------------------------------------/
 ModelQmlAndCRepository::ModelQmlAndCRepository()
@@ -97,7 +99,39 @@ const QMap<QString, IRepository::PARAMETR_FILEFOLDER_GIT_ANNEX>& ModelQmlAndCRep
         assert("CurrentRepo is NULL" && false);
     }
 }
-
+//----------------------------------------------------------------------------------------/
+const QString ModelQmlAndCRepository::GetLastModifiedFile(const QString& file) const
+{
+    auto iterRepo = FacadeApplication::instance->currentRepository;
+    if(iterRepo != FacadeApplication::instance->repository.end())
+    {
+        IRepository* curRepo = iterRepo->second.get();
+        QMap<QString, IRepository::PARAMETR_FILEFOLDER_GIT_ANNEX> mapState = curRepo->GetStateFileDir();
+        const QFileInfo& fileInfo = mapState[file].fileInfo;
+        return fileInfo.lastModified().date().toString("dd.MM.yyyy");
+    }
+    else{
+        assert("CurrentRepo is NULL" && false);
+    }
+}
+//----------------------------------------------------------------------------------------/
+const QString ModelQmlAndCRepository::GetSizeFile(const QString& file) const
+{
+    auto iterRepo = FacadeApplication::instance->currentRepository;
+    if(iterRepo != FacadeApplication::instance->repository.end())
+    {
+        IRepository* curRepo = iterRepo->second.get();
+        QMap<QString, IRepository::PARAMETR_FILEFOLDER_GIT_ANNEX> mapState = curRepo->GetStateFileDir();
+        const QFileInfo& fileInfo = mapState[file].fileInfo;
+        quint64 nSize = fileInfo.size();
+        qint64 i = 0;
+        for (; nSize > 1023; nSize /= 1024, ++i) { }
+        return QString().setNum(nSize) + " " + "BKMGT"[i];
+    }
+    else{
+        assert("CurrentRepo is NULL" && false);
+    }
+}
 //----------------------------------------------------------------------------------------/
 
 

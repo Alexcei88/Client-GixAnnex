@@ -42,5 +42,11 @@ public:
     /** @brief Вернуть массив параметров состояний синхронизации файлов и директории */
     const QMap<QString, IRepository::PARAMETR_FILEFOLDER_GIT_ANNEX>& GetParamSyncFileDir() const;
 
+    /** @brief Дата посл модификации файла */
+    const QString       GetLastModifiedFile(const QString& file) const;
+    /** @brief Размер файла */
+    const QString       GetSizeFile(const QString& file) const;
+
+
 };
 }

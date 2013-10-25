@@ -36,10 +36,8 @@ void IRepository::InitClass()
 //----------------------------------------------------------------------------------------/
 void IRepository::SetState(const STATE_REPOSITORY& state)
 {
-    std::cout<<"State = "<<int(state)<<std::endl;
     QByteArray str = metaEnumState.valueToKey(int(state));
-    std::cout<<"State = "<<QString(state).toStdString().c_str()<<std::endl;
-    paramSyncRepo.currentState = QString(state);
+    paramSyncRepo.currentState = QString(str);
 }
 //----------------------------------------------------------------------------------------/
 QString IRepository::GetState() const
@@ -74,13 +72,16 @@ void IRepository::UpdateParamSyncFileDir(const QString& curDir)
 
     paramSyncFileDir.clear();
     QStringList nameAllFilesAndDir = dir.entryList();
-    for(auto iterator = nameAllFilesAndDir.begin(); iterator !=  nameAllFilesAndDir.end(); ++iterator)
+    QFileInfoList infoList = dir.entryInfoList();
+    auto iteratorInfo = infoList.begin();
+    for(auto iterator = nameAllFilesAndDir.begin(); iterator !=  nameAllFilesAndDir.end(); ++iterator, ++iteratorInfo)
     {
         if(*iterator == "." || *iterator == "..") continue;
         PARAMETR_FILEFOLDER_GIT_ANNEX paramTemp;
         paramTemp.autosync = true;
         QByteArray curState = metaEnumStateF.valueToKey(SyncedF);
         paramTemp.currentState = QString(curState);
+        paramTemp.fileInfo = *iteratorInfo;
         paramSyncFileDir[*iterator] = paramTemp;
     }
 }
