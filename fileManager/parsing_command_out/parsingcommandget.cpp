@@ -6,13 +6,14 @@ ParsingCommandGet::ParsingCommandGet(const TShell* shell, IRepository* repositor
   , startGet(false)
 {
     // регулярное выражение в случаи успешного начала скачивания файла текущего файла
-    QString succes1 = "(^ ?get)(.*)";
+    QString succes1 = "(^ ?get )(.*)";
+    QString succes2 = "(^ ?get )(.*)(\(from.*)";
 
     // регулярное выражение в случаи успешного окончания скачивания файла(может быть как отдельной строкой идти,а может и совмещенно)
     QString succesEnd = "(.*)(ok)(.*)";
 
     //  ресурс недоступен
-    QString unsucces = "(get)(.*)(not available)";
+    QString unsucces = "(get)(.*)(not available)(.*)";
     // причина ошибки
     QString error = "(error: )(.*)";
     // процесс скачивания ресурса из интернета(пока нереализованно)
@@ -23,6 +24,7 @@ ParsingCommandGet::ParsingCommandGet(const TShell* shell, IRepository* repositor
 //    QString summaryFailed = "";
 
     listRegExpPossible.push_back(succes1);
+    listRegExpPossible.push_back(succes2);
     listRegExpPossible.push_back(unsucces);
     listRegExpPossible.push_back(error);
     listRegExpPossible.push_back(succesEnd);
@@ -34,37 +36,50 @@ void ParsingCommandGet::ParsingData()
     if(commandStart && !commandEnd)
     {
         // посл полученная строка из потока вывода
-        const QString str = dataStdOut.back().replace(QChar('\n'), QString(" "));
+        const QString str = dataStdOut.back();
 
-        // в случаи неудачи начала скачивания
-        regExp.setPattern(listRegExpPossible[1]);
-        if(regExp.indexIn(str) != -1)
+        // идем построчно
+        QStringList strLines = str.split("\n", QString::SkipEmptyParts);
+        for(auto it = strLines.begin(); it != strLines.end(); ++it)
         {
-            dataAfterParsing << regExp.cap(2) << regExp.cap(3);
-            wasErrorCommand = true;
-            return;
-        }
-
-        //  в случаи успеха начала скачивания
-        regExp.setPattern(listRegExpPossible[0]);
-        if(regExp.indexIn(str) != -1)
-        {
-            StartGetContentFile();
-            return;
-        }
-
-        // в случаи окончания скачивания файла
-        regExp.setPattern(listRegExpPossible[3]);
-        if(regExp.indexIn(str) != -1)
-        {
-            EndGetContentFile();
-
-            // проверка, не началось ли новое скачивание
-            const QString remainStr = regExp.cap(3);
-            regExp.setPattern(listRegExpPossible[0]);
-            if(regExp.indexIn(remainStr) != -1)
+            QString tempStr = *it;
+            while(!tempStr.isEmpty())
             {
-                StartGetContentFile();
+                // в случаи неудачи начала скачивания
+                regExp.setPattern(listRegExpPossible[2]);
+                if(regExp.indexIn(tempStr) != -1)
+                {
+                    dataAfterParsing << regExp.cap(2) << regExp.cap(3);
+                    wasErrorCommand = true;
+                    continue;
+                }
+
+                //  в случаи успеха начала скачивания
+                regExp.setPattern(listRegExpPossible[1]);
+                if(regExp.indexIn(tempStr) != -1)
+                {
+                    StartGetContentFile();
+                    tempStr = regExp.cap(3);
+                    continue;
+                }
+                regExp.setPattern(listRegExpPossible[0]);
+                if(regExp.indexIn(tempStr) != -1)
+                {
+                    StartGetContentFile();
+                    tempStr = "";
+                    continue;
+                }
+
+                // в случаи окончания скачивания файла
+                regExp.setPattern(listRegExpPossible[4]);
+                if(regExp.indexIn(tempStr) != -1)
+                {
+                    EndGetContentFile();
+                    tempStr = regExp.cap(3);
+                    continue;
+                }
+                // не нашли соответствие, перрываем парсинг текущей строки
+                tempStr = "";
             }
         }
     }

@@ -155,13 +155,16 @@ bool IRepository::DirContainsFile(const QString& dir, const QString& file) const
 //----------------------------------------------------------------------------------------/
 void IRepository::OnStartGetContentFile(const QString& file)
 {
-    std::cout<<"START GET Content"<<file.toStdString().c_str()<<std::endl;
-    gettingContentFile.push_back(file);
+    if(std::find(gettingContentFile.begin(), gettingContentFile.end(), file) != gettingContentFile.end()){
+        gettingContentFile.push_back(file);
+    }
 }
 //----------------------------------------------------------------------------------------/
 void IRepository::OnEndGetContentFile(const QString& file)
 {
-    gettingContentFile.erase(std::find(gettingContentFile.begin(), gettingContentFile.end(), file));
+    auto itErase = std::find(gettingContentFile.begin(), gettingContentFile.end(), file);
+    if(itErase != gettingContentFile.end())
+        gettingContentFile.erase(itErase);
 }
 //----------------------------------------------------------------------------------------/
 void IRepository::OnStartDropContentFile(const QString& file)
