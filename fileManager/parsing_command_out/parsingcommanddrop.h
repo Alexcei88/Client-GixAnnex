@@ -19,6 +19,10 @@ private:
     bool                startDrop;
     // имя текущего удаляемого ресурса
     QString             nameFileGetContent;
+    //  начала удаления файла
+    void                StartDropContentFile();
+    // конец удаления файла
+    void                EndDropContentFile();
 };
 
 #endif // PARSINGCOMMANDDROP_H

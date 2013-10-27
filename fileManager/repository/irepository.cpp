@@ -33,6 +33,8 @@ void IRepository::InitClass()
 
     QObject::connect(this, &IRepository::startGetContentFile, this, &IRepository::OnStartGetContentFile, Qt::DirectConnection);
     QObject::connect(this, &IRepository::endGetContentFile, this, &IRepository::OnEndGetContentFile, Qt::DirectConnection);
+    QObject::connect(this, &IRepository::startDropContentFile, this, &IRepository::OnStartDropContentFile, Qt::DirectConnection);
+    QObject::connect(this, &IRepository::endDropContentFile, this, &IRepository::OnEndDropContentFile, Qt::DirectConnection);
 
     dir.setPath("");
 }
@@ -169,12 +171,17 @@ void IRepository::OnEndGetContentFile(const QString& file)
 //----------------------------------------------------------------------------------------/
 void IRepository::OnStartDropContentFile(const QString& file)
 {
-    droppingContentFile.push_back(file);
+    if(std::find(droppingContentFile.begin(), droppingContentFile.end(), file) != droppingContentFile.end()){
+        droppingContentFile.push_back(file);
+    }
 }
 //----------------------------------------------------------------------------------------/
 void IRepository::OnEndDropContentFile(const QString& file)
 {
-    droppingContentFile.erase(std::find(droppingContentFile.begin(), droppingContentFile.end(), file));
+    auto itErase = std::find(droppingContentFile.begin(), droppingContentFile.end(), file);
+    if(itErase != droppingContentFile.end()) {
+        droppingContentFile.erase(itErase);
+    }
 }
 //----------------------------------------------------------------------------------------/
 
