@@ -56,6 +56,9 @@ public:
     /** @brief  Запуск потока обновления иконок синхронизации */
     Q_INVOKABLE void    StartThreadIconsSync();
 
+    /** @brief полностью обновить список состояния иконок */
+    void                UpdateStateIconsFileSync();
+
     /** @brief Возвращает новый список */
     //Q_INVOKABLE QVariantList makeNewList() { QVariantList listNew; listNew.push_back("synced"); return listNew;};
 
@@ -77,9 +80,6 @@ private:
 
     // поток, в котором будем обновление иконок синхронизации в представлении
     QThread*            thread;
-
-    /** @brief полностью обновить список состояния иконок */
-    void                UpdateStateIconsFileSync();
 
 signals:
     void                changedStateIconsFileSync(QVariantList);

@@ -7,11 +7,13 @@ ParsingCommandDrop::ParsingCommandDrop(const TShell* shell, IRepository* reposit
 {
     // регулярные выражение в случаи успешного удаления
     QString succes1 = "(^ ?drop )(.*)";
-    QString succes2 = "(^ ?drop )(.*)(\\(from.*)";
+    QString succes2 = "(^ ?drop )(.*)(ок)";
 
     // регулярное выражение в случаи успешного окончания скачивания файла(может быть как отдельной строкой идти,а может и совмещенно)
-    QString succesEnd = "(.*)(ок)(.*)";
+    QString succesEnd = "(.*)(ok)(.*)";
 
+    // в случаи неудачной попытки удаление контента(например, количество коий меньше 0)
+    QString failedEnd = "([^0-9])(failed)(.*)";
     // итоговый результат удаления
     // количество файлов, которые не удалось скопировать-
 //    QString summaryFailed = "";
@@ -19,11 +21,11 @@ ParsingCommandDrop::ParsingCommandDrop(const TShell* shell, IRepository* reposit
     listRegExpPossible.push_back(succes1);
     listRegExpPossible.push_back(succes2);
     listRegExpPossible.push_back(succesEnd);
+    listRegExpPossible.push_back(failedEnd);
 }
 //----------------------------------------------------------------------------------------/
 void ParsingCommandDrop::ParsingData()
 {
-    return;
     // команда стартовала, но еще не завершилась
     if(commandStart && !commandEnd)
     {
@@ -36,15 +38,25 @@ void ParsingCommandDrop::ParsingData()
             QString tempStr = *it;
             while(!tempStr.isEmpty())
             {
-                //  в случаи успеха начала скачивания
+                //  случаи неудачного окончания скачивания файла
+                regExp.setPattern(listRegExpPossible[3]);
+                if(regExp.indexIn(tempStr) != -1)
+                {
+                    EndDropContentFile();
+                    tempStr = "";
+                    continue;
+                }
+                // в случаи успеха начала скачивания и немедленного завершения скачивания
                 regExp.setPattern(listRegExpPossible[1]);
                 if(regExp.indexIn(tempStr) != -1)
                 {
                     StartDropContentFile();
-                    tempStr = regExp.cap(3);
+                    EndDropContentFile();
+                    tempStr = "";
                     continue;
                 }
 
+                //  в случаи успеха начала скачивания
                 regExp.setPattern(listRegExpPossible[0]);
                 if(regExp.indexIn(tempStr) != -1)
                 {

@@ -1,6 +1,7 @@
 #include "model_icons.h"
 #include "facadeapplication.h"
 #include <iostream>
+#include "../Controller/controller_icons.h"
 
 using namespace GANN_MVC;
 
@@ -26,10 +27,10 @@ void ModelQmlAndCIcons::UpdateFileSyncIcons()
             {
                 IRepository* curRepo = iterRepo->second.get();
                 curRepo->UpdateParamSyncFileDir();
+                contrIcons->UpdateStateIconsFileSync();
             }
-
-            std::cout<<"Обновляем представление с иконками"<<std::endl;
-           // FacadeApplication::getInstance()->systemTray->ReLoadDirectoryView();
+            //std::cout<<"Обновляем представление с иконками"<<std::endl;
+            //FacadeApplication::getInstance()->systemTray->ReLoadDirectoryView();
             sleep(2);
         }
     }

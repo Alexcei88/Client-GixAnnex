@@ -90,7 +90,7 @@ void IRepository::UpdateParamSyncFileDirFull(const QString& curDir)
         {
             // текущее состояние
             QByteArray curState;
-            if(IsGettingContentFileDir(*iterator) && IsDroppingContentFileDir(*iterator)){
+            if(IsGettingContentFileDir(*iterator) || IsDroppingContentFileDir(*iterator)){
                 curState = metaEnumStateF.valueToKey(SyncingF);
             }
             else {
@@ -111,11 +111,8 @@ void IRepository::UpdateParamSyncFileDir()
         PARAMETR_FILEFOLDER_GIT_ANNEX& paramSync = iterator.value();
         // текущее состояние
         QByteArray curState;
-        if(IsGettingContentFileDir(fileName) && IsDroppingContentFileDir(fileName))
+        if(IsGettingContentFileDir(fileName) || IsDroppingContentFileDir(fileName))
         {
-#ifdef DEBUG
-            std::cout<<"Syncing "<<fileName.toStdString().c_str()<<std::endl;
-#endif
             curState = metaEnumStateF.valueToKey(SyncingF);
             paramSync.currentState = QString(curState);
         }
@@ -181,7 +178,7 @@ void IRepository::OnEndGetContentFile(const QString& file)
     }
     else
     {
-        std::cout<<"WARNING!!!! В списке получаемых в текущий момент файлов нет файла, получени контента которого закончилось!!!"<<std::endl;
+        std::cout<<"WARNING!!!! В списке получаемых в текущий момент файлов нет файла, получение контента которого закончилось!!!"<<std::endl;
         #ifdef DEBUG
                 assert(0);
         #endif
@@ -200,6 +197,13 @@ void IRepository::OnEndDropContentFile(const QString& file)
     auto itErase = std::find(droppingContentFile.begin(), droppingContentFile.end(), file);
     if(itErase != droppingContentFile.end()) {
         droppingContentFile.erase(itErase);
+    }
+    else
+    {
+        std::cout<<"WARNING!!!! В списке удаляемых в текущий момент файлов нет файла, удаление контента которого закончилось!!!"<<std::endl;
+        #ifdef DEBUG
+                assert(0);
+        #endif
     }
 }
 //----------------------------------------------------------------------------------------/
