@@ -7,7 +7,7 @@ ParsingCommandGet::ParsingCommandGet(const TShell* shell, IRepository* repositor
 {
     // регулярное выражение в случаи успешного начала скачивания файла текущего файла
     QString succes1 = "(^ ?get )(.*)";
-    QString succes2 = "(^ ?get )(.*)(\(from.*)";
+    QString succes2 = "(^ ?get )(.*)(\\(from.*)";
 
     // регулярное выражение в случаи успешного окончания скачивания файла(может быть как отдельной строкой идти,а может и совмещенно)
     QString succesEnd = "(.*)(ok)(.*)";

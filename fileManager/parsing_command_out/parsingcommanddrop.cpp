@@ -7,7 +7,7 @@ ParsingCommandDrop::ParsingCommandDrop(const TShell* shell, IRepository* reposit
 {
     // регулярные выражение в случаи успешного удаления
     QString succes1 = "(^ ?drop )(.*)";
-    QString succes2 = "(^ ?drop )(.*)(\(from.*)";
+    QString succes2 = "(^ ?drop )(.*)(\\(from.*)";
 
     // регулярное выражение в случаи успешного окончания скачивания файла(может быть как отдельной строкой идти,а может и совмещенно)
     QString succesEnd = "(.*)(ок)(.*)";
@@ -23,6 +23,7 @@ ParsingCommandDrop::ParsingCommandDrop(const TShell* shell, IRepository* reposit
 //----------------------------------------------------------------------------------------/
 void ParsingCommandDrop::ParsingData()
 {
+    return;
     // команда стартовала, но еще не завершилась
     if(commandStart && !commandEnd)
     {

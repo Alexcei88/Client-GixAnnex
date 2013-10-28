@@ -46,7 +46,6 @@ RESULT_EXEC_PROCESS TRepository::CloneRepository(QString& localURL, const QStrin
     this->localURL  = localURL + folderToClone;
 
     localURL +=folderToClone;
-    dirRepository.setPath(localURL);
     return result;
 }
 //----------------------------------------------------------------------------------------/

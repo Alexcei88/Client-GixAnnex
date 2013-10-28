@@ -53,6 +53,9 @@ public:
     @param file - путь к файлу */
     Q_INVOKABLE QVariant GetSizeFile(QVariant file) const;
 
+    /** @brief  Запуск потока обновления иконок синхронизации */
+    Q_INVOKABLE void    StartThreadIconsSync();
+
     /** @brief Возвращает новый список */
     //Q_INVOKABLE QVariantList makeNewList() { QVariantList listNew; listNew.push_back("synced"); return listNew;};
 

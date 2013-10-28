@@ -17,21 +17,18 @@ using namespace GANN_MVC;
 ControllerIcons::ControllerIcons() :
     mainModel(QSharedPointer<ModelQmlAndCRepository>(new ModelQmlAndCRepository()))
   , modelIcons(QSharedPointer<ModelQmlAndCIcons>(new ModelQmlAndCIcons(this)))
+  , thread(0l)
 {
     QObject::connect(this, &ControllerIcons::changedParentDIrectory, this, &ControllerIcons::OnChangeParrentDirectory);
-
-    // запускаем поток обновления иконок синхронизации
-    thread = new QThread(this);
-    modelIcons->moveToThread(thread);
-    QObject::connect(thread, &QThread::started, [=] {modelIcons->UpdateFileSyncIcons(); });
-    QObject::connect(this, SIGNAL(stopThread()), thread, SLOT(quit()));
-    thread->start();
 }
 ControllerIcons::~ControllerIcons()
 {
-    // посылаем сигнал о завершении потока обнолвении иконок синхронизации
-    emit stopThread();
-    while(thread->isFinished());
+    // посылаем сигнал о завершении потока обновлении иконок синхронизации
+    if(thread != 0 && thread->isRunning())
+    {
+        emit stopThread();
+        while(thread->isFinished());
+    }
 }
 //----------------------------------------------------------------------------------------/
 QVariant ControllerIcons::GetPathIconsFile(QVariant file) const
@@ -59,6 +56,19 @@ QVariant ControllerIcons::GetLastModifiedFile(QVariant file) const
 QVariant ControllerIcons::GetSizeFile(QVariant file) const
 {
     return mainModel->GetSizeFile(file.toString());
+}
+//----------------------------------------------------------------------------------------/
+void ControllerIcons::StartThreadIconsSync()
+{
+    if(thread != 0 && thread->isRunning())
+        return;
+
+    // запускаем поток обновления иконок синхронизации
+    thread = new QThread(this);
+    modelIcons->moveToThread(thread);
+    QObject::connect(thread, &QThread::started, [=] {modelIcons->UpdateFileSyncIcons(); });
+    QObject::connect(this, SIGNAL(stopThread()), thread, SLOT(quit()));
+    thread->start();
 }
 //----------------------------------------------------------------------------------------/
 void ControllerIcons::OnChangeParrentDirectory(QString curDir)

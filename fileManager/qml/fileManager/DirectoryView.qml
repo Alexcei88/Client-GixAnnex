@@ -136,6 +136,9 @@ Rectangle
             z: 50
             anchors.margins: 20
         }
+        Component.onCompleted: {
+            contrIcons.StartThreadIconsSync();
+        }
 
 //        highlightFollowsCurrentItem: true
         highlightMoveDuration: 0

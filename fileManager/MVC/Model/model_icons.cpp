@@ -25,12 +25,12 @@ void ModelQmlAndCIcons::UpdateFileSyncIcons()
             if(iterRepo != FacadeApplication::instance->repository.end())
             {
                 IRepository* curRepo = iterRepo->second.get();
-               // curRepo->UpdateParamSyncFileDir();
+                curRepo->UpdateParamSyncFileDir();
             }
 
             std::cout<<"Обновляем представление с иконками"<<std::endl;
            // FacadeApplication::getInstance()->systemTray->ReLoadDirectoryView();
-            sleep(15);
+            sleep(2);
         }
     }
 }
