@@ -13,7 +13,9 @@ ParsingCommandDrop::ParsingCommandDrop(const TShell* shell, IRepository* reposit
     QString succesEnd = "(.*)(ok)(.*)";
 
     // в случаи неудачной попытки удаление контента(например, количество коий меньше 0)
-    QString failedEnd = "([^0-9])(failed)(.*)";
+    QString unsucces = "(.*)(failed)(.*)";
+    QString unsuccesAdd = "(.*)(\\d+ failed)(.*)";
+
     // итоговый результат удаления
     // количество файлов, которые не удалось скопировать-
 //    QString summaryFailed = "";
@@ -21,7 +23,8 @@ ParsingCommandDrop::ParsingCommandDrop(const TShell* shell, IRepository* reposit
     listRegExpPossible.push_back(succes1);
     listRegExpPossible.push_back(succes2);
     listRegExpPossible.push_back(succesEnd);
-    listRegExpPossible.push_back(failedEnd);
+    listRegExpPossible.push_back(unsucces);
+    listRegExpPossible.push_back(unsuccesAdd);
 }
 //----------------------------------------------------------------------------------------/
 void ParsingCommandDrop::ParsingData()
@@ -42,7 +45,12 @@ void ParsingCommandDrop::ParsingData()
                 regExp.setPattern(listRegExpPossible[3]);
                 if(regExp.indexIn(tempStr) != -1)
                 {
-                    EndDropContentFile();
+                    regExp.setPattern(listRegExpPossible[4]);
+                    if(regExp.indexIn(tempStr) == -1)
+                    {
+                        startDrop = false;
+                        wasErrorCommand = true;
+                    }
                     tempStr = "";
                     continue;
                 }

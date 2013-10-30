@@ -56,7 +56,6 @@ Rectangle
     // функция обновления состояния иконок у текущего списка
     function updateIconsStateFileSync()
     {
-        console.log("updateIconsStateFileSync");
         var folderTemp = dirModel.folder;
         dirModel.folder = "";
         dirModel.folder = folderTemp;

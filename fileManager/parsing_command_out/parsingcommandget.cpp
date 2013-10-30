@@ -13,11 +13,14 @@ ParsingCommandGet::ParsingCommandGet(const TShell* shell, IRepository* repositor
     QString succesEnd = "(.*)(ok)(.*)";
 
     //  ресурс недоступен
-    QString unsucces = "(get)(.*)(not available)(.*)";
+    QString unsucces = "(.*)(failed)(.*)";
+    QString unsuccesAdd = "(.*)(\\d+ failed)(.*)";
+
     // причина ошибки
     QString error = "(error: )(.*)";
     // процесс скачивания ресурса из интернета(пока нереализованно)
     QString processDownLoad = "()";
+
 
     // итоговый результат копирования
     // количество файлов, которые не удалось скопировать-
@@ -26,6 +29,7 @@ ParsingCommandGet::ParsingCommandGet(const TShell* shell, IRepository* repositor
     listRegExpPossible.push_back(succes1);
     listRegExpPossible.push_back(succes2);
     listRegExpPossible.push_back(unsucces);
+    listRegExpPossible.push_back(unsuccesAdd);
     listRegExpPossible.push_back(error);
     listRegExpPossible.push_back(succesEnd);
 }
@@ -49,8 +53,13 @@ void ParsingCommandGet::ParsingData()
                 regExp.setPattern(listRegExpPossible[2]);
                 if(regExp.indexIn(tempStr) != -1)
                 {
-                    dataAfterParsing << regExp.cap(2) << regExp.cap(3);
-                    wasErrorCommand = true;
+                    regExp.setPattern(listRegExpPossible[3]);
+                    if(regExp.indexIn(tempStr) == -1)
+                    {
+                        startGet = false;
+                        wasErrorCommand = true;
+                    }
+                    tempStr = "";
                     continue;
                 }
 
@@ -71,7 +80,7 @@ void ParsingCommandGet::ParsingData()
                 }
 
                 // в случаи окончания скачивания файла
-                regExp.setPattern(listRegExpPossible[4]);
+                regExp.setPattern(listRegExpPossible[5]);
                 if(regExp.indexIn(tempStr) != -1)
                 {
                     EndGetContentFile();

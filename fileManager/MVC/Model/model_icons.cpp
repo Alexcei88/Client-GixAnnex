@@ -29,8 +29,7 @@ void ModelQmlAndCIcons::UpdateFileSyncIcons()
                 curRepo->UpdateParamSyncFileDir();
                 contrIcons->UpdateStateIconsFileSync();
             }
-            //std::cout<<"Обновляем представление с иконками"<<std::endl;
-            //FacadeApplication::getInstance()->systemTray->ReLoadDirectoryView();
+            FacadeApplication::getInstance()->systemTray->ReLoadDirectoryView();
             sleep(2);
         }
     }
