@@ -33,8 +33,9 @@ ControllerIcons::~ControllerIcons()
 //----------------------------------------------------------------------------------------/
 QVariant ControllerIcons::GetPathIconsFile(QVariant file) const
 {
+    static QMimeDatabase dataBase;
     QFileInfo fileInfo(file.toString());
-    QMimeType type = QMimeDatabase().mimeTypeForFile(fileInfo);
+    QMimeType type = dataBase.mimeTypeForFile(fileInfo);
     QString pathIcons;
     if(QIcon::hasThemeIcon(type.iconName()))
     {

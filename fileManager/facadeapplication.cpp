@@ -22,17 +22,17 @@ FacadeApplication::FacadeApplication() :
 {
     fileRepoConfig.setFileName(pathFileRepoConfig);
 
-    // загружаем ресурсные файлы
+    // генерируем список путей до иконок
     ResourceGenerator::getInstance();
 
-    // загружаем из конфигов репозитории
+    // загружаем из конфигов существующие репозитории
     LoadRepositories();
 
     // инициализируем связь C и QML
     InitClassCAndQML();
 
-    // разрешаем выполнять задачу только в одном потоке
-    // больше 1 процесса git-annex создать все равно нельзя
+    // разрешаем выполнять задачу git-annex только в одном потоке
+    // больше 1 процесса git-annex создать все равно не даст
     QThreadPool::globalInstance()->setMaxThreadCount(1);
 
     // запускаем таймер синхронизации данных

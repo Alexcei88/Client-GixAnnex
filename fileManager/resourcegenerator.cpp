@@ -1,21 +1,22 @@
 #include "resourcegenerator.h"
 
+// Qt stuff
 #include <QFile>
+#include <QMimeDatabase>
+#include <QIcon>
+
+using namespace boost::filesystem;
 
 boost::shared_ptr<ResourceGenerator> ResourceGenerator::instance = boost::shared_ptr<ResourceGenerator>();
 //----------------------------------------------------------------------------------------/
-ResourceGenerator::ResourceGenerator()
+ResourceGenerator::ResourceGenerator() :
+    listAllMimeType(QMimeDatabase().allMimeTypes())
 {
-    // пока что бесполезный класс
-    resourceFileIcon = new QResource("/home/alexcei88/GitAnnex/client/fileManager/Resource.qrc");
-    std::cout<<"AbsolutePath"<<resourceFileIcon->absoluteFilePath().toStdString().c_str()<<std::endl;
     GenerateResource();
 }
 //----------------------------------------------------------------------------------------/
 ResourceGenerator::~ResourceGenerator()
-{
-    delete resourceFileIcon;
-}
+{}
 //----------------------------------------------------------------------------------------/
 ResourceGenerator* ResourceGenerator::getInstance()
 {
@@ -26,16 +27,52 @@ ResourceGenerator* ResourceGenerator::getInstance()
 //----------------------------------------------------------------------------------------/
 void ResourceGenerator::GenerateResource()
 {
-    if(QIcon::hasThemeIcon("application-msword"))
+    QStringList possiblePathToSearch = QIcon::themeSearchPaths();
+    pathToIconsDirectoryView.clear();
+    for(auto type = listAllMimeType.begin(); type != listAllMimeType.end(); ++type)
     {
-        QIcon icon = QIcon::fromTheme("application-msword");
-       // QFile tempFile(&icon);
-        std::cout<<"Da, we finded"<<std::endl;
-    }
-    const QString fileName = "/home/alexcei88/GitAnnex/client/fileManager/folder.png";
-    if(resourceFileIcon->registerResource(fileName, "/"))
-    {
-        std::cout<<"Resource File Add"<<std::endl;
+        try
+        {
+            if(QIcon::hasThemeIcon(type->iconName()))
+            {
+                // пробуем найти файл с текущим названием
+                for(auto path = possiblePathToSearch.begin(); path != possiblePathToSearch.end(); ++path)
+                {
+                    boost::filesystem::path rootSearchDir("path");
+                    boost::filesystem::path foundDir;
+                    if(FindFile(rootSearchDir, type->iconName().toStdString(), foundDir))
+                    {
+                        //мы нашли полный путь до иконки
+
+                    }
+                }
+            }
+        }
+        catch(filesystem_error)
+        {
+            std::cout<<"Произошло исключение библиотеки boost::filesystem, загружаем стандартную картинку для данного mimetype"<<std::endl;
+        }
     }
 }
+//----------------------------------------------------------------------------------------/
+bool ResourceGenerator::FindFile(const boost::filesystem::path& dirPath,const std::string& fileName, boost::filesystem::path& pathFound)
+{
+    if(!exists(dirPath)) return false;
+    directory_iterator endItr;
+
+    for (directory_iterator itr(dirPath ); itr != endItr; ++itr)
+    {
+        if (is_directory( *itr ) )
+        {
+            if(FindFile(*itr, fileName, pathFound)) return true;
+        }
+//        else if(itr-> == fileName )
+//        {
+//            pathFound= *itr;
+//            return true;
+//        }
+    }
+    return false;
+}
+
 //----------------------------------------------------------------------------------------/

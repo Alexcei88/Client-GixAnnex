@@ -6,7 +6,7 @@
 //----------------------------------------------------------------------------------------/
 SystemTray::SystemTray():
     mainView(0l)
-   ,cloneRepoView(0l)
+  , cloneRepoView(0l)
 {
     //=================================================================================== /
     addRepoAction   = new QAction(tr("&New repository"), this);
@@ -25,7 +25,7 @@ SystemTray::SystemTray():
     trayIconMenu->addSeparator();
     trayIconMenu->addAction(quitAction);
 
-    trayIcon    = new QSystemTrayIcon(QIcon("qrc:/heart.ico"), this);
+    trayIcon    = new QSystemTrayIcon(QIcon(":/heart.ico"), this);
     trayIcon->setContextMenu(trayIconMenu);
     trayIcon->show();
 
