@@ -86,7 +86,6 @@ void IRepository::UpdateParamSyncFileDirFull(const QString& curDir)
         if(*iterator == "." || *iterator == "..") continue;
         PARAMETR_FILEFOLDER_GIT_ANNEX paramTemp;
         paramTemp.autosync = true;
-
         {
             // текущее состояние
             QByteArray curState;
@@ -128,7 +127,6 @@ bool IRepository::IsGettingContentFileDir(const QString& file)
 {
     for(auto iterator = gettingContentFile.constBegin(); iterator != gettingContentFile.constEnd(); ++iterator)
     {       
-        // всегда выдает относительный путь
 #if 0
         const QString gettingFile = *iterator;
         QString fullPathFile = dir.path() + "/" + file;
@@ -207,4 +205,3 @@ void IRepository::OnEndDropContentFile(const QString& file)
     }
 }
 //----------------------------------------------------------------------------------------/
-

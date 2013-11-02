@@ -25,10 +25,29 @@ ResourceGenerator* ResourceGenerator::getInstance()
     return instance.get();
 }
 //----------------------------------------------------------------------------------------/
+const QString ResourceGenerator::GetResourcePath(const QMimeType& type)
+{
+    auto it = pathToIconsDirectoryView.find(type.name());
+    if( it != pathToIconsDirectoryView.end())
+    {
+        return it.value();
+    }
+    else
+    {
+        std::cout<<"КРИТИЧЕСКАЯ ОШИБКА!!! Нет ресурса с иконкой для отображения данного mimetype. Это критическая ошибка."
+                   "Программа будет закрыта."<<std::endl;
+#ifndef DEBUG
+        exit(1);
+#endif
+    }
+}
+//----------------------------------------------------------------------------------------/
 void ResourceGenerator::GenerateResource()
 {
     QStringList possiblePathToSearch = QIcon::themeSearchPaths();
     pathToIconsDirectoryView.clear();
+
+    boost::filesystem::path foundDir;
     for(auto type = listAllMimeType.begin(); type != listAllMimeType.end(); ++type)
     {
         try
@@ -38,14 +57,28 @@ void ResourceGenerator::GenerateResource()
                 // пробуем найти файл с текущим названием
                 for(auto path = possiblePathToSearch.begin(); path != possiblePathToSearch.end(); ++path)
                 {
-                    boost::filesystem::path rootSearchDir("path");
-                    boost::filesystem::path foundDir;
-                    if(FindFile(rootSearchDir, type->iconName().toStdString(), foundDir))
+                    boost::filesystem::path rootSearchDir((*path).toStdString());
+                    if(FindFile(rootSearchDir, (type->iconName() +".png").toStdString(), foundDir))
                     {
-                        //мы нашли полный путь до иконки
-
+                        pathToIconsDirectoryView[type->name()] = QString(foundDir.c_str());
                     }
                 }
+            }
+            else if(QIcon::hasThemeIcon(type->genericIconName()))
+            {
+                // пробуем найти файл с текущим названием
+                for(auto path = possiblePathToSearch.begin(); path != possiblePathToSearch.end(); ++path)
+                {
+                    boost::filesystem::path rootSearchDir((*path).toStdString());
+                    if(FindFile(rootSearchDir, (type->genericIconName() +".png").toStdString(), foundDir))
+                    {
+                        pathToIconsDirectoryView[type->name()] = QString(foundDir.c_str());
+                    }
+                }
+            }
+            else
+            {
+                // мы не нашли, соответственно загружаем какой-то ресурс по умолчанию
             }
         }
         catch(filesystem_error)
@@ -53,12 +86,17 @@ void ResourceGenerator::GenerateResource()
             std::cout<<"Произошло исключение библиотеки boost::filesystem, загружаем стандартную картинку для данного mimetype"<<std::endl;
         }
     }
+
+
 }
 //----------------------------------------------------------------------------------------/
-bool ResourceGenerator::FindFile(const boost::filesystem::path& dirPath,const std::string& fileName, boost::filesystem::path& pathFound)
+bool ResourceGenerator::FindFile(const boost::filesystem::path& dirPath, const std::string& fileName, boost::filesystem::path& pathFound)
 {
     if(!exists(dirPath)) return false;
     directory_iterator endItr;
+
+    // path, указывающий на файл, который ищем
+    boost::filesystem::path searchFile(fileName.c_str());
 
     for (directory_iterator itr(dirPath ); itr != endItr; ++itr)
     {
@@ -66,11 +104,15 @@ bool ResourceGenerator::FindFile(const boost::filesystem::path& dirPath,const st
         {
             if(FindFile(*itr, fileName, pathFound)) return true;
         }
-//        else if(itr-> == fileName )
-//        {
-//            pathFound= *itr;
-//            return true;
-//        }
+        else
+        {
+            boost::filesystem::path temp_path(*itr);
+            if(temp_path.filename() == searchFile)
+            {
+                pathFound = temp_path;
+                return true;
+            }
+        }
     }
     return false;
 }

@@ -9,12 +9,7 @@
  * состояние синхронизации, то немедленно передать в представление)
 */
 
-#include <QObject>
 #include <QSharedPointer>
-#include <QVariant>
-#include <QStringList>
-#include <QDir>
-#include <QTimer>
 
 #include "../Model/model_repository.h"
 #include "../Model/model_icons.h"

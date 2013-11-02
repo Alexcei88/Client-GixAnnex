@@ -1,8 +1,7 @@
 #include "controller_icons.h"
+#include "../../resourcegenerator.h"
 
 // Qt stuff
-#include <QString>
-#include <iostream>
 #include <QFileInfo>
 #include <QMimeDatabase>
 #include <QMimeType>
@@ -11,6 +10,7 @@
 
 #include <assert.h>
 #include <iostream>
+
 
 using namespace GANN_MVC;
 //----------------------------------------------------------------------------------------/
@@ -32,10 +32,11 @@ ControllerIcons::~ControllerIcons()
 }
 //----------------------------------------------------------------------------------------/
 QVariant ControllerIcons::GetPathIconsFile(QVariant file) const
-{
+{    
     static QMimeDatabase dataBase;
     QFileInfo fileInfo(file.toString());
     QMimeType type = dataBase.mimeTypeForFile(fileInfo);
+#if 0
     QString pathIcons;
     if(QIcon::hasThemeIcon(type.iconName()))
     {
@@ -46,6 +47,9 @@ QVariant ControllerIcons::GetPathIconsFile(QVariant file) const
         // определяем другой общий для этот типа
         pathIcons = "qrc:/mimetypes/resource/mimetypes/" + type.genericIconName() + ".png";
     }
+#else
+    QString pathIcons = ResourceGenerator::getInstance()->GetResourcePath(type);
+#endif
     return QVariant(pathIcons);
 }
 //----------------------------------------------------------------------------------------/
