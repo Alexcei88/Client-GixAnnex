@@ -32,12 +32,13 @@ SOURCES += main.cpp \
     facadeapplication.cpp \
     MVC/Controller/controller_repository.cpp \
     MVC/Model/model_repository.cpp \
-# Installation path
-# target.path =
     shell/shelltask.cpp \
     resourcegenerator.cpp \
     MVC/Controller/controller_icons.cpp \
     MVC/Model/model_icons.cpp
+
+# Installation path
+# target.path =
 
 # Please do not modify the following two lines. Required for deployment.
 include(qtquick2applicationviewer/qtquick2applicationviewer.pri)
@@ -48,7 +49,9 @@ OTHER_FILES += \
     qml/fileManager/DirectoryView.qml \
     qml/fileManager/propertyFile/PropertyFile.qml \
     qml/fileManager/getContent/GetContent.qml \
-    qml/fileManager/repository/Clone.qml
+    qml/fileManager/repository/Clone.qml \
+
+INCLUDEPATH += iniparser/
 
 RESOURCES += \
     Resource.qrc \
@@ -73,10 +76,13 @@ HEADERS += \
     shell/shelltask.h \
     resourcegenerator.h \
     MVC/Controller/controller_icons.h \
-    MVC/Model/model_icons.h
+    MVC/Model/model_icons.h \
+    iniparser/iniparser.h \
+    iniparser/dictionary.h
 
 # Включаем поддержку С++11
 QMAKE_CXXFLAGS += -std=c++0x
 
 LIBS += -lboost_system \
-        -lboost_filesystem
+        -lboost_filesystem \
+        libiniparser.a
