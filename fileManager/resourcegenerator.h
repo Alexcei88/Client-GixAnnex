@@ -5,10 +5,10 @@
  * Генератор ресурсов для различных тем(поддержка пока тока Linux)
 */
 // Qt Stuff
-#include <QList>
 #include <QMimeType>
 #include <QMap>
 #include <QSize>
+#include <QStringList>
 
 // boost stuff
 #include <boost/shared_ptr.hpp>
@@ -33,10 +33,11 @@ private:
         @param pathGeneralTheme - путь, где располагаются общие ресурсы
         @param size - требуемый размер картинки, по умолчанию 48*48
     */
-    void                GenerateResourceIconsDirectoryView(const boost::filesystem::path& pathCurTheme
-                                                            , const QSize size = QSize(48, 48)
-                                                            );
-
+    void                GenerateResourceIconsDirectoryView(const boost::filesystem::path& pathCurTheme);
+    /** @brief размер иконок для отображения(по умолчанию 48*48) */
+    const QSize sizeIcons;
+    /** @brief список поддиректорий, где ищем иконки */
+    QStringList subPathSearchIcons;
     // список всех зарегистрированных mimetype-ов
     const QList<QMimeType> listAllMimeType;
     // список полных путей для всех mimeType-ов иконок DirectoryView(размер фиксированный, 48*48)
@@ -60,6 +61,11 @@ private:
         @return false - не найдено, true - найдено
     */
     bool                FindFile(const boost::filesystem::path& dirPath, const std::string &fileName, std::vector<boost::filesystem::path>& pathFound);
+
+    /** @brief формирование списка поддиректорий в текущем пути темы в системе в зависимости
+     *  от требуемого размера и списка поддиректорий
+    */
+    void                GenerateListPathInCurTheme(const boost::filesystem::path& pathCurrentTheme, QVector<boost::filesystem::path>& pathSearch) const;
 };
 
 #endif // RESOURCEGENERATOR_H
