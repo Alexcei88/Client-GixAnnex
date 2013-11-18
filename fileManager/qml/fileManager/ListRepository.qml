@@ -51,6 +51,11 @@ Rectangle {
         keyNavigationWraps: true
         delegate:
             Item{
+            Component.onCompleted: {
+                if(GridView.isCurrentItem)
+                    selectNewRepository(localPath)
+            }
+
             id: viewItem
             height: viewModel.cellHeight
             width: viewModel.cellWidth

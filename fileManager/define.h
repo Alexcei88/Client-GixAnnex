@@ -12,4 +12,7 @@ namespace GANN_DEFINE {
     };
 }
 
+#define DEBUG
+//#undef DEBUG
+
 #endif // DEFINE_H

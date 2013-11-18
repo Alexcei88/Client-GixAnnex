@@ -8,18 +8,16 @@ import "utils.js" as UtilsScript
 
 Rectangle
 {
-
     //-------------------------------------------------------------------------/
     // ПОЛЬЗОВАТЕЛЬСКИЕ КЛАССЫ MVC
 
     ControllerRepository {
         id: repository
-        currentPathRepo: UtilsScript.GetFullStrPath(dirModel.folder.toString())
     }
 
     ControllerIcons {
         id: contrIcons
-
+        currentPath: UtilsScript.GetFullStrPath(dirModel.folder.toString())
     }
 
     // СВО-ВА, ФУНКЦИИ И СИГНАЛЫ
@@ -35,15 +33,41 @@ Rectangle
     onChangeParentFolder:
     {
         // меняем рабочую директорию у модели
-        dirModel.folder = path;
+        console.log(path)
         repository.currentPathRepo = path;
+        contrIcons.currentPath = path;
+        dirModel.folder = path;
+        console.log(dirModel.folder.toString())
         folderView.currentIndex = -1;
     }
+
+    // функция взятия пути до иконки в зависимости от mymetype файла
     function getResourceImage(fileName)
     {
         var currentPathRepo = UtilsScript.GetFullStrPath(dirModel.folder.toString());
-        var path = currentPathRepo + fileName;
-        return contrIcons.GetPathIconsFile(path);
+        var path = currentPathRepo + "/" + fileName;
+        return contrIcons.GetPathIconsFileDirecoctoryView(path);
+    }
+
+    // функция обновления списка состояния иконок
+    function updateListStateFileSync(folder)
+    {
+        contrIcons.currentPath = UtilsScript.GetFullStrPath(folder.toString());
+    }
+
+    // функция обновления состояния иконок у текущего списка
+    function updateIconsStateFileSync()
+    {
+        var folderTemp = dirModel.folder;
+        dirModel.folder = "";
+        dirModel.folder = folderTemp;
+    }
+
+    // функция проверки нахождения свойства folder впределах корневого пути репозитория
+    // чтобы выше корня репозитория не выходить
+    function direcotoryIsSubRootRepositoryDirectory(path)
+    {
+        return repository.DirIsSubRootDirRepository(path)
     }
 
     //-------------------------------------------------------------------------/
@@ -55,7 +79,9 @@ Rectangle
             if(dirModel.isFolder(dirModel.index) && view.currentItem)
             {
                 var fileName = view.currentItem.curFileName;
-                dirModel.folder = dirModel.folder == "file:///" ? dirModel.folder + fileName : dirModel.folder +"/" + fileName;
+                var folder = dirModel.folder == "file:///" ? dirModel.folder + fileName : dirModel.folder +"/" + fileName;
+                updateListStateFileSync(folder);
+                dirModel.folder = folder;
                 view.currentIndex = -1;
             }
         }
@@ -86,6 +112,13 @@ Rectangle
     FolderListModel
     {
         id: dirModel
+        objectName: "dirModel"
+
+        function updateIcons()
+        {
+            console.log("updateIcons")
+        }
+
         folder: repository.GetDefaultRepositoryPath()
         showDirs: true
         showDirsFirst: true
@@ -112,6 +145,9 @@ Rectangle
             z: 50
             anchors.margins: 20
         }
+        Component.onCompleted: {
+            contrIcons.StartThreadIconsSync();
+        }
 
 //        highlightFollowsCurrentItem: true
         highlightMoveDuration: 0
@@ -136,11 +172,7 @@ Rectangle
                 Image{
 
                     id: imgFolder
-                    source: if(dirModel.isFolder(model.index)) {
-                                "qrc:/icons/folder.png" }
-                            else {
-                                getResourceImage(curFileName);
-                            }
+                    source: getResourceImage(curFileName);
                     anchors.horizontalCenter: parent.horizontalCenter
                     Image{
                         id: dirSync
@@ -148,7 +180,7 @@ Rectangle
                         anchors.left: parent.left
                         anchors.leftMargin: 2
                         source: "qrc:/synced.png"
-                        state: "SYMBOL_LINK"
+                        state: "SYNCING"
                     }
 
                     // различные состояния, в которых может находиться директория(или файл)
@@ -156,26 +188,25 @@ Rectangle
                             State {
                                 // 1. Идет синхронизация
                                 name: "SYNCING"
-                                when: { contrIcons.stateIconsFileSync[0] === "syncing" }
+                                when: { contrIcons.stateIconsFileSyncQML[curFileName] === "SyncingF" }
                                 PropertyChanges {
                                     target: dirSync
-                                    source: "qrc:/synced.png"
+                                    source: "qrc:/syncing.png"
                                 }
                             },
                             // 2. Имеются только символичеcкие ссылки
                             State {
                                 name: "SYMBOL_LINK"
-                                when: { contrIcons.stateIconsFileSync[0] === "synced" }
+                                when: { contrIcons.stateIconsFileSyncQML[curFileName] === "SyncedF" }
                                 PropertyChanges {
                                     target: dirSync
-                                    source: "qrc:/disable_sync.png"
-
+                                    source: "qrc:/synced.png"
                                 }
                             },
                             // 3. Имеются символичеcкие ссылки, некоторые из них с контентом
                             State {
                                 name: "SYMBOL_LINK_AND_SOME_CONTENT"
-                                when: { contrIcons.stateIconsFileSync[0] === "sincsng"  }
+                                when: { contrIcons.stateIconsFileSyncQML[curFileName] === "sincsng"  }
                                 PropertyChanges {
                                     target: dirSync
                                     source: "qrc:/syncing.png"
@@ -185,7 +216,7 @@ Rectangle
 
                             // 4. Символическая ссылка с контенктом
                             State {
-                                when: { contrIcons.stateIconsFileSync[0] === "sinsdng"  }
+                                when: { contrIcons.stateIconsFileSyncQML[curFileName] === "sinsdng"  }
                                 name: "SYMBOL_LINK_AND_CONTENT"
                                 PropertyChanges {
                                     target: dirSync
@@ -196,7 +227,7 @@ Rectangle
                             // 5. Синхронизация выключена
                             State {
                                 name: "DISABLE_SYNC"
-                                when: { contrIcons.stateIconsFileSync[0] === "sinssng"  }
+                                when: { contrIcons.stateIconsFileSyncQML[curFileName] === "sinssng"  }
                                 PropertyChanges {
                                     target: dirSync
                                     source: "qrc:/synced.png"
@@ -242,10 +273,10 @@ Rectangle
                 {
                     if(dirModel.isFolder(model.index))
                     {
-                        dirModel.folder = dirModel.folder == "file:///" ? dirModel.folder + curFileName : dirModel.folder +"/" + curFileName;
-                        console.log(dirModel.folder);
+                        var folder = dirModel.folder == "file:///" ? dirModel.folder + curFileName : dirModel.folder +"/" + curFileName;
+                        updateListStateFileSync(folder);
+                        dirModel.folder = folder
                         view.currentIndex = -1;
-
                     }
                 }
                 onEntered: {

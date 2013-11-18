@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
     windowTray.SetCloneRepoView(&cloneRepoViewer);
     facadeApp->SetSystemTray(&windowTray);
 
-    TRepository rep;
+    //TRepository rep;
 //    rep.CloneRepository("/home/alexcei/Copy/copyproject", "MyRepo", "/home/alexcei/Copy/project");
 //    rep.GetContentFile(".");
     flush(std::cout);

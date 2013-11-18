@@ -33,16 +33,16 @@ void ControllerRepository::CancelCloneRepository() const
 //----------------------------------------------------------------------------------------/
 QVariant ControllerRepository::GetContentDirectory(QVariant dir) const
 {
-    QVariantList stateIconsFileSync;
-    stateIconsFileSync.push_back("synced");
-    ControllerIcons controllerTest;
-    controllerTest.SetStateIconsFileSync(stateIconsFileSync);
-    return "dsd";
     return model->GetContentDirectory(dir.toString());
 }
 //----------------------------------------------------------------------------------------/
 QVariant ControllerRepository::DropContentDirectory(QVariant dir) const
 {
     return model->DropContentDirectory(dir.toString());
+}
+//----------------------------------------------------------------------------------------/
+QVariant ControllerRepository::DirIsSubRootDirRepository(QVariant dir) const
+{
+    return model->DirIsSubRootDirRepository(dir.toString());
 }
 //----------------------------------------------------------------------------------------/

@@ -17,24 +17,25 @@ boost::shared_ptr<FacadeApplication> FacadeApplication::instance = boost::shared
 FacadeApplication::FacadeApplication() :
     pathFileRepoConfig("ganx-repository.xml")
   , currentRepository(repository.end())
+  , systemTray(0l)
 //    pathFileRepoConfig(":/config/config_repo")
 {
     fileRepoConfig.setFileName(pathFileRepoConfig);
 
-    // загружаем ресурсные файлы
+    // генерируем список путей до иконок
     ResourceGenerator::getInstance();
 
-    // загружаем из конфигов репозитории
+    // загружаем из конфигов существующие репозитории
     LoadRepositories();
 
     // инициализируем связь C и QML
     InitClassCAndQML();
 
-    // разрешаем выполнять задачу только в одном потоке
-    // больше 1 процесса git-annex создать все равно нельзя
+    // разрешаем выполнять задачу git-annex только в одном потоке
+    // больше 1 процесса git-annex создать все равно не даст
     QThreadPool::globalInstance()->setMaxThreadCount(1);
 
-    // делаем таймер, и запускаем его
+    // запускаем таймер синхронизации данных
     QObject::connect(&timeSync, &QTimer::timeout, [=](){this->TimeOutTimeSync();});
     // интервал срабатывания тайминга(в миллисек)
     const int timeInterval = 30000;
@@ -171,12 +172,10 @@ void FacadeApplication::ChangeCurrentRepository(const QString& dir)
 void FacadeApplication::TimeOutTimeSync()
 {
     timeSync.stop();
-    // идем по все репозиториям, и выполняем синхронизацию
-    std::cout<<"Timer Signal End"<<std::endl;
     if(currentRepository != repository.end())
     {
         // выполняем синхронизацию активного репозитория
-        const IRepository *repository = currentRepository->second.get();
+        IRepository *repository = currentRepository->second.get();
         if(repository->GetParamSyncRepository())
             repository->SyncRepository();
         // синхронизацию контента

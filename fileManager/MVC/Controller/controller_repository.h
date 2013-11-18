@@ -42,6 +42,10 @@ public:
     /** @brief удалить контент у файла(директории)*/
     Q_INVOKABLE QVariant    DropContentDirectory(QVariant dir) const;
 
+    /** @brief явяеться ли выбранный путь поддиректорией корневого пути репозитория*/
+    Q_INVOKABLE QVariant    DirIsSubRootDirRepository(QVariant dir) const;
+
+
 private:
     const QSharedPointer<ModelQmlAndCRepository>  model;
     QString                 currentPathRepo;

@@ -25,6 +25,7 @@
 // our stuff
 #include "systemtray.h"
 #include "MVC/Model/model_repository.h"
+#include "MVC/Model/model_icons.h"
 #include "repository/irepository.h"
 
 class IRepository;
@@ -36,8 +37,11 @@ public:
     static FacadeApplication* getInstance();
     void            SetSystemTray(SystemTray* systemTray) { this->systemTray = systemTray; };
 
-    // класс модели MVC объявим другом
+    // классы модели MVC объявим другом для нашего фасада(
+    // принято такое архитектурное решение, что все методы фасада сделать приватными, и дать доступ только к моделям MVC,
+    // т.к кроме модели никто не может уведомлять о новых событиях, действиях, происходящие в приложении)
     friend class GANN_MVC::ModelQmlAndCRepository;
+    friend class GANN_MVC::ModelQmlAndCIcons;
 
 private:
     FacadeApplication();
@@ -47,10 +51,10 @@ private:
 
     void            InitClassCAndQML();
 
-    /** @brief загрузка репозиториев из сохраненных конфигов */
+    /** @brief Загрузка репозиториев из сохраненных конфигов */
     void            LoadRepositories();
 
-    /** @brief сохранения репозитория в конфигах */
+    /** @brief Сохранения репозитория в конфигах */
     void            SaveRepository(const QString& localURL, const QString& remoteURL, const QString& nameRepo);
 
     /** @brief начать клонирование репозитория */
@@ -59,9 +63,8 @@ private:
     /** @brief Сменить итератор текущий репозиторий */
     void            ChangeCurrentRepository(const QString &dir);
 
-    /** @brief Слот, срабатывающий при тайм-айте таймера(в основном синхронизация данных)*/
+    /** @brief Функция-слот, срабатывающий при тайм-айте таймера синхронизации данных*/
     void            TimeOutTimeSync();
-
 
     /** @brief путь к файлу конфигов репозитория, формат xml */
     const QString   pathFileRepoConfig;
@@ -76,9 +79,6 @@ private:
     /** @brief системный трей */
     SystemTray*     systemTray;
     QFile           fileRepoConfig;
-
-
-
 
 };
 
