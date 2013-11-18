@@ -41,3 +41,8 @@ QVariant ControllerRepository::DropContentDirectory(QVariant dir) const
     return model->DropContentDirectory(dir.toString());
 }
 //----------------------------------------------------------------------------------------/
+QVariant ControllerRepository::DirIsSubRootDirRepository(QVariant dir) const
+{
+    return model->DirIsSubRootDirRepository(dir.toString());
+}
+//----------------------------------------------------------------------------------------/

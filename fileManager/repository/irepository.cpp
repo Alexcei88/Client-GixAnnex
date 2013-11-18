@@ -70,10 +70,10 @@ void IRepository::SetParamSyncRepository(const bool& autosync, const bool& autos
 //----------------------------------------------------------------------------------------/
 void IRepository::UpdateParamSyncFileDirFull(const QString& curDir)
 {
-    // проверка на то, что текущий путь явлеяться поддиректорией корневого
    // std::cout<<"New Dir = "<<curDir.toStdString().c_str()<<std::endl;
    // std::cout<<"Local URL Dir = "<<localURL.toStdString().c_str()<<std::endl;
 
+    // проверка на то, что текущий путь является поддиректорией к корню репозитория
     assert(curDir.length() >= localURL.length() && curDir.contains(localURL, Qt::CaseSensitive));
     dir.setPath(curDir);
 
@@ -121,6 +121,11 @@ void IRepository::UpdateParamSyncFileDir()
             paramSync.currentState = QString(curState);
         }
     }
+}
+//----------------------------------------------------------------------------------------/
+bool IRepository::DirIsSubRootDirRepository(const QString& dir) const
+{
+    return (dir.length() >= localURL.length() && dir.contains(localURL, Qt::CaseSensitive) );
 }
 //----------------------------------------------------------------------------------------/
 bool IRepository::IsGettingContentFileDir(const QString& file)

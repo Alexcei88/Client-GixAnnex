@@ -8,11 +8,21 @@ import "propertyFile"
 
 Rectangle {
 
+    // СВО-ВА, ФУНКЦИИ И СИГНАЛЫ
+    //-------------------------------------------------------------------------/
     // обновление списка состояния синхронизации файлов у DirectoryView
     function updateListFileSync(folder)
     {
         contenItem.updateListStateFileSync(folder);
     }
+
+    // функция проверки нахождения свойства folder впределах корневого пути репозитория
+    // чтобы выше корня репозитория не выходить
+    function direcotoryIsSubRootRepositoryDirectory(folder)
+    {
+        return contenItem.direcotoryIsSubRootRepositoryDirectory(folder);
+    }
+    //-------------------------------------------------------------------------/
 
     id: windowContent
     width: 100
@@ -36,6 +46,7 @@ Rectangle {
         {
             listRepository.reloadModel();
         }
+
         ListRepository
         {
             id: listRepository
@@ -43,7 +54,8 @@ Rectangle {
             Layout.minimumWidth: parent.width/8
             Layout.maximumWidth: 3 * parent.width/5
             color: "#E6E6FA"
-            onSelectNewRepository: {
+            onSelectNewRepository:
+            {
                 contenItem.changeParentFolder(path)
                 propertyFile.folderPath = path;
             }
@@ -57,9 +69,11 @@ Rectangle {
             color: "darkgray"
             width: 3 * parent.width/5
             focus: true
-            onShowPropertyFile: {
+            onShowPropertyFile:
+            {
                 propertyFile.folderPath = UtilsScript.GetFullStrPath(folderModel.folder.toString());
-                propertyFile.updateData(currentName) }
+                propertyFile.updateData(currentName)
+            }
         }
 
         // Вывод информации о файле,директории

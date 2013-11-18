@@ -121,7 +121,7 @@ const QString ModelQmlAndCRepository::GetSizeFile(const QString& file) const
     auto iterRepo = FacadeApplication::instance->currentRepository;
     if(iterRepo != FacadeApplication::instance->repository.end())
     {
-        IRepository* curRepo = iterRepo->second.get();
+        const IRepository* curRepo = iterRepo->second.get();
         const QMap<QString, IRepository::PARAMETR_FILEFOLDER_GIT_ANNEX> mapState = curRepo->GetStateFileDir();
         const QFileInfo& fileInfo = mapState[file].fileInfo;
         if(fileInfo.isFile())
@@ -148,5 +148,15 @@ const QString ModelQmlAndCRepository::GetSizeFile(const QString& file) const
     }
 }
 //----------------------------------------------------------------------------------------/
-
+bool ModelQmlAndCRepository::DirIsSubRootDirRepository(const QString& dir) const
+{
+    auto iterRepo = FacadeApplication::instance->currentRepository;
+    if(iterRepo != FacadeApplication::instance->repository.end())
+    {
+        const IRepository* curRepo = iterRepo->second.get();
+        return curRepo->DirIsSubRootDirRepository(dir);
+    }
+    return false;
+}
+//----------------------------------------------------------------------------------------/
 

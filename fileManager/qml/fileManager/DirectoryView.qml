@@ -62,6 +62,14 @@ Rectangle
         dirModel.folder = "";
         dirModel.folder = folderTemp;
     }
+
+    // функция проверки нахождения свойства folder впределах корневого пути репозитория
+    // чтобы выше корня репозитория не выходить
+    function direcotoryIsSubRootRepositoryDirectory(path)
+    {
+        return repository.DirIsSubRootDirRepository(path)
+    }
+
     //-------------------------------------------------------------------------/
 
     ContextMenu

@@ -92,7 +92,7 @@ void ResourceGenerator::GenerateResource()
         }
 
         dictionary* ini = 0l;
-        // да, есть такие файлы, начинаем каждый просматривать, находя файл, который описывает текущую тему и общие
+        // да, есть такие файлы, начинаем каждый просматривать, находя файл, который описывает текущую тему
         foreach (path dir, searchedDir)
         {
             ini = iniparser_load(dir.c_str());
@@ -145,7 +145,7 @@ void ResourceGenerator::GenerateResourceIconsForAllMimeTypes(const QVector<boost
             {
                 if(QIcon::hasThemeIcon(type->iconName()))
                 {
-                    if(FindFile(*path, (type->iconName() +".png").toStdString(), foundDir))
+                    if(FindFile(*path, type->iconName().toStdString(), foundDir))
                     {
                         pathToIconsDirectoryView[type->name()] = QString(foundDir.c_str());
                         successfulFind = true;
@@ -156,7 +156,7 @@ void ResourceGenerator::GenerateResourceIconsForAllMimeTypes(const QVector<boost
                 if(QIcon::hasThemeIcon(type->genericIconName()))
                 {
                     // пробуем найти файл с текущим названием
-                    if(FindFile(*path, (type->genericIconName() +".png").toStdString(), foundDir))
+                    if(FindFile(*path, type->genericIconName().toStdString(), foundDir))
                     {
                         pathToIconsDirectoryView[type->name()] = QString(foundDir.c_str());
                         successfulFind = true;
@@ -183,9 +183,8 @@ bool ResourceGenerator::FindFile(const boost::filesystem::path& dirPath, const s
     if(!exists(dirPath)) return false;
     directory_iterator endItr;
 
-    // path, указывающий на файл, который ищем
-    boost::filesystem::path searchFile(fileName.c_str());
-
+    static QRegExp regExp;
+    const std::string strPattern = fileName + ".*";
     for (directory_iterator itr(dirPath ); itr != endItr; ++itr)
     {
         if(is_directory(*itr))
@@ -195,7 +194,9 @@ bool ResourceGenerator::FindFile(const boost::filesystem::path& dirPath, const s
         else
         {
             boost::filesystem::path temp_path(*itr);
-            if(temp_path.filename() == searchFile)
+            const QString str(temp_path.c_str());
+            regExp.setPattern(QString(strPattern.c_str()));
+            if(regExp.indexIn(str) != -1)
             {
                 pathFound = temp_path;
                 return true;

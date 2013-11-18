@@ -41,9 +41,14 @@ Rectangle
                         iconSource:"qrc:back"
                         onClicked: {
                             var folder = toolBar.folderModel.parentFolder;
-                            windowContent.updateListFileSync(folder);
-                            toolBar.folderModel.folder = folder;
-                            toolBar.folderView.currentIndex = -1;
+                            // если итоговый путь будет подкорнем корня репозитория, то переходим назад
+                            // иначе ничего не делаем
+                            if(windowContent.direcotoryIsSubRootRepositoryDirectory(folder))
+                            {
+                                windowContent.updateListFileSync(folder);
+                                toolBar.folderModel.folder = folder;
+                                toolBar.folderView.currentIndex = -1;
+                            }
                         }
                     }
                     ToolButton{

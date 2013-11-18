@@ -148,6 +148,9 @@ public:
     /** @brief Обновить параметры синхронизации у текущей директории */
     void                UpdateParamSyncFileDir();
 
+    /** @brief Является ли выбранный путь поддиректорией корневого пути репозитория */
+    bool                DirIsSubRootDirRepository(const QString& dir) const;
+
 protected:
 
     /**
