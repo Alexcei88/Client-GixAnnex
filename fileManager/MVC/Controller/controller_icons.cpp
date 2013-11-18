@@ -31,25 +31,21 @@ ControllerIcons::~ControllerIcons()
     }
 }
 //----------------------------------------------------------------------------------------/
-QVariant ControllerIcons::GetPathIconsFile(QVariant file) const
+QVariant ControllerIcons::GetPathIconsFileDirecoctoryView(QVariant file) const
 {    
-    static QMimeDatabase dataBase;
-    QFileInfo fileInfo(file.toString());
-    QMimeType type = dataBase.mimeTypeForFile(fileInfo);
-#if 0
-    QString pathIcons;
-    if(QIcon::hasThemeIcon(type.iconName()))
-    {
-        pathIcons = "qrc:/mimetypes/resource/mimetypes/" + type.iconName() + ".png";
-    }
-    else
-    {
-        // определяем другой общий для этот типа
-        pathIcons = "qrc:/mimetypes/resource/mimetypes/" + type.genericIconName() + ".png";
-    }
-#else
-    QString pathIcons = ResourceGenerator::getInstance()->GetResourcePath(type);
-#endif
+    static const QMimeDatabase dataBase;
+    const QFileInfo fileInfo(file.toString());
+    const QMimeType type = dataBase.mimeTypeForFile(fileInfo);
+    const QString pathIcons = ResourceGenerator::getInstance()->GetResourcePathDirectoryView(type);
+    return QVariant(pathIcons);
+}
+//----------------------------------------------------------------------------------------/
+QVariant ControllerIcons::GetPathIconsFilePropertyFile(QVariant file) const
+{
+    static const QMimeDatabase dataBase;
+    const QFileInfo fileInfo(file.toString());
+    const QMimeType type = dataBase.mimeTypeForFile(fileInfo);
+    const QString pathIcons = ResourceGenerator::getInstance()->GetResourcePathPropertyFile(type);
     return QVariant(pathIcons);
 }
 //----------------------------------------------------------------------------------------/

@@ -1,6 +1,7 @@
 import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
+import "utils.js" as UtilsScript
 
 // our stuff
 import "propertyFile"
@@ -56,7 +57,9 @@ Rectangle {
             color: "darkgray"
             width: 3 * parent.width/5
             focus: true
-            onShowPropertyFile: { propertyFile.updateData(currentName) }
+            onShowPropertyFile: {
+                propertyFile.folderPath = UtilsScript.GetFullStrPath(folderModel.folder.toString());
+                propertyFile.updateData(currentName) }
         }
 
         // Вывод информации о файле,директории

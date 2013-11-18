@@ -46,7 +46,7 @@ Rectangle
     {
         var currentPathRepo = UtilsScript.GetFullStrPath(dirModel.folder.toString());
         var path = currentPathRepo + "/" + fileName;
-        return contrIcons.GetPathIconsFile(path);
+        return contrIcons.GetPathIconsFileDirecoctoryView(path);
     }
 
     // функция обновления списка состояния иконок

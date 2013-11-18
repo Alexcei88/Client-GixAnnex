@@ -36,9 +36,13 @@ public:
     void                SetStateIconsFileSync(QVariantMap stateIcons) { stateIconsFileSync = stateIcons;};
     QVariantMap         GetStateIconsFileSync() { return stateIconsFileSync; };
 
-    /** @brief возвращает путь иконки в зависимости от mimetype файла
+    /** @brief возвращает путь иконки для проводника в зависимости от mimetype файла
     @param file - путь к файлу */
-    Q_INVOKABLE QVariant GetPathIconsFile(QVariant file) const;
+    Q_INVOKABLE QVariant GetPathIconsFileDirecoctoryView(QVariant file) const;
+
+    /** @brief возвращает путь иконки для тображения иконки в свойствах файла в зависимости от mimetype файла
+    @param file - путь к файлу */
+    Q_INVOKABLE QVariant GetPathIconsFilePropertyFile(QVariant file) const;
 
     /** @brief дата последней модификации файла(директории)
     @param file - путь к файлу */

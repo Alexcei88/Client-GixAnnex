@@ -17,6 +17,7 @@ boost::shared_ptr<ResourceGenerator> ResourceGenerator::instance = boost::shared
 ResourceGenerator::ResourceGenerator() :
     listAllMimeType(QMimeDatabase().allMimeTypes())
   , sizeIcons(48, 48)
+  , sizeIconsPropertyFile(128, 128)
 {
     currentThemeName = QIcon::themeName();
     subPathSearchIcons.push_back("mimetypes");
@@ -34,10 +35,28 @@ ResourceGenerator* ResourceGenerator::getInstance()
     return instance.get();
 }
 //----------------------------------------------------------------------------------------/
-const QString ResourceGenerator::GetResourcePath(const QMimeType& type)
+const QString ResourceGenerator::GetResourcePathDirectoryView(const QMimeType& type)
 {
     auto it = pathToIconsDirectoryView.find(type.name());
     if( it != pathToIconsDirectoryView.end())
+    {
+        return it.value();
+    }
+    else
+    {
+        std::cout<<"КРИТИЧЕСКАЯ ОШИБКА!!! Нет ресурса с иконкой для отображения mimetype "
+                 <<type.name().toStdString().c_str()<<". Это критическая ошибка."
+                 "Программа будет закрыта."<<std::endl;
+#ifndef DEBUG
+        exit(1);
+#endif
+    }
+}
+//----------------------------------------------------------------------------------------/
+const QString ResourceGenerator::GetResourcePathPropertyFile(const QMimeType& type)
+{
+    auto it = pathToIconsPropertyFile.find(type.name());
+    if( it != pathToIconsPropertyFile.end())
     {
         return it.value();
     }
@@ -94,67 +113,33 @@ void ResourceGenerator::GenerateResource()
         std::cout<<"Не смогли найти файл с описанием текущей темы. Это критическая ошибка. Программа будет закрыта"<<std::endl;
         exit(1);
     }
+    // генерация иконок нужных размеров
     GenerateResourceIconsDirectoryView(themeDirIcons);
 }
 //----------------------------------------------------------------------------------------/
 void ResourceGenerator::GenerateResourceIconsDirectoryView(const boost::filesystem::path& pathCurTheme)
-{
-#if 0
-    // список директорий для просмотра
-    QStringList possiblePathToSearch = QIcon::themeSearchPaths();
-
-    pathToIconsDirectoryView.clear();
-    boost::filesystem::path foundDir;
-    for(auto type = listAllMimeType.begin(); type != listAllMimeType.end(); ++type)
-    {
-        try
-        {
-            if(QIcon::hasThemeIcon(type->iconName()))
-            {
-                // пробуем найти файл с текущим названием
-                for(auto path = possiblePathToSearch.begin(); path != possiblePathToSearch.end(); ++path)
-                {
-                    boost::filesystem::path rootSearchDir((*path).toStdString());
-                    if(FindFile(rootSearchDir, (type->iconName() +".png").toStdString(), foundDir))
-                    {
-                        pathToIconsDirectoryView[type->name()] = QString(foundDir.c_str());
-                    }
-                }
-            }
-            else if(QIcon::hasThemeIcon(type->genericIconName()))
-            {
-                // пробуем найти файл с текущим названием
-                for(auto path = possiblePathToSearch.begin(); path != possiblePathToSearch.end(); ++path)
-                {
-                    boost::filesystem::path rootSearchDir((*path).toStdString());
-                    if(FindFile(rootSearchDir, (type->genericIconName() +".png").toStdString(), foundDir))
-                    {
-                        pathToIconsDirectoryView[type->name()] = QString(foundDir.c_str());
-                    }
-                }
-            }
-            else
-            {
-                // мы не нашли, соответственно загружаем какой-то ресурс по умолчанию
-            }
-        }
-        catch(filesystem_error)
-        {
-            std::cout<<"Произошло исключение библиотеки boost::filesystem, загружаем стандартную картинку для данного mimetype файла!!!"<<std::endl;
-        }
-    }
-#else
+{  
+    // для проводника
     QVector<path> subPathSearchIcons;
     // генерируем пути, в которых буем искать иконки в зависимости от размера
-    GenerateListPathInCurTheme(pathCurTheme, subPathSearchIcons);
+    GenerateListPathInCurTheme(pathCurTheme, subPathSearchIcons, sizeIcons);
+    GenerateResourceIconsForAllMimeTypes(subPathSearchIcons, pathToIconsDirectoryView);
 
+    // для отображения свойств файла
+    subPathSearchIcons.clear();
+    // генерируем пути, в которых буем искать иконки в зависимости от размера
+    GenerateListPathInCurTheme(pathCurTheme, subPathSearchIcons, sizeIconsPropertyFile);
+    GenerateResourceIconsForAllMimeTypes(subPathSearchIcons, pathToIconsPropertyFile);
+}
+void ResourceGenerator::GenerateResourceIconsForAllMimeTypes(const QVector<boost::filesystem::path>& paths, QMap<QString, QString>& pathToIconsDirectoryView)
+{
     boost::filesystem::path foundDir;
     //признак успешного нахождения файла
     bool successfulFind = false;
     for(auto type = listAllMimeType.begin(); type != listAllMimeType.end(); ++type)
     {
         successfulFind = false;
-        for(auto path = subPathSearchIcons.begin(); path != subPathSearchIcons.end(); ++path)
+        for(auto path = paths.begin(); path != paths.end(); ++path)
         {
             try
             {
@@ -191,8 +176,6 @@ void ResourceGenerator::GenerateResourceIconsDirectoryView(const boost::filesyst
         }
     }
     // теперь загружаем ресурсы для folder-ов
-
-#endif
 }
 //----------------------------------------------------------------------------------------/
 bool ResourceGenerator::FindFile(const boost::filesystem::path& dirPath, const std::string& fileName, boost::filesystem::path& pathFound)
@@ -252,7 +235,7 @@ bool ResourceGenerator::FindFile(const boost::filesystem::path& dirPath, const s
         return true;
 }
 //----------------------------------------------------------------------------------------/
-void ResourceGenerator::GenerateListPathInCurTheme(const boost::filesystem::path& pathCurrentTheme, QVector<boost::filesystem::path>& pathSearch) const
+void ResourceGenerator::GenerateListPathInCurTheme(const boost::filesystem::path& pathCurrentTheme, QVector<boost::filesystem::path>& pathSearch, const QSize& sizeIcons) const
 {
     dictionary* ini = 0l;
     const QString fileName("index.theme");

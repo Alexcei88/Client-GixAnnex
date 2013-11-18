@@ -37,7 +37,7 @@ Rectangle
     function getResourceImage(fileName)
     {
         var path = folderPath + "/"+fileName;
-        return repositoryIcons.GetPathIconsFile(path);
+        return repositoryIcons.GetPathIconsFilePropertyFile(path);
     }
     //-------------------------------------------------------------------------/
 

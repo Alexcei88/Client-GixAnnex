@@ -19,7 +19,9 @@ class ResourceGenerator
 public:
     static ResourceGenerator* getInstance();
     ~ResourceGenerator();
-    const QString       GetResourcePath(const QMimeType& type);
+    const QString       GetResourcePathDirectoryView(const QMimeType& type);
+    const QString       GetResourcePathPropertyFile(const QMimeType& type);
+
 
 private:
     static boost::shared_ptr<ResourceGenerator> instance;
@@ -28,22 +30,32 @@ private:
     /** @brief Генерация ресурсов */
     void                GenerateResource();
 
-    /** @brief Генерация ресурсов для иконок
+    /** @brief Генерация ресурсов иконок
         @param pathCurTheme - путь, где располагаются ресурсы по текущей теме
-        @param pathGeneralTheme - путь, где располагаются общие ресурсы
-        @param size - требуемый размер картинки, по умолчанию 48*48
     */
     void                GenerateResourceIconsDirectoryView(const boost::filesystem::path& pathCurTheme);
-    /** @brief размер иконок для отображения(по умолчанию 48*48) */
-    const QSize sizeIcons;
+
+    /** @brief Генерация ресурсов иконок в указанных путях для всех типов mimetype-ов *
+     *  @param paths - пути, где ищем инконки
+     *  @param pathToIconsDirectoryView - мэп, куда сохраняем результаты
+     */
+    void                GenerateResourceIconsForAllMimeTypes(const QVector<boost::filesystem::path> &paths, QMap<QString, QString>& pathToIconsDirectoryView);
+
+    /** @brief размер иконок для отображения в проводнике(по умолчанию 48*48) */
+    const QSize         sizeIcons;
+    /** @brief размер иконок для отображения в свойствах файла(по умолчанию 128*128) */
+    const QSize         sizeIconsPropertyFile;
+
+
     /** @brief список поддиректорий, где ищем иконки */
-    QStringList subPathSearchIcons;
-    // список всех зарегистрированных mimetype-ов
+    QStringList         subPathSearchIcons;
+
+    /** @brief список всех зарегистрированных mimetype-ов */
     const QList<QMimeType> listAllMimeType;
     /** @brief список полных путей для всех mimeType-ов иконок DirectoryView + папки(размер фиксированный, 48*48) */
     QMap<QString, QString> pathToIconsDirectoryView;
-
-
+    /** @brief список полных путей для всех mimeType-ов иконок для PropertyFile + папки(размер фиксированный, 128*128) */
+    QMap<QString, QString> pathToIconsPropertyFile;
 
     /** @brief текущая имя темы в системе */
     QString             currentThemeName;
@@ -67,7 +79,7 @@ private:
     /** @brief формирование списка поддиректорий в текущем пути темы в системе в зависимости
      *  от требуемого размера и списка поддиректорий
     */
-    void                GenerateListPathInCurTheme(const boost::filesystem::path& pathCurrentTheme, QVector<boost::filesystem::path>& pathSearch) const;
+    void                GenerateListPathInCurTheme(const boost::filesystem::path& pathCurrentTheme, QVector<boost::filesystem::path>& pathSearch, const QSize& sizeIcons) const;
 };
 
 #endif // RESOURCEGENERATOR_H

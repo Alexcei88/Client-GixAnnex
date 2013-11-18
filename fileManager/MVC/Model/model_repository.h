@@ -46,7 +46,6 @@ public:
     const QString       GetLastModifiedFile(const QString& file) const;
     /** @brief Размер файла */
     const QString       GetSizeFile(const QString& file) const;
-
-
 };
+
 }
