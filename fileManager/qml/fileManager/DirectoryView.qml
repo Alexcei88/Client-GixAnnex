@@ -33,9 +33,11 @@ Rectangle
     onChangeParentFolder:
     {
         // меняем рабочую директорию у модели
+        console.log(path)
         repository.currentPathRepo = path;
         contrIcons.currentPath = path;
         dirModel.folder = path;
+        console.log(dirModel.folder.toString())
         folderView.currentIndex = -1;
     }
 
@@ -43,7 +45,7 @@ Rectangle
     function getResourceImage(fileName)
     {
         var currentPathRepo = UtilsScript.GetFullStrPath(dirModel.folder.toString());
-        var path = currentPathRepo + fileName;
+        var path = currentPathRepo + "/" + fileName;
         return contrIcons.GetPathIconsFile(path);
     }
 
@@ -162,11 +164,7 @@ Rectangle
                 Image{
 
                     id: imgFolder
-                    source: if(dirModel.isFolder(model.index)) {
-                                "qrc:/icons/folder.png" }
-                            else {
-                                getResourceImage(curFileName);
-                            }
+                    source: getResourceImage(curFileName);
                     anchors.horizontalCenter: parent.horizontalCenter
                     Image{
                         id: dirSync

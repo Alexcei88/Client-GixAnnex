@@ -30,6 +30,7 @@ Rectangle {
         focus: true
         Keys.forwardTo: [contenItem]
 
+        // функция перезагрузки модели списка репозиториев
         function reloadModel()
         {
             listRepository.reloadModel();
@@ -41,7 +42,10 @@ Rectangle {
             Layout.minimumWidth: parent.width/8
             Layout.maximumWidth: 3 * parent.width/5
             color: "#E6E6FA"
-            onSelectNewRepository: { contenItem.changeParentFolder(path) }
+            onSelectNewRepository: {
+                contenItem.changeParentFolder(path)
+                propertyFile.folderPath = path;
+            }
         }
         DirectoryView
         {

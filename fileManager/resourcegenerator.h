@@ -40,8 +40,10 @@ private:
     QStringList subPathSearchIcons;
     // список всех зарегистрированных mimetype-ов
     const QList<QMimeType> listAllMimeType;
-    // список полных путей для всех mimeType-ов иконок DirectoryView(размер фиксированный, 48*48)
+    /** @brief список полных путей для всех mimeType-ов иконок DirectoryView + папки(размер фиксированный, 48*48) */
     QMap<QString, QString> pathToIconsDirectoryView;
+
+
 
     /** @brief текущая имя темы в системе */
     QString             currentThemeName;
