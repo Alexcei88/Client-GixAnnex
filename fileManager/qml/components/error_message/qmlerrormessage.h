@@ -10,7 +10,7 @@ public:
     explicit QMLErrorMessage(QWidget* parent = 0);
     ~QMLErrorMessage();
 
-    Q_INVOKABLE void ShowErrorMessage() const;
+    Q_INVOKABLE void ShowErrorMessage(QVariant title, QVariant text) const;
 private:
     QMessageBox*    box;
 };

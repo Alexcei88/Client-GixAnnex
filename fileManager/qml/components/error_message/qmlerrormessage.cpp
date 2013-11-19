@@ -1,19 +1,21 @@
 #include "qmlerrormessage.h"
 #include <iostream>
 
+//----------------------------------------------------------------------------------------/
 QMLErrorMessage::QMLErrorMessage(QWidget *parent)
 {
     box = new QMessageBox(parent);
 }
-
+//----------------------------------------------------------------------------------------/
 QMLErrorMessage::~QMLErrorMessage()
 {
     delete box;
     box = 0;
 }
-
-void QMLErrorMessage::ShowErrorMessage() const
+//----------------------------------------------------------------------------------------/
+void QMLErrorMessage::ShowErrorMessage(QVariant title, QVariant text) const
 {
-    std::cout<<"ShowErrorMessage"<<std::endl;
-    box->show();
+    QMessageBox::critical(box, title.toString(), text.toString());
 }
+//----------------------------------------------------------------------------------------/
+

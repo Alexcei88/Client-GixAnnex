@@ -170,11 +170,13 @@ Rectangle
                 onClicked:
                 {
                     var result = repository.StartCloneRepository(destUrl.text, sourсeUrl.text, valueNameRepo.text);
-                    if(result == 5)
+                    if(result === 5)
                     {
                         // директории назначения не существует, выдавать ошибку клонирования
-                        console.log("Error Destinition Path");
-                        errorS.ShowErrorMessage();
+                        var title = "Error Clone Repository"
+                        var text = "Destinition URL <i>" + destUrl.text +"</i> not exist.<br>";
+                        var text1 = text + "Clone repository not execute!"
+                        errorS.ShowErrorMessage(title, text1);
                     }
 
                 }
