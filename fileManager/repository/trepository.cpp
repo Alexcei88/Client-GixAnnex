@@ -24,13 +24,13 @@ RESULT_EXEC_PROCESS TRepository::CloneRepository(QString& localURL, const QStrin
     RESULT_EXEC_PROCESS result = shellCommand->SetWorkingDirectory(localURL, shell.get());
 
     QString folderToClone = "";
-    result = shellCommand->CloneRepositories(remoteURL, folderToClone, shell);
-    folderToClone = "/" + folderToClone;
+    result = shellCommand->CloneRepositories(remoteURL, folderToClone, shell, this);
     if(result != int(NO_ERROR))
     {
         printf("Error clone repositories: %s \n", remoteURL.toStdString().c_str());
         return result;
     }
+    folderToClone = "/" + folderToClone;
     shellCommand->SetWorkingDirectory(localURL + folderToClone, shell.get());
 
     result = shellCommand->InitRepositories(nameRepo, shell.get());
@@ -49,7 +49,7 @@ RESULT_EXEC_PROCESS TRepository::CloneRepository(QString& localURL, const QStrin
     return result;
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS TRepository::DeleteRepository(const QString &localURL)
+RESULT_EXEC_PROCESS TRepository::DeleteRepository()
 {
     this->nameRepo = "";
     this->localURL = "";

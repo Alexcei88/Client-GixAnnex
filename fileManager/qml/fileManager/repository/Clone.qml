@@ -15,10 +15,10 @@ Rectangle
 
     SystemPalette { id: sysPal }
 
-
     ErrorMessage{
         id: errorS
     }
+
     FileDialog {
         id: fileDialogSource
         title: "Please choose a source folder"
@@ -33,7 +33,7 @@ Rectangle
 
     FileDialog {
         id: fileDialogDestinition
-        title: "Please choose a destinotion folder"
+        title: "Please choose a destinition folder"
         selectFolder: true
         onAccepted: {
             var path = fileDialogDestinition.folder.toString();
@@ -170,13 +170,23 @@ Rectangle
                 onClicked:
                 {
                     var result = repository.StartCloneRepository(destUrl.text, sourсeUrl.text, valueNameRepo.text);
+                    var title = "Error Clone Repository"
                     if(result === 5)
                     {
                         // директории назначения не существует, выдавать ошибку клонирования
-                        var title = "Error Clone Repository"
                         var text = "Destinition URL <i>" + destUrl.text +"</i> not exist.<br>";
                         var text1 = text + "Clone repository not execute!"
                         errorS.ShowErrorMessage(title, text1);
+                    }
+                    else if(result === 4)
+                    {
+                        // ошибка во время исполнения
+                        var text = repository.GetLastError();
+                        errorS.ShowErrorMessage(title, text);
+                    }
+                    else
+                    {
+                        // клонирование репозитория завершилось успешно
                     }
 
                 }

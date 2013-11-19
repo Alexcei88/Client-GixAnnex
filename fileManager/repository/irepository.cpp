@@ -18,22 +18,25 @@ void IRepository::InitClass()
 {
     shellCommand = boost::make_shared<ShellCommand>();
 
-    const QMetaObject &mo = staticMetaObject;
-    int enum_index = mo.indexOfEnumerator("STATE_REPOSITORY");
-    metaEnumState = mo.enumerator(enum_index);
-
     // устанавливаем состояние репозитория по умолчанию
     paramSyncRepo.autosync = false;
     paramSyncRepo.autosyncContent = false;
     paramSyncRepo.currentState = "Disable_sincing";
 
+    // init Q_Enums
+    const QMetaObject &mo = staticMetaObject;
+    int enum_index = mo.indexOfEnumerator("STATE_REPOSITORY");
+    metaEnumState = mo.enumerator(enum_index);
+
     int enum_indexF = mo.indexOfEnumerator("STATE_FILE_AND_DIR");
     metaEnumStateF = mo.enumerator(enum_indexF);
 
+    // сигналы/слоты
     QObject::connect(this, &IRepository::startGetContentFile, this, &IRepository::OnStartGetContentFile, Qt::DirectConnection);
     QObject::connect(this, &IRepository::endGetContentFile, this, &IRepository::OnEndGetContentFile, Qt::DirectConnection);
     QObject::connect(this, &IRepository::startDropContentFile, this, &IRepository::OnStartDropContentFile, Qt::DirectConnection);
     QObject::connect(this, &IRepository::endDropContentFile, this, &IRepository::OnEndDropContentFile, Qt::DirectConnection);
+    QObject::connect(this, &IRepository::errorCloneRepository, this, &IRepository::OnErrorCloneRepository, Qt::DirectConnection);
 
     dir.setPath("");
 }
@@ -208,5 +211,10 @@ void IRepository::OnEndDropContentFile(const QString& file)
                 assert(0);
         #endif
     }
+}
+//----------------------------------------------------------------------------------------/
+void IRepository::OnErrorCloneRepository(const QString &error)
+{
+    lastError = error;
 }
 //----------------------------------------------------------------------------------------/

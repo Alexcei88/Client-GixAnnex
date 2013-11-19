@@ -1,8 +1,9 @@
 #include "parsingcommandget.h"
+#include "../repository/irepository.h"
+#include <assert.h>
 
 ParsingCommandGet::ParsingCommandGet(const TShell* shell, IRepository* repository) :
-    IParsingCommandOut(shell)
-  , repository(repository)
+    IParsingCommandOut(shell, repository)
   , startGet(false)
 {
     // регулярное выражение в случаи успешного начала скачивания файла текущего файла

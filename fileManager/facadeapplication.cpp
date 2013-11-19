@@ -166,6 +166,7 @@ GANN_DEFINE::RESULT_EXEC_PROCESS FacadeApplication::StartCloneRepository(QString
     }
     else
     {
+        lastError = newRepo->GetLastError();
         delete newRepo;
         newRepo = 0l;
     }

@@ -1,7 +1,9 @@
 #include "parsingcommandclone.h"
+#include "../repository/irepository.h"
 
 //----------------------------------------------------------------------------------------/
-ParsingCommandClone::ParsingCommandClone(const TShell* shell): IParsingCommandOut(shell)
+ParsingCommandClone::ParsingCommandClone(const TShell* shell, IRepository * repository):
+    IParsingCommandOut(shell, repository)
 {
     // регулярное выражение в случаи успешного парсинга
     QString succes = "(Cloning into ')(.*)(')(.*)";
@@ -27,10 +29,13 @@ void ParsingCommandClone::ParsingData()
             const QString str = dataStdOut[i];
             if(regExp.indexIn(str) != -1)
             {
+                QString errorString;
                 // была ошибка, формируем сообщение об ошибке
                 dataAfterParsing<<regExp.cap(1)<<regExp.cap(2);
 
-                // если есть, то попытка найти причину ошибки
+                errorString += regExp.cap(1);
+                errorString += regExp.cap(2);
+                // если возможно, то пытаемся найти причину ошибки
                 regExp.setPattern(listRegExpPossible[2]);
                 for(int j = 0; j < dataStdOut.size(); ++j)
                 {
@@ -38,8 +43,11 @@ void ParsingCommandClone::ParsingData()
                     if(regExp.indexIn(str) != -1)
                     {
                         dataAfterParsing<<regExp.cap(1)<<regExp.cap(2);
+                        errorString += regExp.cap(1);
+                        errorString += regExp.cap(2);
                     }
                 }
+                emit repository->errorCloneRepository(errorString);
                 wasErrorCommand = true;
                 return;
             }

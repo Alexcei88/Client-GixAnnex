@@ -46,8 +46,10 @@ int main(int argc, char *argv[])
     // viewer копирования репозитория
     QtQuick2ApplicationViewer cloneRepoViewer;
     cloneRepoViewer.setMainQmlFile(QStringLiteral("qml/fileManager/repository/Clone.qml"));
-    cloneRepoViewer.setMinimumHeight(150);
+    cloneRepoViewer.setMinimumHeight(170);
     cloneRepoViewer.setMinimumWidth(540);
+    cloneRepoViewer.setMaximumHeight(cloneRepoViewer.minimumHeight());
+    cloneRepoViewer.setMaximumWidth(cloneRepoViewer.minimumWidth());
     cloneRepoViewer.setX(600);
     cloneRepoViewer.setY(300);    
     cloneRepoViewer.setTitle("Git-Annex Clone Repository");

@@ -29,7 +29,8 @@ public:
     @param folderClone - папка, куда будет скопирован репозиторий
     @return 0 - нет ошибок
     */
-    GANN_DEFINE::RESULT_EXEC_PROCESS CloneRepositories(const QString& remoteURL, QString &folderClone, const boost::shared_ptr<TShell> shell);
+    GANN_DEFINE::RESULT_EXEC_PROCESS CloneRepositories( const QString& remoteURL, QString &folderClone
+                                                       ,const boost::shared_ptr<TShell> shell, IRepository* repository);
 
     // 2. Добавление каталога/файла в репозиторий
     GANN_DEFINE::RESULT_EXEC_PROCESS AddFile(const QString& path, const boost::shared_ptr<TShell> shell) const;

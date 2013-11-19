@@ -159,4 +159,9 @@ bool ModelQmlAndCRepository::DirIsSubRootDirRepository(const QString& dir) const
     return false;
 }
 //----------------------------------------------------------------------------------------/
+const QString& ModelQmlAndCRepository::GetLastError() const
+{
+    return FacadeApplication::getInstance()->lastError;
+}
+//----------------------------------------------------------------------------------------/
 

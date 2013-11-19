@@ -92,7 +92,7 @@ public:
     @param localURL -
     @return 0 - нет ошибок
     */
-    virtual GANN_DEFINE::RESULT_EXEC_PROCESS DeleteRepository(const QString& localURL) = 0;
+    virtual GANN_DEFINE::RESULT_EXEC_PROCESS DeleteRepository() = 0;
 
     /**
     @brief получение контента у файла из репозитория
@@ -151,6 +151,9 @@ public:
     /** @brief Является ли выбранный путь поддиректорией корневого пути репозитория */
     bool                DirIsSubRootDirRepository(const QString& dir) const;
 
+    /** @brief возвращает последнее сообщение об ошибке */
+    const QString&      GetLastError() { return lastError; };
+
 protected:
 
     /**
@@ -180,6 +183,9 @@ protected:
     // вспом класс для манипулированием файловой системой
     QDir                dir;
 
+    /** @brief последнее сообщение об ошибке в репозитории */
+    QString             lastError;
+
 private:
     void                InitClass();
     // вектор, содержащий файлы, которые сейчас скачиваются(или дано задание на скачивание)
@@ -193,21 +199,26 @@ private:
     /** @brief идет ли в текущей директории(или сам текущий файл) удаление контента в текущий момент времени */
     bool                IsDroppingContentFileDir(const QString& file);
 
-    // содержит ли директория файл, в тч и в поддиректориях)
+    /** @brief содержит ли директория файл в поддиректориях */
     bool                DirContainsFile(const QString& dir, const QString& file) const;
 
 public slots:
     // слот, говорящий о начале получения контента у файла
     void                OnStartGetContentFile(const QString&);
     void                OnEndGetContentFile(const QString&);
+    // начало/конец удаленич
     void                OnStartDropContentFile(const QString&);
     void                OnEndDropContentFile(const QString&);
+    // неудачное клонирование репозитория
+    void                OnErrorCloneRepository(const QString&);
 
 signals:
+    // сигналы начала/конца get
     void                startGetContentFile(const QString&);
     void                endGetContentFile(const QString&);
     void                startDropContentFile(const QString&);
     void                endDropContentFile(const QString&);
+    void                errorCloneRepository(const QString&);
 
 };
 

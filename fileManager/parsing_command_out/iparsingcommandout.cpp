@@ -1,15 +1,17 @@
 #include "iparsingcommandout.h"
 #include "../shell/tshell.h"
+#include "../repository/irepository.h"
 
 using namespace GANN_DEFINE;
 
 //----------------------------------------------------------------------------------------/
-IParsingCommandOut::IParsingCommandOut(const TShell *shell):
+IParsingCommandOut::IParsingCommandOut(const TShell *shell, IRepository *repository):
   commandStart(false)
  ,commandEnd(false)
  ,exitCodeCommand(0)
  ,wasErrorCommand(false)
  ,shell(shell)
+ ,repository(repository)
 {}
 //----------------------------------------------------------------------------------------/
 IParsingCommandOut::~IParsingCommandOut(){};
@@ -20,9 +22,10 @@ void IParsingCommandOut::SetParamBeforeStartCommand()
     dataAfterParsing.clear();
     commandStart    = true;
     commandEnd      = false;
+    exitCodeCommand = -2;
 }
 //----------------------------------------------------------------------------------------/
-void IParsingCommandOut::GetNewDataStdOut()
+void IParsingCommandOut::SetNewDataStdOut()
 {
     QString newData(shell->readStandartOutput());
 
@@ -37,7 +40,7 @@ void IParsingCommandOut::GetNewDataStdOut()
 void IParsingCommandOut::SetParamAfterEndCommand(int exitCode)
 {
     commandEnd      = true;
-    commandStart    = true;
+    commandStart    = false;
     exitCodeCommand = exitCode;
 
     // выполняем парсинг после выполнения команды
@@ -51,7 +54,7 @@ QStringList IParsingCommandOut::GetParsingData() const
 //----------------------------------------------------------------------------------------/
 RESULT_EXEC_PROCESS IParsingCommandOut::GetCodeError() const
 {
-    if(commandEnd == true && commandStart == true)
+    if(commandEnd == true && exitCodeCommand != -2)
     {
         // команда была запущена и выполнена до конца
         if(wasErrorCommand || exitCodeCommand)

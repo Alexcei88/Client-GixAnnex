@@ -2,7 +2,6 @@
 #define PARSINGCOMMANDGET_H
 
 #include "iparsingcommandout.h"
-#include "../repository/irepository.h"
 
 // Qt stuff
 #include <QString>
@@ -14,7 +13,6 @@ public:
     virtual void        ParsingData();
 
 private:
-    IRepository*        repository;
     // флаг начала скачивания ресурсов
     bool                startGet;
     // имя текущего скачиваемого ресурса

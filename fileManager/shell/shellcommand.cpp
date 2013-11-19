@@ -7,6 +7,7 @@
 #include "../parsing_command_out/parsingcommandwhereis.h"
 #include "../parsing_command_out/parsingcommandget.h"
 #include "../parsing_command_out/parsingcommanddrop.h"
+#include "../parsing_command_out/parsingcommandempty.h"
 
 #include <QThreadPool>
 
@@ -21,7 +22,7 @@ ShellCommand::~ShellCommand(){}
 RESULT_EXEC_PROCESS ShellCommand::InitRepositories(const QString& nameRepo, const TShell *shell)
 {
     const QString strCommand = baseCommand + "init " + nameRepo;
-    boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandClone(shell));
+    boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandEmpty(shell));
     return shell->ExecuteProcess(strCommand, receiverParsing.get());
 }
 //----------------------------------------------------------------------------------------/
@@ -31,24 +32,22 @@ RESULT_EXEC_PROCESS ShellCommand::SetWorkingDirectory(const QString &localURL, c
     return NO_ERROR;
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS ShellCommand::CloneRepositories(const QString& remoteURL, QString& folderClone, const boost::shared_ptr<TShell> shell)
+RESULT_EXEC_PROCESS ShellCommand::CloneRepositories(const QString& remoteURL, QString& folderClone, const boost::shared_ptr<TShell> shell, IRepository *repository)
 {
     const QString strCommand = "git clone " + remoteURL;
-    boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandClone(shell.get()));
+    boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandClone(shell.get(), repository));
     ShellTask* shellTask = new ShellTask(strCommand, receiverParsing, shell);
 
     QThreadPool::globalInstance()->start(shellTask);
+    // ждем окончания клонирования репозитория
     QThreadPool::globalInstance()->waitForDone();
-    //    RESULT_EXEC_PROCESS result = shell->ExecuteProcess(strCommand, receiverParsing[CLONE_REPO]);
-//    if(result != NO_ERROR)
-//        return result;
 
     RESULT_EXEC_PROCESS codeError = receiverParsing->GetCodeError();
     if(codeError != NO_ERROR)
         return codeError;
 
     QStringList parsingData = receiverParsing->GetParsingData();
-//    // иначе нет ошибок
+    // иначе нет ошибок
     folderClone = parsingData.at(0);
     return NO_ERROR;
 }

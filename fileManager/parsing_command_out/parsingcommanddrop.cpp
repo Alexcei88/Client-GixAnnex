@@ -1,8 +1,9 @@
 #include "parsingcommanddrop.h"
+#include <assert.h>
+#include "../repository/irepository.h"
 
 ParsingCommandDrop::ParsingCommandDrop(const TShell* shell, IRepository* repository) :
-    IParsingCommandOut(shell)
-  , repository(repository)
+    IParsingCommandOut(shell, repository)
   , startDrop(false)
 {
     // регулярные выражение в случаи успешного удаления

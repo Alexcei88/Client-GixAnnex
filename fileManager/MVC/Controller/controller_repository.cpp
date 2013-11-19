@@ -46,3 +46,9 @@ QVariant ControllerRepository::DirIsSubRootDirRepository(QVariant dir) const
     return model->DirIsSubRootDirRepository(dir.toString());
 }
 //----------------------------------------------------------------------------------------/
+const QVariant ControllerRepository::GetLastError() const
+{
+    return model->GetLastError();
+}
+//----------------------------------------------------------------------------------------/
+
