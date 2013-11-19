@@ -17,7 +17,7 @@ Rectangle
 
     ControllerIcons {
         id: contrIcons
-        currentPath: UtilsScript.GetFullStrPath(dirModel.folder.toString())
+        currentPath: UtilsScript.getFullStrPath(dirModel.folder.toString())
     }
 
     // СВО-ВА, ФУНКЦИИ И СИГНАЛЫ
@@ -33,18 +33,16 @@ Rectangle
     onChangeParentFolder:
     {
         // меняем рабочую директорию у модели
-        console.log(path)
         repository.currentPathRepo = path;
         contrIcons.currentPath = path;
         dirModel.folder = path;
-        console.log(dirModel.folder.toString())
         folderView.currentIndex = -1;
     }
 
     // функция взятия пути до иконки в зависимости от mymetype файла
     function getResourceImage(fileName)
     {
-        var currentPathRepo = UtilsScript.GetFullStrPath(dirModel.folder.toString());
+        var currentPathRepo = UtilsScript.getFullStrPath(dirModel.folder.toString());
         var path = currentPathRepo + "/" + fileName;
         return contrIcons.GetPathIconsFileDirecoctoryView(path);
     }
@@ -52,7 +50,7 @@ Rectangle
     // функция обновления списка состояния иконок
     function updateListStateFileSync(folder)
     {
-        contrIcons.currentPath = UtilsScript.GetFullStrPath(folder.toString());
+        contrIcons.currentPath = UtilsScript.getFullStrPath(folder.toString());
     }
 
     // функция обновления состояния иконок у текущего списка
@@ -88,16 +86,16 @@ Rectangle
         onGetContentDirectory:
         {
             var fileName = view.currentItem.curFileName;
-            var currentPathRepo = UtilsScript.GetFullStrPath(dirModel.folder.toString());
-            var relativePath = UtilsScript.GetRelativeStrPath(repository.currentPathRepo.toString(), currentPathRepo);
+            var currentPathRepo = UtilsScript.getFullStrPath(dirModel.folder.toString());
+            var relativePath = UtilsScript.getRelativeStrPath(repository.currentPathRepo.toString(), currentPathRepo);
             var addFile =  relativePath === "" ? fileName : relativePath + "/" + fileName;
             repository.GetContentDirectory(addFile);
         }
         onDropContentDirectory:
         {
             var fileName = view.currentItem.curFileName;
-            var currentPathRepo = UtilsScript.GetFullStrPath(dirModel.folder.toString());
-            var relativePath = UtilsScript.GetRelativeStrPath(repository.currentPathRepo.toString(), currentPathRepo);
+            var currentPathRepo = UtilsScript.getFullStrPath(dirModel.folder.toString());
+            var relativePath = UtilsScript.getRelativeStrPath(repository.currentPathRepo.toString(), currentPathRepo);
             var addFile =  relativePath === "" ? fileName : relativePath + "/" + fileName;
             repository.DropContentDirectory(addFile);
         }

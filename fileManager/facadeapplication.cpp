@@ -3,6 +3,7 @@
 #include "MVC/Controller/controller_icons.h"
 #include "repository/trepository.h"
 #include "resourcegenerator.h"
+#include <qml/components/error_message/qmlerrormessage.h>
 
 #include <QQmlEngine>
 #include <QQmlComponent>
@@ -149,12 +150,24 @@ void FacadeApplication::SaveRepository(const QString& localURL, const QString& r
 //----------------------------------------------------------------------------------------/
 GANN_DEFINE::RESULT_EXEC_PROCESS FacadeApplication::StartCloneRepository(QString &localURL, const QString &remoteURL, const QString &nameRepo)
 {
+    static QDir dir;
+    dir.setPath(localURL);
+    if(!dir.exists())
+    {
+        // директория, куда будем копировать, не существует.
+        return DIRECTORY_NOT_EXIST;
+    }
     TRepository* newRepo = new TRepository;
     RESULT_EXEC_PROCESS result = newRepo->CloneRepository(localURL, nameRepo, remoteURL);
     if(result == NO_ERROR)
     {
         std::unique_ptr<IRepository> tempRepo(newRepo);
         repository[localURL] = std::move(tempRepo);
+    }
+    else
+    {
+        delete newRepo;
+        newRepo = 0l;
     }
     return result;
 }
@@ -203,6 +216,6 @@ void FacadeApplication::InitClassCAndQML()
 {
     qmlRegisterType<GANN_MVC::ControllerRepository>("Repository", 1, 0, "ControllerRepository");
     qmlRegisterType<GANN_MVC::ControllerIcons>("Icons", 1, 0, "ControllerIcons");
-
+    qmlRegisterType<QMLErrorMessage>("Error", 1, 0, "ErrorMessage");
 }
 //----------------------------------------------------------------------------------------/

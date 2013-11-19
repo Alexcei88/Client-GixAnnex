@@ -35,7 +35,8 @@ SOURCES += main.cpp \
     shell/shelltask.cpp \
     resourcegenerator.cpp \
     MVC/Controller/controller_icons.cpp \
-    MVC/Model/model_icons.cpp
+    MVC/Model/model_icons.cpp \
+    qml/components/error_message/qmlerrormessage.cpp
 
 # Installation path
 # target.path =
@@ -78,7 +79,8 @@ HEADERS += \
     MVC/Controller/controller_icons.h \
     MVC/Model/model_icons.h \
     iniparser/iniparser.h \
-    iniparser/dictionary.h
+    iniparser/dictionary.h \
+    qml/components/error_message/qmlerrormessage.h
 
 # Включаем поддержку С++11
 QMAKE_CXXFLAGS += -std=c++0x

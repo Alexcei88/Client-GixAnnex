@@ -5,6 +5,7 @@ import QtQuick.Layouts 1.0
 import QtQuick.Dialogs 1.0
 import Repository 1.0
 import "../utils.js" as UtilsScript
+import Error 1.0
 
 Rectangle
 {
@@ -12,13 +13,19 @@ Rectangle
         id: repository
     }
 
+    SystemPalette { id: sysPal }
+
+
+    ErrorMessage{
+        id: errorS
+    }
     FileDialog {
         id: fileDialogSource
         title: "Please choose a source folder"
         selectFolder: true
         onAccepted: {
             var path = fileDialogSource.folder.toString();
-            sourсeUrl.text = UtilsScript.GetFullStrPath(path);
+            sourсeUrl.text = UtilsScript.getFullStrPath(path);
         }
         onRejected: {
         }
@@ -30,7 +37,7 @@ Rectangle
         selectFolder: true
         onAccepted: {
             var path = fileDialogDestinition.folder.toString();
-            destUrl.text = UtilsScript.GetFullStrPath(path);
+            destUrl.text = UtilsScript.getFullStrPath(path);
         }
         onRejected: {
         }
@@ -40,7 +47,8 @@ Rectangle
     x: 0
     y: 0
     width: 500
-    height: 62
+    color: sysPal.window
+    height: columnOptionClone.height + buttonRow.height + 50
 
     Column
     {
@@ -73,7 +81,7 @@ Rectangle
                 implicitWidth: 300
                 height: 20
                 focus: true
-                text: "cRedssssssffffffffffffffffffpo"
+                text: "URL..."
             }
 
             Button {
@@ -103,7 +111,7 @@ Rectangle
                 implicitWidth: 300
                 height: 20
                 focus: true
-                text: "home"
+                text: "URL"
             }
 
             Button {
@@ -112,7 +120,6 @@ Rectangle
                 onClicked:  {
                     fileDialogDestinition.visible = true;
                 }
-
             }
         }
 
@@ -124,13 +131,15 @@ Rectangle
             spacing: 15
 
 
-            Text{
+            Text
+            {
                 id: nameRepo
                 text:"Name: "
                 width: columnOptionClone.widthText
             }
 
-            TextField{
+            TextField
+            {
                 id: valueNameRepo
                 implicitWidth: 300
                 height: 20
@@ -155,10 +164,19 @@ Rectangle
 
             id: cloneButton
             text: "Clone"
-            MouseArea{
+            MouseArea
+            {
                 anchors.fill: parent
-                onClicked: {
-                    repository.StartCloneRepository(destUrl.text, sourсeUrl.text, valueNameRepo.text)
+                onClicked:
+                {
+                    var result = repository.StartCloneRepository(destUrl.text, sourсeUrl.text, valueNameRepo.text);
+                    if(result == 5)
+                    {
+                        // директории назначения не существует, выдавать ошибку клонирования
+                        console.log("Error Destinition Path");
+                        errorS.ShowErrorMessage();
+                    }
+
                 }
             }
         }
@@ -168,7 +186,8 @@ Rectangle
             text: "Cancel"
             MouseArea{
                 anchors.fill: parent
-                onClicked: {
+                onClicked:
+                {
                     repository.CancelCloneRepository()
                 }
             }

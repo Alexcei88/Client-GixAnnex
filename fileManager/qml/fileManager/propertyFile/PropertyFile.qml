@@ -79,7 +79,6 @@ Rectangle
 
         property int maxWidthNameField: 74
 
-        //        onWidthChanged: {console.log(column.width) }
         anchors.top: columnHead.bottom
         anchors.topMargin: 5
         anchors.horizontalCenter: columnHead.horizontalCenter

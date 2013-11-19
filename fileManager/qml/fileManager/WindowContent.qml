@@ -71,7 +71,7 @@ Rectangle {
             focus: true
             onShowPropertyFile:
             {
-                propertyFile.folderPath = UtilsScript.GetFullStrPath(folderModel.folder.toString());
+                propertyFile.folderPath = UtilsScript.getFullStrPath(folderModel.folder.toString());
                 propertyFile.updateData(currentName)
             }
         }
