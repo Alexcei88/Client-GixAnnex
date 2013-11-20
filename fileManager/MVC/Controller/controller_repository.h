@@ -7,6 +7,8 @@
 #include <QVariantList>
 
 #include "../Model/model_repository.h"
+#include "controller_icons.h"
+
 namespace GANN_MVC
 {
 
@@ -40,11 +42,18 @@ public:
     /** @brief удалить контент у файла(директории)*/
     Q_INVOKABLE QVariant    DropContentDirectory(QVariant dir) const;
 
+    /** @brief явяеться ли выбранный путь поддиректорией корневого пути репозитория*/
+    Q_INVOKABLE QVariant    DirIsSubRootDirRepository(QVariant dir) const;
+
+    /** @brief возвращает последнее сообщение об ошибке */
+    Q_INVOKABLE const QVariant GetLastError() const;
+
 private:
     const QSharedPointer<ModelQmlAndCRepository>  model;
     QString                 currentPathRepo;
+
 signals:
-    void                currentPathRepoChanged(QString);
+    void                    currentPathRepoChanged(QString);
 };
 
 }

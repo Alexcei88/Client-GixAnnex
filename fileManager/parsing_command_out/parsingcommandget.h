@@ -3,11 +3,24 @@
 
 #include "iparsingcommandout.h"
 
+// Qt stuff
+#include <QString>
+
 class ParsingCommandGet : public IParsingCommandOut
 {
 public:
-    ParsingCommandGet(const TShell *shell);
+    ParsingCommandGet(const TShell *shell1, IRepository* repository);
     virtual void        ParsingData();
+
+private:
+    // флаг начала скачивания ресурсов
+    bool                startGet;
+    // имя текущего скачиваемого ресурса
+    QString             nameFileGetContent;
+    //  начала скачивания файла
+    void                StartGetContentFile();
+    // конец скачивания файла
+    void                EndGetContentFile();
 };
 
 #endif // PARSINGCOMMANDGET_H

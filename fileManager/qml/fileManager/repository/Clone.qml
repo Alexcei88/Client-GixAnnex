@@ -5,11 +5,18 @@ import QtQuick.Layouts 1.0
 import QtQuick.Dialogs 1.0
 import Repository 1.0
 import "../utils.js" as UtilsScript
+import Error 1.0
 
 Rectangle
 {
     ControllerRepository {
         id: repository
+    }
+
+    SystemPalette { id: sysPal }
+
+    ErrorMessage{
+        id: errorS
     }
 
     FileDialog {
@@ -18,7 +25,7 @@ Rectangle
         selectFolder: true
         onAccepted: {
             var path = fileDialogSource.folder.toString();
-            sourсeUrl.text = UtilsScript.GetFullStrPath(path);
+            sourсeUrl.text = UtilsScript.getFullStrPath(path);
         }
         onRejected: {
         }
@@ -26,11 +33,11 @@ Rectangle
 
     FileDialog {
         id: fileDialogDestinition
-        title: "Please choose a destinotion folder"
+        title: "Please choose a destinition folder"
         selectFolder: true
         onAccepted: {
             var path = fileDialogDestinition.folder.toString();
-            destUrl.text = UtilsScript.GetFullStrPath(path);
+            destUrl.text = UtilsScript.getFullStrPath(path);
         }
         onRejected: {
         }
@@ -40,7 +47,8 @@ Rectangle
     x: 0
     y: 0
     width: 500
-    height: 62
+    color: sysPal.window
+    height: columnOptionClone.height + buttonRow.height + 50
 
     Column
     {
@@ -73,7 +81,7 @@ Rectangle
                 implicitWidth: 300
                 height: 20
                 focus: true
-                text: "cRedssssssffffffffffffffffffpo"
+                text: "URL..."
             }
 
             Button {
@@ -103,7 +111,7 @@ Rectangle
                 implicitWidth: 300
                 height: 20
                 focus: true
-                text: "home"
+                text: "URL"
             }
 
             Button {
@@ -112,7 +120,6 @@ Rectangle
                 onClicked:  {
                     fileDialogDestinition.visible = true;
                 }
-
             }
         }
 
@@ -124,13 +131,15 @@ Rectangle
             spacing: 15
 
 
-            Text{
+            Text
+            {
                 id: nameRepo
                 text:"Name: "
                 width: columnOptionClone.widthText
             }
 
-            TextField{
+            TextField
+            {
                 id: valueNameRepo
                 implicitWidth: 300
                 height: 20
@@ -155,10 +164,40 @@ Rectangle
 
             id: cloneButton
             text: "Clone"
-            MouseArea{
+            MouseArea
+            {
                 anchors.fill: parent
-                onClicked: {
-                    repository.StartCloneRepository(destUrl.text, sourсeUrl.text, valueNameRepo.text)
+                onClicked:
+                {
+                    var title = "Error Clone Repository"
+                    if(valueNameRepo.text == "")
+                    {
+                        // ошибка, поле не может быть пустым
+                        var text1 = "Field 'Name' must be not empty";
+                        errorS.ShowErrorMessage(title, text1);
+                        return;
+                    }
+
+                    var result = repository.StartCloneRepository(destUrl.text, sourсeUrl.text, valueNameRepo.text);
+                    var title = "Error Clone Repository"
+                    if(result === 5)
+                    {
+                        // директории назначения не существует, выдавать ошибку клонирования
+                        var text = "Destinition URL <i>" + destUrl.text +"</i> not exist.<br>";
+                        var text1 = text + "Clone repository not execute!"
+                        errorS.ShowErrorMessage(title, text1);
+                    }
+                    else if(result === 4)
+                    {
+                        // ошибка во время исполнения
+                        var text = repository.GetLastError();
+                        errorS.ShowErrorMessage(title, text);
+                    }
+                    else
+                    {
+                        // клонирование репозитория завершилось успешно
+                    }
+
                 }
             }
         }
@@ -168,7 +207,8 @@ Rectangle
             text: "Cancel"
             MouseArea{
                 anchors.fill: parent
-                onClicked: {
+                onClicked:
+                {
                     repository.CancelCloneRepository()
                 }
             }

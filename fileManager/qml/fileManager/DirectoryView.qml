@@ -2,12 +2,25 @@ import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
 import Qt.labs.folderlistmodel 1.0
-import "utils.js" as UtilsScript
 import Repository 1.0
+import Icons 1.0
+import "utils.js" as UtilsScript
 
 Rectangle
 {
-    // СВО-ВА И СИГНАЛЫ
+    //-------------------------------------------------------------------------/
+    // ПОЛЬЗОВАТЕЛЬСКИЕ КЛАССЫ MVC
+
+    ControllerRepository {
+        id: repository
+    }
+
+    ControllerIcons {
+        id: contrIcons
+        currentPath: UtilsScript.getFullStrPath(dirModel.folder.toString())
+    }
+
+    // СВО-ВА, ФУНКЦИИ И СИГНАЛЫ
     //-------------------------------------------------------------------------/
     property var folderModel: dirModel
     property var folderView: view
@@ -20,16 +33,43 @@ Rectangle
     onChangeParentFolder:
     {
         // меняем рабочую директорию у модели
-        dirModel.folder = path;
         repository.currentPathRepo = path;
+        contrIcons.currentPath = path;
+        dirModel.folder = path;
         folderView.currentIndex = -1;
     }
-    //-------------------------------------------------------------------------/
-    ControllerRepository {
-        id: repository
-        currentPathRepo: UtilsScript.GetFullStrPath(dirModel.folder.toString())
+
+    // функция взятия пути до иконки в зависимости от mymetype файла
+    function getResourceImage(fileName)
+    {
+        var currentPathRepo = UtilsScript.getFullStrPath(dirModel.folder.toString());
+        var path = currentPathRepo + "/" + fileName;
+        return contrIcons.GetPathIconsFileDirecoctoryView(path);
     }
 
+    // функция обновления списка состояния иконок
+    function updateListStateFileSync(folder)
+    {
+        contrIcons.currentPath = UtilsScript.getFullStrPath(folder.toString());
+    }
+
+    // функция обновления состояния иконок у текущего списка
+    function updateIconsStateFileSync()
+    {
+//        var folderTemp = dirModel.folder;
+//        dirModel.folder = "";
+//        dirModel.folder = folderTemp;
+//        folderView.update();
+    }
+
+    // функция проверки нахождения свойства folder впределах корневого пути репозитория
+    // чтобы выше корня репозитория не выходить
+    function direcotoryIsSubRootRepositoryDirectory(path)
+    {
+        return repository.DirIsSubRootDirRepository(path)
+    }
+
+    //-------------------------------------------------------------------------/
 
     ContextMenu
     {
@@ -38,24 +78,26 @@ Rectangle
             if(dirModel.isFolder(dirModel.index) && view.currentItem)
             {
                 var fileName = view.currentItem.curFileName;
-                dirModel.folder = dirModel.folder == "file:///" ? dirModel.folder + fileName : dirModel.folder +"/" + fileName;
+                var folder = dirModel.folder == "file:///" ? dirModel.folder + fileName : dirModel.folder +"/" + fileName;
+                updateListStateFileSync(folder);
+                dirModel.folder = folder;
                 view.currentIndex = -1;
             }
         }
         onGetContentDirectory:
         {
             var fileName = view.currentItem.curFileName;
-            var currentPathRepo = UtilsScript.GetFullStrPath(dirModel.folder.toString());
-            var relativePath = UtilsScript.GetRelativeStrPath(repository.currentPathRepo.toString(), currentPathRepo);
-            var addFile =  relativePath == "" ? fileName : relativePath + "/" + fileName;
+            var currentPathRepo = UtilsScript.getFullStrPath(dirModel.folder.toString());
+            var relativePath = UtilsScript.getRelativeStrPath(repository.currentPathRepo.toString(), currentPathRepo);
+            var addFile =  relativePath === "" ? fileName : relativePath + "/" + fileName;
             repository.GetContentDirectory(addFile);
         }
         onDropContentDirectory:
         {
             var fileName = view.currentItem.curFileName;
-            var currentPathRepo = UtilsScript.GetFullStrPath(dirModel.folder.toString());
-            var relativePath = UtilsScript.GetRelativeStrPath(repository.currentPathRepo.toString(), currentPathRepo);
-            var addFile =  relativePath == "" ? fileName : relativePath + "/" + fileName;
+            var currentPathRepo = UtilsScript.getFullStrPath(dirModel.folder.toString());
+            var relativePath = UtilsScript.getRelativeStrPath(repository.currentPathRepo.toString(), currentPathRepo);
+            var addFile =  relativePath === "" ? fileName : relativePath + "/" + fileName;
             repository.DropContentDirectory(addFile);
         }
     }
@@ -69,6 +111,8 @@ Rectangle
     FolderListModel
     {
         id: dirModel
+        objectName: "dirModel"
+
         folder: repository.GetDefaultRepositoryPath()
         showDirs: true
         showDirsFirst: true
@@ -95,6 +139,9 @@ Rectangle
             z: 50
             anchors.margins: 20
         }
+        Component.onCompleted: {
+            contrIcons.StartThreadIconsSync();
+        }
 
 //        highlightFollowsCurrentItem: true
         highlightMoveDuration: 0
@@ -104,9 +151,9 @@ Rectangle
         {
             id: itemView
 
-            property var isCurrent: GridView.isCurrentItem
+            property bool isCurrent: GridView.isCurrentItem
             property var curFileName: fileName
-            property var maxLengthOneLine: 0.95 * view.cellWidth
+            property real maxLengthOneLine: 0.95 * view.cellWidth
 
             width: view.cellWidth
             height: view.cellHeight
@@ -117,17 +164,73 @@ Rectangle
                 width: view.cellWidth
 
                 Image{
-                    id: imgFolder
-                    source: dirModel.isFolder(model.index) ? "qrc:/folder" : "qrc:/image_files/word.png";
-                    anchors.horizontalCenter: parent.horizontalCenter
 
+                    id: imgFolder
+                    source: getResourceImage(curFileName);
+                    anchors.horizontalCenter: parent.horizontalCenter
                     Image{
                         id: dirSync
                         anchors.bottom: parent.bottom
                         anchors.left: parent.left
-                        anchors.leftMargin: 5
-                        source: "qrc:/images/ok.png"
+                        anchors.leftMargin: 2
+                        source: "qrc:/synced.png"
+                        state: "SYNCING"
                     }
+
+                    // различные состояния, в которых может находиться директория(или файл)
+                    states:[
+                            State {
+                                // 1. Идет синхронизация
+                                name: "SYNCING"
+                                when: { contrIcons.stateIconsFileSyncQML[curFileName] === "SyncingF" }
+                                PropertyChanges {
+                                    target: dirSync
+                                    source: "qrc:/syncing.png"
+                                }
+                            },
+                            // 2. Имеются только символичеcкие ссылки
+                            State {
+                                name: "SYMBOL_LINK"
+                                when: { contrIcons.stateIconsFileSyncQML[curFileName] === "SyncedF" }
+                                PropertyChanges {
+                                    target: dirSync
+                                    source: "qrc:/synced.png"
+                                }
+                            },
+                            // 3. Имеются символичеcкие ссылки, некоторые из них с контентом
+                            State {
+                                name: "SYMBOL_LINK_AND_SOME_CONTENT"
+                                when: { contrIcons.stateIconsFileSyncQML[curFileName] === "sincsng"  }
+                                PropertyChanges {
+                                    target: dirSync
+                                    source: "qrc:/syncing.png"
+
+                                }
+                            },
+
+                            // 4. Символическая ссылка с контенктом
+                            State {
+                                when: { contrIcons.stateIconsFileSyncQML[curFileName] === "sinsdng"  }
+                                name: "SYMBOL_LINK_AND_CONTENT"
+                                PropertyChanges {
+                                    target: dirSync
+                                    source: "qrc:/syncing.png"
+
+                                }
+                            },
+                            // 5. Синхронизация выключена
+                            State {
+                                name: "DISABLE_SYNC"
+                                when: { contrIcons.stateIconsFileSyncQML[curFileName] === "sinssng"  }
+                                PropertyChanges {
+                                    target: dirSync
+                                    source: "qrc:/synced.png"
+
+                                }
+                            }
+
+                            // папка с автосинхронизацией контента(посмотреть, это будет отдельным состоянием, или просто как)
+                        ]
                 }
 
                 Text
@@ -157,59 +260,24 @@ Rectangle
                 onClicked:
                 {
                     view.currentIndex = model.index
-                    if(mouse.button == Qt.RightButton)
+                    if(mouse.button === Qt.RightButton)
                         menudirectory.popup()
                 }
                 onDoubleClicked:
                 {
                     if(dirModel.isFolder(model.index))
                     {
-                        dirModel.folder = dirModel.folder == "file:///" ? dirModel.folder + curFileName : dirModel.folder +"/" + curFileName;
-                        console.log(dirModel.folder);
+                        var folder = dirModel.folder == "file:///" ? dirModel.folder + curFileName : dirModel.folder +"/" + curFileName;
+                        updateListStateFileSync(folder);
+                        dirModel.folder = folder
                         view.currentIndex = -1;
-
                     }
                 }
                 onEntered: {
                     // посылаем сигнал, что необходимо вывести свойства объекта, на который навели
-                    showPropertyFile(curFileName)
+                    //showPropertyFile(curFileName)
                 }
             }
-            // различные состояния, в которых может находиться директория(или файл)
-            states:[
-                    State {
-                        // 1. Идет синхронизация
-                        name: "SYNCING"
-//                        PropertyChanges { target: menuBar; y: 0 }
-//                        PropertyChanges { target: textArea; y: partition + drawer.height }
-//                        PropertyChanges { target: drawer; y: partition }
-//                        PropertyChanges { target: arrowIcon; rotation: 180 }
-                    },
-                    // 2. Имеются только символичеcкие ссылки
-                    State {
-                        name: "SYMBOL_LINK"
-//                        PropertyChanges { target: menuBar; y: -height; }
-//                        PropertyChanges { target: textArea; y: drawer.height; height: screen.height - drawer.height }
-//                        PropertyChanges { target: drawer; y: 0 }
-//                        PropertyChanges { target: arrowIcon; rotation: 0 }
-                    },
-
-                    // 3. Имеются символичеcкие ссылки, некоторые из них с контентом
-                    State {
-                        name: "SYMBOL_LINK_AND_SOME_CONTENT"
-    //                        PropertyChanges { target: menuBar; y: -height; }
-    //                        PropertyChanges { target: textArea; y: drawer.height; height: screen.height - drawer.height }
-    //                        PropertyChanges { target: drawer; y: 0 }
-    //                        PropertyChanges { target: arrowIcon; rotation: 0 }
-                    },
-
-                    // 4. Символическая ссылка с контенктом
-                    State {
-                        name: "SYMBOL_LINK_AND_CONTENT"
-                    }
-
-                    // папка с автосинхронизацией контента(посмотреть, это будет отдельным состоянием, или просто как)
-                ]
         }
     }
 }

@@ -1,7 +1,9 @@
 #include "facadeapplication.h"
 #include "MVC/Controller/controller_repository.h"
+#include "MVC/Controller/controller_icons.h"
 #include "repository/trepository.h"
 #include "resourcegenerator.h"
+#include <qml/components/error_message/qmlerrormessage.h>
 
 #include <QQmlEngine>
 #include <QQmlComponent>
@@ -16,24 +18,25 @@ boost::shared_ptr<FacadeApplication> FacadeApplication::instance = boost::shared
 FacadeApplication::FacadeApplication() :
     pathFileRepoConfig("ganx-repository.xml")
   , currentRepository(repository.end())
+  , systemTray(0l)
 //    pathFileRepoConfig(":/config/config_repo")
 {
     fileRepoConfig.setFileName(pathFileRepoConfig);
 
-    // загружаем ресурсные файлы
+    // генерируем список путей до иконок
     ResourceGenerator::getInstance();
 
-    // загружаем из конфигов репозитории
+    // загружаем из конфигов существующие репозитории
     LoadRepositories();
 
     // инициализируем связь C и QML
     InitClassCAndQML();
 
-    // разрешаем выполнять задачу только в одном потоке
-    // больше 1 процесса git-annex создать все равно нельзя
+    // разрешаем выполнять задачу git-annex только в одном потоке
+    // больше 1 процесса git-annex создать все равно не даст
     QThreadPool::globalInstance()->setMaxThreadCount(1);
 
-    // делаем таймер, и запускаем его
+    // запускаем таймер синхронизации данных
     QObject::connect(&timeSync, &QTimer::timeout, [=](){this->TimeOutTimeSync();});
     // интервал срабатывания тайминга(в миллисек)
     const int timeInterval = 30000;
@@ -50,7 +53,11 @@ FacadeApplication* FacadeApplication::getInstance()
 //----------------------------------------------------------------------------------------/
 void FacadeApplication::LoadRepositories()
 {
-    QDomDocument doc;
+    // проверка есть ли нужный нам файл в домашнем каталоге(если нет, то создаем пустой)
+#warning MUST_DO
+
+    QDomDocument doc;   
+
     if(!fileRepoConfig.open(QIODevice::ReadOnly))
     {
         printf("ERROR: Unable to open file. Repositories was not load!!!");
@@ -104,7 +111,9 @@ void FacadeApplication::LoadRepositories()
     fileRepoConfig.close();
 }
 //----------------------------------------------------------------------------------------/
-void FacadeApplication::SaveRepository(const QString& localURL, const QString& remoteURL, const QString& nameRepo)
+void FacadeApplication::SaveRepository(const QString& localURL, const QString& remoteURL, const QString& nameRepo,
+                                       const bool autosync, const bool autosyncContent
+                                       )
 {
     QDomDocument doc;
 
@@ -121,24 +130,42 @@ void FacadeApplication::SaveRepository(const QString& localURL, const QString& r
         return;
     }
     // cодержимое тега зарегистрированных репозитория
-    // создаем элемент
+    // создаем элемент репо
     QDomElement newRepo = doc.createElement("repo");
 
     // создаем атрибуты элемента
-    QDomAttr attrNewRepo = doc.createAttribute("localUrl");
-    attrNewRepo.setValue(localURL);
-    newRepo.setAttributeNode(attrNewRepo);
+    {
+        QDomAttr attrNewRepo = doc.createAttribute("localUrl");
+        attrNewRepo.setValue(localURL);
+        newRepo.setAttributeNode(attrNewRepo);
 
-    QDomAttr attrNewRepo_1 = doc.createAttribute("remoteUrl");
-    attrNewRepo_1.setValue(remoteURL);
-    newRepo.setAttributeNode(attrNewRepo_1);
+        QDomAttr attrNewRepo_1 = doc.createAttribute("remoteUrl");
+        attrNewRepo_1.setValue(remoteURL);
+        newRepo.setAttributeNode(attrNewRepo_1);
 
-    QDomAttr attrNewRepo_2 = doc.createAttribute("nameRepo");
-    attrNewRepo_2.setValue(nameRepo);
-    newRepo.setAttributeNode(attrNewRepo_2);
+        QDomAttr attrNewRepo_2 = doc.createAttribute("nameRepo");
+        attrNewRepo_2.setValue(nameRepo);
+        newRepo.setAttributeNode(attrNewRepo_2);
 
-    QDomElement elReporegistry = doc.firstChildElement("reporegistry");
-    elReporegistry.appendChild(newRepo);
+        QDomElement elReporegistry = doc.firstChildElement("reporegistry");
+        elReporegistry.appendChild(newRepo);
+    }
+
+    // создаем дочерний элемент у элемента newRepo элемент paramSync
+    QDomElement paramSync = doc.createElement("paramSync");
+
+    // создаем аттрибуты элемента
+    {
+        QDomAttr attrParamAutoSync = doc.createAttribute("autosync");
+        attrParamAutoSync.setValue(QString::number(int(autosync)));
+        paramSync.setAttributeNode(attrParamAutoSync);
+
+        QDomAttr attrParamAutoSyncContent = doc.createAttribute("autosyncContent");
+        attrParamAutoSyncContent.setValue(QString::number(int(autosyncContent)));
+        paramSync.setAttributeNode(attrParamAutoSyncContent);
+    }
+    // теперь устанавливаем этот элемент как дочерний к элементу newRepo
+    newRepo.appendChild(paramSync);
 
     fileRepoConfig.reset();
     QTextStream(&fileRepoConfig) << doc.toString();
@@ -147,12 +174,25 @@ void FacadeApplication::SaveRepository(const QString& localURL, const QString& r
 //----------------------------------------------------------------------------------------/
 GANN_DEFINE::RESULT_EXEC_PROCESS FacadeApplication::StartCloneRepository(QString &localURL, const QString &remoteURL, const QString &nameRepo)
 {
+    static QDir dir;
+    dir.setPath(localURL);
+    if(!dir.exists())
+    {
+        // директория, куда будем копировать, не существует.
+        return DIRECTORY_NOT_EXIST;
+    }
     TRepository* newRepo = new TRepository;
     RESULT_EXEC_PROCESS result = newRepo->CloneRepository(localURL, nameRepo, remoteURL);
     if(result == NO_ERROR)
     {
         std::unique_ptr<IRepository> tempRepo(newRepo);
         repository[localURL] = std::move(tempRepo);
+    }
+    else
+    {
+        lastError = newRepo->GetLastError();
+        delete newRepo;
+        newRepo = 0l;
     }
     return result;
 }
@@ -170,12 +210,10 @@ void FacadeApplication::ChangeCurrentRepository(const QString& dir)
 void FacadeApplication::TimeOutTimeSync()
 {
     timeSync.stop();
-    // идем по все репозиториям, и выполняем синхронизацию
-    std::cout<<"Timer Signal End"<<std::endl;
     if(currentRepository != repository.end())
     {
         // выполняем синхронизацию активного репозитория
-        const IRepository *repository = currentRepository->second.get();
+        IRepository *repository = currentRepository->second.get();
         if(repository->GetParamSyncRepository())
             repository->SyncRepository();
         // синхронизацию контента
@@ -202,5 +240,7 @@ void FacadeApplication::TimeOutTimeSync()
 void FacadeApplication::InitClassCAndQML()
 {
     qmlRegisterType<GANN_MVC::ControllerRepository>("Repository", 1, 0, "ControllerRepository");
+    qmlRegisterType<GANN_MVC::ControllerIcons>("Icons", 1, 0, "ControllerIcons");
+    qmlRegisterType<QMLErrorMessage>("Error", 1, 0, "ErrorMessage");
 }
 //----------------------------------------------------------------------------------------/

@@ -7,12 +7,13 @@
 
 #include "../define.h"
 
+class IRepository;
 class TShell;
 
 class IParsingCommandOut
 {
 public:
-    IParsingCommandOut(const TShell* shell);
+    IParsingCommandOut(const TShell* shell, IRepository* repository = 0);
     virtual ~IParsingCommandOut();
 
     /** @brief действия перед запуском команды */
@@ -23,7 +24,7 @@ public:
      * @param listData - список данных, заполненный согласно протоколу парсинга каждой команды
      * @return 0 - нет ошибок
      */
-    void                GetNewDataStdOut();
+    void                SetNewDataStdOut();
 
     /** @brief действия по окончанию выполнения команды */
     virtual void        SetParamAfterEndCommand(int exitCode);
@@ -61,6 +62,8 @@ protected:
 
     /** @brief класс, выполняющий команду shell*/
     const TShell*       shell;
+    /** @brief репозиторий, который вызвал команду */
+    IRepository*        repository;
 
 signals:
     // сигнал, которым сообщаем, что новые данные готовы после парсинга

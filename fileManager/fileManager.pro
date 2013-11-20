@@ -26,15 +26,21 @@ SOURCES += main.cpp \
     parsing_command_out/parsingcommandclone.cpp \
     parsing_command_out/parsingcommandget.cpp \
     parsing_command_out/parsingcommandwhereis.cpp \
+    parsing_command_out/parsingcommanddrop.cpp \
     systemtray.cpp \
     repository/irepository.cpp \
     facadeapplication.cpp \
     MVC/Controller/controller_repository.cpp \
     MVC/Model/model_repository.cpp \
+    shell/shelltask.cpp \
+    resourcegenerator.cpp \
+    MVC/Controller/controller_icons.cpp \
+    MVC/Model/model_icons.cpp \
+    qml/components/error_message/qmlerrormessage.cpp \
+    parsing_command_out/parsingcommandempty.cpp
+
 # Installation path
 # target.path =
-    shell/shelltask.cpp \
-    resourcegenerator.cpp
 
 # Please do not modify the following two lines. Required for deployment.
 include(qtquick2applicationviewer/qtquick2applicationviewer.pri)
@@ -45,10 +51,13 @@ OTHER_FILES += \
     qml/fileManager/DirectoryView.qml \
     qml/fileManager/propertyFile/PropertyFile.qml \
     qml/fileManager/getContent/GetContent.qml \
-    qml/fileManager/repository/Clone.qml
+    qml/fileManager/repository/Clone.qml \
+
+INCLUDEPATH += iniparser/
 
 RESOURCES += \
-    Resource.qrc
+    Resource.qrc \
+    ResourceIcons.qrc
 
 HEADERS += \
     shell/tshell.h \
@@ -59,6 +68,7 @@ HEADERS += \
     parsing_command_out/parsingcommandclone.h \
     parsing_command_out/parsingcommandget.h \
     parsing_command_out/parsingcommandwhereis.h \
+    parsing_command_out/parsingcommanddrop.h \
     systemtray.h \
     facadeapplication.h \
     MVC/Controller/controller_repository.h \
@@ -66,7 +76,17 @@ HEADERS += \
     define.h \
     MVC/Model/model_updateviewer.h \
     shell/shelltask.h \
-    resourcegenerator.h
+    resourcegenerator.h \
+    MVC/Controller/controller_icons.h \
+    MVC/Model/model_icons.h \
+    iniparser/iniparser.h \
+    iniparser/dictionary.h \
+    qml/components/error_message/qmlerrormessage.h \
+    parsing_command_out/parsingcommandempty.h
 
 # Включаем поддержку С++11
 QMAKE_CXXFLAGS += -std=c++0x
+
+LIBS += -lboost_system \
+        -lboost_filesystem \
+        libiniparser.a

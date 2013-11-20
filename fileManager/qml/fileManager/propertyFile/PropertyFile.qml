@@ -1,13 +1,23 @@
 import QtQuick 2.1
 import QtQuick.Layouts 1.0
+import Icons 1.0
 
 Rectangle
 {
     id: propertyRect
 
-    // СВО-ВА И СИГНАЛЫ
+    //-------------------------------------------------------------------------/
+    // ПОЛЬЗОВАТЕЛЬСКИЕ КЛАССЫ MVC
+
+    ControllerIcons {
+        id: repositoryIcons
+    }
+    //-------------------------------------------------------------------------/
+
+    // СВО-ВА, СИГНАЛЫ, МЕТОДЫ
     //-------------------------------------------------------------------------/
     property var folderView: null
+    property string folderPath: ""
 
     // сигнал, которые говорит, что нужно обновить данные о свойствах папки(файла)
     signal updateData(var currentName)
@@ -17,7 +27,17 @@ Rectangle
         {
             name.text = currentName;
             propertyWhereis.nameOption = "New Data";
+            propertyLastModified.valueOption = repositoryIcons.GetLastModifiedFile(currentName);
+            propertySize.valueOption = repositoryIcons.GetSizeFile(currentName);
+            iconsImage.source = getResourceImage(currentName)
         }
+    }
+
+    // функция взятия пути до иконки в зависимости от mymetype файла
+    function getResourceImage(fileName)
+    {
+        var path = folderPath + "/"+fileName;
+        return repositoryIcons.GetPathIconsFilePropertyFile(path);
     }
     //-------------------------------------------------------------------------/
 
@@ -33,11 +53,23 @@ Rectangle
     border.color: "black"
     border.width: 1
     radius: 5
-    Text
-    {
-        id: name
-        text: "FileName"
+
+    ColumnLayout {
+
         anchors.horizontalCenter: parent.horizontalCenter
+        id: columnHead
+
+        Image {
+            id: iconsImage
+            anchors.horizontalCenter: parent.horizontalCenter
+
+        }
+        Text
+        {
+            id: name
+            text: "FileName"
+            anchors.horizontalCenter: parent.horizontalCenter
+        }
     }
 
     ColumnLayout
@@ -47,10 +79,9 @@ Rectangle
 
         property int maxWidthNameField: 74
 
-        //        onWidthChanged: {console.log(column.width) }
-        anchors.top: name.bottom
+        anchors.top: columnHead.bottom
         anchors.topMargin: 5
-        anchors.horizontalCenter: name.horizontalCenter
+        anchors.horizontalCenter: columnHead.horizontalCenter
         anchors.horizontalCenterOffset: -maxWidthNameField
 
         PropertyValue

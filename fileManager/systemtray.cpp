@@ -1,11 +1,12 @@
 #include "systemtray.h"
 #include <QQuickItem>
+#include <QList>
 #include <iostream>
 
 //----------------------------------------------------------------------------------------/
 SystemTray::SystemTray():
     mainView(0l)
-   ,cloneRepoView(0l)
+  , cloneRepoView(0l)
 {
     //=================================================================================== /
     addRepoAction   = new QAction(tr("&New repository"), this);
@@ -24,7 +25,7 @@ SystemTray::SystemTray():
     trayIconMenu->addSeparator();
     trayIconMenu->addAction(quitAction);
 
-    trayIcon    = new QSystemTrayIcon(QIcon("qrc:/heart.ico"), this);
+    trayIcon    = new QSystemTrayIcon(QIcon(":/heart.ico"), this);
     trayIcon->setContextMenu(trayIconMenu);
     trayIcon->show();
 
@@ -70,6 +71,17 @@ bool SystemTray::ReLoadListRepository() const
         QObjectList parentItem = parent[0]->children();
         QObjectList itemChildren = parentItem[2]->children();
         return QMetaObject::invokeMethod(itemChildren[0], "reloadModel");
+    }
+    return false;
+}
+//----------------------------------------------------------------------------------------/
+bool SystemTray::ReLoadDirectoryView() const
+{
+    if(mainView)
+    {
+        QObjectList parent = mainView->rootObject()->children();
+        QList<QObject*> object = parent[0]->findChildren<QObject*>(QString("directoryView"));
+        return QMetaObject::invokeMethod(object[0], "updateIconsStateFileSync");
     }
     return false;
 }

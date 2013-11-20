@@ -8,13 +8,11 @@
 using namespace GANN_DEFINE;
 //----------------------------------------------------------------------------------------/
 TRepository::TRepository(): IRepository()
-{
-}
+{}
+//----------------------------------------------------------------------------------------/
 TRepository::TRepository(const QString& localUrl, const QString& remoteUrl, const QString& nameRepo) :
     IRepository(localUrl, remoteUrl, nameRepo)
-{
-
-}
+{}
 //----------------------------------------------------------------------------------------/
 TRepository::~TRepository() {}
 //----------------------------------------------------------------------------------------/
@@ -26,13 +24,13 @@ RESULT_EXEC_PROCESS TRepository::CloneRepository(QString& localURL, const QStrin
     RESULT_EXEC_PROCESS result = shellCommand->SetWorkingDirectory(localURL, shell.get());
 
     QString folderToClone = "";
-    result = shellCommand->CloneRepositories(remoteURL, folderToClone, shell);
-    folderToClone = "/" + folderToClone;
+    result = shellCommand->CloneRepositories(remoteURL, folderToClone, shell, this);
     if(result != int(NO_ERROR))
     {
         printf("Error clone repositories: %s \n", remoteURL.toStdString().c_str());
         return result;
     }
+    folderToClone = "/" + folderToClone;
     shellCommand->SetWorkingDirectory(localURL + folderToClone, shell.get());
 
     result = shellCommand->InitRepositories(nameRepo, shell.get());
@@ -51,7 +49,7 @@ RESULT_EXEC_PROCESS TRepository::CloneRepository(QString& localURL, const QStrin
     return result;
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS TRepository::DeleteRepository(const QString &localURL)
+RESULT_EXEC_PROCESS TRepository::DeleteRepository()
 {
     this->nameRepo = "";
     this->localURL = "";
@@ -60,11 +58,11 @@ RESULT_EXEC_PROCESS TRepository::DeleteRepository(const QString &localURL)
     return NO_ERROR;
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS TRepository::GetContentFile(const QString& file) const
+RESULT_EXEC_PROCESS TRepository::GetContentFile(const QString& file)
 {
     boost::shared_ptr<TShell> shell(new TShell());
     shellCommand->SetWorkingDirectory(this->localURL, shell.get());
-    RESULT_EXEC_PROCESS result = shellCommand->GetContentFile(file, shell);
+    RESULT_EXEC_PROCESS result = shellCommand->GetContentFile(file, shell, this);
     if(result != NO_ERROR)
     {
         printf("Error git-annex get content of file: %s \n", file.toStdString().c_str());
@@ -73,11 +71,11 @@ RESULT_EXEC_PROCESS TRepository::GetContentFile(const QString& file) const
     return result;
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS TRepository::DropContentFile(const QString& file) const
+RESULT_EXEC_PROCESS TRepository::DropContentFile(const QString& file)
 {
     boost::shared_ptr<TShell> shell(new TShell());
     shellCommand->SetWorkingDirectory(this->localURL, shell.get());
-    RESULT_EXEC_PROCESS result = shellCommand->DropContentFile(file, shell);
+    RESULT_EXEC_PROCESS result = shellCommand->DropContentFile(file, shell, this);
     if(result != NO_ERROR)
     {
         printf("Error git-annex drop content of file: %s \n", file.toStdString().c_str());

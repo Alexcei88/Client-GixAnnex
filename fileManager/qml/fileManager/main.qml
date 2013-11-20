@@ -5,6 +5,7 @@ import QtQuick.Layouts 1.0
 import Qt.labs.folderlistmodel 1.0
 // окно с отображением контента
 import "getContent"
+
 Rectangle
 {
     id: mainRectangle
@@ -13,6 +14,7 @@ Rectangle
 
     Column
     {
+        id: mainColumn
         Keys.forwardTo: [windowContent, toolBar]
 
         spacing: 1
@@ -25,6 +27,7 @@ Rectangle
         // сверху панелька
         RowLayout
         {
+            id: rowToolBar
             ToolBar
             {
                 id: toolBar
@@ -37,8 +40,15 @@ Rectangle
                     ToolButton{
                         iconSource:"qrc:back"
                         onClicked: {
-                            toolBar.folderModel.folder = toolBar.folderModel.parentFolder;
-                            toolBar.folderView.currentIndex = -1;
+                            var folder = toolBar.folderModel.parentFolder;
+                            // если итоговый путь будет подкорнем корня репозитория, то переходим назад
+                            // иначе ничего не делаем
+                            if(windowContent.direcotoryIsSubRootRepositoryDirectory(folder))
+                            {
+                                windowContent.updateListFileSync(folder);
+                                toolBar.folderModel.folder = folder;
+                                toolBar.folderView.currentIndex = -1;
+                            }
                         }
                     }
                     ToolButton{
@@ -48,12 +58,12 @@ Rectangle
                             if(toolBar.folderView.currentItem)
                             {
                                 var fileName = toolBar.folderView.currentItem.curFileName;
-                                toolBar.folderModel.folder = toolBar.folderModel.folder == "file:///" ? toolBar.folderModel.folder + fileName : toolBar.folderModel.folder +"/" + fileName;
+                                var folder = toolBar.folderModel.folder == "file:///" ? toolBar.folderModel.folder + fileName : toolBar.folderModel.folder +"/" + fileName;;
+                                toolBar.folderModel.folder = folder;
                                 toolBar.folderView.currentIndex = -1;
                             }
                         }
                     }
-
                     ToolButton{
                         text: "аав1"
                     }

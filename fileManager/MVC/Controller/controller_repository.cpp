@@ -1,4 +1,5 @@
 #include "controller_repository.h"
+#include "controller_icons.h"
 #include <iostream>
 
 using namespace GANN_MVC;
@@ -21,8 +22,7 @@ QVariant ControllerRepository::GetDefaultRepositoryPath() const
 //----------------------------------------------------------------------------------------/
 QVariant ControllerRepository::StartCloneRepository(QVariant localUlr, QVariant remoteURL, QVariant nameRepo)
 {
-    QVariant result = model->CloneRepository(localUlr.toString(), remoteURL.toString(), nameRepo.toString());
-    return result;
+    return model->CloneRepository(localUlr.toString(), remoteURL.toString(), nameRepo.toString());
 }
 //----------------------------------------------------------------------------------------/
 void ControllerRepository::CancelCloneRepository() const
@@ -40,3 +40,14 @@ QVariant ControllerRepository::DropContentDirectory(QVariant dir) const
     return model->DropContentDirectory(dir.toString());
 }
 //----------------------------------------------------------------------------------------/
+QVariant ControllerRepository::DirIsSubRootDirRepository(QVariant dir) const
+{
+    return model->DirIsSubRootDirRepository(dir.toString());
+}
+//----------------------------------------------------------------------------------------/
+const QVariant ControllerRepository::GetLastError() const
+{
+    return model->GetLastError();
+}
+//----------------------------------------------------------------------------------------/
+

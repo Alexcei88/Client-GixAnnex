@@ -9,7 +9,11 @@ namespace GANN_DEFINE {
         ,ERROR_NO_FINISHED = 2
         ,IGNORE_COMMAND = 3
         ,ERROR_EXECUTE = 4
+        ,DIRECTORY_NOT_EXIST
     };
 }
+
+#define DEBUG
+//#undef DEBUG
 
 #endif // DEFINE_H
