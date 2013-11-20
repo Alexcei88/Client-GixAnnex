@@ -53,7 +53,11 @@ FacadeApplication* FacadeApplication::getInstance()
 //----------------------------------------------------------------------------------------/
 void FacadeApplication::LoadRepositories()
 {
-    QDomDocument doc;
+    // проверка есть ли нужный нам файл в домашнем каталоге(если нет, то создаем пустой)
+#warning MUST_DO
+
+    QDomDocument doc;   
+
     if(!fileRepoConfig.open(QIODevice::ReadOnly))
     {
         printf("ERROR: Unable to open file. Repositories was not load!!!");
@@ -107,7 +111,9 @@ void FacadeApplication::LoadRepositories()
     fileRepoConfig.close();
 }
 //----------------------------------------------------------------------------------------/
-void FacadeApplication::SaveRepository(const QString& localURL, const QString& remoteURL, const QString& nameRepo)
+void FacadeApplication::SaveRepository(const QString& localURL, const QString& remoteURL, const QString& nameRepo,
+                                       const bool autosync, const bool autosyncContent
+                                       )
 {
     QDomDocument doc;
 
@@ -124,24 +130,42 @@ void FacadeApplication::SaveRepository(const QString& localURL, const QString& r
         return;
     }
     // cодержимое тега зарегистрированных репозитория
-    // создаем элемент
+    // создаем элемент репо
     QDomElement newRepo = doc.createElement("repo");
 
     // создаем атрибуты элемента
-    QDomAttr attrNewRepo = doc.createAttribute("localUrl");
-    attrNewRepo.setValue(localURL);
-    newRepo.setAttributeNode(attrNewRepo);
+    {
+        QDomAttr attrNewRepo = doc.createAttribute("localUrl");
+        attrNewRepo.setValue(localURL);
+        newRepo.setAttributeNode(attrNewRepo);
 
-    QDomAttr attrNewRepo_1 = doc.createAttribute("remoteUrl");
-    attrNewRepo_1.setValue(remoteURL);
-    newRepo.setAttributeNode(attrNewRepo_1);
+        QDomAttr attrNewRepo_1 = doc.createAttribute("remoteUrl");
+        attrNewRepo_1.setValue(remoteURL);
+        newRepo.setAttributeNode(attrNewRepo_1);
 
-    QDomAttr attrNewRepo_2 = doc.createAttribute("nameRepo");
-    attrNewRepo_2.setValue(nameRepo);
-    newRepo.setAttributeNode(attrNewRepo_2);
+        QDomAttr attrNewRepo_2 = doc.createAttribute("nameRepo");
+        attrNewRepo_2.setValue(nameRepo);
+        newRepo.setAttributeNode(attrNewRepo_2);
 
-    QDomElement elReporegistry = doc.firstChildElement("reporegistry");
-    elReporegistry.appendChild(newRepo);
+        QDomElement elReporegistry = doc.firstChildElement("reporegistry");
+        elReporegistry.appendChild(newRepo);
+    }
+
+    // создаем дочерний элемент у элемента newRepo элемент paramSync
+    QDomElement paramSync = doc.createElement("paramSync");
+
+    // создаем аттрибуты элемента
+    {
+        QDomAttr attrParamAutoSync = doc.createAttribute("autosync");
+        attrParamAutoSync.setValue(QString::number(int(autosync)));
+        paramSync.setAttributeNode(attrParamAutoSync);
+
+        QDomAttr attrParamAutoSyncContent = doc.createAttribute("autosyncContent");
+        attrParamAutoSyncContent.setValue(QString::number(int(autosyncContent)));
+        paramSync.setAttributeNode(attrParamAutoSyncContent);
+    }
+    // теперь устанавливаем этот элемент как дочерний к элементу newRepo
+    newRepo.appendChild(paramSync);
 
     fileRepoConfig.reset();
     QTextStream(&fileRepoConfig) << doc.toString();

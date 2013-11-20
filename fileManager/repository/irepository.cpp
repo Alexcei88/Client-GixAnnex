@@ -19,9 +19,9 @@ void IRepository::InitClass()
     shellCommand = boost::make_shared<ShellCommand>();
 
     // устанавливаем состояние репозитория по умолчанию
-    paramSyncRepo.autosync = false;
-    paramSyncRepo.autosyncContent = false;
-    paramSyncRepo.currentState = "Disable_sincing";
+    paramSyncRepo.autosync = true;
+    paramSyncRepo.autosyncContent = true;
+    paramSyncRepo.currentState = "Synced";
 
     // init Q_Enums
     const QMetaObject &mo = staticMetaObject;

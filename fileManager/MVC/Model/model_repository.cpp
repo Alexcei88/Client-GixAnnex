@@ -16,7 +16,7 @@ ModelQmlAndCRepository::ModelQmlAndCRepository()
 //----------------------------------------------------------------------------------------/
 const QString ModelQmlAndCRepository::GetDefaultRepository() const
 {
-    QString localPath = "";
+    QString localPath = "/Empty";
     if(FacadeApplication::instance->currentRepository != FacadeApplication::instance->repository.end())
     {
         localPath = FacadeApplication::instance->currentRepository->first;

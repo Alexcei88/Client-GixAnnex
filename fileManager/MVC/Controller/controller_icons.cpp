@@ -74,8 +74,10 @@ void ControllerIcons::StartThreadIconsSync()
 //----------------------------------------------------------------------------------------/
 void ControllerIcons::OnChangeParrentDirectory(QString curDir)
 {
+    if(curDir == "/Empty")
+        return;
     assert(dir.exists(curDir));
-    // посылаем модели о смене текущей директории отображения в текущем репозитории
+    // посылаем модели сигнал о смене текущей директории отображения в текущем репозитории
     mainModel->ChangeCurrentViewDirectory(curDir);
 
     dir.setPath(curDir);

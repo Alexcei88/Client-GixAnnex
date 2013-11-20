@@ -23,7 +23,7 @@ public:
     enum STATE_REPOSITORY
     {
             Syncing = 0,        // идет синхронизация
-            Synced = 1,         // синхронизация выполнена
+            Synced = 1,         // синхронизация включена и выполнена
             Disable_sincing = 2 // синхронизация выключена
     };
 

@@ -54,7 +54,9 @@ private:
     void                LoadRepositories();
 
     /** @brief Сохранения репозитория в конфигах */
-    void                SaveRepository(const QString& localURL, const QString& remoteURL, const QString& nameRepo);
+    void                SaveRepository(const QString& localURL, const QString& remoteURL, const QString& nameRepo,
+                                       const bool autosync = true, const bool autosyncContent = true
+                                       );
 
     /** @brief начать клонирование репозитория */
     GANN_DEFINE::RESULT_EXEC_PROCESS StartCloneRepository(QString& localURL, const QString& remoteURL, const QString& nameRepo);

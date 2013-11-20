@@ -169,6 +169,15 @@ Rectangle
                 anchors.fill: parent
                 onClicked:
                 {
+                    var title = "Error Clone Repository"
+                    if(valueNameRepo.text == "")
+                    {
+                        // ошибка, поле не может быть пустым
+                        var text1 = "Field 'Name' must be not empty";
+                        errorS.ShowErrorMessage(title, text1);
+                        return;
+                    }
+
                     var result = repository.StartCloneRepository(destUrl.text, sourсeUrl.text, valueNameRepo.text);
                     var title = "Error Clone Repository"
                     if(result === 5)
