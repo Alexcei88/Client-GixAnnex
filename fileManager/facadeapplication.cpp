@@ -41,7 +41,7 @@ FacadeApplication::FacadeApplication() :
     // интервал срабатывания тайминга(в миллисек)
     const int timeInterval = 30000;
     timeSync.setInterval(timeInterval);
-    timeSync.start();
+    //timeSync.start();
 }
 //----------------------------------------------------------------------------------------/
 FacadeApplication* FacadeApplication::getInstance()

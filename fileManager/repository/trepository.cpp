@@ -18,22 +18,20 @@ TRepository::~TRepository() {}
 //----------------------------------------------------------------------------------------/
 RESULT_EXEC_PROCESS TRepository::CloneRepository(QString& localURL, const QString& nameRepo, const QString& remoteURL)
 {
-    boost::shared_ptr<TShell> shell(new TShell());
-
     // здесь должны переходить в текущую директорию
-    RESULT_EXEC_PROCESS result = shellCommand->SetWorkingDirectory(localURL, shell.get());
+    shellCommand->SetWorkingDirectory(localURL);
 
     QString folderToClone = "";
-    result = shellCommand->CloneRepositories(remoteURL, folderToClone, shell, this);
+    RESULT_EXEC_PROCESS result = shellCommand->CloneRepositories(remoteURL, folderToClone, this);
     if(result != int(NO_ERROR))
     {
         printf("Error clone repositories: %s \n", remoteURL.toStdString().c_str());
         return result;
     }
     folderToClone = "/" + folderToClone;
-    shellCommand->SetWorkingDirectory(localURL + folderToClone, shell.get());
+    shellCommand->SetWorkingDirectory(localURL + folderToClone);
 
-    result = shellCommand->InitRepositories(nameRepo, shell.get());
+    result = shellCommand->InitRepositories(nameRepo);
     if(result != int(NO_ERROR))
     {
         printf("Error git-annex init repositories: %s \n", localURL.toStdString().c_str());
@@ -60,9 +58,8 @@ RESULT_EXEC_PROCESS TRepository::DeleteRepository()
 //----------------------------------------------------------------------------------------/
 RESULT_EXEC_PROCESS TRepository::GetContentFile(const QString& file)
 {
-    boost::shared_ptr<TShell> shell(new TShell());
-    shellCommand->SetWorkingDirectory(this->localURL, shell.get());
-    RESULT_EXEC_PROCESS result = shellCommand->GetContentFile(file, shell, this);
+    shellCommand->SetWorkingDirectory(this->localURL);
+    RESULT_EXEC_PROCESS result = shellCommand->GetContentFile(file, this);
     if(result != NO_ERROR)
     {
         printf("Error git-annex get content of file: %s \n", file.toStdString().c_str());
@@ -73,9 +70,8 @@ RESULT_EXEC_PROCESS TRepository::GetContentFile(const QString& file)
 //----------------------------------------------------------------------------------------/
 RESULT_EXEC_PROCESS TRepository::DropContentFile(const QString& file)
 {
-    boost::shared_ptr<TShell> shell(new TShell());
-    shellCommand->SetWorkingDirectory(this->localURL, shell.get());
-    RESULT_EXEC_PROCESS result = shellCommand->DropContentFile(file, shell, this);
+    shellCommand->SetWorkingDirectory(this->localURL);
+    RESULT_EXEC_PROCESS result = shellCommand->DropContentFile(file, this);
     if(result != NO_ERROR)
     {
         printf("Error git-annex drop content of file: %s \n", file.toStdString().c_str());
@@ -86,9 +82,8 @@ RESULT_EXEC_PROCESS TRepository::DropContentFile(const QString& file)
 //----------------------------------------------------------------------------------------/
 RESULT_EXEC_PROCESS TRepository::WhereisFile(const QString& file) const
 {
-    boost::shared_ptr<TShell> shell(new TShell());
-    shellCommand->SetWorkingDirectory(this->localURL, shell.get());
-    RESULT_EXEC_PROCESS result = shellCommand->WhereisFiles(file, shell);
+    shellCommand->SetWorkingDirectory(this->localURL);
+    RESULT_EXEC_PROCESS result = shellCommand->WhereisFiles(file);
     if(result != NO_ERROR)
     {
         printf("Error git-annex drop content of file: %s \n", file.toStdString().c_str());
@@ -99,9 +94,9 @@ RESULT_EXEC_PROCESS TRepository::WhereisFile(const QString& file) const
 //----------------------------------------------------------------------------------------/
 GANN_DEFINE::RESULT_EXEC_PROCESS TRepository::SyncRepository() const
 {
-    boost::shared_ptr<TShell> shell(new TShell());
-    shellCommand->SetWorkingDirectory(this->localURL, shell.get());
-    RESULT_EXEC_PROCESS result = shellCommand->Sync(shell);
+    return NO_ERROR;
+    shellCommand->SetWorkingDirectory(this->localURL);
+    RESULT_EXEC_PROCESS result = shellCommand->Sync();
     if(result != NO_ERROR)
     {
         printf("Error sync repository\n");

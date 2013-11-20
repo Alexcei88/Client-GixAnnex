@@ -1,13 +1,13 @@
 #include "tshell.h"
 #include <stdio.h>
+#include <QProcess>
 
 using namespace GANN_DEFINE;
 
 //----------------------------------------------------------------------------------------/
-TShell::TShell(QObject* parent):
-    QObject(parent)
+TShell::TShell()
 {
-    process = boost::make_shared<QProcess>(this);
+    process = boost::make_shared<QProcess>();
     process->setProcessChannelMode(QProcess::MergedChannels);
 }
 //----------------------------------------------------------------------------------------/
@@ -65,6 +65,7 @@ RESULT_EXEC_PROCESS TShell::ExecuteProcess(const QString &str, IParsingCommandOu
 void TShell::SetWorkingDirectory(const QString& dir) const
 {
     process->setWorkingDirectory(dir);
+    std::cout<<"dir ="<<dir.toStdString().c_str()<<std::endl;
 }
 //----------------------------------------------------------------------------------------/
 QByteArray TShell::readStandartOutput() const

@@ -5,12 +5,11 @@
 using namespace GANN_DEFINE;
 
 //----------------------------------------------------------------------------------------/
-IParsingCommandOut::IParsingCommandOut(const TShell *shell, IRepository *repository):
+IParsingCommandOut::IParsingCommandOut(IRepository *repository):
   commandStart(false)
  ,commandEnd(false)
  ,exitCodeCommand(0)
  ,wasErrorCommand(false)
- ,shell(shell)
  ,repository(repository)
 {}
 //----------------------------------------------------------------------------------------/
@@ -50,6 +49,11 @@ void IParsingCommandOut::SetParamAfterEndCommand(int exitCode)
 QStringList IParsingCommandOut::GetParsingData() const
 {
     return dataAfterParsing;
+}
+//----------------------------------------------------------------------------------------/
+void IParsingCommandOut::SetShell(TShell* shell)
+{
+    this->shell = shell;
 }
 //----------------------------------------------------------------------------------------/
 RESULT_EXEC_PROCESS IParsingCommandOut::GetCodeError() const

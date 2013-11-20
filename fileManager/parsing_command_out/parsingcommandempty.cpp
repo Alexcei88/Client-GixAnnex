@@ -1,8 +1,8 @@
 #include "parsingcommandempty.h"
 
 //----------------------------------------------------------------------------------------/
-ParsingCommandEmpty::ParsingCommandEmpty(const TShell *shell):
-    IParsingCommandOut(shell)
+ParsingCommandEmpty::ParsingCommandEmpty():
+    IParsingCommandOut()
 {
 }
 //----------------------------------------------------------------------------------------/

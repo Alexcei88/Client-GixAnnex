@@ -9,7 +9,7 @@
 class ParsingCommandGet : public IParsingCommandOut
 {
 public:
-    ParsingCommandGet(const TShell *shell1, IRepository* repository);
+    ParsingCommandGet(IRepository* repository);
     virtual void        ParsingData();
 
 private:

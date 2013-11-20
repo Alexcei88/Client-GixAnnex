@@ -19,24 +19,29 @@ ShellCommand::ShellCommand():
 //----------------------------------------------------------------------------------------/
 ShellCommand::~ShellCommand(){}
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS ShellCommand::InitRepositories(const QString& nameRepo, const TShell *shell)
+RESULT_EXEC_PROCESS ShellCommand::InitRepositories(const QString& nameRepo)
 {
+
     const QString strCommand = baseCommand + "init " + nameRepo;
-    boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandEmpty(shell));
-    return shell->ExecuteProcess(strCommand, receiverParsing.get());
+    boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandEmpty());
+    ShellTask* shellTask = new ShellTask(strCommand, localURL, receiverParsing);
+    QThreadPool::globalInstance()->start(shellTask);
+    // ждем окончания клонирования репозитория
+    QThreadPool::globalInstance()->waitForDone();
+    RESULT_EXEC_PROCESS codeError = receiverParsing->GetCodeError();
+    return codeError;
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS ShellCommand::SetWorkingDirectory(const QString &localURL, const TShell* shell)
+void ShellCommand::SetWorkingDirectory(const QString& localURL)
 {
-    shell->SetWorkingDirectory(localURL);
-    return NO_ERROR;
+    this->localURL = localURL;
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS ShellCommand::CloneRepositories(const QString& remoteURL, QString& folderClone, const boost::shared_ptr<TShell> shell, IRepository *repository)
+RESULT_EXEC_PROCESS ShellCommand::CloneRepositories(const QString& remoteURL, QString& folderClone, IRepository *repository)
 {
     const QString strCommand = "git clone " + remoteURL;
-    boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandClone(shell.get(), repository));
-    ShellTask* shellTask = new ShellTask(strCommand, receiverParsing, shell);
+    boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandClone(repository));
+    ShellTask* shellTask = new ShellTask(strCommand, localURL, receiverParsing);
 
     QThreadPool::globalInstance()->start(shellTask);
     // ждем окончания клонирования репозитория
@@ -52,33 +57,33 @@ RESULT_EXEC_PROCESS ShellCommand::CloneRepositories(const QString& remoteURL, QS
     return NO_ERROR;
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS ShellCommand::AddFile(const QString& path, const boost::shared_ptr<TShell> shell) const
+RESULT_EXEC_PROCESS ShellCommand::AddFile(const QString& path) const
 {
     const QString strCommand = baseCommand + "add " + path;
 //    return shell->ExecuteProcess(strCommand, receiverParsing[ADD_FILE]);
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS ShellCommand::GetContentFile(const QString& path, const boost::shared_ptr<TShell> shell, IRepository* repository) const
+RESULT_EXEC_PROCESS ShellCommand::GetContentFile(const QString& path, IRepository* repository) const
 {
     const QString strCommand = baseCommand + "get " + path;
-    boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandGet(shell.get(), repository));
-    ShellTask* shellTask = new ShellTask(strCommand, receiverParsing, shell);
+    boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandGet(repository));
+    ShellTask* shellTask = new ShellTask(strCommand, localURL, receiverParsing);
 
     QThreadPool::globalInstance()->start(shellTask);
     return NO_ERROR;
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS ShellCommand::DropContentFile(const QString& path, const boost::shared_ptr<TShell> shell, IRepository* repository) const
+RESULT_EXEC_PROCESS ShellCommand::DropContentFile(const QString& path, IRepository* repository) const
 {
     const QString strCommand = baseCommand + "drop " + path;
-    boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandDrop(shell.get(), repository));
-    ShellTask* shellTask = new ShellTask(strCommand, receiverParsing, shell);
+    boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandDrop(repository));
+    ShellTask* shellTask = new ShellTask(strCommand, localURL, receiverParsing);
 
     QThreadPool::globalInstance()->start(shellTask);
     return NO_ERROR;
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS ShellCommand::RemoveFile(const QString& path, const boost::shared_ptr<TShell> shell) const
+RESULT_EXEC_PROCESS ShellCommand::RemoveFile(const QString& path) const
 {
 #if 0
     const QString strCommand = "git rm" + path;
@@ -91,7 +96,7 @@ RESULT_EXEC_PROCESS ShellCommand::RemoveFile(const QString& path, const boost::s
 #endif
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS ShellCommand::Sync(const boost::shared_ptr<TShell> shell) const
+RESULT_EXEC_PROCESS ShellCommand::Sync() const
 {    
 #if 0
     const QString strCommand = baseCommand + "sync";
@@ -104,7 +109,7 @@ RESULT_EXEC_PROCESS ShellCommand::Sync(const boost::shared_ptr<TShell> shell) co
 //    return shell->ExecuteProcess(strCommand);
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS ShellCommand::WhereisFiles(const QString& path, const boost::shared_ptr<TShell> shell) const
+RESULT_EXEC_PROCESS ShellCommand::WhereisFiles(const QString& path) const
 {
 #if 0
     const QString strCommand = baseCommand + "whereis " + path;
@@ -117,7 +122,7 @@ RESULT_EXEC_PROCESS ShellCommand::WhereisFiles(const QString& path, const boost:
 //    return shell->ExecuteProcess(strCommand);
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS ShellCommand::PullRepositories(const boost::shared_ptr<TShell> shell) const
+RESULT_EXEC_PROCESS ShellCommand::PullRepositories() const
 {
 #if 0
     const QString strCommand = "git pull";

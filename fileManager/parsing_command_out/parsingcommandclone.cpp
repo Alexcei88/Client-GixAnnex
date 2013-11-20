@@ -2,8 +2,8 @@
 #include "../repository/irepository.h"
 
 //----------------------------------------------------------------------------------------/
-ParsingCommandClone::ParsingCommandClone(const TShell* shell, IRepository * repository):
-    IParsingCommandOut(shell, repository)
+ParsingCommandClone::ParsingCommandClone(IRepository * repository):
+    IParsingCommandOut(repository)
 {
     // регулярное выражение в случаи успешного парсинга
     QString succes = "(Cloning into ')(.*)(')(.*)";
