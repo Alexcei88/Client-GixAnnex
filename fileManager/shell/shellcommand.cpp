@@ -21,7 +21,6 @@ ShellCommand::~ShellCommand(){}
 //----------------------------------------------------------------------------------------/
 RESULT_EXEC_PROCESS ShellCommand::InitRepositories(const QString& nameRepo)
 {
-
     const QString strCommand = baseCommand + "init " + nameRepo;
     boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandEmpty());
     ShellTask* shellTask = new ShellTask(strCommand, localURL, receiverParsing);
@@ -98,15 +97,12 @@ RESULT_EXEC_PROCESS ShellCommand::RemoveFile(const QString& path) const
 //----------------------------------------------------------------------------------------/
 RESULT_EXEC_PROCESS ShellCommand::Sync() const
 {    
-#if 0
     const QString strCommand = baseCommand + "sync";
-    boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandGet(shell.get()));
-    ShellTask* shellTask = new ShellTask(strCommand, receiverParsing, shell);
+    boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandEmpty());
+    ShellTask* shellTask = new ShellTask(strCommand, localURL, receiverParsing);
 
     QThreadPool::globalInstance()->start(shellTask);
     return NO_ERROR;
-#endif
-//    return shell->ExecuteProcess(strCommand);
 }
 //----------------------------------------------------------------------------------------/
 RESULT_EXEC_PROCESS ShellCommand::WhereisFiles(const QString& path) const

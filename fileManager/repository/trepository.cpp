@@ -94,7 +94,6 @@ RESULT_EXEC_PROCESS TRepository::WhereisFile(const QString& file) const
 //----------------------------------------------------------------------------------------/
 GANN_DEFINE::RESULT_EXEC_PROCESS TRepository::SyncRepository() const
 {
-    return NO_ERROR;
     shellCommand->SetWorkingDirectory(this->localURL);
     RESULT_EXEC_PROCESS result = shellCommand->Sync();
     if(result != NO_ERROR)

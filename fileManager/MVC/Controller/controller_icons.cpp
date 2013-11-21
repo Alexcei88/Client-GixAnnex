@@ -27,7 +27,6 @@ ControllerIcons::~ControllerIcons()
     if(thread != 0 && thread->isRunning())
     {
         emit stopThread();
-        while(thread->isFinished());
     }
 }
 //----------------------------------------------------------------------------------------/

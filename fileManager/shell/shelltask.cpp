@@ -10,25 +10,14 @@ ShellTask::ShellTask(const QString strCommand, const QString localURL, boost::sh
     command(strCommand)
   , localURL(localURL)
   , parsingCommand(parsingCommand)
-
 {}
 //----------------------------------------------------------------------------------------/
 void ShellTask::run()
 {
-    static TShell shell;
+    TShell shell;
     shell.SetWorkingDirectory(localURL);
     parsingCommand->SetShell(&shell);
-    RESULT_EXEC_PROCESS result = shell.ExecuteProcess(command, parsingCommand.get());
-
-    if(result != NO_ERROR)
-    {
-//        return result;
-    }
-    RESULT_EXEC_PROCESS codeError = parsingCommand->GetCodeError();
-    if(codeError != NO_ERROR)
-    {
-//        return codeError;
-    }
+    shell.ExecuteProcess(command, parsingCommand.get());
 }
 //----------------------------------------------------------------------------------------/
 

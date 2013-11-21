@@ -36,7 +36,7 @@ RESULT_EXEC_PROCESS TShell::ExecuteProcess(const QString &str, IParsingCommandOu
 
     // ждем, пока процесс не запуститься
     // если процесс не запустился, возвращаем -1
-    if(!process->waitForStarted(10000))
+    if(!process->waitForStarted(20000))
     {
         printf("Process not started! \n");
         QObject::disconnect(m_connection_readOut);
@@ -65,7 +65,6 @@ RESULT_EXEC_PROCESS TShell::ExecuteProcess(const QString &str, IParsingCommandOu
 void TShell::SetWorkingDirectory(const QString& dir) const
 {
     process->setWorkingDirectory(dir);
-    std::cout<<"dir ="<<dir.toStdString().c_str()<<std::endl;
 }
 //----------------------------------------------------------------------------------------/
 QByteArray TShell::readStandartOutput() const
