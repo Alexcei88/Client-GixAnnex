@@ -29,7 +29,7 @@ Rectangle
             propertyWhereis.nameOption = "New Data";
             propertyLastModified.valueOption = repositoryIcons.GetLastModifiedFile(currentName);
             propertySize.valueOption = repositoryIcons.GetSizeFile(currentName);
-            iconsImage.source = getResourceImage(currentName)
+            iconsImage.source = getResourceImage(currentName);
         }
     }
 

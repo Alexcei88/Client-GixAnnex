@@ -275,7 +275,7 @@ Rectangle
                 }
                 onEntered: {
                     // посылаем сигнал, что необходимо вывести свойства объекта, на который навели
-                    //showPropertyFile(curFileName)
+                    showPropertyFile(curFileName)
                 }
             }
         }
