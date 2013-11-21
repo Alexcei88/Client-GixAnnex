@@ -2,28 +2,22 @@
 #include "define.h"
 #include "tshell.h"
 #include "../parsing_command_out/iparsingcommandout.h"
+#include "../parsing_command_out/parsingcommandempty.h"
 
 using namespace GANN_DEFINE;
 //----------------------------------------------------------------------------------------/
-ShellTask::ShellTask(const QString strCommand, boost::shared_ptr<IParsingCommandOut> parsingCommand, const boost::shared_ptr<TShell> shell):
+ShellTask::ShellTask(const QString strCommand, const QString localURL, boost::shared_ptr<IParsingCommandOut> parsingCommand):
     command(strCommand)
+  , localURL(localURL)
   , parsingCommand(parsingCommand)
-  , shell(shell)
-{
-}
+{}
 //----------------------------------------------------------------------------------------/
 void ShellTask::run()
 {
-    RESULT_EXEC_PROCESS result = shell->ExecuteProcess(command, parsingCommand.get());
-    if(result != NO_ERROR)
-    {
-//        return result;
-    }
-    RESULT_EXEC_PROCESS codeError = parsingCommand->GetCodeError();
-    if(codeError != NO_ERROR)
-    {
-//        return codeError;
-    }
+    TShell shell;
+    shell.SetWorkingDirectory(localURL);
+    parsingCommand->SetShell(&shell);
+    shell.ExecuteProcess(command, parsingCommand.get());
 }
 //----------------------------------------------------------------------------------------/
 

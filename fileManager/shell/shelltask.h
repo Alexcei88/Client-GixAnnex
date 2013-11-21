@@ -15,7 +15,7 @@ class IParsingCommandOut;
 class ShellTask: public QRunnable
 {
 public:
-    ShellTask(const QString strCommand, boost::shared_ptr<IParsingCommandOut> parsingCommand, const boost::shared_ptr<TShell> shell);
+    ShellTask(const QString strCommand, const QString localURL, boost::shared_ptr<IParsingCommandOut> parsingCommand);
     // функция потока
     virtual void run();
 
@@ -25,7 +25,9 @@ protected:
     // класс парсинга
     boost::shared_ptr<IParsingCommandOut> parsingCommand;
     // класс выполнения команды
-    const boost::shared_ptr<TShell> shell;
+    TShell* shell;
+    // директория, откуда работаем с shell-ом
+    const QString localURL;
 };
 
 #endif // SHELLTASK_H

@@ -22,8 +22,8 @@ Rectangle
 
     // СВО-ВА, ФУНКЦИИ И СИГНАЛЫ
     //-------------------------------------------------------------------------/
-    property var folderModel: dirModel
-    property var folderView: view
+    property alias folderModel: dirModel
+    property alias folderView: view
 
     // сигнал, что нужно показать свойства у директории
     signal showPropertyFile(var currentName)
@@ -59,7 +59,8 @@ Rectangle
 //        var folderTemp = dirModel.folder;
 //        dirModel.folder = "";
 //        dirModel.folder = folderTemp;
-//        folderView.update();
+        console.log("Call update View");
+        folderView.update();
     }
 
     // функция проверки нахождения свойства folder впределах корневого пути репозитория
@@ -139,7 +140,9 @@ Rectangle
             z: 50
             anchors.margins: 20
         }
-        Component.onCompleted: {
+        Component.onCompleted:
+        {
+            // запускаем поток обновления состояния иконок
             contrIcons.StartThreadIconsSync();
         }
 

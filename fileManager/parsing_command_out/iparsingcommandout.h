@@ -13,7 +13,7 @@ class TShell;
 class IParsingCommandOut
 {
 public:
-    IParsingCommandOut(const TShell* shell, IRepository* repository = 0);
+    IParsingCommandOut(IRepository* repository = 0);
     virtual ~IParsingCommandOut();
 
     /** @brief действия перед запуском команды */
@@ -38,6 +38,10 @@ public:
     /** @brief взятие данных после парсинга по требованию */
     virtual QStringList GetParsingData() const;
 
+    /** @brief установка shellа, откуда будут браться данные */
+    void                SetShell(TShell *shell);
+
+
 protected:
     /** @brief список данных, поступивших на входной поток данных */
     QStringList         dataStdOut;
@@ -61,7 +65,7 @@ protected:
     bool                wasErrorCommand;
 
     /** @brief класс, выполняющий команду shell*/
-    const TShell*       shell;
+    TShell*             shell;
     /** @brief репозиторий, который вызвал команду */
     IRepository*        repository;
 

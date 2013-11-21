@@ -27,7 +27,6 @@ ControllerIcons::~ControllerIcons()
     if(thread != 0 && thread->isRunning())
     {
         emit stopThread();
-        while(thread->isFinished());
     }
 }
 //----------------------------------------------------------------------------------------/
@@ -96,6 +95,11 @@ void ControllerIcons::UpdateStateIconsFileSync()
     {
         if(*iterator == "." || *iterator == "..") continue;
         IRepository::PARAMETR_FILEFOLDER_GIT_ANNEX paramSyncCur = paramSync[*iterator];
+        if(paramSyncCur.currentState == "SyncingF")
+        {
+            std::cout<<"We have update state!!!"<<std::endl;
+//            assert(0);
+        }
         stateIconsFileSync[*iterator] = paramSyncCur.currentState;
     }
 }

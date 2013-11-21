@@ -20,12 +20,10 @@
 #include "../define.h"
 
 
-class TShell: public QObject
+class TShell
 {
-    Q_OBJECT
-
 public:
-    TShell(QObject* parent = 0);
+    TShell();
     ~TShell();
 
     // выполнение команды без аргументов
@@ -37,7 +35,7 @@ public:
     // чтение стандартного потока данных
     QByteArray          readStandartOutput() const;
 
-private:    
+//private:
     boost::shared_ptr<QProcess> process;
 };
 

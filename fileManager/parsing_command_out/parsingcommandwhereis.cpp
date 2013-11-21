@@ -1,7 +1,7 @@
 #include "parsingcommandwhereis.h"
 
 //----------------------------------------------------------------------------------------/
-ParsingCommandWhereIs::ParsingCommandWhereIs(const TShell* shell): IParsingCommandOut(shell)
+ParsingCommandWhereIs::ParsingCommandWhereIs(): IParsingCommandOut()
 {
     // регулярное выражение в случаи успешного парсинга
     QString succes = "(whereis)(.*)(\()(\\d)";

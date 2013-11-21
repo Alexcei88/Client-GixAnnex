@@ -39,7 +39,7 @@ FacadeApplication::FacadeApplication() :
     // запускаем таймер синхронизации данных
     QObject::connect(&timeSync, &QTimer::timeout, [=](){this->TimeOutTimeSync();});
     // интервал срабатывания тайминга(в миллисек)
-    const int timeInterval = 30000;
+    const int timeInterval = 20000;
     timeSync.setInterval(timeInterval);
     timeSync.start();
 }
@@ -129,7 +129,7 @@ void FacadeApplication::SaveRepository(const QString& localURL, const QString& r
         fileRepoConfig.close();
         return;
     }
-    // cодержимое тега зарегистрированных репозитория
+    // cодержимое тега зарегистрированных репозиториев
     // создаем элемент репо
     QDomElement newRepo = doc.createElement("repo");
 
@@ -223,7 +223,7 @@ void FacadeApplication::TimeOutTimeSync()
     // теперь всех остальных
     for(auto iterator = repository.begin(); iterator != repository.end(); ++iterator)
     {
-        // текущий репозитирой мы уже синхронизировали
+        // текущий репозиторий мы уже синхронизировали выше
         if(iterator != currentRepository)
         {
             // выполняем синхронизацию активного репозитория

@@ -5,7 +5,7 @@
 class ParsingCommandEmpty: public IParsingCommandOut
 {
 public:
-    ParsingCommandEmpty(const TShell* shell);
+    ParsingCommandEmpty();
     virtual void        ParsingData();
 };
 

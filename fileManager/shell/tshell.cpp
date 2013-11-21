@@ -1,13 +1,13 @@
 #include "tshell.h"
 #include <stdio.h>
+#include <QProcess>
 
 using namespace GANN_DEFINE;
 
 //----------------------------------------------------------------------------------------/
-TShell::TShell(QObject* parent):
-    QObject(parent)
+TShell::TShell()
 {
-    process = boost::make_shared<QProcess>(this);
+    process = boost::make_shared<QProcess>();
     process->setProcessChannelMode(QProcess::MergedChannels);
 }
 //----------------------------------------------------------------------------------------/
@@ -36,7 +36,7 @@ RESULT_EXEC_PROCESS TShell::ExecuteProcess(const QString &str, IParsingCommandOu
 
     // ждем, пока процесс не запуститься
     // если процесс не запустился, возвращаем -1
-    if(!process->waitForStarted(10000))
+    if(!process->waitForStarted(20000))
     {
         printf("Process not started! \n");
         QObject::disconnect(m_connection_readOut);

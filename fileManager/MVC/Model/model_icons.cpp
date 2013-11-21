@@ -30,7 +30,7 @@ void ModelQmlAndCIcons::UpdateFileSyncIcons()
                 contrIcons->UpdateStateIconsFileSync();
             }
             FacadeApplication::getInstance()->systemTray->ReLoadDirectoryView();
-            sleep(20);
+            sleep(2);
         }
     }
 }
