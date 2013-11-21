@@ -116,9 +116,14 @@ public:
     virtual GANN_DEFINE::RESULT_EXEC_PROCESS WhereisFile(const QString& file = " ") const = 0;
 
     /**
-    @brief синхрнизация с удаленным репозиторием
+    @brief синхронизация с удаленным репозиторием
     */
     virtual GANN_DEFINE::RESULT_EXEC_PROCESS SyncRepository() const = 0;
+
+    /**
+    @brief запуск демона просмотра за рабочей директорией репозитория
+    */
+    virtual GANN_DEFINE::RESULT_EXEC_PROCESS StartWatchRepository() const;
 
     /**
     @brief Установка состояния репозитория

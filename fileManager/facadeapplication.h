@@ -58,6 +58,12 @@ private:
                                        const bool autosync = true, const bool autosyncContent = true
                                        );
 
+    /** @brief Запуск демона просмотра(watch) за директориями у репозиториев */
+    void                StartWatchRepositories() const;
+
+    /** @brief Запуск демона просмотра(watch) у конкретного репозитория */
+    void                StartWatchRepository(const IRepository* repository) const;
+
     /** @brief начать клонирование репозитория */
     GANN_DEFINE::RESULT_EXEC_PROCESS StartCloneRepository(QString& localURL, const QString& remoteURL, const QString& nameRepo);
 

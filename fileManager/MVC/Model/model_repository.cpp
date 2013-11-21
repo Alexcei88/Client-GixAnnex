@@ -41,7 +41,7 @@ GANN_DEFINE::RESULT_EXEC_PROCESS ModelQmlAndCRepository::CloneRepository(const Q
     {
         facade->SaveRepository(localPath, remoteURL, nameRepo);
         facade->systemTray->ReLoadListRepository();
-        facade->systemTray->CancelCloneRepository();
+        facade->systemTray->CancelCloneRepository();       
     }
     return result;
 }

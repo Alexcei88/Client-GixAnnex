@@ -56,6 +56,15 @@ RESULT_EXEC_PROCESS ShellCommand::CloneRepositories(const QString& remoteURL, QS
     return NO_ERROR;
 }
 //----------------------------------------------------------------------------------------/
+RESULT_EXEC_PROCESS ShellCommand::WatchRepository(const QString& path) const
+{
+    const QString strCommand = baseCommand + "watch ";
+    boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandEmpty());
+    ShellTask* shellTask = new ShellTask(strCommand, path, receiverParsing);
+    QThreadPool::globalInstance()->start(shellTask);
+    return NO_ERROR;
+}
+//----------------------------------------------------------------------------------------/
 RESULT_EXEC_PROCESS ShellCommand::AddFile(const QString& path) const
 {
     const QString strCommand = baseCommand + "add " + path;

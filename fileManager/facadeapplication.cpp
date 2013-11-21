@@ -26,15 +26,18 @@ FacadeApplication::FacadeApplication() :
     // генерируем список путей до иконок
     ResourceGenerator::getInstance();
 
-    // загружаем из конфигов существующие репозитории
-    LoadRepositories();
-
-    // инициализируем связь C и QML
-    InitClassCAndQML();
-
     // разрешаем выполнять задачу git-annex только в одном потоке
     // больше 1 процесса git-annex создать все равно не даст
     QThreadPool::globalInstance()->setMaxThreadCount(1);
+
+    // загружаем из конфигов существующие репозитории
+    LoadRepositories();
+
+    // запускаем демон за просмотром директорий с репозиториями
+    StartWatchRepositories();
+
+    // инициализируем связь C и QML
+    InitClassCAndQML();
 
     // запускаем таймер синхронизации данных
     QObject::connect(&timeSync, &QTimer::timeout, [=](){this->TimeOutTimeSync();});
@@ -172,6 +175,19 @@ void FacadeApplication::SaveRepository(const QString& localURL, const QString& r
     fileRepoConfig.close();
 }
 //----------------------------------------------------------------------------------------/
+void FacadeApplication::StartWatchRepositories() const
+{
+    for(auto itRepo = repository.begin(); itRepo != repository.end(); ++itRepo)
+    {
+        StartWatchRepository(itRepo->second.get());
+    }
+}
+//----------------------------------------------------------------------------------------/
+void FacadeApplication::StartWatchRepository(const IRepository* repository) const
+{
+    repository->StartWatchRepository();
+}
+//----------------------------------------------------------------------------------------/
 GANN_DEFINE::RESULT_EXEC_PROCESS FacadeApplication::StartCloneRepository(QString &localURL, const QString &remoteURL, const QString &nameRepo)
 {
     static QDir dir;
@@ -187,6 +203,9 @@ GANN_DEFINE::RESULT_EXEC_PROCESS FacadeApplication::StartCloneRepository(QString
     {
         std::unique_ptr<IRepository> tempRepo(newRepo);
         repository[localURL] = std::move(tempRepo);
+
+        // запускаем демон за просмотрм репозитория
+        StartWatchRepository(repository[localURL].get());
     }
     else
     {

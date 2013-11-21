@@ -1,5 +1,7 @@
 #include "irepository.h"
 
+using namespace GANN_DEFINE;
+
 //----------------------------------------------------------------------------------------/
 IRepository::IRepository()
 {
@@ -39,6 +41,17 @@ void IRepository::InitClass()
     QObject::connect(this, &IRepository::errorCloneRepository, this, &IRepository::OnErrorCloneRepository, Qt::DirectConnection);
 
     dir.setPath("");
+}
+//----------------------------------------------------------------------------------------/
+RESULT_EXEC_PROCESS IRepository::StartWatchRepository() const
+{
+    RESULT_EXEC_PROCESS result = shellCommand->WatchRepository(localURL);
+    if(result != NO_ERROR)
+    {
+        printf("Error watch repositories: %s \n", localURL.toStdString().c_str());
+        return result;
+    }
+    return result;
 }
 //----------------------------------------------------------------------------------------/
 void IRepository::SetState(const STATE_REPOSITORY& state)

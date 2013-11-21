@@ -31,6 +31,9 @@ public:
     GANN_DEFINE::RESULT_EXEC_PROCESS CloneRepositories( const QString& remoteURL, QString &folderClone
                                                        ,IRepository* repository);
 
+    /** @brief запустить демон просмотра за рабочей директорией */
+    GANN_DEFINE::RESULT_EXEC_PROCESS WatchRepository( const QString& path) const;
+
     // 2. Добавление каталога/файла в репозиторий
     GANN_DEFINE::RESULT_EXEC_PROCESS AddFile(const QString& path) const;
     // 3. закачать контент у файлов((директории)
