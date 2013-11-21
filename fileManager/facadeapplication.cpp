@@ -13,7 +13,7 @@
 
 using namespace GANN_DEFINE;
 
-boost::shared_ptr<FacadeApplication> FacadeApplication::instance = boost::shared_ptr<FacadeApplication>();
+FacadeApplication* FacadeApplication::instance = 0;
 //----------------------------------------------------------------------------------------/
 FacadeApplication::FacadeApplication() :
     pathFileRepoConfig("ganx-repository.xml")
@@ -34,7 +34,7 @@ FacadeApplication::FacadeApplication() :
     LoadRepositories();
 
     // запускаем демон за просмотром директорий с репозиториями
-    StartWatchRepositories();
+    WatchRepositories();
 
     // инициализируем связь C и QML
     InitClassCAndQML();
@@ -49,9 +49,28 @@ FacadeApplication::FacadeApplication() :
 //----------------------------------------------------------------------------------------/
 FacadeApplication* FacadeApplication::getInstance()
 {
-    if(instance.get() == 0)
-        instance = boost::shared_ptr<FacadeApplication>(new FacadeApplication());
-    return instance.get();
+    if(instance == 0)
+        instance = new FacadeApplication();
+    return instance;
+}
+//----------------------------------------------------------------------------------------/
+void FacadeApplication::RemoveInstance()
+{
+    delete instance;
+}
+//----------------------------------------------------------------------------------------/
+FacadeApplication::~FacadeApplication()
+{
+    // все остальные задачи нужно убивать к чертовой матери, и останавливать демоны
+    if(QThreadPool::globalInstance()->activeThreadCount())
+    {
+        std::cout<<"There is running shell command. They will kill."<<std::endl;
+    }
+
+    // останавливаем демон просмотра за директориями репозитория
+    WatchRepositories(false);
+    // ждем, пока демоны выключаться
+    while(QThreadPool::globalInstance()->activeThreadCount()) { }
 }
 //----------------------------------------------------------------------------------------/
 void FacadeApplication::LoadRepositories()
@@ -175,17 +194,17 @@ void FacadeApplication::SaveRepository(const QString& localURL, const QString& r
     fileRepoConfig.close();
 }
 //----------------------------------------------------------------------------------------/
-void FacadeApplication::StartWatchRepositories() const
+void FacadeApplication::WatchRepositories(const bool start) const
 {
     for(auto itRepo = repository.begin(); itRepo != repository.end(); ++itRepo)
     {
-        StartWatchRepository(itRepo->second.get());
+        WatchRepository(itRepo->second.get(), start);
     }
 }
 //----------------------------------------------------------------------------------------/
-void FacadeApplication::StartWatchRepository(const IRepository* repository) const
+void FacadeApplication::WatchRepository(const IRepository* repository, const bool start) const
 {
-    repository->StartWatchRepository();
+    start ? repository->StartWatchRepository() : repository->StopWatchRepository();
 }
 //----------------------------------------------------------------------------------------/
 GANN_DEFINE::RESULT_EXEC_PROCESS FacadeApplication::StartCloneRepository(QString &localURL, const QString &remoteURL, const QString &nameRepo)
@@ -204,8 +223,8 @@ GANN_DEFINE::RESULT_EXEC_PROCESS FacadeApplication::StartCloneRepository(QString
         std::unique_ptr<IRepository> tempRepo(newRepo);
         repository[localURL] = std::move(tempRepo);
 
-        // запускаем демон за просмотрм репозитория
-        StartWatchRepository(repository[localURL].get());
+        // запускаем демон просмотра за каталогом с репозиторием
+        WatchRepository(repository[localURL].get());
     }
     else
     {

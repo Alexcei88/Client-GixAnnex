@@ -56,12 +56,21 @@ RESULT_EXEC_PROCESS ShellCommand::CloneRepositories(const QString& remoteURL, QS
     return NO_ERROR;
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS ShellCommand::WatchRepository(const QString& path) const
+RESULT_EXEC_PROCESS ShellCommand::WatchRepository(const QString& path, const bool start) const
 {
-    const QString strCommand = baseCommand + "watch ";
+    const QString paramCommand = start ? "" : " --stop";
+    const QString strCommand = baseCommand + "watch " + paramCommand;
     boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandEmpty());
+#if 0
+    TShell shell;
+    shell.SetWorkingDirectory(path);
+    shell.ExecuteProcess(path, receiverParsing);
+#else
     ShellTask* shellTask = new ShellTask(strCommand, path, receiverParsing);
     QThreadPool::globalInstance()->start(shellTask);
+    // ждем окончания выполнения команды
+    QThreadPool::globalInstance()->waitForDone();
+#endif
     return NO_ERROR;
 }
 //----------------------------------------------------------------------------------------/

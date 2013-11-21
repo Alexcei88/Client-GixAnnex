@@ -15,6 +15,13 @@
 // ради теста
 #include "repository/trepository.h"
 
+
+// функция, выполняющаяся по завершению работы программы
+void Exit()
+{
+    FacadeApplication::RemoveInstance();
+}
+
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
@@ -65,6 +72,7 @@ int main(int argc, char *argv[])
     //TRepository rep;
 //    rep.CloneRepository("/home/alexcei/Copy/copyproject", "MyRepo", "/home/alexcei/Copy/project");
 //    rep.GetContentFile(".");
-    flush(std::cout);
+//    flush(std::cout);
+    atexit(Exit);
     return app.exec();
 }

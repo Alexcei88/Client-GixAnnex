@@ -34,6 +34,9 @@ class FacadeApplication
 
 public:
     static FacadeApplication* getInstance();
+    static void     RemoveInstance();
+    ~FacadeApplication();
+
     void            SetSystemTray(SystemTray* systemTray) { this->systemTray = systemTray; }
 
     // классы модели MVC объявим другом для нашего фасада(
@@ -46,7 +49,7 @@ private:
     FacadeApplication();
     FacadeApplication(const FacadeApplication& facade);
     FacadeApplication& operator = (const FacadeApplication& facade);
-    static boost::shared_ptr<FacadeApplication> instance;
+    static FacadeApplication* instance;
 
     void                InitClassCAndQML();
 
@@ -58,11 +61,11 @@ private:
                                        const bool autosync = true, const bool autosyncContent = true
                                        );
 
-    /** @brief Запуск демона просмотра(watch) за директориями у репозиториев */
-    void                StartWatchRepositories() const;
+    /** @brief Запуск/Остановка демона просмотра(watch) за директориями у репозиториев */
+    void                WatchRepositories(const bool start = true) const;
 
-    /** @brief Запуск демона просмотра(watch) у конкретного репозитория */
-    void                StartWatchRepository(const IRepository* repository) const;
+    /** @brief Запуск/Остановка демона просмотра(watch) у конкретного репозитория */
+    void                WatchRepository(const IRepository* repository, const bool start = true) const;
 
     /** @brief начать клонирование репозитория */
     GANN_DEFINE::RESULT_EXEC_PROCESS StartCloneRepository(QString& localURL, const QString& remoteURL, const QString& nameRepo);

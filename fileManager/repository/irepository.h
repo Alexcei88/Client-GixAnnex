@@ -126,6 +126,11 @@ public:
     virtual GANN_DEFINE::RESULT_EXEC_PROCESS StartWatchRepository() const;
 
     /**
+    @brief остановка демона просмотра за рабочей директорией репозитория
+    */
+    virtual GANN_DEFINE::RESULT_EXEC_PROCESS StopWatchRepository() const;
+
+    /**
     @brief Установка состояния репозитория
     */
     void                SetState(const STATE_REPOSITORY& state);

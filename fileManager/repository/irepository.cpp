@@ -54,6 +54,17 @@ RESULT_EXEC_PROCESS IRepository::StartWatchRepository() const
     return result;
 }
 //----------------------------------------------------------------------------------------/
+RESULT_EXEC_PROCESS IRepository::StopWatchRepository() const
+{
+    RESULT_EXEC_PROCESS result = shellCommand->WatchRepository(localURL, false);
+    if(result != NO_ERROR)
+    {
+        printf("Error watch repositories: %s \n", localURL.toStdString().c_str());
+        return result;
+    }
+    return result;
+}
+//----------------------------------------------------------------------------------------/
 void IRepository::SetState(const STATE_REPOSITORY& state)
 {
     QByteArray str = metaEnumState.valueToKey(int(state));
