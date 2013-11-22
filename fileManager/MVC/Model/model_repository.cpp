@@ -143,7 +143,8 @@ const QString ModelQmlAndCRepository::GetSizeFile(const QString& file) const
             return QString().setNum(list.size()) + " " + "items";
         }
     }
-    else{
+    else
+    {
         assert("CurrentRepo is NULL" && false);
     }
 }
