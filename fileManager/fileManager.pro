@@ -38,7 +38,8 @@ SOURCES += main.cpp \
     MVC/Model/model_icons.cpp \
     qml/components/error_message/qmlerrormessage.cpp \
     parsing_command_out/parsingcommandempty.cpp \
-    qml/components/folder_model/myqdeclarativefolderlistmodelprivate.cpp
+   # qml/components/folder_model/myqdeclarativefolderlistmodelprivate.cpp
+    qml/components/error_message/folderlistmodel.cpp
 
 # Installation path
 # target.path =
@@ -84,7 +85,8 @@ HEADERS += \
     iniparser/dictionary.h \
     qml/components/error_message/qmlerrormessage.h \
     parsing_command_out/parsingcommandempty.h \
-    qml/components/folder_model/myqdeclarativefolderlistmodelprivate.h
+  #  qml/components/folder_model/myqdeclarativefolderlistmodelprivate.h
+    qml/components/error_message/folderlistmodel.h
 
 # Включаем поддержку С++11
 QMAKE_CXXFLAGS += -std=c++0x

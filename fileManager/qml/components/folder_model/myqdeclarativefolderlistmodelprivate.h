@@ -86,6 +86,7 @@ class QDeclarativeFolderListModelPrivate
          : sortField(QDeclarativeFolderListModel::Name), sortReversed(false), count(0) {
          nameFilters << QLatin1String("*");
      }
+     ~QDeclarativeFolderListModelPrivate() {};
 
      void updateSorting() {
          QDir::SortFlags flags = 0;
