@@ -21,6 +21,7 @@
 #include <QFile>
 #include <QDomDocument>
 #include <QTimer>
+#include <QObject>
 
 // our stuff
 #include "systemtray.h"
@@ -29,8 +30,9 @@
 
 class IRepository;
 
-class FacadeApplication
+class FacadeApplication: public QObject
 {
+    Q_OBJECT
 
 public:
     static FacadeApplication* getInstance();
@@ -38,7 +40,6 @@ public:
     ~FacadeApplication();
 
     void            SetSystemTray(SystemTray* systemTray) { this->systemTray = systemTray; }
-
     // классы модели MVC объявим другом для нашего фасада(
     // принято такое архитектурное решение, что все методы фасада сделать приватными, и дать доступ только к моделям MVC,
     // т.к кроме модели никто не может уведомлять о новых событиях, действиях, происходящие на уровне представления)
@@ -92,6 +93,11 @@ private:
 
     /** @brief последнее сообщение об ошибке в клиенте */
     QString             lastError;
+
+
+signals:
+    void            stopThreadIconsSync();
+
 
 };
 

@@ -16,7 +16,8 @@ using namespace GANN_DEFINE;
 FacadeApplication* FacadeApplication::instance = 0;
 //----------------------------------------------------------------------------------------/
 FacadeApplication::FacadeApplication() :
-    pathFileRepoConfig("ganx-repository.xml")
+    QObject()
+  , pathFileRepoConfig("ganx-repository.xml")
   , currentRepository(repository.end())
   , systemTray(0l)
 //    pathFileRepoConfig(":/config/config_repo")
@@ -61,10 +62,15 @@ void FacadeApplication::RemoveInstance()
 //----------------------------------------------------------------------------------------/
 FacadeApplication::~FacadeApplication()
 {
+    // выключаем таймер синхронизации данных
+    timeSync.stop();
+
+    // останавливаем поток синхронизации иконок
+    emit stopThreadIconsSync();
     // все остальные задачи нужно убивать к чертовой матери, и останавливать демоны
     if(QThreadPool::globalInstance()->activeThreadCount())
     {
-        std::cout<<"There is running shell command. They will kill."<<std::endl;
+        std::cout<<"There is running shell commands. They will kill."<<std::endl;
     }
 
     // останавливаем демон просмотра за директориями репозитория

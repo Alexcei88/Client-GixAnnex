@@ -18,7 +18,6 @@ ModelQmlAndCIcons::~ModelQmlAndCIcons()
 //----------------------------------------------------------------------------------------/
 void ModelQmlAndCIcons::UpdateFileSyncIcons()
 {
-    return;
     while(!exitThread)
     {
         if(FacadeApplication::getInstance()->systemTray)

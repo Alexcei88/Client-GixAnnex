@@ -55,6 +55,9 @@ public:
     /** @brief  Запуск потока обновления иконок синхронизации */
     Q_INVOKABLE void    StartThreadIconsSync();
 
+    /** @brief Остановка потока обновления иконок синхронизации */
+    static void         StopThreadIconsSync();
+
     /** @brief полностью обновить список состояния иконок */
     void                UpdateStateIconsFileSync();
 
@@ -65,20 +68,21 @@ public slots:
     void                OnChangeParrentDirectory(QString curDir);
 
 private:
+    // модели
     const QSharedPointer<ModelQmlAndCRepository>  mainModel;
-    const QSharedPointer<ModelQmlAndCIcons> modelIcons;
+    ModelQmlAndCIcons*  modelIcons;
 
     /** @brief список текущего состояния иконок синхронизации
     * в зависимости от текущего списка отображаемых иконок файлов(директорий) */
-    QVariantMap        stateIconsFileSync;
+    QVariantMap         stateIconsFileSync;
 
     /** @brief текущий отображаемый путь в модели QML FolderListModel */
     QString             currentPathView;
     // вспомог класс
     QDir                dir;
 
-    // поток, в котором будем обновление иконок синхронизации в представлении
-    QThread*            thread;
+    // поток, в котором будем обновление иконок синхронизации в представлении(один на все объекты)
+    static QThread*     thread;
 
 signals:
     void                changedStateIconsFileSync(QVariantList);
