@@ -68,15 +68,14 @@ FacadeApplication::~FacadeApplication()
     // останавливаем поток синхронизации иконок
     emit stopThreadIconsSync();
     // все остальные задачи нужно убивать к чертовой матери, и останавливать демоны
-    if(QThreadPool::globalInstance()->activeThreadCount())
-    {
-        std::cout<<"There is running shell commands. They will kill."<<std::endl;
-    }
+    // ждем секунду, чтобы QThreadPool уничтожил все свои потоки
+    QThreadPool::globalInstance()->setExpiryTimeout(1000);
+    QThreadPool::globalInstance()->waitForDone(1000);
 
     // останавливаем демон просмотра за директориями репозитория
     WatchRepositories(false);
     // ждем, пока демоны выключаться
-    while(QThreadPool::globalInstance()->activeThreadCount()) { }
+    QThreadPool::globalInstance()->waitForDone();
 }
 //----------------------------------------------------------------------------------------/
 void FacadeApplication::LoadRepositories()

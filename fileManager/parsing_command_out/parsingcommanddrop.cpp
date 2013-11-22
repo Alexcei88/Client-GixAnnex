@@ -8,7 +8,7 @@ ParsingCommandDrop::ParsingCommandDrop(IRepository* repository) :
 {
     // регулярные выражение в случаи успешного удаления
     QString succes1 = "(^ ?drop )(.*)";
-    QString succes2 = "(^ ?drop )(.*)(ок)";
+    QString succes2 = "(^ ?drop )(.*)(ok)";
 
     // регулярное выражение в случаи успешного окончания скачивания файла(может быть как отдельной строкой идти,а может и совмещенно)
     QString succesEnd = "(.*)(ok)(.*)";

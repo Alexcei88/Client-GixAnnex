@@ -22,7 +22,6 @@ ParsingCommandGet::ParsingCommandGet(IRepository* repository) :
     // процесс скачивания ресурса из интернета(пока нереализованно)
     QString processDownLoad = "()";
 
-
     // итоговый результат копирования
     // количество файлов, которые не удалось скопировать-
 //    QString summaryFailed = "";

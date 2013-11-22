@@ -16,6 +16,7 @@ class ShellTask: public QRunnable
 {
 public:
     ShellTask(const QString strCommand, const QString localURL, boost::shared_ptr<IParsingCommandOut> parsingCommand);
+    ~ShellTask();
     // функция потока
     virtual void run();
 
