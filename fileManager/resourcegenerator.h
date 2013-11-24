@@ -18,13 +18,14 @@ class ResourceGenerator
 {
 public:
     static ResourceGenerator* getInstance();
+    static void         RemoveInstance();
     ~ResourceGenerator();
     const QString       GetResourcePathDirectoryView(const QMimeType& type);
     const QString       GetResourcePathPropertyFile(const QMimeType& type);
 
 
 private:
-    static boost::shared_ptr<ResourceGenerator> instance;
+    static ResourceGenerator* instance;
     ResourceGenerator();
 
     /** @brief Генерация ресурсов */
@@ -45,7 +46,6 @@ private:
     const QSize         sizeIcons;
     /** @brief размер иконок для отображения в свойствах файла(по умолчанию 128*128) */
     const QSize         sizeIconsPropertyFile;
-
 
     /** @brief список поддиректорий, где ищем иконки */
     QStringList         subPathSearchIcons;

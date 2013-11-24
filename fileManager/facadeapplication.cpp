@@ -67,6 +67,7 @@ FacadeApplication::~FacadeApplication()
 
     // останавливаем поток синхронизации иконок
     emit stopThreadIconsSync();
+
     // все остальные задачи нужно убивать к чертовой матери, и останавливать демоны
     // ждем секунду, чтобы QThreadPool уничтожил все свои потоки
     QThreadPool::globalInstance()->setExpiryTimeout(1000);
@@ -76,6 +77,8 @@ FacadeApplication::~FacadeApplication()
     WatchRepositories(false);
     // ждем, пока демоны выключаться
     QThreadPool::globalInstance()->waitForDone();
+
+    ResourceGenerator::RemoveInstance();
 }
 //----------------------------------------------------------------------------------------/
 void FacadeApplication::LoadRepositories()
