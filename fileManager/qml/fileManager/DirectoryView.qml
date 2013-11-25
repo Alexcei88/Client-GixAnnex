@@ -114,7 +114,7 @@ Rectangle
 //    FolderListModel
     NewFolderListModel
     {
-        property int lastIndex: -1;
+        property int lastIndex: -1
 
         id: dirModel
         folder: repository.GetDefaultRepositoryPath()
@@ -280,14 +280,14 @@ Rectangle
                     {
                         var folder = dirModel.folder == "file:///" ? dirModel.folder + curFileName : dirModel.folder +"/" + curFileName;
                         updateListStateFileSync(folder);
-                        dirModel.folder = folder
-                        view.currentIndex = -1;
                         dirModel.lastIndex = -1;
+                        view.currentIndex = -1;
+                        dirModel.folder = folder
                     }
                 }
                 onEntered: {
                     // посылаем сигнал, что необходимо вывести свойства объекта, на который навели
-                    //showPropertyFile(curFileName)
+                    showPropertyFile(curFileName)
                 }
             }
         }

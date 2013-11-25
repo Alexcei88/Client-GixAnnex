@@ -184,8 +184,8 @@ void QMLFolderListModel::updateModel()
 //----------------------------------------------------------------------------------------/
 void QMLFolderListModel::refresh()
 {
-    static int number = 0;
-    std::cout<<++number<<"RefreshModel"<<std::endl;
+//    static int number = 0;
+//    std::cout<<++number<<"RefreshModel"<<std::endl;
     d->folderIndex = QModelIndex();
     if (d->count)
     {
