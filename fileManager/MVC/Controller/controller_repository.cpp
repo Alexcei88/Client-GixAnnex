@@ -7,7 +7,7 @@ using namespace GANN_MVC;
 ControllerRepository::ControllerRepository( ):
     model(QSharedPointer<ModelQmlAndCRepository>(new ModelQmlAndCRepository()))
 {
-    QObject::connect(this, &ControllerRepository::currentPathRepoChanged, [=](QString dir){model->ChangeCurrentRepository(dir); });
+    QObject::connect(this, &ControllerRepository::currentPathRepoChanged, [=](QUrl dir){model->ChangeCurrentRepository(dir.toLocalFile()); });
 }
 //----------------------------------------------------------------------------------------/
 QVariant ControllerRepository::GetStateRepository(QVariant path) const
@@ -30,14 +30,14 @@ void ControllerRepository::CancelCloneRepository() const
     model->CancelCloneRepository();
 }
 //----------------------------------------------------------------------------------------/
-QVariant ControllerRepository::GetContentDirectory(QVariant dir) const
+QVariant ControllerRepository::GetContentDirectory(QUrl dir) const
 {
-    return model->GetContentDirectory(dir.toString());
+    return model->GetContentDirectory(dir.toLocalFile());
 }
 //----------------------------------------------------------------------------------------/
-QVariant ControllerRepository::DropContentDirectory(QVariant dir) const
+QVariant ControllerRepository::DropContentDirectory(QUrl dir) const
 {
-    return model->DropContentDirectory(dir.toString());
+    return model->DropContentDirectory(dir.toLocalFile());
 }
 //----------------------------------------------------------------------------------------/
 QVariant ControllerRepository::DirIsSubRootDirRepository(QVariant dir) const

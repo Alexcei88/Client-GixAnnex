@@ -14,6 +14,8 @@
 #include "../Model/model_repository.h"
 #include "../Model/model_icons.h"
 
+#include <QUrl>
+
 namespace GANN_MVC
 {
 
@@ -25,10 +27,10 @@ public:
     ~ControllerIcons();
 
     /** @brief текущий отображаемый путь */
-    Q_PROPERTY(QString currentPath READ GetCurrentPath WRITE SetCurrentPath NOTIFY changedParentDIrectory);
+    Q_PROPERTY(QUrl currentPath READ GetCurrentPath WRITE SetCurrentPath NOTIFY changedParentDirectory);
 
-    void                SetCurrentPath(QString curPath) { currentPathView = curPath; emit changedParentDIrectory(curPath);};
-    QString             GetCurrentPath() { return currentPathView; };
+    void                SetCurrentPath(QUrl curPath) { currentPathView = curPath; emit changedParentDirectory(curPath);};
+    QUrl                GetCurrentPath() { return currentPathView; };
 
     /** @brief вектор состояний иконок */
     Q_PROPERTY(QVariantMap stateIconsFileSyncQML READ GetStateIconsFileSync WRITE SetStateIconsFileSync NOTIFY changedStateIconsFileSync);
@@ -65,7 +67,7 @@ public:
     //Q_INVOKABLE QVariantList makeNewList() { QVariantList listNew; listNew.push_back("synced"); return listNew;};
 
 public slots:
-    void                OnChangeParrentDirectory(QString curDir);
+    void                OnChangeParentDirectory(QUrl curDir);
 
 private:
     // модели
@@ -77,7 +79,7 @@ private:
     QVariantMap         stateIconsFileSync;
 
     /** @brief текущий отображаемый путь в модели QML FolderListModel */
-    QString             currentPathView;
+    QUrl                currentPathView;
     // вспомог класс
     QDir                dir;
 
@@ -86,7 +88,7 @@ private:
 
 signals:
     void                changedStateIconsFileSync(QVariantList);
-    void                changedParentDIrectory(QString);
+    void                changedParentDirectory(QUrl);
     void                stopThread();
 };
 

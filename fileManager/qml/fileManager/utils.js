@@ -29,6 +29,6 @@ function getRelativeStrPath(parentPathRepoStr, fullPathStr)
     if(from == -1)
         // не нашли вхождения
         return fullPathStr;
-    var relativeStr = fullPathStr.substring(from + parentPathRepoStr.length + 1, to);
+    var relativeStr = fullPathStr.substring(from + parentPathRepoStr.length, to);
     return relativeStr;
 }

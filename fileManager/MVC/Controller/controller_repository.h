@@ -5,6 +5,7 @@
 #include <QSharedPointer>
 #include <QString>
 #include <QVariantList>
+#include <QUrl>
 
 #include "../Model/model_repository.h"
 #include "controller_icons.h"
@@ -19,10 +20,10 @@ class ControllerRepository: public QObject
 public:
     ControllerRepository( );
 
-    Q_PROPERTY(QString currentPathRepo READ GetCurrentPathRepo WRITE SetCurrentPathRepo NOTIFY currentPathRepoChanged)
+    Q_PROPERTY(QUrl currentPathRepo READ GetCurrentPathRepo WRITE SetCurrentPathRepo NOTIFY currentPathRepoChanged)
 
-    QString                 GetCurrentPathRepo() { return currentPathRepo; };
-    void                    SetCurrentPathRepo(QString path) { currentPathRepo = path; emit currentPathRepoChanged(path);};
+    QUrl                    GetCurrentPathRepo() { return currentPathRepo; };
+    void                    SetCurrentPathRepo(QUrl path) { currentPathRepo = path; emit currentPathRepoChanged(path);};
 
     /** @brief берет состояние репозитория */
     Q_INVOKABLE QVariant    GetStateRepository(QVariant path) const;
@@ -37,10 +38,10 @@ public:
     Q_INVOKABLE void        CancelCloneRepository() const;
 
     /** @brief взять контент у файла(директории)*/
-    Q_INVOKABLE QVariant    GetContentDirectory(QVariant dir) const;
+    Q_INVOKABLE QVariant    GetContentDirectory(QUrl dir) const;
 
     /** @brief удалить контент у файла(директории)*/
-    Q_INVOKABLE QVariant    DropContentDirectory(QVariant dir) const;
+    Q_INVOKABLE QVariant    DropContentDirectory(QUrl dir) const;
 
     /** @brief явяеться ли выбранный путь поддиректорией корневого пути репозитория*/
     Q_INVOKABLE QVariant    DirIsSubRootDirRepository(QVariant dir) const;
@@ -50,10 +51,10 @@ public:
 
 private:
     const QSharedPointer<ModelQmlAndCRepository>  model;
-    QString                 currentPathRepo;
+    QUrl                    currentPathRepo;
 
 signals:
-    void                    currentPathRepoChanged(QString);
+    void                    currentPathRepoChanged(QUrl);
 };
 
 }
