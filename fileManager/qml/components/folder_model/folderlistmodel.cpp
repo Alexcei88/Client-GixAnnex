@@ -1,34 +1,34 @@
 #include "folderlistmodel.h"
-
+#include <iostream>
 //----------------------------------------------------------------------------------------/
-/*********************  FolderListModelPrivate  ******************************************/
+/*********************  QMLFolderListModelPrivate  ******************************************/
 //----------------------------------------------------------------------------------------/
-FolderListModelPrivate::FolderListModelPrivate():
-    sortField(NewFolderListModel::Name)
+QMLFolderListModelPrivate::QMLFolderListModelPrivate():
+    sortField(QMLFolderListModel::Name)
    ,sortReversed(false)
    ,count(0)
 {
     nameFilters << QLatin1String("*");
 }
 //----------------------------------------------------------------------------------------/
-void FolderListModelPrivate::UpdateSorting()
+void QMLFolderListModelPrivate::UpdateSorting()
 {
     QDir::SortFlags flags = 0;
     switch(sortField)
     {
-    case NewFolderListModel::Unsorted:
+    case QMLFolderListModel::Unsorted:
         flags |= QDir::Unsorted;
         break;
-    case NewFolderListModel::Name:
+    case QMLFolderListModel::Name:
         flags |= QDir::Name;
         break;
-    case NewFolderListModel::Time:
+    case QMLFolderListModel::Time:
         flags |= QDir::Time;
         break;
-    case NewFolderListModel::Size:
+    case QMLFolderListModel::Size:
         flags |= QDir::Size;
         break;
-    case NewFolderListModel::Type:
+    case QMLFolderListModel::Type:
         flags |= QDir::Type;
         break;
     }
@@ -39,35 +39,52 @@ void FolderListModelPrivate::UpdateSorting()
     model.setSorting(flags);
 }
 //----------------------------------------------------------------------------------------/
-/*********************   NewFolderListModel  **********************************************/
+/*********************   QMLFolderListModel  **********************************************/
 //----------------------------------------------------------------------------------------/
-NewFolderListModel::NewFolderListModel(QObject *parent):
+QMLFolderListModel::QMLFolderListModel(QObject *parent):
     QAbstractListModel(parent)
 {
-    d = new FolderListModelPrivate();
+    roles_[FileNameRole] = "fileName";
+    roles_[FilePathRole] = "filePath";
+    d = new QMLFolderListModelPrivate();
+
+    d->model.setFilter(QDir::AllDirs | QDir::Files | QDir::Drives | QDir::NoDotAndDotDot);
+    connect(&d->model, SIGNAL(rowsInserted(const QModelIndex&,int,int))
+            , this, SLOT(inserted(const QModelIndex&,int,int)));
+    connect(&d->model, SIGNAL(rowsRemoved(const QModelIndex&,int,int))
+            , this, SLOT(removed(const QModelIndex&,int,int)));
+    connect(&d->model, SIGNAL(dataChanged(const QModelIndex&,const QModelIndex&))
+            , this, SLOT(handleDataChanged(const QModelIndex&,const QModelIndex&)));
+    connect(&d->model, SIGNAL(modelReset()), this, SLOT(refresh()));
+    connect(&d->model, SIGNAL(layoutChanged()), this, SLOT(refresh()));
+
 }
 //----------------------------------------------------------------------------------------/
-NewFolderListModel::~NewFolderListModel()
+QMLFolderListModel::~QMLFolderListModel()
 {
     delete d;
 }
 //----------------------------------------------------------------------------------------/
-void NewFolderListModel::classBegin()
+void QMLFolderListModel::classBegin()
 {
 
 }
 //----------------------------------------------------------------------------------------/
-void NewFolderListModel::componentComplete()
+void QMLFolderListModel::componentComplete()
 {
+    if (!d->folder.isValid() || d->folder.toLocalFile().isEmpty() || !QDir().exists(d->folder.toLocalFile()))
+            setFolder(QUrl(QLatin1String("file://")+QDir::currentPath()));
 
+    if (!d->folderIndex.isValid())
+        QMetaObject::invokeMethod(this, "refresh", Qt::QueuedConnection);
 }
 //----------------------------------------------------------------------------------------/
-QUrl NewFolderListModel::folder() const
+QUrl QMLFolderListModel::folder() const
 {
     return d->folder;
 }
 //----------------------------------------------------------------------------------------/
-void NewFolderListModel::setFolder(const QUrl &folder)
+void QMLFolderListModel::setFolder(const QUrl &folder)
 {
     if (folder == d->folder)
         return;
@@ -80,7 +97,7 @@ void NewFolderListModel::setFolder(const QUrl &folder)
     }
 }
 //----------------------------------------------------------------------------------------/
-QUrl NewFolderListModel::parentFolder() const
+QUrl QMLFolderListModel::parentFolder() const
 {
     QString localFile = d->folder.toLocalFile();
     if (!localFile.isEmpty())
@@ -104,23 +121,23 @@ QUrl NewFolderListModel::parentFolder() const
     return QUrl::fromLocalFile(localFile);
 }
 //----------------------------------------------------------------------------------------/
-QStringList NewFolderListModel::nameFilters() const
+QStringList QMLFolderListModel::nameFilters() const
 {
     return d->nameFilters;
 }
 //----------------------------------------------------------------------------------------/
-void NewFolderListModel::setNameFilters(const QStringList &filters)
+void QMLFolderListModel::setNameFilters(const QStringList &filters)
 {
     d->nameFilters = filters;
     d->model.setNameFilters(d->nameFilters);
 }
 //----------------------------------------------------------------------------------------/
-NewFolderListModel::SortField NewFolderListModel::sortField() const
+QMLFolderListModel::SortField QMLFolderListModel::sortField() const
 {
     return d->sortField;
 }
 //----------------------------------------------------------------------------------------/
-void NewFolderListModel::setSortField(SortField field)
+void QMLFolderListModel::setSortField(SortField field)
 {
     if (field != d->sortField) {
         d->sortField = field;
@@ -128,12 +145,12 @@ void NewFolderListModel::setSortField(SortField field)
     }
 }
 //----------------------------------------------------------------------------------------/
-bool NewFolderListModel::sortReversed() const
+bool QMLFolderListModel::sortReversed() const
 {
     return d->sortReversed;
 }
 //----------------------------------------------------------------------------------------/
-void NewFolderListModel::setSortReversed(bool rev)
+void QMLFolderListModel::setSortReversed(bool rev)
 {
     if (rev != d->sortReversed)
     {
@@ -142,7 +159,7 @@ void NewFolderListModel::setSortReversed(bool rev)
     }
 }
 //----------------------------------------------------------------------------------------/
-bool NewFolderListModel::isFolder(int index) const
+bool QMLFolderListModel::isFolder(int index) const
 {
     if (index != -1)
     {
@@ -153,7 +170,7 @@ bool NewFolderListModel::isFolder(int index) const
     return false;
 }
 //----------------------------------------------------------------------------------------/
-void NewFolderListModel::refresh()
+void QMLFolderListModel::refresh()
 {
     d->folderIndex = QModelIndex();
     if (d->count)
@@ -171,7 +188,7 @@ void NewFolderListModel::refresh()
     }
 }
 //----------------------------------------------------------------------------------------/
-void NewFolderListModel::inserted(const QModelIndex &index, int start, int end)
+void QMLFolderListModel::inserted(const QModelIndex &index, int start, int end)
 {
     if (index == d->folderIndex) {
         emit beginInsertRows(QModelIndex(), start, end);
@@ -180,7 +197,7 @@ void NewFolderListModel::inserted(const QModelIndex &index, int start, int end)
     }
 }
 //----------------------------------------------------------------------------------------/
-void NewFolderListModel::removed(const QModelIndex &index, int start, int end)
+void QMLFolderListModel::removed(const QModelIndex &index, int start, int end)
 {
     if (index == d->folderIndex)
     {
@@ -190,18 +207,18 @@ void NewFolderListModel::removed(const QModelIndex &index, int start, int end)
     }
 }
 //----------------------------------------------------------------------------------------/
-void NewFolderListModel::handleDataChanged(const QModelIndex &start, const QModelIndex &end)
+void QMLFolderListModel::handleDataChanged(const QModelIndex &start, const QModelIndex &end)
 {
     if (start.parent() == d->folderIndex)
         emit dataChanged(index(start.row(),0), index(end.row(),0));
 }
 //----------------------------------------------------------------------------------------/
-bool NewFolderListModel::showDirs() const
+bool QMLFolderListModel::showDirs() const
 {
     return d->model.filter() & QDir::AllDirs;
 }
 //----------------------------------------------------------------------------------------/
-void NewFolderListModel::setShowDirs(bool on)
+void QMLFolderListModel::setShowDirs(bool on)
 {
     if (!(d->model.filter() & QDir::AllDirs) == !on)
         return;
@@ -212,12 +229,12 @@ void NewFolderListModel::setShowDirs(bool on)
 }
 
 //----------------------------------------------------------------------------------------/
-bool NewFolderListModel::showDotAndDotDot() const
+bool QMLFolderListModel::showDotAndDotDot() const
 {
     return !(d->model.filter() & QDir::NoDotAndDotDot);
 }
 //----------------------------------------------------------------------------------------/
-void NewFolderListModel::setShowDotAndDotDot(bool on)
+void QMLFolderListModel::setShowDotAndDotDot(bool on)
 {
     if (!(d->model.filter() & QDir::NoDotAndDotDot) == on)
         return;
@@ -227,12 +244,12 @@ void NewFolderListModel::setShowDotAndDotDot(bool on)
         d->model.setFilter(d->model.filter() | QDir::NoDotAndDotDot);
 }
 //----------------------------------------------------------------------------------------/
-bool NewFolderListModel::showOnlyReadable() const
+bool QMLFolderListModel::showOnlyReadable() const
 {
     return d->model.filter() & QDir::Readable;
 }
 //----------------------------------------------------------------------------------------/
-void NewFolderListModel::setShowOnlyReadable(bool on)
+void QMLFolderListModel::setShowOnlyReadable(bool on)
 {
     if (!(d->model.filter() & QDir::Readable) == !on)
         return;
@@ -242,3 +259,34 @@ void NewFolderListModel::setShowOnlyReadable(bool on)
         d->model.setFilter(d->model.filter() & ~QDir::Readable);
 }
 //----------------------------------------------------------------------------------------/
+int QMLFolderListModel::rowCount(const QModelIndex &parent) const
+{
+    Q_UNUSED(parent);
+    return d->count;
+}
+//----------------------------------------------------------------------------------------/
+QVariant QMLFolderListModel::data(const QModelIndex &index, int role) const
+{
+    QVariant rv;
+    QModelIndex modelIndex = d->model.index(index.row(), 0, d->folderIndex);
+
+    std::cout<<__FUNCTION__<<role<<std::endl;
+    if (modelIndex.isValid())
+    {
+        if (role == FileNameRole)
+        {
+            rv = d->model.data(modelIndex, QDirModel::FileNameRole).toString();
+            std::cout<<rv.toString().toStdString().c_str()<<std::endl;
+        }
+        else if (role == FilePathRole)
+            rv = QUrl::fromLocalFile(d->model.data(modelIndex, QDirModel::FilePathRole).toString());
+    }
+    return rv;
+}
+//----------------------------------------------------------------------------------------/
+QHash<int, QByteArray> QMLFolderListModel::roleNames() const
+{
+    return roles_;
+}
+//----------------------------------------------------------------------------------------/
+

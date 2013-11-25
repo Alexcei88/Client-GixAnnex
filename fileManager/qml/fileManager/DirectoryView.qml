@@ -4,6 +4,8 @@ import QtQuick.Layouts 1.0
 import Qt.labs.folderlistmodel 1.0
 import Repository 1.0
 import Icons 1.0
+import FolderListModel 1.0
+
 import "utils.js" as UtilsScript
 
 Rectangle
@@ -59,7 +61,7 @@ Rectangle
 //        var folderTemp = dirModel.folder;
 //        dirModel.folder = "";
 //        dirModel.folder = folderTemp;
-        console.log("Call update View");
+//        console.log("Call update View");
         folderView.update();
     }
 
@@ -109,14 +111,13 @@ Rectangle
     Keys.forwardTo: [view]
     focus: true
 
-    FolderListModel
+//    FolderListModel
+    NewFolderListModel
     {
         id: dirModel
-        objectName: "dirModel"
-
         folder: repository.GetDefaultRepositoryPath()
         showDirs: true
-        showDirsFirst: true
+        //showDirsFirst: true
         showOnlyReadable: true
     }
 

@@ -8,9 +8,9 @@
 #include <QObject>
 #include <QFileSystemModel>
 
-class FolderListModelPrivate;
+class QMLFolderListModelPrivate;
 
-class NewFolderListModel: public QAbstractListModel, public QQmlParserStatus
+class QMLFolderListModel: public QAbstractListModel, public QQmlParserStatus
 {
     Q_OBJECT
     Q_INTERFACES(QQmlParserStatus)
@@ -20,14 +20,20 @@ class NewFolderListModel: public QAbstractListModel, public QQmlParserStatus
     Q_PROPERTY(QStringList nameFilters READ nameFilters WRITE setNameFilters)
     Q_PROPERTY(SortField sortField READ sortField WRITE setSortField)
     Q_PROPERTY(bool sortReversed READ sortReversed WRITE setSortReversed)
-//    Q_PROPERTY(bool showDirs READ showDirs WRITE setShowDirs)
-//    Q_PROPERTY(bool showDotAndDotDot READ showDotAndDotDot WRITE setShowDotAndDotDot)
-//    Q_PROPERTY(bool showOnlyReadable READ showOnlyReadable WRITE setShowOnlyReadable)
-//    Q_PROPERTY(int count READ count)
+    Q_PROPERTY(bool showDirs READ showDirs WRITE setShowDirs)
+    Q_PROPERTY(bool showDotAndDotDot READ showDotAndDotDot WRITE setShowDotAndDotDot)
+    Q_PROPERTY(bool showOnlyReadable READ showOnlyReadable WRITE setShowOnlyReadable)
+    Q_PROPERTY(int count READ count)
+
+    enum Roles
+    {
+        FileNameRole = Qt::UserRole + 1,
+        FilePathRole
+    };
 
 public:
-    NewFolderListModel(QObject *parent);
-    ~NewFolderListModel();
+    QMLFolderListModel(QObject *parent = 0);
+    ~QMLFolderListModel();
 
     QUrl                folder() const;
     void                setFolder(const QUrl &folder);
@@ -53,11 +59,17 @@ public:
     bool                showOnlyReadable() const;
     void                setShowOnlyReadable(bool);
 
+    int                 count() const { return rowCount(QModelIndex()); }
 
-    Q_INVOKABLE bool isFolder(int index) const;
+    /** @brief переопределяемые методы абстрактной модели */
+    int                 rowCount(const QModelIndex &parent) const;
+    QVariant            data(const QModelIndex &index, int role) const;
+    virtual QHash<int, QByteArray> roleNames() const;
 
     virtual void        classBegin();
     virtual void        componentComplete();
+
+    Q_INVOKABLE bool    isFolder(int index) const;
 
 signals:
     void                folderChanged();
@@ -69,27 +81,28 @@ private slots:
     void                handleDataChanged(const QModelIndex &start, const QModelIndex &end);
 
 private:
-    Q_DISABLE_COPY(NewFolderListModel);
-    FolderListModelPrivate* d;
+    Q_DISABLE_COPY(QMLFolderListModel);
+    QMLFolderListModelPrivate* d;
+    QHash<int, QByteArray> roles_;
 
 };
 
 
-class FolderListModelPrivate
+class QMLFolderListModelPrivate
 {
 
 public:
-    FolderListModelPrivate();
+    QMLFolderListModelPrivate();
 
     // обновления сортировки
     void                UpdateSorting();
 
-    QDirModel model;
-    QUrl folder;
-    QStringList nameFilters;
-    QModelIndex folderIndex;
-    NewFolderListModel::SortField sortField;
-    bool sortReversed;
-    int count;
+    QDirModel           model;
+    QUrl                folder;
+    QStringList         nameFilters;
+    QModelIndex         folderIndex;
+    QMLFolderListModel::SortField sortField;
+    bool                sortReversed;
+    int                 count;
 };
 #endif // FOLDERLISTMODEL_H
