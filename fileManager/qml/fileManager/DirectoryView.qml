@@ -26,7 +26,6 @@ Rectangle
     //-------------------------------------------------------------------------/
     property alias folderModel: dirModel
     property alias folderView: view
-
     // сигнал, что нужно показать свойства у директории
     signal showPropertyFile(var currentName)
 
@@ -39,6 +38,7 @@ Rectangle
         contrIcons.currentPath = path;
         dirModel.folder = path;
         folderView.currentIndex = -1;
+        dirModel.lastIndex = -1;
     }
 
     // функция взятия пути до иконки в зависимости от mymetype файла
@@ -59,8 +59,11 @@ Rectangle
     function updateIconsStateFileSync()
     {
         dirModel.updateModel();
+        if(dirModel.lastIndex < dirModel.count)
+        {
+            view.currentIndex = dirModel.lastIndex;
+        }
     }
-
     // функция проверки нахождения свойства folder впределах корневого пути репозитория
     // чтобы выше корня репозитория не выходить
     function direcotoryIsSubRootRepositoryDirectory(path)
@@ -80,6 +83,7 @@ Rectangle
                 var folder = dirModel.folder == "file:///" ? dirModel.folder + fileName : dirModel.folder +"/" + fileName;
                 updateListStateFileSync(folder);
                 dirModel.folder = folder;
+                dirModel.lastIndex = -1;
                 view.currentIndex = -1;
             }
         }
@@ -110,11 +114,17 @@ Rectangle
 //    FolderListModel
     NewFolderListModel
     {
+        property int lastIndex: -1;
+
         id: dirModel
         folder: repository.GetDefaultRepositoryPath()
         showDirs: true
         showDirsFirst: true
         showOnlyReadable: true
+
+        Component.onCompleted: {
+            lastIndex = -1;
+        }
     }
 
     GridView
@@ -259,7 +269,8 @@ Rectangle
 
                 onClicked:
                 {
-                    view.currentIndex = model.index
+                    view.currentIndex = model.index;
+                    dirModel.lastIndex = model.index;
                     if(mouse.button === Qt.RightButton)
                         menudirectory.popup()
                 }
@@ -271,6 +282,7 @@ Rectangle
                         updateListStateFileSync(folder);
                         dirModel.folder = folder
                         view.currentIndex = -1;
+                        dirModel.lastIndex = -1;
                     }
                 }
                 onEntered: {

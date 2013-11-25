@@ -93,6 +93,8 @@ void QMLFolderListModel::setFolder(const QUrl &folder)
 {
     if (folder == d->folder)
         return;
+
+    std::cout<<"folder = "<<folder.toString().toStdString().c_str()<<std::endl;
     QModelIndex index = d->model.index(folder.toLocalFile());
     if ((index.isValid() && d->model.isDir(index)) || folder.toLocalFile().isEmpty())
     {
@@ -177,11 +179,7 @@ bool QMLFolderListModel::isFolder(int index) const
 //----------------------------------------------------------------------------------------/
 void QMLFolderListModel::updateModel()
 {
-//    const QString path= d->folder.toLocalFile();
-//    std::cout<<oldIndex.row()<<oldIndex.column()<<std::
-    QMetaObject::invokeMethod(this, "refresh", Qt::QueuedConnection);
-//    d->model.refresh();
-//    d->model.index(path);
+    QMetaObject::invokeMethod(this, "refresh", Qt::DirectConnection);
 }
 //----------------------------------------------------------------------------------------/
 void QMLFolderListModel::refresh()
