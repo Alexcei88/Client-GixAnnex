@@ -58,11 +58,7 @@ Rectangle
     // функция обновления состояния иконок у текущего списка
     function updateIconsStateFileSync()
     {
-//        var folderTemp = dirModel.folder;
-//        dirModel.folder = "";
-//        dirModel.folder = folderTemp;
-//        console.log("Call update View");
-        folderView.update();
+        dirModel.updateModel();
     }
 
     // функция проверки нахождения свойства folder впределах корневого пути репозитория
@@ -117,7 +113,7 @@ Rectangle
         id: dirModel
         folder: repository.GetDefaultRepositoryPath()
         showDirs: true
-        //showDirsFirst: true
+        showDirsFirst: true
         showOnlyReadable: true
     }
 
@@ -279,7 +275,7 @@ Rectangle
                 }
                 onEntered: {
                     // посылаем сигнал, что необходимо вывести свойства объекта, на который навели
-                    showPropertyFile(curFileName)
+                    //showPropertyFile(curFileName)
                 }
             }
         }

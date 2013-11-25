@@ -9,6 +9,9 @@ QMLFolderListModelPrivate::QMLFolderListModelPrivate():
    ,count(0)
 {
     nameFilters << QLatin1String("*");
+    // запрещаем разруливание символических ссылок(нам это не нужно)
+    model.setResolveSymlinks(false);
+
 }
 //----------------------------------------------------------------------------------------/
 void QMLFolderListModelPrivate::UpdateSorting()
@@ -48,7 +51,7 @@ QMLFolderListModel::QMLFolderListModel(QObject *parent):
     roles_[FilePathRole] = "filePath";
     d = new QMLFolderListModelPrivate();
 
-    d->model.setFilter(QDir::AllDirs | QDir::Files | QDir::Drives | QDir::NoDotAndDotDot);
+    d->model.setFilter(QDir::AllDirs | QDir::Files | QDir::System | QDir::NoDotAndDotDot);
     connect(&d->model, SIGNAL(rowsInserted(const QModelIndex&,int,int))
             , this, SLOT(inserted(const QModelIndex&,int,int)));
     connect(&d->model, SIGNAL(rowsRemoved(const QModelIndex&,int,int))
@@ -76,7 +79,9 @@ void QMLFolderListModel::componentComplete()
             setFolder(QUrl(QLatin1String("file://")+QDir::currentPath()));
 
     if (!d->folderIndex.isValid())
-        QMetaObject::invokeMethod(this, "refresh", Qt::QueuedConnection);
+    {
+        d->model.refresh();
+    }
 }
 //----------------------------------------------------------------------------------------/
 QUrl QMLFolderListModel::folder() const
@@ -92,7 +97,7 @@ void QMLFolderListModel::setFolder(const QUrl &folder)
     if ((index.isValid() && d->model.isDir(index)) || folder.toLocalFile().isEmpty())
     {
         d->folder = folder;
-        QMetaObject::invokeMethod(this, "refresh", Qt::QueuedConnection);
+        d->model.refresh();
         emit folderChanged();
     }
 }
@@ -170,8 +175,19 @@ bool QMLFolderListModel::isFolder(int index) const
     return false;
 }
 //----------------------------------------------------------------------------------------/
+void QMLFolderListModel::updateModel()
+{
+//    const QString path= d->folder.toLocalFile();
+//    std::cout<<oldIndex.row()<<oldIndex.column()<<std::
+    QMetaObject::invokeMethod(this, "refresh", Qt::QueuedConnection);
+//    d->model.refresh();
+//    d->model.index(path);
+}
+//----------------------------------------------------------------------------------------/
 void QMLFolderListModel::refresh()
 {
+    static int number = 0;
+    std::cout<<++number<<"RefreshModel"<<std::endl;
     d->folderIndex = QModelIndex();
     if (d->count)
     {
@@ -222,6 +238,7 @@ void QMLFolderListModel::setShowDirs(bool on)
 {
     if (!(d->model.filter() & QDir::AllDirs) == !on)
         return;
+    return;
     if (on)
         d->model.setFilter(d->model.filter() | QDir::AllDirs | QDir::Drives);
     else
@@ -238,6 +255,7 @@ void QMLFolderListModel::setShowDotAndDotDot(bool on)
 {
     if (!(d->model.filter() & QDir::NoDotAndDotDot) == on)
         return;
+    return;
     if (on)
         d->model.setFilter(d->model.filter() & ~QDir::NoDotAndDotDot);
     else
@@ -246,6 +264,7 @@ void QMLFolderListModel::setShowDotAndDotDot(bool on)
 //----------------------------------------------------------------------------------------/
 bool QMLFolderListModel::showOnlyReadable() const
 {
+    return 1;
     return d->model.filter() & QDir::Readable;
 }
 //----------------------------------------------------------------------------------------/
@@ -253,10 +272,26 @@ void QMLFolderListModel::setShowOnlyReadable(bool on)
 {
     if (!(d->model.filter() & QDir::Readable) == !on)
         return;
+    return;
     if (on)
         d->model.setFilter(d->model.filter() | QDir::Readable);
     else
         d->model.setFilter(d->model.filter() & ~QDir::Readable);
+}
+//----------------------------------------------------------------------------------------/
+bool QMLFolderListModel::showDirsFirst() const
+{
+    return d->model.sorting() & QDir::DirsFirst;
+}
+//----------------------------------------------------------------------------------------/
+void QMLFolderListModel::setShowDirsFirst(bool on)
+{
+    if (!(d->model.sorting() & QDir::DirsFirst) == !on)
+        return;
+    if (on)
+        d->model.setSorting(d->model.sorting() | QDir::DirsFirst);
+    else
+        d->model.setSorting(d->model.sorting() & ~QDir::DirsFirst);
 }
 //----------------------------------------------------------------------------------------/
 int QMLFolderListModel::rowCount(const QModelIndex &parent) const
@@ -270,14 +305,10 @@ QVariant QMLFolderListModel::data(const QModelIndex &index, int role) const
     QVariant rv;
     QModelIndex modelIndex = d->model.index(index.row(), 0, d->folderIndex);
 
-    std::cout<<__FUNCTION__<<role<<std::endl;
     if (modelIndex.isValid())
     {
         if (role == FileNameRole)
-        {
             rv = d->model.data(modelIndex, QDirModel::FileNameRole).toString();
-            std::cout<<rv.toString().toStdString().c_str()<<std::endl;
-        }
         else if (role == FilePathRole)
             rv = QUrl::fromLocalFile(d->model.data(modelIndex, QDirModel::FilePathRole).toString());
     }

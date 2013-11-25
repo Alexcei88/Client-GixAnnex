@@ -23,6 +23,7 @@ class QMLFolderListModel: public QAbstractListModel, public QQmlParserStatus
     Q_PROPERTY(bool showDirs READ showDirs WRITE setShowDirs)
     Q_PROPERTY(bool showDotAndDotDot READ showDotAndDotDot WRITE setShowDotAndDotDot)
     Q_PROPERTY(bool showOnlyReadable READ showOnlyReadable WRITE setShowOnlyReadable)
+    Q_PROPERTY(bool showDirsFirst READ showDirsFirst WRITE setShowDirsFirst)
     Q_PROPERTY(int count READ count)
 
     enum Roles
@@ -58,6 +59,8 @@ public:
     void                setShowDotAndDotDot(bool);
     bool                showOnlyReadable() const;
     void                setShowOnlyReadable(bool);
+    bool                showDirsFirst() const;
+    void                setShowDirsFirst(bool);
 
     int                 count() const { return rowCount(QModelIndex()); }
 
@@ -70,6 +73,8 @@ public:
     virtual void        componentComplete();
 
     Q_INVOKABLE bool    isFolder(int index) const;
+    // обновить модель
+    Q_INVOKABLE void    updateModel();
 
 signals:
     void                folderChanged();
@@ -90,11 +95,10 @@ private:
 
 class QMLFolderListModelPrivate
 {
-
 public:
     QMLFolderListModelPrivate();
 
-    // обновления сортировки
+    // обновления способа сортировки
     void                UpdateSorting();
 
     QDirModel           model;
