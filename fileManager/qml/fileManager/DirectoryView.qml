@@ -120,11 +120,7 @@ Rectangle
         folder: repository.GetDefaultRepositoryPath()
         showDirs: true
         showDirsFirst: true
-        showOnlyReadable: true
-
-        Component.onCompleted: {
-            lastIndex = -1;
-        }
+        showOnlyReadable: false
     }
 
     GridView

@@ -29,7 +29,7 @@ class QMLFolderListModel: public QAbstractListModel, public QQmlParserStatus
     enum Roles
     {
         FileNameRole = Qt::UserRole + 1,
-        FilePathRole
+        FilePathRole,
     };
 
 public:

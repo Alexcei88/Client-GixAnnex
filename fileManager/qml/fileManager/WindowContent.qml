@@ -16,7 +16,7 @@ Rectangle {
         contenItem.updateListStateFileSync(folder);
     }
 
-    // функция проверки нахождения свойства folder впределах корневого пути репозитория
+    // функция проверки нахождения свойства folder в пределах корневого пути репозитория
     // чтобы выше корня репозитория не выходить
     function direcotoryIsSubRootRepositoryDirectory(folder)
     {

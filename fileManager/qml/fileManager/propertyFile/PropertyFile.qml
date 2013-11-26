@@ -27,8 +27,8 @@ Rectangle
         {
             name.text = currentName;
             propertyWhereis.nameOption = "New Data";
-            propertyLastModified.valueOption = repositoryIcons.GetLastModifiedFile(currentName);
-            propertySize.valueOption = repositoryIcons.GetSizeFile(currentName);
+            propertyLastModified.valueOption = repositoryIcons.GetLastModifiedFile(folderPath + "/" + currentName);
+            propertySize.valueOption = repositoryIcons.GetSizeFile(folderPath + "/" + currentName);
             iconsImage.source = getResourceImage(currentName);
         }
     }

@@ -51,7 +51,7 @@ QMLFolderListModel::QMLFolderListModel(QObject *parent):
     roles_[FilePathRole] = "filePath";
     d = new QMLFolderListModelPrivate();
 
-    d->model.setFilter(QDir::AllDirs | QDir::Files | QDir::System | QDir::NoDotAndDotDot);
+    d->model.setFilter(QDir::AllDirs | QDir::Files | QDir::System );
     connect(&d->model, SIGNAL(rowsInserted(const QModelIndex&,int,int))
             , this, SLOT(inserted(const QModelIndex&,int,int)));
     connect(&d->model, SIGNAL(rowsRemoved(const QModelIndex&,int,int))
@@ -60,6 +60,8 @@ QMLFolderListModel::QMLFolderListModel(QObject *parent):
             , this, SLOT(handleDataChanged(const QModelIndex&,const QModelIndex&)));
     connect(&d->model, SIGNAL(modelReset()), this, SLOT(refresh()));
     connect(&d->model, SIGNAL(layoutChanged()), this, SLOT(refresh()));
+
+    setShowDotAndDotDot(false);
 
 }
 //----------------------------------------------------------------------------------------/
@@ -94,7 +96,6 @@ void QMLFolderListModel::setFolder(const QUrl &folder)
     if (folder == d->folder)
         return;
 
-    std::cout<<"folder = "<<folder.toString().toStdString().c_str()<<std::endl;
     QModelIndex index = d->model.index(folder.toLocalFile());
     if ((index.isValid() && d->model.isDir(index)) || folder.toLocalFile().isEmpty())
     {
@@ -236,7 +237,6 @@ void QMLFolderListModel::setShowDirs(bool on)
 {
     if (!(d->model.filter() & QDir::AllDirs) == !on)
         return;
-    return;
     if (on)
         d->model.setFilter(d->model.filter() | QDir::AllDirs | QDir::Drives);
     else
@@ -253,7 +253,6 @@ void QMLFolderListModel::setShowDotAndDotDot(bool on)
 {
     if (!(d->model.filter() & QDir::NoDotAndDotDot) == on)
         return;
-    return;
     if (on)
         d->model.setFilter(d->model.filter() & ~QDir::NoDotAndDotDot);
     else
@@ -262,7 +261,6 @@ void QMLFolderListModel::setShowDotAndDotDot(bool on)
 //----------------------------------------------------------------------------------------/
 bool QMLFolderListModel::showOnlyReadable() const
 {
-    return 1;
     return d->model.filter() & QDir::Readable;
 }
 //----------------------------------------------------------------------------------------/
@@ -270,7 +268,6 @@ void QMLFolderListModel::setShowOnlyReadable(bool on)
 {
     if (!(d->model.filter() & QDir::Readable) == !on)
         return;
-    return;
     if (on)
         d->model.setFilter(d->model.filter() | QDir::Readable);
     else
@@ -307,7 +304,7 @@ QVariant QMLFolderListModel::data(const QModelIndex &index, int role) const
     {
         if (role == FileNameRole)
             rv = d->model.data(modelIndex, QDirModel::FileNameRole).toString();
-        else if (role == FilePathRole)
+         else if (role == FilePathRole)
             rv = QUrl::fromLocalFile(d->model.data(modelIndex, QDirModel::FilePathRole).toString());
     }
     return rv;
@@ -318,4 +315,3 @@ QHash<int, QByteArray> QMLFolderListModel::roleNames() const
     return roles_;
 }
 //----------------------------------------------------------------------------------------/
-
