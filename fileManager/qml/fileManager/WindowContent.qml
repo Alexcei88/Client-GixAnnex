@@ -18,9 +18,9 @@ Rectangle {
 
     // функция проверки нахождения свойства folder впределах корневого пути репозитория
     // чтобы выше корня репозитория не выходить
-    function direcotoryIsSubRootRepositoryDirectory(folder)
+    function isSubRootRepositoryDirectory(folder)
     {
-        return contenItem.direcotoryIsSubRootRepositoryDirectory(folder);
+        return contenItem.isSubRootRepositoryDirectory(folder);
     }
     //-------------------------------------------------------------------------/
 

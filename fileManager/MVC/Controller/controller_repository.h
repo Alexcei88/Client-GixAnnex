@@ -26,7 +26,7 @@ public:
     void                    SetCurrentPathRepo(QUrl path) { currentPathRepo = path; emit currentPathRepoChanged(path);};
 
     /** @brief берет состояние репозитория */
-    Q_INVOKABLE QVariant    GetStateRepository(QVariant path) const;
+    Q_INVOKABLE QVariant    GetStateRepository(QUrl path) const;
 
     /** @brief путь до репозитория по умолчанию */
     Q_INVOKABLE QVariant    GetDefaultRepositoryPath() const;
@@ -44,7 +44,7 @@ public:
     Q_INVOKABLE QVariant    DropContentDirectory(QUrl dir) const;
 
     /** @brief явяеться ли выбранный путь поддиректорией корневого пути репозитория*/
-    Q_INVOKABLE QVariant    DirIsSubRootDirRepository(QVariant dir) const;
+    Q_INVOKABLE QVariant    DirIsSubRootDirRepository(QUrl dir) const;
 
     /** @brief возвращает последнее сообщение об ошибке */
     Q_INVOKABLE const QVariant GetLastError() const;

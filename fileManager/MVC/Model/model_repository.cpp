@@ -64,6 +64,7 @@ GANN_DEFINE::RESULT_EXEC_PROCESS ModelQmlAndCRepository::GetContentDirectory(con
 //----------------------------------------------------------------------------------------/
 GANN_DEFINE::RESULT_EXEC_PROCESS ModelQmlAndCRepository::DropContentDirectory(const QString& dir) const
 {
+    std::cout<<dir.toStdString().c_str()<<std::endl;
     auto iterRepo = FacadeApplication::instance->currentRepository;
     if(iterRepo != FacadeApplication::instance->repository.end())
     {
