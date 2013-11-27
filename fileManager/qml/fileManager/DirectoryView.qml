@@ -4,6 +4,8 @@ import QtQuick.Layouts 1.0
 import Qt.labs.folderlistmodel 1.0
 import Repository 1.0
 import Icons 1.0
+import FolderListModel 1.0
+
 import "utils.js" as UtilsScript
 
 Rectangle
@@ -24,7 +26,6 @@ Rectangle
     //-------------------------------------------------------------------------/
     property alias folderModel: dirModel
     property alias folderView: view
-
     // сигнал, что нужно показать свойства у директории
     signal showPropertyFile(var currentName)
 
@@ -37,6 +38,7 @@ Rectangle
         contrIcons.currentPath = path;
         dirModel.folder = path;
         folderView.currentIndex = -1;
+        dirModel.lastIndex = -1;
     }
 
     // функция взятия пути до иконки в зависимости от mymetype файла
@@ -56,13 +58,12 @@ Rectangle
     // функция обновления состояния иконок у текущего списка
     function updateIconsStateFileSync()
     {
-//        var folderTemp = dirModel.folder;
-//        dirModel.folder = "";
-//        dirModel.folder = folderTemp;
-        console.log("Call update View");
-        folderView.update();
+        dirModel.updateModel();
+        if(dirModel.lastIndex < dirModel.count)
+        {
+            view.currentIndex = dirModel.lastIndex;
+        }
     }
-
     // функция проверки нахождения свойства folder впределах корневого пути репозитория
     // чтобы выше корня репозитория не выходить
     function isSubRootRepositoryDirectory(path)
@@ -82,6 +83,7 @@ Rectangle
                 var folder = dirModel.folder == "file:///" ? dirModel.folder + fileName : dirModel.folder +"/" + fileName;
                 updateListStateFileSync(folder);
                 dirModel.folder = folder;
+                dirModel.lastIndex = -1;
                 view.currentIndex = -1;
             }
         }
@@ -103,15 +105,17 @@ Rectangle
     Keys.forwardTo: [view]
     focus: true
 
-    FolderListModel
+//    FolderListModel
+    NewFolderListModel
     {
-        id: dirModel
-        objectName: "dirModel"
+        property int lastIndex: -1
 
+        id: dirModel
         folder: repository.GetDefaultRepositoryPath()
         showDirs: true
         showDirsFirst: true
-        showOnlyReadable: true
+        showOnlyReadable: false
+        sortField: NewFolderListModel.Type
     }
 
     GridView
@@ -256,7 +260,8 @@ Rectangle
 
                 onClicked:
                 {
-                    view.currentIndex = model.index
+                    view.currentIndex = model.index;
+                    dirModel.lastIndex = model.index;
                     if(mouse.button === Qt.RightButton)
                         menudirectory.popup()
                 }
@@ -266,8 +271,9 @@ Rectangle
                     {
                         var folder = dirModel.folder == "file:///" ? dirModel.folder + curFileName : dirModel.folder +"/" + curFileName;
                         updateListStateFileSync(folder);
-                        dirModel.folder = folder
+                        dirModel.lastIndex = -1;
                         view.currentIndex = -1;
+                        dirModel.folder = folder
                     }
                 }
                 onEntered: {

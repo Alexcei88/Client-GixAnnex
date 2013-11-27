@@ -102,50 +102,39 @@ const QMap<QString, IRepository::PARAMETR_FILEFOLDER_GIT_ANNEX> &ModelQmlAndCRep
     }
 }
 //----------------------------------------------------------------------------------------/
-const QString ModelQmlAndCRepository::GetLastModifiedFile(const QString& file) const
+const QString ModelQmlAndCRepository::GetLastModifiedFile(const QUrl& file) const
 {
-    auto iterRepo = FacadeApplication::instance->currentRepository;
-    if(iterRepo != FacadeApplication::instance->repository.end())
+    const QFileInfo fileInfo(file.toString());
+    if(!fileInfo.isFile() && fileInfo.isSymLink())
     {
-        IRepository* curRepo = iterRepo->second.get();
-        QMap<QString, IRepository::PARAMETR_FILEFOLDER_GIT_ANNEX> mapState = curRepo->GetStateFileDir();
-        const QFileInfo& fileInfo = mapState[file].fileInfo;
-        return fileInfo.lastModified().date().toString("dd.MM.yyyy");
+        return "undefined";
     }
-    else{
-        assert("CurrentRepo is NULL" && false);
-    }
+    return fileInfo.lastModified().date().toString("dd.MM.yyyy");
 }
 //----------------------------------------------------------------------------------------/
-const QString ModelQmlAndCRepository::GetSizeFile(const QString& file) const
+const QString ModelQmlAndCRepository::GetSizeFile(const QUrl& file) const
 {
-    auto iterRepo = FacadeApplication::instance->currentRepository;
-    if(iterRepo != FacadeApplication::instance->repository.end())
+    const QFileInfo fileInfo(file.toString());
+    if(fileInfo.isFile())
     {
-        const IRepository* curRepo = iterRepo->second.get();
-        const QMap<QString, IRepository::PARAMETR_FILEFOLDER_GIT_ANNEX> mapState = curRepo->GetStateFileDir();
-        const QFileInfo& fileInfo = mapState[file].fileInfo;
-        if(fileInfo.isFile())
-        {
-            quint64 nSize = fileInfo.size();
-            qint64 i = 0;
-            for (; nSize > 1023; nSize /= 1024, ++i) { }
-            return QString().setNum(nSize) + " " + "BKMGT"[i];
-        }
-        else
-        {
-            static QDir _dir;
-            _dir.setPath(fileInfo.dir().absolutePath() + "/" + file);
-            assert(_dir.exists());
-            // возвращаем сколько коренных item-ов в поддиректории
-            QStringList list = _dir.entryList();
-            list.removeAll(".");
-            list.removeAll("..");
-            return QString().setNum(list.size()) + " " + "items";
-        }
+        quint64 nSize = fileInfo.size();
+        qint64 i = 0;
+        for (; nSize > 1023; nSize /= 1024, ++i) { }
+        return QString().setNum(nSize) + " " + "BKMGT"[i];
     }
-    else{
-        assert("CurrentRepo is NULL" && false);
+    else if(fileInfo.isSymLink())
+    {
+        // пустая ссылка
+        return "undefined";
+    }
+    else
+    {
+        static QDir _dir;
+        _dir.setFilter(QDir::NoDotAndDotDot | QDir::AllEntries);
+        _dir.setPath(file.toString());
+        assert(_dir.exists());
+        // возвращаем сколько коренных item-ов в поддиректории
+        return QString().setNum(_dir.count()) + " " + "items";
     }
 }
 //----------------------------------------------------------------------------------------/

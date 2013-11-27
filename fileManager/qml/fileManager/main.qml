@@ -48,6 +48,7 @@ Rectangle
                                 windowContent.updateListFileSync(folder);
                                 toolBar.folderModel.folder = folder;
                                 toolBar.folderView.currentIndex = -1;
+                                toolBar.folderModel.lastIndex = -1;
                             }
                         }
                     }
@@ -61,6 +62,7 @@ Rectangle
                                 var folder = toolBar.folderModel.folder == "file:///" ? toolBar.folderModel.folder + fileName : toolBar.folderModel.folder +"/" + fileName;;
                                 toolBar.folderModel.folder = folder;
                                 toolBar.folderView.currentIndex = -1;
+                                toolBar.folderModel.lastIndex = -1;
                             }
                         }
                     }
@@ -76,16 +78,12 @@ Rectangle
                 onFilterChanges: {
                     toolBar.folderModel.nameFilters = textFilter.toString() + "*";
                     toolBar.folderView.currentIndex = -1;
+                    toolBar.folderModel.lastIndex = -1;
                     toolBar.folderView.update();
                 }
             }
         }
 
-        GetContent{
-            width: 100
-            height: 20
-            visible: false
-        }
 
         WindowContent
         {

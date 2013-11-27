@@ -4,6 +4,7 @@
 #include "repository/trepository.h"
 #include "resourcegenerator.h"
 #include <qml/components/error_message/qmlerrormessage.h>
+#include <qml/components/folder_model/folderlistmodel.h>
 
 #include <QQmlEngine>
 #include <QQmlComponent>
@@ -68,6 +69,7 @@ FacadeApplication::~FacadeApplication()
     // останавливаем поток синхронизации иконок
     emit stopThreadIconsSync();
 
+#warning NOT_WORK
     // все остальные задачи нужно убивать к чертовой матери, и останавливать демоны
     // ждем секунду, чтобы QThreadPool уничтожил все свои потоки
     QThreadPool::globalInstance()->setExpiryTimeout(1000);
@@ -288,5 +290,6 @@ void FacadeApplication::InitClassCAndQML()
     qmlRegisterType<GANN_MVC::ControllerRepository>("Repository", 1, 0, "ControllerRepository");
     qmlRegisterType<GANN_MVC::ControllerIcons>("Icons", 1, 0, "ControllerIcons");
     qmlRegisterType<QMLErrorMessage>("Error", 1, 0, "ErrorMessage");
+    qmlRegisterType<QMLFolderListModel>("FolderListModel", 1, 0, "NewFolderListModel");
 }
 //----------------------------------------------------------------------------------------/
