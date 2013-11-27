@@ -121,6 +121,7 @@ Rectangle
         showDirs: true
         showDirsFirst: true
         showOnlyReadable: false
+        sortField: NewFolderListModel.Type
     }
 
     GridView

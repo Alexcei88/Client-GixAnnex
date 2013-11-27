@@ -6,7 +6,7 @@
 #include <QUrl>
 #include <QQmlParserStatus>
 #include <QObject>
-#include <QFileSystemModel>
+#include <QFileSystemWatcher>
 
 class QMLFolderListModelPrivate;
 
@@ -81,6 +81,7 @@ signals:
 
 private slots:
     void                refresh();
+    void                fullRefresh();
     void                inserted(const QModelIndex &index, int start, int end);
     void                removed(const QModelIndex &index, int start, int end);
     void                handleDataChanged(const QModelIndex &start, const QModelIndex &end);
@@ -89,7 +90,7 @@ private:
     Q_DISABLE_COPY(QMLFolderListModel);
     QMLFolderListModelPrivate* d;
     QHash<int, QByteArray> roles_;
-
+    QFileSystemWatcher watcher;
 };
 
 

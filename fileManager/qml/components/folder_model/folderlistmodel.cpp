@@ -60,13 +60,15 @@ QMLFolderListModel::QMLFolderListModel(QObject *parent):
             , this, SLOT(handleDataChanged(const QModelIndex&,const QModelIndex&)));
     connect(&d->model, SIGNAL(modelReset()), this, SLOT(refresh()));
     connect(&d->model, SIGNAL(layoutChanged()), this, SLOT(refresh()));
+    connect(&watcher, SIGNAL(directoryChanged(QString)), this, SLOT(fullRefresh()));
+    connect(&watcher, SIGNAL(fileChanged(QString)), this, SLOT(fullRefresh()));
 
     setShowDotAndDotDot(false);
-
 }
 //----------------------------------------------------------------------------------------/
 QMLFolderListModel::~QMLFolderListModel()
 {
+    watcher.removePath(d->folder.toLocalFile());
     delete d;
 }
 //----------------------------------------------------------------------------------------/
@@ -99,6 +101,10 @@ void QMLFolderListModel::setFolder(const QUrl &folder)
     QModelIndex index = d->model.index(folder.toLocalFile());
     if ((index.isValid() && d->model.isDir(index)) || folder.toLocalFile().isEmpty())
     {
+        // настраиваем watcher
+        if(!d->folder.isEmpty())
+            watcher.removePath(d->folder.toLocalFile());
+        watcher.addPath(folder.toLocalFile());
         d->folder = folder;
         d->model.refresh();
         emit folderChanged();
@@ -201,6 +207,11 @@ void QMLFolderListModel::refresh()
         d->count = newcount;
         emit endInsertRows();
     }
+}
+//----------------------------------------------------------------------------------------/
+void QMLFolderListModel::fullRefresh()
+{
+    d->model.refresh();
 }
 //----------------------------------------------------------------------------------------/
 void QMLFolderListModel::inserted(const QModelIndex &index, int start, int end)
