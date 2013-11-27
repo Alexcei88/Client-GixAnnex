@@ -19,7 +19,7 @@ Rectangle
 
     ControllerIcons {
         id: contrIcons
-        currentPath: UtilsScript.getFullStrPath(dirModel.folder.toString())
+        currentPath: dirModel.folder.toString()
     }
 
     // СВО-ВА, ФУНКЦИИ И СИГНАЛЫ
@@ -52,7 +52,7 @@ Rectangle
     // функция обновления списка состояния иконок
     function updateListStateFileSync(folder)
     {
-        contrIcons.currentPath = UtilsScript.getFullStrPath(folder.toString());
+        contrIcons.currentPath = folder;
     }
 
     // функция обновления состояния иконок у текущего списка
@@ -66,7 +66,7 @@ Rectangle
     }
     // функция проверки нахождения свойства folder впределах корневого пути репозитория
     // чтобы выше корня репозитория не выходить
-    function direcotoryIsSubRootRepositoryDirectory(path)
+    function isSubRootRepositoryDirectory(path)
     {
         return repository.DirIsSubRootDirRepository(path)
     }
@@ -90,18 +90,12 @@ Rectangle
         onGetContentDirectory:
         {
             var fileName = view.currentItem.curFileName;
-            var currentPathRepo = UtilsScript.getFullStrPath(dirModel.folder.toString());
-            var relativePath = UtilsScript.getRelativeStrPath(repository.currentPathRepo.toString(), currentPathRepo);
-            var addFile =  relativePath === "" ? fileName : relativePath + "/" + fileName;
-            repository.GetContentDirectory(addFile);
+            repository.GetContentDirectory(fileName);
         }
         onDropContentDirectory:
         {
             var fileName = view.currentItem.curFileName;
-            var currentPathRepo = UtilsScript.getFullStrPath(dirModel.folder.toString());
-            var relativePath = UtilsScript.getRelativeStrPath(repository.currentPathRepo.toString(), currentPathRepo);
-            var addFile =  relativePath === "" ? fileName : relativePath + "/" + fileName;
-            repository.DropContentDirectory(addFile);
+            repository.DropContentDirectory(fileName);
         }
     }
 

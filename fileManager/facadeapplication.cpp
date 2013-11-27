@@ -79,6 +79,8 @@ FacadeApplication::~FacadeApplication()
     WatchRepositories(false);
     // ждем, пока демоны выключаться
     QThreadPool::globalInstance()->waitForDone();
+
+    ResourceGenerator::RemoveInstance();
 }
 //----------------------------------------------------------------------------------------/
 void FacadeApplication::LoadRepositories()

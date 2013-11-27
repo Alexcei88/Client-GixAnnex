@@ -43,7 +43,7 @@ Rectangle
                             var folder = toolBar.folderModel.parentFolder;
                             // если итоговый путь будет подкорнем корня репозитория, то переходим назад
                             // иначе ничего не делаем
-                            if(windowContent.direcotoryIsSubRootRepositoryDirectory(folder))
+                            if(windowContent.isSubRootRepositoryDirectory(folder))
                             {
                                 windowContent.updateListFileSync(folder);
                                 toolBar.folderModel.folder = folder;

@@ -21,7 +21,7 @@ ControllerIcons::ControllerIcons() :
     mainModel(QSharedPointer<ModelQmlAndCRepository>(new ModelQmlAndCRepository()))
   , modelIcons(new ModelQmlAndCIcons(this))
 {
-    QObject::connect(this, &ControllerIcons::changedParentDIrectory, this, &ControllerIcons::OnChangeParrentDirectory);
+    QObject::connect(this, &ControllerIcons::changedParentDirectory, this, &ControllerIcons::OnChangeParentDirectory);
 }
 ControllerIcons::~ControllerIcons()
 {
@@ -86,15 +86,15 @@ void ControllerIcons::StopThreadIconsSync()
     }
 }
 //----------------------------------------------------------------------------------------/
-void ControllerIcons::OnChangeParrentDirectory(QString curDir)
+void ControllerIcons::OnChangeParentDirectory(QUrl curDir)
 {
-    if(curDir == "/Empty")
+    if(curDir.isEmpty())
         return;
-    assert(dir.exists(curDir));
+    assert(dir.exists(curDir.toLocalFile()));
     // посылаем модели сигнал о смене текущей директории отображения в текущем репозитории
-    mainModel->ChangeCurrentViewDirectory(curDir);
+    mainModel->ChangeCurrentViewDirectory(curDir.toLocalFile());
 
-    dir.setPath(curDir);
+    dir.setPath(curDir.toLocalFile());
 
     // обновляем полностю список состояния иконок синхронизации
     UpdateStateIconsFileSync();

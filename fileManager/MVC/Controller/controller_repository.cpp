@@ -7,10 +7,10 @@ using namespace GANN_MVC;
 ControllerRepository::ControllerRepository( ):
     model(QSharedPointer<ModelQmlAndCRepository>(new ModelQmlAndCRepository()))
 {
-    QObject::connect(this, &ControllerRepository::currentPathRepoChanged, [=](QString dir){model->ChangeCurrentRepository(dir); });
+    QObject::connect(this, &ControllerRepository::currentPathRepoChanged, [=](QUrl dir){model->ChangeCurrentRepository(dir.toLocalFile()); });
 }
 //----------------------------------------------------------------------------------------/
-QVariant ControllerRepository::GetStateRepository(QVariant path) const
+QVariant ControllerRepository::GetStateRepository(QUrl path) const
 {
     return model->GetStateRepository(path.toString());
 }
@@ -30,19 +30,19 @@ void ControllerRepository::CancelCloneRepository() const
     model->CancelCloneRepository();
 }
 //----------------------------------------------------------------------------------------/
-QVariant ControllerRepository::GetContentDirectory(QVariant dir) const
+QVariant ControllerRepository::GetContentDirectory(QUrl dir) const
 {
     return model->GetContentDirectory(dir.toString());
 }
 //----------------------------------------------------------------------------------------/
-QVariant ControllerRepository::DropContentDirectory(QVariant dir) const
+QVariant ControllerRepository::DropContentDirectory(QUrl dir) const
 {
     return model->DropContentDirectory(dir.toString());
 }
 //----------------------------------------------------------------------------------------/
-QVariant ControllerRepository::DirIsSubRootDirRepository(QVariant dir) const
+QVariant ControllerRepository::DirIsSubRootDirRepository(QUrl dir) const
 {
-    return model->DirIsSubRootDirRepository(dir.toString());
+    return model->DirIsSubRootDirRepository(dir.toLocalFile());
 }
 //----------------------------------------------------------------------------------------/
 const QVariant ControllerRepository::GetLastError() const
