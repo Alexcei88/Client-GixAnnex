@@ -57,8 +57,6 @@ public:
         bool        autosync;
         // состояние синхронизации, в котором находиться текущий файл
         QString     currentState;
-        // свойства файла(директории)
-        QFileInfo   fileInfo;
     };
 
     IRepository();
@@ -155,7 +153,7 @@ public:
     /** @brief Получить полностью новые параметры синхронизации(при смене рабочей директории) */
     void                UpdateParamSyncFileDirFull(const QString& curDir);
 
-    /** @brief Обновить параметры синхронизации у текущей директории */
+    /** @brief Обновить параметры синхронизации у текущей директории(список файлов постоянный) */
     void                UpdateParamSyncFileDir();
 
     /** @brief Является ли выбранный путь поддиректорией корневого пути репозитория */
@@ -166,10 +164,8 @@ public:
 
 protected:
 
-    /**
-    @brief Установка состояния у файла(или директории)
-    @param fileDirName - название файла(директории), у которого меняем состояние
-    */
+    /** @brief Установка состояния у файла(или директории)
+    @param fileDirName - название файла(директории), у которого меняем состояние */
     void                SetStateFileDir(const QString& fileDirName, const STATE_FILE_AND_DIR& state);
 
     boost::shared_ptr<ShellCommand> shellCommand;
@@ -189,36 +185,45 @@ protected:
 
     // параметры состояния файлов, в которых находиться текущий файл(или директория)
     QMap<QString, PARAMETR_FILEFOLDER_GIT_ANNEX> paramSyncFileDir;
-
     // вспом класс для манипулированием файловой системой
     QDir                dir;
-
     /** @brief последнее сообщение об ошибке в репозитории */
     QString             lastError;
 
 private:
+
     void                InitClass();
     // вектор, содержащий файлы, которые сейчас скачиваются(или дано задание на скачивание)
     QList<QString>      gettingContentFile;
     // вектор, содержащий файлы, которые сейчас удаляются(или дано задание на удаление)
     QList<QString>      droppingContentFile;
+    // вектор, содержащий файлы, которые не удалось скачать(ключ - имя файла, значение - причина ошибки)
+    QMap<QString, QString> errorGettingContentFile;
+    // вектор, содержащий файлы, которые не удалось удалить(ключ - имя файла, значение - причина ошибки)
+    QMap<QString, QString> errorDroppingContentFile;
 
     /** @brief идет ли в текущей директории(или сам текущий файл) получение контента в текущий момент времени */
-    bool                IsGettingContentFileDir(const QString& file);
-
+    bool                IsGettingContentFileDir(const QString& file) const;
     /** @brief идет ли в текущей директории(или сам текущий файл) удаление контента в текущий момент времени */
-    bool                IsDroppingContentFileDir(const QString& file);
-
-    /** @brief содержит ли директория файл в поддиректориях */
+    bool                IsDroppingContentFileDir(const QString& file) const;
+    /** @brief есть ли ошибка получения контента в текущей директории(или сам текущий файл) в текущий момент времени */
+    bool                IsErrorGettingContentFileDir(const QString& file) const;
+    /** @brief есть ли ошибка получения контента в текущей директории(или сам текущий файл) в текущий момент времени */
+    bool                IsErrorDroppingContentFileDir(const QString& file) const;
+    /** @brief Содержит ли директория файл в поддиректориях */
     bool                DirContainsFile(const QString& dir, const QString& file) const;
-
+    /** @brief высчитать текущее состояние файла/директории */
+    QString             CalculateStateFileDir(const QString& file) const;
 public slots:
     // слот, говорящий о начале получения контента у файла
     void                OnStartGetContentFile(const QString&);
     void                OnEndGetContentFile(const QString&);
-    // начало/конец удаленич
+    void                OnErrorGetContentFile(const QString&, const QString&);
+    // начало/конец удаления
     void                OnStartDropContentFile(const QString&);
     void                OnEndDropContentFile(const QString&);
+    void                OnErrorDropContentFile(const QString&, const QString&);
+
     // неудачное клонирование репозитория
     void                OnErrorCloneRepository(const QString&);
 
@@ -226,8 +231,12 @@ signals:
     // сигналы начала/конца get
     void                startGetContentFile(const QString&);
     void                endGetContentFile(const QString&);
+    void                errorGetContentFile(const QString&, const QString&);
+
     void                startDropContentFile(const QString&);
     void                endDropContentFile(const QString&);
+    void                errorDropContentFile(const QString&, const QString&);
+
     void                errorCloneRepository(const QString&);
 
 };

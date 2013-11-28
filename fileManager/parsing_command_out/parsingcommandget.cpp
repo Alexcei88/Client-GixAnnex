@@ -118,4 +118,13 @@ void ParsingCommandGet::EndGetContentFile()
     wasErrorCommand = false;
 }
 //----------------------------------------------------------------------------------------/
+void ParsingCommandGet::ErrorGetContentFile()
+{
+    assert(startGet && "Скачивание ресурса не было запущено");
+    startGet = false;
+    dataAfterParsing << regExp.cap(1);
+    emit repository->endGetContentFile(nameFileGetContent);
+    wasErrorCommand = false;
+}
+//----------------------------------------------------------------------------------------/
 
