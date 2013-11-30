@@ -80,7 +80,7 @@ bool SystemTray::ReLoadDirectoryView() const
     if(mainView)
     {
         QObjectList parent = mainView->rootObject()->children();
-        QList<QObject*> object = parent[0]->findChildren<QObject*>(QString("directoryView"));
+        QList<QObject*> object = parent[1]->findChildren<QObject*>(QString("directoryView"));
         return QMetaObject::invokeMethod(object[0], "updateIconsStateFileSync");
     }
     return false;

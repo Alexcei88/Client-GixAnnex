@@ -43,7 +43,7 @@ void IRepository::InitClass()
     QObject::connect(this, &IRepository::errorCloneRepository, this, &IRepository::OnErrorCloneRepository, Qt::DirectConnection);
 
     dir.setPath("");
-    dir.setFilter(QDir::NoDotAndDotDot);
+    dir.setFilter(QDir::NoDotAndDotDot | QDir::AllEntries | QDir::System);
 }
 //----------------------------------------------------------------------------------------/
 RESULT_EXEC_PROCESS IRepository::StartWatchRepository() const
@@ -197,6 +197,10 @@ QString IRepository::CalculateStateFileDir(const QString& file) const
     if(IsGettingContentFileDir(file) || IsDroppingContentFileDir(file))
     {
         curState = metaEnumStateF.valueToKey(SyncingF);
+    }
+    else if(IsErrorDroppingContentFileDir(file) || IsErrorGettingContentFileDir(file))
+    {
+        curState = metaEnumStateF.valueToKey(SyncedFError);
     }
     else
     {

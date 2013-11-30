@@ -105,6 +105,10 @@ Rectangle
     Keys.forwardTo: [view]
     focus: true
 
+    border.width: 2
+    border.color: "blue"
+
+
 //    FolderListModel
     NewFolderListModel
     {

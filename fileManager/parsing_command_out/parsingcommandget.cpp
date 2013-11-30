@@ -16,9 +16,9 @@ ParsingCommandGet::ParsingCommandGet(IRepository* repository) :
     //  ресурс недоступен
     QString unsucces = "(.*)(failed)(.*)";
     QString unsuccesAdd = "(.*)(\\d+ failed)(.*)";
-
     // причина ошибки
     QString error = "(error: )(.*)";
+
     // процесс скачивания ресурса из интернета(пока нереализованно)
     QString processDownLoad = "()";
 
@@ -56,8 +56,7 @@ void ParsingCommandGet::ParsingData()
                     regExp.setPattern(listRegExpPossible[3]);
                     if(regExp.indexIn(tempStr) == -1)
                     {
-                        startGet = false;
-                        wasErrorCommand = true;
+                        ErrorGetContentFile();
                     }
                     tempStr = "";
                     continue;
@@ -122,9 +121,10 @@ void ParsingCommandGet::ErrorGetContentFile()
 {
     assert(startGet && "Скачивание ресурса не было запущено");
     startGet = false;
+    wasErrorCommand = true;
     dataAfterParsing << regExp.cap(1);
-    emit repository->endGetContentFile(nameFileGetContent);
-    wasErrorCommand = false;
+    emit repository->errorGetContentFile(nameFileGetContent, "ffff");
+    wasErrorCommand = true;
 }
 //----------------------------------------------------------------------------------------/
 

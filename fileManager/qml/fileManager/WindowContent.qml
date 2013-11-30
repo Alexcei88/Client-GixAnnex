@@ -33,6 +33,8 @@ Rectangle {
 
     Keys.forwardTo: [split]
 
+    SystemPalette { id: sysPal }
+
     SplitView
     {
         id: split
@@ -53,7 +55,7 @@ Rectangle {
             width: parent.width/5
             Layout.minimumWidth: parent.width/8
             Layout.maximumWidth: 3 * parent.width/5
-            color: "#E6E6FA"
+            color: sysPal.window
             onSelectNewRepository:
             {
                 contenItem.changeParentFolder(path)
@@ -66,7 +68,7 @@ Rectangle {
             objectName: "directoryView"
             Layout.minimumWidth: parent.width/5
             Layout.fillWidth: true
-            color: "darkgray"
+            color: "white"
             width: 3 * parent.width/5
             focus: true
             onShowPropertyFile:
@@ -74,6 +76,7 @@ Rectangle {
                 propertyFile.folderPath = UtilsScript.getFullStrPath(folderModel.folder.toString());
                 propertyFile.updateData(currentName)
             }
+
         }
 
         // Вывод информации о файле,директории
@@ -83,7 +86,7 @@ Rectangle {
             width: parent.width/5
             Layout.minimumWidth: parent.width/5
             Layout.maximumWidth: 3 * parent.width/5
-            color: '#116062'
+            color: sysPal.window
 
             // инициализация представления
             folderView: windowContent.folderView

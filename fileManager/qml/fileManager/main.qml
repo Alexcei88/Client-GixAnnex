@@ -12,6 +12,10 @@ Rectangle
     width: 900
     height:570
 
+    SystemPalette { id: sysPal }
+
+    color: sysPal.window
+
     Column
     {
         id: mainColumn
@@ -28,15 +32,19 @@ Rectangle
         RowLayout
         {
             id: rowToolBar
+            width: parent.width
             ToolBar
             {
                 id: toolBar
                 property var folderModel: windowContent.folderModel
                 property var folderView: windowContent.folderView
+                implicitWidth: parent.width
+                Component.onCompleted: {
+                    console.log(width)
+                }
 
                 RowLayout
                 {
-                    width: parent.width
                     ToolButton{
                         iconSource:"qrc:back"
                         onClicked: {
@@ -66,21 +74,22 @@ Rectangle
                             }
                         }
                     }
+                    // фильтр вывода файлов(директории к сож нет)
+                    FilterBox
+                    {
+                        id: filterDir;
+                        onFilterChanges: {
+                            toolBar.folderModel.nameFilters = textFilter.toString() + "*";
+                            toolBar.folderView.currentIndex = -1;
+                            toolBar.folderModel.lastIndex = -1;
+                            toolBar.folderView.update();
+                        }
+                    }
+
                     ToolButton{
                         text: "аав1"
                     }
-                }
-            }
-            // фильтр вывода файлов(директории к сож нет)
-            FilterBox
-            {
-                id: filterDir;
-                onFilterChanges: {
-                    toolBar.folderModel.nameFilters = textFilter.toString() + "*";
-                    toolBar.folderView.currentIndex = -1;
-                    toolBar.folderModel.lastIndex = -1;
-                    toolBar.folderView.update();
-                }
+                }               
             }
         }
 

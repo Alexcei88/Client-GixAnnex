@@ -50,10 +50,6 @@ Rectangle
     width: parent.width
     height: parent.height
 
-    border.color: "black"
-    border.width: 1
-    radius: 5
-
     ColumnLayout {
 
         anchors.horizontalCenter: parent.horizontalCenter

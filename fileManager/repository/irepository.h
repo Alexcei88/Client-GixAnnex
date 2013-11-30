@@ -30,9 +30,10 @@ public:
     // состояния файла
     enum STATE_FILE_AND_DIR
     {
-        SyncingF = 0,        // идет синхронизация
-        SyncedF = 1,         // синхронизация выполнена
-        Disable_sincingF = 2 // синхронизация выключена
+         SyncingF = 0        // идет синхронизация
+        ,SyncedF             // синхронизация выполнена
+        ,SyncedFError        // при синхронизации была ошибка
+        ,Disable_sincingF    // синхронизация выключена
     };
 
     /**
