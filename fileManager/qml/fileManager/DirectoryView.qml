@@ -73,6 +73,8 @@ Rectangle
 
     //-------------------------------------------------------------------------/
 
+    SystemPalette { id: sysPal }
+
     ContextMenu
     {
         id: menudirectory
@@ -136,12 +138,14 @@ Rectangle
         cellWidth: 70
 
         keyNavigationWraps: true
-        highlight: Rectangle {
-            color: "skyblue"
+        highlight:
+            Rectangle
+            {
+            color: sysPal.highlight
             radius: 5
             z: 50
             anchors.margins: 20
-        }
+            }
         Component.onCompleted:
         {
             // запускаем поток обновления состояния иконок

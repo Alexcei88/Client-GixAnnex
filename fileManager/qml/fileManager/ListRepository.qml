@@ -33,7 +33,10 @@ Rectangle {
         XmlRole { name: "nameRepo"; query: "@nameRepo/string()" }
     }
 
-    GridView {
+    SystemPalette { id: sysPal }
+
+    GridView
+    {
         id: viewModel
         model: modelRepoXML
 
@@ -47,95 +50,100 @@ Rectangle {
 
         keyNavigationWraps: true
         delegate:
-            Item{
-            Component.onCompleted: {
-                if(GridView.isCurrentItem)
-                    selectNewRepository(localPath)
-            }
+            Item
+            {
+                id: viewItem
+                height: viewModel.cellHeight
+                width: viewModel.cellWidth
 
-            id: viewItem
-            height: viewModel.cellHeight
-            width: viewModel.cellWidth
-
-            RowLayout {
-
-            anchors.fill: parent
-            width: parent.width
-
-                Image{
-                    id: repoSync
-                    anchors.leftMargin: 5
-                    source: "qrc:/repo_on.png"
-                    state: "SYNCING"
+                onWidthChanged:
+                {
+                    rowLayout = viewModel.cellWidth
+                    itemText = width - repoSync.width - 5
+                    textNameRepo.width = width - repoSync.width - 5
                 }
 
-                Item{
-                    width: parent.width - repoSync.width
-                    Text{
-                        text: nameRepo
-                        elide: Text.ElideRight
-                        maximumLineCount: 1
-                        renderType: Text.NativeRendering
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.left: parent.left
-                        anchors.leftMargin: 4
-                        width: parent.width
+                RowLayout
+                {
+                    id: rowLayout
+                    anchors.fill: parent
+                    width: parent.width
+
+                    Image{
+                        id: repoSync
+                        anchors.leftMargin: 5
+                        source: "qrc:/repo_on.png"
+                        state: "SYNCING"
+                    }
+
+                    Item{
+                        id: itemText
+                        width: parent.width - repoSync.width
+                        Text{
+                            id: textNameRepo
+                            text: nameRepo
+                            elide: Text.ElideRight
+                            maximumLineCount: 1
+                            renderType: Text.NativeRendering
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.left: parent.left
+                            anchors.leftMargin: 4
+                            width: parent.width
+                        }
+                    }
+                }
+                // различные состояния, в которых может находиться репозиторий
+                states:[
+                        // 1. Идет синхронизация
+                        State {
+                            name: "SYNCING"
+                            when: { repository.GetStateRepository(localPath) === "Syncing";}
+                            PropertyChanges {
+                                target: repoSync
+                                source: "qrc:/repo_on.png"
+
+                            }
+                        },
+
+                        // 2. Репозиторий сихронизирован
+                        State {
+                            name: "SYNCED"
+                            when: { repository.GetStateRepository(localPath) === "Synced";}
+                            PropertyChanges {
+                                target: repoSync
+                                source: "qrc:/repo_on.png"
+                            }
+                        },
+
+                        // 3. Репозиторий выключен
+                        State {
+                            name: "DISABLE SYNC"
+                            when: { repository.GetStateRepository(localPath) === "Disable_sincing";}
+                            PropertyChanges {
+                                target: repoSync
+                                source: "qrc:/images/clear.png"
+
+                            }
+                        }
+                        // папка с автосинхронизацией контента(посмотреть, это будет отдельным состоянием, или просто как)
+                    ]
+
+                MouseArea{
+                    id: mouseAreaItem
+                    anchors.fill: parent
+                    onClicked: {
+                        viewModel.currentIndex = model.index
+                        selectNewRepository(localPath)
                     }
                 }
             }
-            // различные состояния, в которых может находиться репозиторий
-            states:[
-                    // 1. Идет синхронизация
-                    State {
-                        name: "SYNCING"
-                        when: { repository.GetStateRepository(localPath) === "Syncing";}
-                        PropertyChanges {
-                            target: repoSync
-                            source: "qrc:/repo_on.png"
-
-                        }
-                    },
-
-                    // 2. Репозиторий сихронизирован
-                    State {
-                        name: "SYNCED"
-                        when: { repository.GetStateRepository(localPath) === "Synced";}
-                        PropertyChanges {
-                            target: repoSync
-                            source: "qrc:/repo_on.png"
-                        }
-                    },
-
-                    // 3. Репозиторий выключен
-                    State {
-                        name: "DISABLE SYNC"
-                        when: { repository.GetStateRepository(localPath) === "Disable_sincing";}
-                        PropertyChanges {
-                            target: repoSync
-                            source: "qrc:/images/clear.png"
-
-                        }
-                    }
-
-                    // папка с автосинхронизацией контента(посмотреть, это будет отдельным состоянием, или просто как)
-                ]
-
-            MouseArea{
-                id: mouseAreaItem
-                anchors.fill: parent
-                onClicked: {
-                    viewModel.currentIndex = model.index
-                    selectNewRepository(localPath)
-                }
-            }
-        }
         highlight:
         Item {
             anchors.left: parent.left
             anchors.leftMargin: viewModel.cellHeight
-            width: parent.width - 10
+            width: parent.width
             Rectangle {
-                color: "skyblue"
+                color: sysPal.highlight
                 radius: 1
                 width: parent.width
                 height: viewModel.cellHeight
@@ -143,5 +151,10 @@ Rectangle {
         }
         highlightMoveDuration: 0           
 
+        Component.onCompleted:
+        {
+            if(GridView.isCurrentItem)
+                selectNewRepository(localPath)
+        }
     }
 }

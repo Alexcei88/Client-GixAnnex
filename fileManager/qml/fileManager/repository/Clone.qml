@@ -184,14 +184,14 @@ Rectangle
                     {
                         // директории назначения не существует, выдавать ошибку клонирования
                         var text = "Destinition URL <i>" + destUrl.text +"</i> not exist.<br>";
-                        var text1 = text + "Clone repository not execute!"
-                        errorS.ShowErrorMessage(title, text1);
+                        var text2 = text + "Clone repository not execute!"
+                        errorS.ShowErrorMessage(title, text2);
                     }
                     else if(result === 4)
                     {
                         // ошибка во время исполнения
-                        var text = repository.GetLastError();
-                        errorS.ShowErrorMessage(title, text);
+                        var text3 = repository.GetLastError();
+                        errorS.ShowErrorMessage(title, text3);
                     }
                     else
                     {

@@ -1,5 +1,6 @@
 import QtQuick 2.1
 import QtQuick.Layouts 1.0
+import QtQuick.Controls 1.0
 import Icons 1.0
 
 Rectangle
@@ -50,15 +51,20 @@ Rectangle
     width: parent.width
     height: parent.height
 
-    ColumnLayout {
+    onWidthChanged:
+    {
+        columnHead.width = width
+        separatorRect.width = width - 30
+    }
 
+    ColumnLayout {
+        width: parent.width
         anchors.horizontalCenter: parent.horizontalCenter
         id: columnHead
 
         Image {
             id: iconsImage
             anchors.horizontalCenter: parent.horizontalCenter
-
         }
         Text
         {
@@ -66,6 +72,15 @@ Rectangle
             text: "FileName"
             anchors.horizontalCenter: parent.horizontalCenter
         }
+        // разделитель(взят из ToolBarStyle)
+        Rectangle {
+            id: separatorRect
+            width: parent.width - 30
+            height: 1
+            color: "#999"
+            anchors.horizontalCenter: parent.horizontalCenter
+        }
+
     }
 
     ColumnLayout

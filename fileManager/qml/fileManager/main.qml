@@ -39,10 +39,6 @@ Rectangle
                 property var folderModel: windowContent.folderModel
                 property var folderView: windowContent.folderView
                 implicitWidth: parent.width
-                Component.onCompleted: {
-                    console.log(width)
-                }
-
                 RowLayout
                 {
                     ToolButton{
