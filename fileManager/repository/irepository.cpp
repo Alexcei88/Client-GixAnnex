@@ -221,8 +221,12 @@ void IRepository::OnStartGetContentFile(const QString& file)
 void IRepository::OnEndGetContentFile(const QString& file)
 {
     auto itErase = std::find(gettingContentFile.begin(), gettingContentFile.end(), file);
-    if(itErase != gettingContentFile.end()) {
+    if(itErase != gettingContentFile.end())
+    {
         gettingContentFile.erase(itErase);
+        // убираем файл из вектора ошибок
+        if(errorGettingContentFile.contains(file))
+            errorGettingContentFile.remove(file);
     }
     else
     {
@@ -263,8 +267,12 @@ void IRepository::OnStartDropContentFile(const QString& file)
 void IRepository::OnEndDropContentFile(const QString& file)
 {
     auto itErase = std::find(droppingContentFile.begin(), droppingContentFile.end(), file);
-    if(itErase != droppingContentFile.end()) {
+    if(itErase != droppingContentFile.end())
+    {
         droppingContentFile.erase(itErase);
+        // убираем файл из вектора ошибок
+        if(errorDroppingContentFile.contains(file))
+            errorDroppingContentFile.remove(file);
     }
     else
     {
