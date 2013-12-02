@@ -29,32 +29,32 @@ ControllerIcons::~ControllerIcons()
     modelIcons = 0;
 }
 //----------------------------------------------------------------------------------------/
-QVariant ControllerIcons::GetPathIconsFileDirecoctoryView(QVariant file) const
+QVariant ControllerIcons::GetPathIconsFileDirectoryView(QUrl file) const
 {    
     static const QMimeDatabase dataBase;
-    const QFileInfo fileInfo(file.toString());
+    const QFileInfo fileInfo(file.toLocalFile());
     const QMimeType type = dataBase.mimeTypeForFile(fileInfo);
     const QString pathIcons = ResourceGenerator::getInstance()->GetResourcePathDirectoryView(type);
     return QVariant(pathIcons);
 }
 //----------------------------------------------------------------------------------------/
-QVariant ControllerIcons::GetPathIconsFilePropertyFile(QVariant file) const
+QVariant ControllerIcons::GetPathIconsFilePropertyFile(QUrl file) const
 {
     static const QMimeDatabase dataBase;
-    const QFileInfo fileInfo(file.toString());
+    const QFileInfo fileInfo(file.toLocalFile());
     const QMimeType type = dataBase.mimeTypeForFile(fileInfo);
     const QString pathIcons = ResourceGenerator::getInstance()->GetResourcePathPropertyFile(type);
     return QVariant(pathIcons);
 }
 //----------------------------------------------------------------------------------------/
-QVariant ControllerIcons::GetLastModifiedFile(QVariant file) const
+QVariant ControllerIcons::GetLastModifiedFile(QUrl file) const
 {
-    return mainModel->GetLastModifiedFile(file.toString());
+    return mainModel->GetLastModifiedFile(file.toLocalFile());
 }
 //----------------------------------------------------------------------------------------/
-QVariant ControllerIcons::GetSizeFile(QVariant file) const
+QVariant ControllerIcons::GetSizeFile(QUrl file) const
 {
-    return mainModel->GetSizeFile(file.toString());
+    return mainModel->GetSizeFile(file.toLocalFile());
 }
 //----------------------------------------------------------------------------------------/
 void ControllerIcons::StartThreadIconsSync()

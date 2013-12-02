@@ -19,6 +19,7 @@ Rectangle
     //-------------------------------------------------------------------------/
     property var folderView: null
     property string folderPath: ""
+    property string lastFileName: ""
 
     // сигнал, которые говорит, что нужно обновить данные о свойствах папки(файла)
     signal updateData(var currentName)
@@ -26,7 +27,16 @@ Rectangle
     {
         if(folderView) // проверка, инициализировали ли представление
         {
-            name.text = currentName;
+            if(lastFileName === currentName)
+                // у данного файла уже выведены параметр на экран, еще раз не выводим
+                return;
+
+            if(currentName === "/")
+                name.text = "Path To Repo";
+            else
+                name.text = currentName;
+
+            lastFileName = currentName;
             propertyWhereis.nameOption = "New Data";
             propertyLastModified.valueOption = repositoryIcons.GetLastModifiedFile(folderPath + "/" + currentName);
             propertySize.valueOption = repositoryIcons.GetSizeFile(folderPath + "/" + currentName);

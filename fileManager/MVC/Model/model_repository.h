@@ -43,9 +43,9 @@ public:
     const QMap<QString, IRepository::PARAMETR_FILEFOLDER_GIT_ANNEX>& GetParamSyncFileDir() const;
 
     /** @brief Дата посл модификации файла */
-    const QString       GetLastModifiedFile(const QUrl &file) const;
+    const QString       GetLastModifiedFile(const QString &file) const;
     /** @brief Размер файла */
-    const QString       GetSizeFile(const QUrl &file) const;
+    const QString       GetSizeFile(const QString &file) const;
 
     /** @brief Является ли выбранный путь поддиректорией корневого пути репозитория */
     bool                DirIsSubRootDirRepository(const QString& dir) const;

@@ -1,5 +1,6 @@
 import QtQuick 2.1
 import QtQuick.Controls 1.0
+import QtQuick.Controls.Private 1.0
 import QtQuick.Layouts 1.0
 import Qt.labs.folderlistmodel 1.0
 import Repository 1.0
@@ -39,14 +40,14 @@ Rectangle
         dirModel.folder = path;
         folderView.currentIndex = -1;
         dirModel.lastIndex = -1;
+        showPropertyFile("/")
     }
 
     // функция взятия пути до иконки в зависимости от mymetype файла
     function getResourceImage(fileName)
     {
-        var currentPathRepo = UtilsScript.getFullStrPath(dirModel.folder.toString());
-        var path = currentPathRepo + "/" + fileName;
-        return contrIcons.GetPathIconsFileDirecoctoryView(path);
+        var path = dirModel.folder.toString() + "/" + fileName;
+        return contrIcons.GetPathIconsFileDirectoryView(path);
     }
 
     // функция обновления списка состояния иконок
@@ -110,8 +111,6 @@ Rectangle
     border.width: 2
     border.color: "blue"
 
-
-//    FolderListModel
     NewFolderListModel
     {
         property int lastIndex: -1
@@ -150,9 +149,9 @@ Rectangle
         {
             // запускаем поток обновления состояния иконок
             contrIcons.StartThreadIconsSync();
+            showPropertyFile("/")
         }
 
-//        highlightFollowsCurrentItem: true
         highlightMoveDuration: 0
         focus: true
 
@@ -177,7 +176,8 @@ Rectangle
                     id: imgFolder
                     source: getResourceImage(curFileName);
                     anchors.horizontalCenter: parent.horizontalCenter
-                    Image{
+                    Image
+                    {
                         id: dirSync
                         anchors.bottom: parent.bottom
                         anchors.left: parent.left
