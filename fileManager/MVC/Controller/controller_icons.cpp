@@ -22,6 +22,7 @@ ControllerIcons::ControllerIcons() :
   , modelIcons(new ModelQmlAndCIcons(this))
 {
     QObject::connect(this, &ControllerIcons::changedParentDirectory, this, &ControllerIcons::OnChangeParentDirectory);
+    dir.setFilter(QDir::NoDotAndDotDot | QDir::Files | QDir::AllDirs | QDir::System);
 }
 ControllerIcons::~ControllerIcons()
 {
@@ -29,7 +30,7 @@ ControllerIcons::~ControllerIcons()
     modelIcons = 0;
 }
 //----------------------------------------------------------------------------------------/
-QVariant ControllerIcons::GetPathIconsFileDirectoryView(QUrl file) const
+QVariant ControllerIcons::getPathIconsFileDirectoryView(QUrl file) const
 {    
     static const QMimeDatabase dataBase;
     const QFileInfo fileInfo(file.toLocalFile());
@@ -57,7 +58,7 @@ QVariant ControllerIcons::GetSizeFile(QUrl file) const
     return mainModel->GetSizeFile(file.toLocalFile());
 }
 //----------------------------------------------------------------------------------------/
-void ControllerIcons::StartThreadIconsSync()
+void ControllerIcons::startThreadIconsSync()
 {
     if(thread != 0 && thread->isRunning())
         return;
@@ -108,10 +109,9 @@ void ControllerIcons::UpdateStateIconsFileSync()
     QStringList nameAllFilesAndDir = dir.entryList();
     for(auto iterator = nameAllFilesAndDir.begin(); iterator !=  nameAllFilesAndDir.end(); ++iterator)
     {
-        if(*iterator == "." || *iterator == "..") continue;
         IRepository::PARAMETR_FILEFOLDER_GIT_ANNEX paramSyncCur = paramSync[*iterator];
         stateIconsFileSync[*iterator] = paramSyncCur.currentState;
-    }
+   }
 }
 //----------------------------------------------------------------------------------------/
 

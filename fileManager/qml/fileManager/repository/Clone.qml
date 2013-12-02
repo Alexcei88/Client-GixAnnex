@@ -174,24 +174,24 @@ Rectangle
                     {
                         // ошибка, поле не может быть пустым
                         var text1 = "Field 'Name' must be not empty";
-                        errorS.ShowErrorMessage(title, text1);
+                        errorS.showErrorMessage(title, text1);
                         return;
                     }
 
-                    var result = repository.StartCloneRepository(destUrl.text, sourсeUrl.text, valueNameRepo.text);
-                    var title = "Error Clone Repository"
+                    var result = repository.startCloneRepository(destUrl.text, sourсeUrl.text, valueNameRepo.text);
+                    title = "Error Clone Repository"
                     if(result === 5)
                     {
                         // директории назначения не существует, выдавать ошибку клонирования
                         var text = "Destinition URL <i>" + destUrl.text +"</i> not exist.<br>";
                         var text2 = text + "Clone repository not execute!"
-                        errorS.ShowErrorMessage(title, text2);
+                        errorS.showErrorMessage(title, text2);
                     }
                     else if(result === 4)
                     {
                         // ошибка во время исполнения
-                        var text3 = repository.GetLastError();
-                        errorS.ShowErrorMessage(title, text3);
+                        var text3 = repository.getLastError();
+                        errorS.showErrorMessage(title, text3);
                     }
                     else
                     {

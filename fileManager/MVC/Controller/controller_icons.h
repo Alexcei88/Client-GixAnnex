@@ -40,7 +40,7 @@ public:
 
     /** @brief возвращает путь иконки для проводника в зависимости от mimetype файла
     @param file - путь к файлу */
-    Q_INVOKABLE QVariant GetPathIconsFileDirectoryView(QUrl file) const;
+    Q_INVOKABLE QVariant getPathIconsFileDirectoryView(QUrl file) const;
 
     /** @brief возвращает путь иконки для тображения иконки в свойствах файла в зависимости от mimetype файла
     @param file - путь к файлу */
@@ -55,7 +55,7 @@ public:
     Q_INVOKABLE QVariant GetSizeFile(QUrl file) const;
 
     /** @brief  Запуск потока обновления иконок синхронизации */
-    Q_INVOKABLE void    StartThreadIconsSync();
+    Q_INVOKABLE void    startThreadIconsSync();
 
     /** @brief Остановка потока обновления иконок синхронизации */
     static void         StopThreadIconsSync();

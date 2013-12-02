@@ -10,17 +10,17 @@ ControllerRepository::ControllerRepository( ):
     QObject::connect(this, &ControllerRepository::currentPathRepoChanged, [=](QUrl dir){model->ChangeCurrentRepository(dir.toLocalFile()); });
 }
 //----------------------------------------------------------------------------------------/
-QVariant ControllerRepository::GetStateRepository(QUrl path) const
+QVariant ControllerRepository::getStateRepository(QUrl path) const
 {
     return model->GetStateRepository(path.toString());
 }
 //----------------------------------------------------------------------------------------/
-QVariant ControllerRepository::GetDefaultRepositoryPath() const
+QVariant ControllerRepository::getDefaultRepositoryPath() const
 {
     return model->GetDefaultRepository();
 }
 //----------------------------------------------------------------------------------------/
-QVariant ControllerRepository::StartCloneRepository(QVariant localUlr, QVariant remoteURL, QVariant nameRepo)
+QVariant ControllerRepository::startCloneRepository(QVariant localUlr, QVariant remoteURL, QVariant nameRepo)
 {
     return model->CloneRepository(localUlr.toString(), remoteURL.toString(), nameRepo.toString());
 }
@@ -30,22 +30,22 @@ void ControllerRepository::CancelCloneRepository() const
     model->CancelCloneRepository();
 }
 //----------------------------------------------------------------------------------------/
-QVariant ControllerRepository::GetContentDirectory(QUrl dir) const
+QVariant ControllerRepository::getContentDirectory(QUrl dir) const
 {
     return model->GetContentDirectory(dir.toString());
 }
 //----------------------------------------------------------------------------------------/
-QVariant ControllerRepository::DropContentDirectory(QUrl dir) const
+QVariant ControllerRepository::dropContentDirectory(QUrl dir) const
 {
     return model->DropContentDirectory(dir.toString());
 }
 //----------------------------------------------------------------------------------------/
-QVariant ControllerRepository::DirIsSubRootDirRepository(QUrl dir) const
+QVariant ControllerRepository::dirIsSubRootDirRepository(QUrl dir) const
 {
     return model->DirIsSubRootDirRepository(dir.toLocalFile());
 }
 //----------------------------------------------------------------------------------------/
-const QVariant ControllerRepository::GetLastError() const
+const QVariant ControllerRepository::getLastError() const
 {
     return model->GetLastError();
 }

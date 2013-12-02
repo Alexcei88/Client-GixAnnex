@@ -13,7 +13,7 @@ QMLErrorMessage::~QMLErrorMessage()
     box = 0;
 }
 //----------------------------------------------------------------------------------------/
-void QMLErrorMessage::ShowErrorMessage(QVariant title, QVariant text) const
+void QMLErrorMessage::showErrorMessage(QVariant title, QVariant text) const
 {
     QMessageBox::critical(box, title.toString(), text.toString());
 }

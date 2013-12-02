@@ -47,7 +47,7 @@ Rectangle
     function getResourceImage(fileName)
     {
         var path = dirModel.folder.toString() + "/" + fileName;
-        return contrIcons.GetPathIconsFileDirectoryView(path);
+        return contrIcons.getPathIconsFileDirectoryView(path);
     }
 
     // функция обновления списка состояния иконок
@@ -69,7 +69,7 @@ Rectangle
     // чтобы выше корня репозитория не выходить
     function isSubRootRepositoryDirectory(path)
     {
-        return repository.DirIsSubRootDirRepository(path)
+        return repository.dirIsSubRootDirRepository(path)
     }
 
     //-------------------------------------------------------------------------/
@@ -93,12 +93,12 @@ Rectangle
         onGetContentDirectory:
         {
             var fileName = view.currentItem.curFileName;
-            repository.GetContentDirectory(fileName);
+            repository.getContentDirectory(fileName);
         }
         onDropContentDirectory:
         {
             var fileName = view.currentItem.curFileName;
-            repository.DropContentDirectory(fileName);
+            repository.dropContentDirectory(fileName);
         }
     }
 
@@ -116,7 +116,7 @@ Rectangle
         property int lastIndex: -1
 
         id: dirModel
-        folder: repository.GetDefaultRepositoryPath()
+        folder: repository.getDefaultRepositoryPath()
         showDirs: true
         showDirsFirst: true
         showOnlyReadable: false
@@ -148,7 +148,7 @@ Rectangle
         Component.onCompleted:
         {
             // запускаем поток обновления состояния иконок
-            contrIcons.StartThreadIconsSync();
+            contrIcons.startThreadIconsSync();
             showPropertyFile("/")
         }
 
@@ -197,37 +197,26 @@ Rectangle
                                     source: "qrc:/syncing.png"
                                 }
                             },
-                            // 2. Имеются только символичеcкие ссылки
+                            // 2. Синхронизация завершилась
                             State {
-                                name: "SYMBOL_LINK"
+                                name: "SYNCED"
                                 when: { contrIcons.stateIconsFileSyncQML[curFileName] === "SyncedF" }
                                 PropertyChanges {
                                     target: dirSync
                                     source: "qrc:/synced.png"
                                 }
                             },
-                            // 3. Имеются символичеcкие ссылки, некоторые из них с контентом
+                            // 3. Синхронизация завершилась неудачно
                             State {
-                                name: "SYMBOL_LINK_AND_SOME_CONTENT"
-                                when: { contrIcons.stateIconsFileSyncQML[curFileName] === "sincsng"  }
+                                name: "SYNCED_ERROR"
+                                when: { contrIcons.stateIconsFileSyncQML[curFileName] === "SyncedFError"  }
                                 PropertyChanges {
                                     target: dirSync
-                                    source: "qrc:/syncing.png"
-
+                                    source: "qrc:/disable_sync.png"
                                 }
                             },
 
-                            // 4. Символическая ссылка с контенктом
-                            State {
-                                when: { contrIcons.stateIconsFileSyncQML[curFileName] === "sinsdng"  }
-                                name: "SYMBOL_LINK_AND_CONTENT"
-                                PropertyChanges {
-                                    target: dirSync
-                                    source: "qrc:/syncing.png"
-
-                                }
-                            },
-                            // 5. Синхронизация выключена
+                            // 4. Синхронизация выключена
                             State {
                                 name: "DISABLE_SYNC"
                                 when: { contrIcons.stateIconsFileSyncQML[curFileName] === "sinssng"  }
