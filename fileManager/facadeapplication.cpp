@@ -11,7 +11,6 @@
 #include <QTextStream>
 #include <QThreadPool>
 
-
 using namespace GANN_DEFINE;
 
 FacadeApplication* FacadeApplication::instance = 0;

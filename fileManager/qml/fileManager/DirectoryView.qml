@@ -6,6 +6,7 @@ import Qt.labs.folderlistmodel 1.0
 import Repository 1.0
 import Icons 1.0
 import FolderListModel 1.0
+import Message 1.0
 
 import "utils.js" as UtilsScript
 
@@ -21,6 +22,10 @@ Rectangle
     ControllerIcons {
         id: contrIcons
         currentPath: dirModel.folder.toString()
+    }
+
+    MessageBox{
+        id: message
     }
 
     // СВО-ВА, ФУНКЦИИ И СИГНАЛЫ
@@ -100,7 +105,10 @@ Rectangle
         }
         onRemoveDirectory:
         {
-            repository.removeDirectory(view.currentItem.curFileName);
+            var fileName = view.currentItem.curFileName;
+            var text = "Do you really want to delete <i>" + fileName + "</i>?<br>";
+            if(message.showConfirmMessage("Warning", text))
+                repository.removeDirectory(fileName);
         }
     }
 

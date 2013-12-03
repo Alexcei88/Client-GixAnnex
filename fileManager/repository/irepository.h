@@ -119,7 +119,7 @@ public:
     @param file - имя файла(папки) назначения
     @return 0 - нет ошибок
     */
-    virtual GANN_DEFINE::RESULT_EXEC_PROCESS WhereisFile(const QString& file = " ") const = 0;
+    virtual GANN_DEFINE::RESULT_EXEC_PROCESS WhereisFile(const QString& file = " ") = 0;
 
     /**
     @brief синхронизация с удаленным репозиторием
@@ -136,14 +136,10 @@ public:
     */
     virtual GANN_DEFINE::RESULT_EXEC_PROCESS StopWatchRepository() const;
 
-    /**
-    @brief Установка состояния репозитория
-    */
+    /** @brief Установка состояния репозитория */
     void                SetState(const STATE_REPOSITORY& state);
 
-    /**
-    @brief Взятие состояния репозитория
-    */
+    /** @brief Взятие состояния репозитория */
     QString             GetState() const;
 
     /**
@@ -168,7 +164,7 @@ public:
     bool                DirIsSubRootDirRepository(const QString& dir) const;
 
     /** @brief возвращает последнее сообщение об ошибке */
-    const QString&      GetLastError() { return lastError; };
+    const QString&      GetLastError() const { return lastError; };
 
 protected:
 
@@ -178,23 +174,28 @@ protected:
 
     boost::shared_ptr<ShellCommand> shellCommand;
 
-    // удаленный адрес репозитория
+    /** @brief удаленный адрес репозитория */
     QString             remoteURL;
-    // локальный адрес репозитория
+    /** @brief локальный адрес репозитория */
     QString             localURL;
-    // название репозитория Git-Annex
+    /** @brief название репозитория Git-Annex */
     QString             nameRepo;
-    // параметры синхронизации репозитория
+
+    // параметры репозитория
     PARAMETR_REPOSITORY_GI_ANNEX paramSyncRepo;
 
     // перечисление состояний репозитория, в которых мы находимся
+    // репозитория в целом
     QMetaEnum           metaEnumState;
+    // конкретного файла
     QMetaEnum           metaEnumStateF;
 
     // параметры состояния файлов, в которых находиться текущий файл(или директория)
     QMap<QString, PARAMETR_FILEFOLDER_GIT_ANNEX> paramSyncFileDir;
+
     // вспом класс для манипулированием файловой системой
     QDir                dir;
+
     /** @brief последнее сообщение об ошибке в репозитории */
     QString             lastError;
 
@@ -222,7 +223,8 @@ private:
     bool                DirContainsFile(const QString& dir, const QString& file) const;
     /** @brief высчитать текущее состояние файла/директории */
     QString             CalculateStateFileDir(const QString& file) const;
-public slots:
+
+private slots:
     // слот, говорящий о начале получения контента у файла
     void                OnStartGetContentFile(const QString&);
     void                OnEndGetContentFile(const QString&);
@@ -240,11 +242,11 @@ signals:
     void                startGetContentFile(const QString&);
     void                endGetContentFile(const QString&);
     void                errorGetContentFile(const QString&, const QString&);
-
+    // сигналы начала/конца удаления
     void                startDropContentFile(const QString&);
     void                endDropContentFile(const QString&);
     void                errorDropContentFile(const QString&, const QString&);
-
+    // неудачное клонирование
     void                errorCloneRepository(const QString&);
 
 };

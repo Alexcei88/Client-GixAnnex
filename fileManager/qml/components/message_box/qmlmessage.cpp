@@ -18,4 +18,13 @@ void QMLMessage::showErrorMessage(QVariant title, QVariant text) const
     QMessageBox::critical(box, title.toString(), text.toString());
 }
 //----------------------------------------------------------------------------------------/
-
+QVariant QMLMessage::showConfirmMessage(QVariant title, QVariant text) const
+{
+    if(QMessageBox::question(box, title.toString(), text.toString()) == QMessageBox::Yes){
+        return 1;
+    }
+    else {
+        return 0;
+    }
+}
+//----------------------------------------------------------------------------------------/

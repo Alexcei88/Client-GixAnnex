@@ -58,6 +58,8 @@ RESULT_EXEC_PROCESS TRepository::DeleteRepository()
 //----------------------------------------------------------------------------------------/
 RESULT_EXEC_PROCESS TRepository::GetContentFile(const QString& file)
 {
+    // сразу же заносим данную директорию в список файлов, получающих контент в данный момент времени
+//    emit this->startGetContentFile(file);
     shellCommand->SetWorkingDirectory(this->localURL);
     RESULT_EXEC_PROCESS result = shellCommand->GetContentFile(file, this);
     if(result != NO_ERROR)
@@ -86,7 +88,7 @@ RESULT_EXEC_PROCESS TRepository::RemoveFile(const QString& file)
     DropContentFile(file);
     // а теперь удаляем и сам файл
     shellCommand->SetWorkingDirectory(this->localURL);
-    RESULT_EXEC_PROCESS result = shellCommand->RemoveFile(file);
+    RESULT_EXEC_PROCESS result = shellCommand->RemoveFile(file, QFileInfo(file).isDir());
     if(result != NO_ERROR)
     {
         printf("Error git rm file: %s \n", file.toStdString().c_str());
@@ -95,10 +97,10 @@ RESULT_EXEC_PROCESS TRepository::RemoveFile(const QString& file)
     return result;
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS TRepository::WhereisFile(const QString& file) const
+RESULT_EXEC_PROCESS TRepository::WhereisFile(const QString& file)
 {
     shellCommand->SetWorkingDirectory(this->localURL);
-    RESULT_EXEC_PROCESS result = shellCommand->WhereisFiles(file);
+    RESULT_EXEC_PROCESS result = shellCommand->WhereisFiles(file, this);
     if(result != NO_ERROR)
     {
         printf("Error git-annex drop content of file: %s \n", file.toStdString().c_str());
