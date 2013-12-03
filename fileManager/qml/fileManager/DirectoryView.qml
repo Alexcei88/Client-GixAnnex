@@ -8,8 +8,7 @@ import FolderListModel 1.0
 
 import "utils.js" as UtilsScript
 
-Rectangle
-{
+FocusScope{
     //-------------------------------------------------------------------------/
     // ПОЛЬЗОВАТЕЛЬСКИЕ КЛАССЫ MVC
 
@@ -101,17 +100,26 @@ Rectangle
         }
     }
 
+    id: focusScope
     width: 100
     height: 62
 
-    Keys.forwardTo: [view]
-    focus: true
+    BorderImage {
+        anchors.fill: parent
+        source: "qrc:images/lineedit_bg.png"
+        border { left: 4; top: 4; right: 4; bottom: 4 }
+        BorderImage {
+            anchors.fill: parent
+            anchors.margins: -1
+            anchors.topMargin: -2
+            anchors.rightMargin: 0
+            anchors.bottomMargin: 1
+            source: "qrc:images/lineedit_bg_focus.png"
+            visible: focusScope.activeFocus ? true : false
+            border { left: 4; top: 4; right: 4; bottom: 4 }
+        }
+    }
 
-    border.width: 2
-    border.color: "blue"
-
-
-//    FolderListModel
     NewFolderListModel
     {
         property int lastIndex: -1
@@ -141,11 +149,12 @@ Rectangle
         highlight:
             Rectangle
             {
-            color: sysPal.highlight
-            radius: 5
-            z: 50
-            anchors.margins: 20
+                color: sysPal.highlight
+                radius: 5
+                z: 50
+                anchors.margins: 20
             }
+
         Component.onCompleted:
         {
             // запускаем поток обновления состояния иконок
@@ -154,8 +163,11 @@ Rectangle
 
 //        highlightFollowsCurrentItem: true
         highlightMoveDuration: 0
-        focus: true
-
+        MouseArea {
+            anchors.fill: parent
+            onClicked: {
+                focusScope.focus = true; }
+        }
         delegate: Item
         {
             id: itemView
