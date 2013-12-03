@@ -92,13 +92,15 @@ Rectangle
         }
         onGetContentDirectory:
         {
-            var fileName = view.currentItem.curFileName;
-            repository.getContentDirectory(fileName);
+            repository.getContentDirectory(view.currentItem.curFileName);
         }
         onDropContentDirectory:
         {
-            var fileName = view.currentItem.curFileName;
-            repository.dropContentDirectory(fileName);
+            repository.dropContentDirectory(view.currentItem.curFileName);
+        }
+        onRemoveDirectory:
+        {
+            repository.removeDirectory(view.currentItem.curFileName);
         }
     }
 

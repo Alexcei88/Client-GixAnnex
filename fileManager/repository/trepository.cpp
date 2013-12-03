@@ -80,6 +80,21 @@ RESULT_EXEC_PROCESS TRepository::DropContentFile(const QString& file)
     return result;
 }
 //----------------------------------------------------------------------------------------/
+RESULT_EXEC_PROCESS TRepository::RemoveFile(const QString& file)
+{
+    // сначала удалим контент
+    DropContentFile(file);
+    // а теперь удаляем и сам файл
+    shellCommand->SetWorkingDirectory(this->localURL);
+    RESULT_EXEC_PROCESS result = shellCommand->RemoveFile(file);
+    if(result != NO_ERROR)
+    {
+        printf("Error git rm file: %s \n", file.toStdString().c_str());
+        return result;
+    }
+    return result;
+}
+//----------------------------------------------------------------------------------------/
 RESULT_EXEC_PROCESS TRepository::WhereisFile(const QString& file) const
 {
     shellCommand->SetWorkingDirectory(this->localURL);

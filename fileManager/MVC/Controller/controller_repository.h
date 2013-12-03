@@ -35,13 +35,16 @@ public:
     Q_INVOKABLE QVariant    startCloneRepository(QVariant localUlr, QVariant remoteURL, QVariant nameRepo);
 
     /** @brief Отмена клонирования репозитория */
-    Q_INVOKABLE void        CancelCloneRepository() const;
+    Q_INVOKABLE void        cancelCloneRepository() const;
 
     /** @brief взять контент у файла(директории)*/
     Q_INVOKABLE QVariant    getContentDirectory(QUrl dir) const;
 
     /** @brief удалить контент у файла(директории)*/
     Q_INVOKABLE QVariant    dropContentDirectory(QUrl dir) const;
+
+    /** @brief удалить файл(директорию) из репозитория */
+    Q_INVOKABLE QVariant    removeDirectory(QUrl dir) const;
 
     /** @brief явяеться ли выбранный путь поддиректорией корневого пути репозитория*/
     Q_INVOKABLE QVariant    dirIsSubRootDirRepository(QUrl dir) const;

@@ -39,7 +39,7 @@ QVariant ControllerIcons::getPathIconsFileDirectoryView(QUrl file) const
     return QVariant(pathIcons);
 }
 //----------------------------------------------------------------------------------------/
-QVariant ControllerIcons::GetPathIconsFilePropertyFile(QUrl file) const
+QVariant ControllerIcons::getPathIconsFilePropertyFile(QUrl file) const
 {
     static const QMimeDatabase dataBase;
     const QFileInfo fileInfo(file.toLocalFile());
@@ -48,12 +48,12 @@ QVariant ControllerIcons::GetPathIconsFilePropertyFile(QUrl file) const
     return QVariant(pathIcons);
 }
 //----------------------------------------------------------------------------------------/
-QVariant ControllerIcons::GetLastModifiedFile(QUrl file) const
+QVariant ControllerIcons::getLastModifiedFile(QUrl file) const
 {
     return mainModel->GetLastModifiedFile(file.toLocalFile());
 }
 //----------------------------------------------------------------------------------------/
-QVariant ControllerIcons::GetSizeFile(QUrl file) const
+QVariant ControllerIcons::getSizeFile(QUrl file) const
 {
     return mainModel->GetSizeFile(file.toLocalFile());
 }

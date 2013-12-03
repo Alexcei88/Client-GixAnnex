@@ -38,8 +38,8 @@ Rectangle
 
             lastFileName = currentName;
             propertyWhereis.nameOption = "New Data";
-            propertyLastModified.valueOption = repositoryIcons.GetLastModifiedFile(folderPath + "/" + currentName);
-            propertySize.valueOption = repositoryIcons.GetSizeFile(folderPath + "/" + currentName);
+            propertyLastModified.valueOption = repositoryIcons.getLastModifiedFile(folderPath + "/" + currentName);
+            propertySize.valueOption = repositoryIcons.getSizeFile(folderPath + "/" + currentName);
             iconsImage.source = getResourceImage(currentName);
         }
     }
@@ -48,7 +48,7 @@ Rectangle
     function getResourceImage(fileName)
     {
         var path = folderPath + "/"+fileName;
-        return repositoryIcons.GetPathIconsFilePropertyFile(path);
+        return repositoryIcons.getPathIconsFilePropertyFile(path);
     }
     //-------------------------------------------------------------------------/
 

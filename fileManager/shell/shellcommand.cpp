@@ -102,15 +102,12 @@ RESULT_EXEC_PROCESS ShellCommand::DropContentFile(const QString& path, IReposito
 //----------------------------------------------------------------------------------------/
 RESULT_EXEC_PROCESS ShellCommand::RemoveFile(const QString& path) const
 {
-#if 0
-    const QString strCommand = "git rm" + path;
-    boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandGet(shell.get()));
-    ShellTask* shellTask = new ShellTask(strCommand, receiverParsing, shell);
+    const QString strCommand = "git rm " + path;
+    boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandEmpty());
+    ShellTask* shellTask = new ShellTask(strCommand, localURL, receiverParsing);
 
     QThreadPool::globalInstance()->start(shellTask);
     return NO_ERROR;
-//    return shell->ExecuteProcess(strCommand);
-#endif
 }
 //----------------------------------------------------------------------------------------/
 RESULT_EXEC_PROCESS ShellCommand::Sync() const

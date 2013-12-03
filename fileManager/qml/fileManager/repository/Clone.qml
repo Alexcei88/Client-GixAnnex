@@ -5,7 +5,7 @@ import QtQuick.Layouts 1.0
 import QtQuick.Dialogs 1.0
 import Repository 1.0
 import "../utils.js" as UtilsScript
-import Error 1.0
+import Message 1.0
 
 Rectangle
 {
@@ -15,7 +15,7 @@ Rectangle
 
     SystemPalette { id: sysPal }
 
-    ErrorMessage{
+    MessageBox{
         id: errorS
     }
 
@@ -209,7 +209,7 @@ Rectangle
                 anchors.fill: parent
                 onClicked:
                 {
-                    repository.CancelCloneRepository()
+                    repository.cancelCloneRepository()
                 }
             }
         }

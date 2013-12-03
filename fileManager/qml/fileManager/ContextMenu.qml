@@ -8,6 +8,7 @@ Menu
     signal openDirectory()
     signal getContentDirectory()
     signal dropContentDirectory()
+    signal removeDirectory()
 
     Action
     {
@@ -44,12 +45,25 @@ Menu
         //       tooltip: "Open an image"
     }
 
+    Action
+    {
+        id: removeDirectoryAction
+        text: "&Remove"
+        shortcut: "Ctrl+R"
+        //       iconSource: "images/document-open.png"
+        onTriggered: {
+            removeDirectory()
+        }
+        //       tooltip: "Open an image"
+    }
+
 
 
     title: "ActionDirectory"
     MenuItem { action: openAction }
     MenuItem { action: getContentAction }
     MenuItem { action: dropContentAction }
+    MenuItem { action: removeDirectoryAction }
     MenuItem { text: "On/Off autoget content" }
     MenuItem { text: "Close" }
 }

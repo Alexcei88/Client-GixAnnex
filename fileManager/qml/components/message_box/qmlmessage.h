@@ -3,12 +3,12 @@
 #include <QObject>
 #include <QMessageBox>
 #include <QtWidgets>
-class QMLErrorMessage: public QObject
+class QMLMessage: public QObject
 {
     Q_OBJECT
 public:
-    explicit QMLErrorMessage(QWidget* parent = 0);
-    ~QMLErrorMessage();
+    explicit QMLMessage(QWidget* parent = 0);
+    ~QMLMessage();
 
     Q_INVOKABLE void showErrorMessage(QVariant title, QVariant text) const;
 private:

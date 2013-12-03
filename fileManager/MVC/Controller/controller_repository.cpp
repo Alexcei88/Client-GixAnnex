@@ -25,7 +25,7 @@ QVariant ControllerRepository::startCloneRepository(QVariant localUlr, QVariant 
     return model->CloneRepository(localUlr.toString(), remoteURL.toString(), nameRepo.toString());
 }
 //----------------------------------------------------------------------------------------/
-void ControllerRepository::CancelCloneRepository() const
+void ControllerRepository::cancelCloneRepository() const
 {
     model->CancelCloneRepository();
 }
@@ -38,6 +38,11 @@ QVariant ControllerRepository::getContentDirectory(QUrl dir) const
 QVariant ControllerRepository::dropContentDirectory(QUrl dir) const
 {
     return model->DropContentDirectory(dir.toString());
+}
+//----------------------------------------------------------------------------------------/
+QVariant ControllerRepository::removeDirectory(QUrl dir) const
+{
+    return model->RemoveDirectory(dir.toString());
 }
 //----------------------------------------------------------------------------------------/
 QVariant ControllerRepository::dirIsSubRootDirRepository(QUrl dir) const

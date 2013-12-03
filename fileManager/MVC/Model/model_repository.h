@@ -33,6 +33,9 @@ public:
     /** @brief Удалить контент у файла(директории)*/
     GANN_DEFINE::RESULT_EXEC_PROCESS DropContentDirectory(const QString& dir) const;
 
+    /** @brief Удалить файл(директорию) из репозитория */
+    GANN_DEFINE::RESULT_EXEC_PROCESS RemoveDirectory(const QString& dir) const;
+
     /** @brief Сменить текущий репозиторий */
     void                ChangeCurrentRepository(const QString &dir) const;
 

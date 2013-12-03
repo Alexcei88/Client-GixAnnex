@@ -59,17 +59,36 @@ GANN_DEFINE::RESULT_EXEC_PROCESS ModelQmlAndCRepository::GetContentDirectory(con
         IRepository* curRepo = iterRepo->second.get();
         return curRepo->GetContentFile(dir);
     }
+    else{
+        assert("CurrentRepo is NULL" && false);
+    }
     return NO_ERROR;
 }
 //----------------------------------------------------------------------------------------/
 GANN_DEFINE::RESULT_EXEC_PROCESS ModelQmlAndCRepository::DropContentDirectory(const QString& dir) const
 {
-    std::cout<<dir.toStdString().c_str()<<std::endl;
     auto iterRepo = FacadeApplication::instance->currentRepository;
     if(iterRepo != FacadeApplication::instance->repository.end())
     {
         IRepository* curRepo = iterRepo->second.get();
         return curRepo->DropContentFile(dir);
+    }
+    else{
+        assert("CurrentRepo is NULL" && false);
+    }
+    return NO_ERROR;
+}
+//----------------------------------------------------------------------------------------/
+GANN_DEFINE::RESULT_EXEC_PROCESS ModelQmlAndCRepository::RemoveDirectory(const QString& dir) const
+{
+    auto iterRepo = FacadeApplication::instance->currentRepository;
+    if(iterRepo != FacadeApplication::instance->repository.end())
+    {
+        IRepository* curRepo = iterRepo->second.get();
+        return curRepo->RemoveFile(dir);
+    }
+    else{
+        assert("CurrentRepo is NULL" && false);
     }
     return NO_ERROR;
 }
