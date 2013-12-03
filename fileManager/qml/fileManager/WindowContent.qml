@@ -31,8 +31,6 @@ Rectangle {
     property var folderModel: contenItem.folderModel
     property var folderView:  contenItem.folderView
 
-    Keys.forwardTo: [split]
-
     SystemPalette { id: sysPal }
 
     SplitView
@@ -40,8 +38,6 @@ Rectangle {
         id: split
         anchors.fill: parent
         orientation: Qt.Horizontal
-        focus: true
-        Keys.forwardTo: [contenItem]
 
         // функция перезагрузки модели списка репозиториев
         function reloadModel()
@@ -68,9 +64,7 @@ Rectangle {
             objectName: "directoryView"
             Layout.minimumWidth: parent.width/5
             Layout.fillWidth: true
-            color: "white"
             width: 3 * parent.width/5
-            focus: true
             onShowPropertyFile:
             {
                 propertyFile.folderPath = folderModel.folder.toString();

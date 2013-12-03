@@ -19,7 +19,6 @@ Rectangle
     Column
     {
         id: mainColumn
-        Keys.forwardTo: [windowContent, toolBar]
 
         spacing: 1
         visible: parent.visible

@@ -8,6 +8,9 @@ Rectangle {
 
     // ФУНКЦИИ, СВО-ВА И СИГНАЛЫ
     //-------------------------------------------------------------------------/
+
+    property int widthRepoSync: 0
+//    property int : value
     // сигнал о выборе нового репозитория
     signal selectNewRepository(string path)
 
@@ -21,9 +24,6 @@ Rectangle {
     ControllerRepository {
         id: repository
     }
-    width: parent.width
-    height: parent.width
-
     XmlListModel{
         id: modelRepoXML
         source: "../../ganx-repository.xml"
@@ -34,6 +34,7 @@ Rectangle {
     }
 
     SystemPalette { id: sysPal }
+
 
     GridView
     {
@@ -59,8 +60,8 @@ Rectangle {
                 onWidthChanged:
                 {
                     rowLayout = viewModel.cellWidth
-                    itemText = width - repoSync.width - 5
-                    textNameRepo.width = width - repoSync.width - 5
+                    itemText.width = width - widthRepoSync
+                    textNameRepo.width = itemText.width - textNameRepo.anchors.leftMargin - 7
                 }
 
                 RowLayout
@@ -74,12 +75,18 @@ Rectangle {
                         anchors.leftMargin: 5
                         source: "qrc:/repo_on.png"
                         state: "SYNCING"
+                        Component.onCompleted: {
+                            widthRepoSync = width
+                            itemText.width = viewItem.width - width
+                            textNameRepo.width = itemText.width - 4 - 7
+                        }
                     }
 
                     Item{
                         id: itemText
                         width: parent.width - repoSync.width
-                        Text{
+                        Text
+                        {
                             id: textNameRepo
                             text: nameRepo
                             elide: Text.ElideRight
@@ -88,7 +95,7 @@ Rectangle {
                             anchors.verticalCenter: parent.verticalCenter
                             anchors.left: parent.left
                             anchors.leftMargin: 4
-                            width: parent.width
+                            width: parent.width -  anchors.leftMargin
                         }
                     }
                 }
@@ -101,7 +108,6 @@ Rectangle {
                             PropertyChanges {
                                 target: repoSync
                                 source: "qrc:/repo_on.png"
-
                             }
                         },
 
@@ -140,12 +146,12 @@ Rectangle {
         highlight:
         Item {
             anchors.left: parent.left
-            anchors.leftMargin: viewModel.cellHeight
+            anchors.leftMargin: widthRepoSync
             width: parent.width
             Rectangle {
                 color: sysPal.highlight
                 radius: 1
-                width: parent.width
+                width: parent.width - widthRepoSync
                 height: viewModel.cellHeight
             }
         }
