@@ -48,8 +48,8 @@ Menu
     Action
     {
         id: removeDirectoryAction
-        text: "&Remove"
-        shortcut: "Ctrl+R"
+        text: "&Delete"
+        shortcut: "Del"
         //       iconSource: "images/document-open.png"
         onTriggered: {
             removeDirectory()

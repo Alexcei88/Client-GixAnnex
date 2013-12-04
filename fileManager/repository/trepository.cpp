@@ -88,7 +88,7 @@ RESULT_EXEC_PROCESS TRepository::RemoveFile(const QString& file)
     DropContentFile(file);
     // а теперь удаляем и сам файл
     shellCommand->SetWorkingDirectory(this->localURL);
-    RESULT_EXEC_PROCESS result = shellCommand->RemoveFile(file, QFileInfo(file).isDir());
+    RESULT_EXEC_PROCESS result = shellCommand->RemoveFile(file, QFileInfo(dir.path() + "/" + file).isDir());
     if(result != NO_ERROR)
     {
         printf("Error git rm file: %s \n", file.toStdString().c_str());

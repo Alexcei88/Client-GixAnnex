@@ -96,18 +96,23 @@ FocusScope{
         }
         onGetContentDirectory:
         {
-            repository.getContentDirectory(view.currentItem.curFileName);
+            if(view.currentItem)
+                repository.getContentDirectory(view.currentItem.curFileName);
         }
         onDropContentDirectory:
         {
-            repository.dropContentDirectory(view.currentItem.curFileName);
+            if(view.currentItem)
+                repository.dropContentDirectory(view.currentItem.curFileName);
         }
         onRemoveDirectory:
         {
-            var fileName = view.currentItem.curFileName;
-            var text = "Do you really want to delete <i>" + fileName + "</i>?<br>";
-            if(message.showConfirmMessage("Warning", text))
-                repository.removeDirectory(fileName);
+            if(view.currentItem)
+            {
+                var fileName = view.currentItem.curFileName;
+                var text = "Do you really want to delete <i>" + fileName + "</i>?<br>";
+                if(message.showConfirmMessage("Warning", text))
+                    repository.removeDirectory(fileName);
+            }
         }
     }
 
@@ -117,7 +122,7 @@ FocusScope{
 
     BorderImage {
         anchors.fill: parent
-        source: "qrc:images/lineedit_bg.png"
+        source: Settings.style + "/../Base/images/editbox.png"
         border { left: 4; top: 4; right: 4; bottom: 4 }
         BorderImage {
             anchors.fill: parent
@@ -125,7 +130,7 @@ FocusScope{
             anchors.topMargin: -2
             anchors.rightMargin: 0
             anchors.bottomMargin: 1
-            source: "qrc:images/lineedit_bg_focus.png"
+            source: Settings.style + "/../Base/images/focusframe.png"
             visible: focusScope.activeFocus ? true : false
             border { left: 4; top: 4; right: 4; bottom: 4 }
         }
@@ -176,8 +181,14 @@ FocusScope{
         highlightMoveDuration: 0
         MouseArea {
             anchors.fill: parent
+            // разрешаем распостраняться сигналу по иерархии вверх
+            propagateComposedEvents: true
             onClicked: {
-                focusScope.focus = true; }
+                focusScope.focus = true;
+                // сигнал до конца не обработали, прокидываем по иерархии дальше
+                mouse.accepted = false;
+
+            }
         }
         delegate: Item
         {
