@@ -10,12 +10,6 @@ Rectangle {
 
     // СВО-ВА, ФУНКЦИИ И СИГНАЛЫ
     //-------------------------------------------------------------------------/
-    // обновление списка состояния синхронизации файлов у DirectoryView
-    function updateListFileSync(folder)
-    {
-        contenItem.updateListStateFileSync(folder);
-    }
-
     // функция проверки нахождения свойства folder в пределах корневого пути репозитория
     // чтобы выше корня репозитория не выходить
     function isSubRootRepositoryDirectory(folder)
@@ -28,8 +22,8 @@ Rectangle {
     width: 100
     height: 62
 
-    property var folderModel: contenItem.folderModel
-    property var folderView:  contenItem.folderView
+    property alias folderModel: contenItem.folderModel
+    property alias folderView:  contenItem.folderView
 
     SystemPalette { id: sysPal }
 

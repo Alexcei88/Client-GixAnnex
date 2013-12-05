@@ -55,7 +55,7 @@ const QString ResourceGenerator::GetResourcePathDirectoryView(const QMimeType& t
                  <<type.name().toStdString().c_str()<<". Это критическая ошибка."
                  "Программа будет закрыта."<<std::endl;
 #ifndef DEBUG
-        QCoreApplication::instance()->quit();
+        exit(1);
 #endif
     }
 }
@@ -73,7 +73,7 @@ const QString ResourceGenerator::GetResourcePathPropertyFile(const QMimeType& ty
                  <<type.name().toStdString().c_str()<<". Это критическая ошибка."
                  "Программа будет закрыта."<<std::endl;
 #ifndef DEBUG
-        QCoreApplication::instance()->quit();
+        exit(1);
 #endif
     }
 }

@@ -20,7 +20,7 @@ FocusScope{
 
     ControllerIcons {
         id: contrIcons
-        currentPath: dirModel.folder.toString()
+        currentPath: dirModel.folder
     }
 
     MessageBox{
@@ -40,7 +40,6 @@ FocusScope{
     {
         // меняем рабочую директорию у модели
         repository.currentPathRepo = path;
-        contrIcons.currentPath = path;
         dirModel.folder = path;
         folderView.currentIndex = -1;
         dirModel.lastIndex = -1;
@@ -54,20 +53,14 @@ FocusScope{
         return contrIcons.getPathIconsFileDirectoryView(path);
     }
 
-    // функция обновления списка состояния иконок
-    function updateListStateFileSync(folder)
-    {
-        contrIcons.currentPath = folder;
-    }
-
     // функция обновления состояния иконок у текущего списка
     function updateIconsStateFileSync()
     {
-        dirModel.updateModel();
-        if(dirModel.lastIndex < dirModel.count)
-        {
-            view.currentIndex = dirModel.lastIndex;
-        }
+        //dirModel.updateModel();
+//        if(dirModel.lastIndex < dirModel.count)
+//        {
+//            view.currentIndex = dirModel.lastIndex;
+//        }
     }
     // функция проверки нахождения свойства folder впределах корневого пути репозитория
     // чтобы выше корня репозитория не выходить
@@ -88,7 +81,6 @@ FocusScope{
             {
                 var fileName = view.currentItem.curFileName;
                 var folder = dirModel.folder == "file:///" ? dirModel.folder + fileName : dirModel.folder +"/" + fileName;
-                updateListStateFileSync(folder);
                 dirModel.folder = folder;
                 dirModel.lastIndex = -1;
                 view.currentIndex = -1;
@@ -181,6 +173,7 @@ FocusScope{
         highlightMoveDuration: 0
         MouseArea {
             anchors.fill: parent
+            acceptedButtons: Qt.LeftButton | Qt.RightButton
             // разрешаем распостраняться сигналу по иерархии вверх
             propagateComposedEvents: true
             onClicked: {
@@ -302,10 +295,9 @@ FocusScope{
                     if(dirModel.isFolder(model.index))
                     {
                         var folder = dirModel.folder == "file:///" ? dirModel.folder + curFileName : dirModel.folder +"/" + curFileName;
-                        updateListStateFileSync(folder);
+                        dirModel.folder = folder
                         dirModel.lastIndex = -1;
                         view.currentIndex = -1;
-                        dirModel.folder = folder
                     }
                 }
                 onEntered: {

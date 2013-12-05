@@ -32,6 +32,7 @@ ControllerIcons::~ControllerIcons()
 //----------------------------------------------------------------------------------------/
 QVariant ControllerIcons::getPathIconsFileDirectoryView(QUrl file) const
 {    
+    //std::cout<<"File = "<<file.toString().toStdString().c_str()<<std::endl;
     static const QMimeDatabase dataBase;
     const QFileInfo fileInfo(file.toLocalFile());
     const QMimeType type = dataBase.mimeTypeForFile(fileInfo);
@@ -89,15 +90,18 @@ void ControllerIcons::StopThreadIconsSync()
 //----------------------------------------------------------------------------------------/
 void ControllerIcons::OnChangeParentDirectory(QUrl curDir)
 {
+    std::cout<<"ChangeDir = "<<curDir.toString().toStdString().c_str()<<std::endl;
+
     if(curDir.isEmpty())
         return;
+
     assert(dir.exists(curDir.toLocalFile()));
     // посылаем модели сигнал о смене текущей директории отображения в текущем репозитории
     mainModel->ChangeCurrentViewDirectory(curDir.toLocalFile());
 
     dir.setPath(curDir.toLocalFile());
 
-    // обновляем полностю список состояния иконок синхронизации
+    // обновляем полностью список состояния иконок синхронизации
     UpdateStateIconsFileSync();
 }
 //----------------------------------------------------------------------------------------/
@@ -111,7 +115,7 @@ void ControllerIcons::UpdateStateIconsFileSync()
     {
         IRepository::PARAMETR_FILEFOLDER_GIT_ANNEX paramSyncCur = paramSync[*iterator];
         stateIconsFileSync[*iterator] = paramSyncCur.currentState;
-   }
+    }
 }
 //----------------------------------------------------------------------------------------/
 
