@@ -20,7 +20,7 @@ FocusScope{
 
     ControllerIcons {
         id: contrIcons
-        currentPath: dirModel.folder
+       // currentPath: dirModel.folder
     }
 
     MessageBox{
@@ -167,7 +167,7 @@ FocusScope{
         {
             // запускаем поток обновления состояния иконок
             contrIcons.startThreadIconsSync();
-            showPropertyFile("/")
+            //showPropertyFile("/")
         }
 
         highlightMoveDuration: 0
@@ -211,7 +211,7 @@ FocusScope{
                         anchors.left: parent.left
                         anchors.leftMargin: 2
                         source: "qrc:/synced.png"
-                        state: "SYNCING"
+                       // state: "SYNCING"
                     }
 
                     // различные состояния, в которых может находиться директория(или файл)
@@ -302,7 +302,7 @@ FocusScope{
                 }
                 onEntered: {
                     // посылаем сигнал, что необходимо вывести свойства объекта, на который навели
-                    showPropertyFile(curFileName)
+                   // showPropertyFile(curFileName)
                 }
             }
         }
