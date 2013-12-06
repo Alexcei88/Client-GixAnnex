@@ -26,28 +26,31 @@ public:
     void                    SetCurrentPathRepo(QUrl path) { currentPathRepo = path; emit currentPathRepoChanged(path);};
 
     /** @brief берет состояние репозитория */
-    Q_INVOKABLE QVariant    GetStateRepository(QUrl path) const;
+    Q_INVOKABLE QVariant    getStateRepository(QUrl path) const;
 
     /** @brief путь до репозитория по умолчанию */
-    Q_INVOKABLE QVariant    GetDefaultRepositoryPath() const;
+    Q_INVOKABLE QVariant    getDefaultRepositoryPath() const;
 
     /** @brief Начать клонирование репозитория */
-    Q_INVOKABLE QVariant    StartCloneRepository(QVariant localUlr, QVariant remoteURL, QVariant nameRepo);
+    Q_INVOKABLE QVariant    startCloneRepository(QVariant localUlr, QVariant remoteURL, QVariant nameRepo);
 
     /** @brief Отмена клонирования репозитория */
-    Q_INVOKABLE void        CancelCloneRepository() const;
+    Q_INVOKABLE void        cancelCloneRepository() const;
 
     /** @brief взять контент у файла(директории)*/
-    Q_INVOKABLE QVariant    GetContentDirectory(QUrl dir) const;
+    Q_INVOKABLE QVariant    getContentDirectory(QUrl dir) const;
 
     /** @brief удалить контент у файла(директории)*/
-    Q_INVOKABLE QVariant    DropContentDirectory(QUrl dir) const;
+    Q_INVOKABLE QVariant    dropContentDirectory(QUrl dir) const;
+
+    /** @brief удалить файл(директорию) из репозитория */
+    Q_INVOKABLE QVariant    removeDirectory(QUrl dir) const;
 
     /** @brief явяеться ли выбранный путь поддиректорией корневого пути репозитория*/
-    Q_INVOKABLE QVariant    DirIsSubRootDirRepository(QUrl dir) const;
+    Q_INVOKABLE QVariant    dirIsSubRootDirRepository(QUrl dir) const;
 
     /** @brief возвращает последнее сообщение об ошибке */
-    Q_INVOKABLE const QVariant GetLastError() const;
+    Q_INVOKABLE const QVariant getLastError() const;
 
 private:
     const QSharedPointer<ModelQmlAndCRepository>  model;

@@ -12,7 +12,7 @@ Item
     Text
     {
         id: option
-        text: qsTr("SDFGDFfdfdf:")        
+        text: qsTr("SDFGDFfdfdf:")
     }
 
     Text

@@ -33,6 +33,9 @@ public:
     /** @brief Удалить контент у файла(директории)*/
     GANN_DEFINE::RESULT_EXEC_PROCESS DropContentDirectory(const QString& dir) const;
 
+    /** @brief Удалить файл(директорию) из репозитория */
+    GANN_DEFINE::RESULT_EXEC_PROCESS RemoveDirectory(const QString& dir) const;
+
     /** @brief Сменить текущий репозиторий */
     void                ChangeCurrentRepository(const QString &dir) const;
 
@@ -43,9 +46,9 @@ public:
     const QMap<QString, IRepository::PARAMETR_FILEFOLDER_GIT_ANNEX>& GetParamSyncFileDir() const;
 
     /** @brief Дата посл модификации файла */
-    const QString       GetLastModifiedFile(const QUrl &file) const;
+    const QString       GetLastModifiedFile(const QString &file) const;
     /** @brief Размер файла */
-    const QString       GetSizeFile(const QUrl &file) const;
+    const QString       GetSizeFile(const QString &file) const;
 
     /** @brief Является ли выбранный путь поддиректорией корневого пути репозитория */
     bool                DirIsSubRootDirRepository(const QString& dir) const;

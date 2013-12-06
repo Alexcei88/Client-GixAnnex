@@ -12,10 +12,13 @@ Rectangle
     width: 900
     height:570
 
+    SystemPalette { id: sysPal }
+
+    color: sysPal.window
+
     Column
     {
         id: mainColumn
-        Keys.forwardTo: [windowContent, toolBar]
 
         spacing: 1
         visible: parent.visible
@@ -28,27 +31,27 @@ Rectangle
         RowLayout
         {
             id: rowToolBar
+            width: parent.width
             ToolBar
             {
                 id: toolBar
-                property var folderModel: windowContent.folderModel
-                property var folderView: windowContent.folderView
-
+                property alias folderModel: windowContent.folderModel
+                property alias folderView: windowContent.folderView
+                implicitWidth: parent.width
                 RowLayout
                 {
-                    width: parent.width
                     ToolButton{
                         iconSource:"qrc:back"
                         onClicked: {
                             var folder = toolBar.folderModel.parentFolder;
+                            console.log(folder)
                             // если итоговый путь будет подкорнем корня репозитория, то переходим назад
                             // иначе ничего не делаем
                             if(windowContent.isSubRootRepositoryDirectory(folder))
                             {
-                                windowContent.updateListFileSync(folder);
                                 toolBar.folderModel.folder = folder;
-                                toolBar.folderView.currentIndex = -1;
                                 toolBar.folderModel.lastIndex = -1;
+                                toolBar.folderView.currentIndex = -1;
                             }
                         }
                     }
@@ -66,21 +69,22 @@ Rectangle
                             }
                         }
                     }
+                    // фильтр вывода файлов(директории к сож нет)
+                    FilterBox
+                    {
+                        id: filterDir;
+                        onFilterChanges: {
+                            toolBar.folderModel.nameFilters = textFilter.toString() + "*";
+                            toolBar.folderView.currentIndex = -1;
+                            toolBar.folderModel.lastIndex = -1;
+                            toolBar.folderView.update();
+                        }
+                    }
+
                     ToolButton{
                         text: "аав1"
                     }
-                }
-            }
-            // фильтр вывода файлов(директории к сож нет)
-            FilterBox
-            {
-                id: filterDir;
-                onFilterChanges: {
-                    toolBar.folderModel.nameFilters = textFilter.toString() + "*";
-                    toolBar.folderView.currentIndex = -1;
-                    toolBar.folderModel.lastIndex = -1;
-                    toolBar.folderView.update();
-                }
+                }               
             }
         }
 

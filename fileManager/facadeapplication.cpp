@@ -3,14 +3,13 @@
 #include "MVC/Controller/controller_icons.h"
 #include "repository/trepository.h"
 #include "resourcegenerator.h"
-#include <qml/components/error_message/qmlerrormessage.h>
+#include <qml/components/message_box//qmlmessage.h>
 #include <qml/components/folder_model/folderlistmodel.h>
 
 #include <QQmlEngine>
 #include <QQmlComponent>
 #include <QTextStream>
 #include <QThreadPool>
-
 
 using namespace GANN_DEFINE;
 
@@ -46,7 +45,7 @@ FacadeApplication::FacadeApplication() :
     // интервал срабатывания тайминга(в миллисек)
     const int timeInterval = 20000;
     timeSync.setInterval(timeInterval);
-    timeSync.start();
+    //timeSync.start();
 }
 //----------------------------------------------------------------------------------------/
 FacadeApplication* FacadeApplication::getInstance()
@@ -289,7 +288,7 @@ void FacadeApplication::InitClassCAndQML()
 {
     qmlRegisterType<GANN_MVC::ControllerRepository>("Repository", 1, 0, "ControllerRepository");
     qmlRegisterType<GANN_MVC::ControllerIcons>("Icons", 1, 0, "ControllerIcons");
-    qmlRegisterType<QMLErrorMessage>("Error", 1, 0, "ErrorMessage");
+    qmlRegisterType<QMLMessage>("Message", 1, 0, "MessageBox");
     qmlRegisterType<QMLFolderListModel>("FolderListModel", 1, 0, "NewFolderListModel");
 }
 //----------------------------------------------------------------------------------------/

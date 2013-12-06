@@ -59,17 +59,36 @@ GANN_DEFINE::RESULT_EXEC_PROCESS ModelQmlAndCRepository::GetContentDirectory(con
         IRepository* curRepo = iterRepo->second.get();
         return curRepo->GetContentFile(dir);
     }
+    else{
+        assert("CurrentRepo is NULL" && false);
+    }
     return NO_ERROR;
 }
 //----------------------------------------------------------------------------------------/
 GANN_DEFINE::RESULT_EXEC_PROCESS ModelQmlAndCRepository::DropContentDirectory(const QString& dir) const
 {
-    std::cout<<dir.toStdString().c_str()<<std::endl;
     auto iterRepo = FacadeApplication::instance->currentRepository;
     if(iterRepo != FacadeApplication::instance->repository.end())
     {
         IRepository* curRepo = iterRepo->second.get();
         return curRepo->DropContentFile(dir);
+    }
+    else{
+        assert("CurrentRepo is NULL" && false);
+    }
+    return NO_ERROR;
+}
+//----------------------------------------------------------------------------------------/
+GANN_DEFINE::RESULT_EXEC_PROCESS ModelQmlAndCRepository::RemoveDirectory(const QString& dir) const
+{
+    auto iterRepo = FacadeApplication::instance->currentRepository;
+    if(iterRepo != FacadeApplication::instance->repository.end())
+    {
+        IRepository* curRepo = iterRepo->second.get();
+        return curRepo->RemoveFile(dir);
+    }
+    else{
+        assert("CurrentRepo is NULL" && false);
     }
     return NO_ERROR;
 }
@@ -102,9 +121,9 @@ const QMap<QString, IRepository::PARAMETR_FILEFOLDER_GIT_ANNEX> &ModelQmlAndCRep
     }
 }
 //----------------------------------------------------------------------------------------/
-const QString ModelQmlAndCRepository::GetLastModifiedFile(const QUrl& file) const
+const QString ModelQmlAndCRepository::GetLastModifiedFile(const QString &file) const
 {
-    const QFileInfo fileInfo(file.toString());
+    const QFileInfo fileInfo(file);
     if(!fileInfo.isFile() && fileInfo.isSymLink())
     {
         return "undefined";
@@ -112,9 +131,9 @@ const QString ModelQmlAndCRepository::GetLastModifiedFile(const QUrl& file) cons
     return fileInfo.lastModified().date().toString("dd.MM.yyyy");
 }
 //----------------------------------------------------------------------------------------/
-const QString ModelQmlAndCRepository::GetSizeFile(const QUrl& file) const
+const QString ModelQmlAndCRepository::GetSizeFile(const QString& file) const
 {
-    const QFileInfo fileInfo(file.toString());
+    const QFileInfo fileInfo(file);
     if(fileInfo.isFile())
     {
         quint64 nSize = fileInfo.size();
@@ -130,8 +149,8 @@ const QString ModelQmlAndCRepository::GetSizeFile(const QUrl& file) const
     else
     {
         static QDir _dir;
-        _dir.setFilter(QDir::NoDotAndDotDot | QDir::AllEntries);
-        _dir.setPath(file.toString());
+        _dir.setFilter(QDir::NoDotAndDotDot | QDir::AllDirs | QDir::Files | QDir::System);
+        _dir.setPath(file);
         assert(_dir.exists());
         // возвращаем сколько коренных item-ов в поддиректории
         return QString().setNum(_dir.count()) + " " + "items";

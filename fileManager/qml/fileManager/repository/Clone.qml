@@ -5,7 +5,7 @@ import QtQuick.Layouts 1.0
 import QtQuick.Dialogs 1.0
 import Repository 1.0
 import "../utils.js" as UtilsScript
-import Error 1.0
+import Message 1.0
 
 Rectangle
 {
@@ -15,7 +15,7 @@ Rectangle
 
     SystemPalette { id: sysPal }
 
-    ErrorMessage{
+    MessageBox{
         id: errorS
     }
 
@@ -174,24 +174,24 @@ Rectangle
                     {
                         // ошибка, поле не может быть пустым
                         var text1 = "Field 'Name' must be not empty";
-                        errorS.ShowErrorMessage(title, text1);
+                        errorS.showErrorMessage(title, text1);
                         return;
                     }
 
-                    var result = repository.StartCloneRepository(destUrl.text, sourсeUrl.text, valueNameRepo.text);
-                    var title = "Error Clone Repository"
+                    var result = repository.startCloneRepository(destUrl.text, sourсeUrl.text, valueNameRepo.text);
+                    title = "Error Clone Repository"
                     if(result === 5)
                     {
                         // директории назначения не существует, выдавать ошибку клонирования
                         var text = "Destinition URL <i>" + destUrl.text +"</i> not exist.<br>";
-                        var text1 = text + "Clone repository not execute!"
-                        errorS.ShowErrorMessage(title, text1);
+                        var text2 = text + "Clone repository not execute!"
+                        errorS.showErrorMessage(title, text2);
                     }
                     else if(result === 4)
                     {
                         // ошибка во время исполнения
-                        var text = repository.GetLastError();
-                        errorS.ShowErrorMessage(title, text);
+                        var text3 = repository.getLastError();
+                        errorS.showErrorMessage(title, text3);
                     }
                     else
                     {
@@ -209,7 +209,7 @@ Rectangle
                 anchors.fill: parent
                 onClicked:
                 {
-                    repository.CancelCloneRepository()
+                    repository.cancelCloneRepository()
                 }
             }
         }

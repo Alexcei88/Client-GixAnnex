@@ -21,6 +21,10 @@ private:
     void                StartGetContentFile();
     // конец скачивания файла
     void                EndGetContentFile();
+    // скачивание файла завершилось с ошибкой
+    void                ErrorGetContentFile();
+
+
 };
 
 #endif // PARSINGCOMMANDGET_H

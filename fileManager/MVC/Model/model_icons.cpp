@@ -18,6 +18,9 @@ ModelQmlAndCIcons::~ModelQmlAndCIcons()
 //----------------------------------------------------------------------------------------/
 void ModelQmlAndCIcons::UpdateFileSyncIcons()
 {
+    return;
+    // надо разбираться с многопоточностью, здесь идет обращение к общим неразделяемым ресурсам
+   #warning MULTI_THREAD_ERROR
     while(!exitThread)
     {
         if(FacadeApplication::getInstance()->systemTray)

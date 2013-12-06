@@ -10,12 +10,6 @@ Rectangle {
 
     // СВО-ВА, ФУНКЦИИ И СИГНАЛЫ
     //-------------------------------------------------------------------------/
-    // обновление списка состояния синхронизации файлов у DirectoryView
-    function updateListFileSync(folder)
-    {
-        contenItem.updateListStateFileSync(folder);
-    }
-
     // функция проверки нахождения свойства folder в пределах корневого пути репозитория
     // чтобы выше корня репозитория не выходить
     function isSubRootRepositoryDirectory(folder)
@@ -28,18 +22,16 @@ Rectangle {
     width: 100
     height: 62
 
-    property var folderModel: contenItem.folderModel
-    property var folderView:  contenItem.folderView
+    property alias folderModel: contenItem.folderModel
+    property alias folderView:  contenItem.folderView
 
-    Keys.forwardTo: [split]
+    SystemPalette { id: sysPal }
 
     SplitView
     {
         id: split
         anchors.fill: parent
         orientation: Qt.Horizontal
-        focus: true
-        Keys.forwardTo: [contenItem]
 
         // функция перезагрузки модели списка репозиториев
         function reloadModel()
@@ -53,7 +45,7 @@ Rectangle {
             width: parent.width/5
             Layout.minimumWidth: parent.width/8
             Layout.maximumWidth: 3 * parent.width/5
-            color: "#E6E6FA"
+            color: sysPal.window
             onSelectNewRepository:
             {
                 contenItem.changeParentFolder(path)
@@ -66,14 +58,13 @@ Rectangle {
             objectName: "directoryView"
             Layout.minimumWidth: parent.width/5
             Layout.fillWidth: true
-            color: "darkgray"
             width: 3 * parent.width/5
-            focus: true
             onShowPropertyFile:
             {
-                propertyFile.folderPath = UtilsScript.getFullStrPath(folderModel.folder.toString());
+                propertyFile.folderPath = folderModel.folder.toString();
                 propertyFile.updateData(currentName)
             }
+
         }
 
         // Вывод информации о файле,директории
@@ -83,7 +74,7 @@ Rectangle {
             width: parent.width/5
             Layout.minimumWidth: parent.width/5
             Layout.maximumWidth: 3 * parent.width/5
-            color: '#116062'
+            color: sysPal.window
 
             // инициализация представления
             folderView: windowContent.folderView

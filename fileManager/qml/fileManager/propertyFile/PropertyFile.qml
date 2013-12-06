@@ -1,5 +1,6 @@
 import QtQuick 2.1
 import QtQuick.Layouts 1.0
+import QtQuick.Controls 1.0
 import Icons 1.0
 
 Rectangle
@@ -18,6 +19,7 @@ Rectangle
     //-------------------------------------------------------------------------/
     property var folderView: null
     property string folderPath: ""
+    property string lastFileName: ""
 
     // сигнал, которые говорит, что нужно обновить данные о свойствах папки(файла)
     signal updateData(var currentName)
@@ -25,10 +27,19 @@ Rectangle
     {
         if(folderView) // проверка, инициализировали ли представление
         {
-            name.text = currentName;
+            if(lastFileName === currentName)
+                // у данного файла уже выведены параметр на экран, еще раз не выводим
+                return;
+
+            if(currentName === "/")
+                name.text = "Path To Repo";
+            else
+                name.text = currentName;
+
+            lastFileName = currentName;
             propertyWhereis.nameOption = "New Data";
-            propertyLastModified.valueOption = repositoryIcons.GetLastModifiedFile(folderPath + "/" + currentName);
-            propertySize.valueOption = repositoryIcons.GetSizeFile(folderPath + "/" + currentName);
+            propertyLastModified.valueOption = repositoryIcons.getLastModifiedFile(folderPath + "/" + currentName);
+            propertySize.valueOption = repositoryIcons.getSizeFile(folderPath + "/" + currentName);
             iconsImage.source = getResourceImage(currentName);
         }
     }
@@ -37,7 +48,7 @@ Rectangle
     function getResourceImage(fileName)
     {
         var path = folderPath + "/"+fileName;
-        return repositoryIcons.GetPathIconsFilePropertyFile(path);
+        return repositoryIcons.getPathIconsFilePropertyFile(path);
     }
     //-------------------------------------------------------------------------/
 
@@ -50,19 +61,20 @@ Rectangle
     width: parent.width
     height: parent.height
 
-    border.color: "black"
-    border.width: 1
-    radius: 5
+    onWidthChanged:
+    {
+        columnHead.width = width
+        separatorRect.width = width - 30
+    }
 
     ColumnLayout {
-
+        width: parent.width
         anchors.horizontalCenter: parent.horizontalCenter
         id: columnHead
 
         Image {
             id: iconsImage
             anchors.horizontalCenter: parent.horizontalCenter
-
         }
         Text
         {
@@ -70,6 +82,15 @@ Rectangle
             text: "FileName"
             anchors.horizontalCenter: parent.horizontalCenter
         }
+        // разделитель(взят из ToolBarStyle)
+        Rectangle {
+            id: separatorRect
+            width: parent.width - 30
+            height: 1
+            color: "#999"
+            anchors.horizontalCenter: parent.horizontalCenter
+        }
+
     }
 
     ColumnLayout
