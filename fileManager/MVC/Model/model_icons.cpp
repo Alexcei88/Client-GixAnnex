@@ -1,6 +1,5 @@
 #include "model_icons.h"
 #include "facadeapplication.h"
-#include <iostream>
 #include "../Controller/controller_icons.h"
 
 using namespace GANN_MVC;
@@ -19,21 +18,29 @@ ModelQmlAndCIcons::~ModelQmlAndCIcons()
 void ModelQmlAndCIcons::UpdateFileSyncIcons()
 {
     return;
-    // надо разбираться с многопоточностью, здесь идет обращение к общим неразделяемым ресурсам
-   #warning MULTI_THREAD_ERROR
+    FacadeApplication* facade = FacadeApplication::getInstance();
+    QMutex& mutex = FacadeApplication::threadModel.mutexSyncIcons;
+
     while(!exitThread)
     {
-        if(FacadeApplication::getInstance()->systemTray)
+        if(facade->systemTray)
         {
-            auto iterRepo = FacadeApplication::instance->currentRepository;
-            if(iterRepo != FacadeApplication::instance->repository.end())
+            // здесь захватить мьютексом потока синхронизации иконок
+            mutex.lock();
+
+            static int number = 0;
+            std::cout<<number++<<"Thread Work"<<std::endl;
+            auto iterRepo = facade->currentRepository;
+            if(iterRepo != facade->repository.end())
             {
                 IRepository* curRepo = iterRepo->second.get();
                 curRepo->UpdateParamSyncFileDir();
                 contrIcons->UpdateStateIconsFileSync();
             }
-            FacadeApplication::getInstance()->systemTray->ReLoadDirectoryView();
-            sleep(2);
+            facade->systemTray->ReLoadDirectoryView();
+
+            mutex.unlock();
+            sleep(3);
         }
     }
 }

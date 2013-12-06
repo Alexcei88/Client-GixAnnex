@@ -1,5 +1,8 @@
+// our stuff
 #include "controller_repository.h"
 #include "controller_icons.h"
+#include "facadeapplication.h"
+
 #include <iostream>
 
 using namespace GANN_MVC;
@@ -7,7 +10,14 @@ using namespace GANN_MVC;
 ControllerRepository::ControllerRepository( ):
     model(QSharedPointer<ModelQmlAndCRepository>(new ModelQmlAndCRepository()))
 {
-    QObject::connect(this, &ControllerRepository::currentPathRepoChanged, [=](QUrl dir){model->ChangeCurrentRepository(dir.toLocalFile()); });
+    QObject::connect(this, &ControllerRepository::currentPathRepoChanged, [=](QUrl dir)
+    {
+        QMutex& mutex = FacadeApplication::threadModel.mutexSyncIcons;
+        QMutexLocker mutexLocker(&mutex);
+        // здесь захватить мьютексом поток синхронизации иконки
+        model->ChangeCurrentRepository(dir.toLocalFile());
+
+    });
 }
 //----------------------------------------------------------------------------------------/
 QVariant ControllerRepository::getStateRepository(QUrl path) const

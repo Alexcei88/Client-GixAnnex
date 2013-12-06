@@ -13,6 +13,8 @@
 
 using namespace GANN_DEFINE;
 
+ThreadModel FacadeApplication::threadModel;
+
 FacadeApplication* FacadeApplication::instance = 0;
 //----------------------------------------------------------------------------------------/
 FacadeApplication::FacadeApplication() :

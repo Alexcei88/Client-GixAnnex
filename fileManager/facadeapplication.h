@@ -27,6 +27,7 @@
 #include "systemtray.h"
 #include "MVC/Model/model_repository.h"
 #include "MVC/Model/model_icons.h"
+#include "threadmodel.h"
 
 class IRepository;
 
@@ -36,10 +37,15 @@ class FacadeApplication: public QObject
 
 public:
     static FacadeApplication* getInstance();
-    static void     RemoveInstance();
+    static void         RemoveInstance();
     ~FacadeApplication();
 
-    void            SetSystemTray(SystemTray* systemTray) { this->systemTray = systemTray; }
+    /** @brief модель для работы с потоками, содержащая переменный синхронизации */
+    static ThreadModel  threadModel;
+
+    /** @brief установка системного трея для фасада, он создается извне */
+    void                SetSystemTray(SystemTray* systemTray) { this->systemTray = systemTray; }
+
     // классы модели MVC объявим другом для нашего фасада(
     // принято такое архитектурное решение, что все методы фасада сделать приватными, и дать доступ только к моделям MVC,
     // т.к кроме модели никто не может уведомлять о новых событиях, действиях, происходящие на уровне представления)

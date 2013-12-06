@@ -37,7 +37,6 @@ SOURCES += main.cpp \
     MVC/Controller/controller_icons.cpp \
     MVC/Model/model_icons.cpp \
     parsing_command_out/parsingcommandempty.cpp \
-   # qml/components/folder_model/myqdeclarativefolderlistmodelprivate.cpp
     qml/components/folder_model/folderlistmodel.cpp \
     qml/components/message_box/qmlmessage.cpp
 
@@ -84,9 +83,9 @@ HEADERS += \
     iniparser/iniparser.h \
     iniparser/dictionary.h \
     parsing_command_out/parsingcommandempty.h \
-  #  qml/components/folder_model/myqdeclarativefolderlistmodelprivate.h
     qml/components/folder_model/folderlistmodel.h \
-    qml/components/message_box/qmlmessage.h
+    qml/components/message_box/qmlmessage.h \
+    threadmodel.h
 
 # Включаем поддержку С++11
 QMAKE_CXXFLAGS += -std=c++0x
