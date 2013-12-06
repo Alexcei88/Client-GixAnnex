@@ -34,25 +34,34 @@ FocusScope{
     // сигнал, что нужно показать свойства у директории
     signal showPropertyFile(var currentName)
 
+    //------------------------------------------------------------------------/
     // сигнал о смене родительской директории
-    signal changeParentFolder(string path)
-    onChangeParentFolder:
+    signal changeRepository(string path)
+    onChangeRepository:
     {
         // меняем рабочую директорию у модели
         repository.currentPathRepo = path;
+        changeParentFolder(path)
         dirModel.folder = path;
         folderView.currentIndex = -1;
         dirModel.lastIndex = -1;
         showPropertyFile("/")
     }
-
+    //------------------------------------------------------------------------/
     // функция взятия пути до иконки в зависимости от mymetype файла
     function getResourceImage(fileName)
     {
         var path = dirModel.folder.toString() + "/" + fileName;
         return contrIcons.getPathIconsFileDirectoryView(path);
     }
-
+    //------------------------------------------------------------------------/
+    // функция смены отображаемой директории в классе ControllertIcons
+    // (currentPath должна поменяться до того, как установиться новый folder у модели)
+    function changeParentFolder(path)
+    {
+        contrIcons.currentPath = path
+    }
+    //------------------------------------------------------------------------/
     // функция обновления состояния иконок у текущего списка
     function updateIconsStateFileSync()
     {
@@ -62,6 +71,7 @@ FocusScope{
 //            view.currentIndex = dirModel.lastIndex;
 //        }
     }
+    //------------------------------------------------------------------------/
     // функция проверки нахождения свойства folder впределах корневого пути репозитория
     // чтобы выше корня репозитория не выходить
     function isSubRootRepositoryDirectory(path)
@@ -81,6 +91,7 @@ FocusScope{
             {
                 var fileName = view.currentItem.curFileName;
                 var folder = dirModel.folder == "file:///" ? dirModel.folder + fileName : dirModel.folder +"/" + fileName;
+                changeParentFolder(folder)
                 dirModel.folder = folder;
                 dirModel.lastIndex = -1;
                 view.currentIndex = -1;
@@ -167,7 +178,7 @@ FocusScope{
         {
             // запускаем поток обновления состояния иконок
             contrIcons.startThreadIconsSync();
-            //showPropertyFile("/")
+            showPropertyFile("/")
         }
 
         highlightMoveDuration: 0
@@ -211,7 +222,7 @@ FocusScope{
                         anchors.left: parent.left
                         anchors.leftMargin: 2
                         source: "qrc:/synced.png"
-                       // state: "SYNCING"
+                        state: "SYNCING"
                     }
 
                     // различные состояния, в которых может находиться директория(или файл)
@@ -295,6 +306,7 @@ FocusScope{
                     if(dirModel.isFolder(model.index))
                     {
                         var folder = dirModel.folder == "file:///" ? dirModel.folder + curFileName : dirModel.folder +"/" + curFileName;
+                        changeParentFolder(folder)
                         dirModel.folder = folder
                         dirModel.lastIndex = -1;
                         view.currentIndex = -1;
@@ -302,7 +314,7 @@ FocusScope{
                 }
                 onEntered: {
                     // посылаем сигнал, что необходимо вывести свойства объекта, на который навели
-                   // showPropertyFile(curFileName)
+                    showPropertyFile(curFileName)
                 }
             }
         }
