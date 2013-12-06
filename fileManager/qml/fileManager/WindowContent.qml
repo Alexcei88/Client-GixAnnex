@@ -17,6 +17,11 @@ Rectangle {
         return contenItem.isSubRootRepositoryDirectory(folder);
     }
     //-------------------------------------------------------------------------/
+    function changeParentFolder(folder)
+    {
+        contenItem.changeParentFolder(folder);
+    }
+    //-------------------------------------------------------------------------/
 
     id: windowContent
     width: 100
@@ -48,7 +53,7 @@ Rectangle {
             color: sysPal.window
             onSelectNewRepository:
             {
-                contenItem.changeParentFolder(path)
+                contenItem.changeRepository(path)
                 propertyFile.folderPath = path;
             }
         }

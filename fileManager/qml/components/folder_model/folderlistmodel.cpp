@@ -60,8 +60,8 @@ QMLFolderListModel::QMLFolderListModel(QObject *parent):
             , this, SLOT(handleDataChanged(const QModelIndex&,const QModelIndex&)));
     connect(&d->model, SIGNAL(modelReset()), this, SLOT(refresh()));
     connect(&d->model, SIGNAL(layoutChanged()), this, SLOT(refresh()));
-    connect(&watcher, SIGNAL(directoryChanged(QString)), this, SLOT(fullRefresh()));
-    connect(&watcher, SIGNAL(fileChanged(QString)), this, SLOT(fullRefresh()));
+    connect(&watcher, SIGNAL(directoryChanged(QString)), this, SLOT(fullRefresh()), Qt::DirectConnection);
+    connect(&watcher, SIGNAL(fileChanged(QString)), this, SLOT(fullRefresh()), Qt::DirectConnection);
 
     setShowDotAndDotDot(false);
 }
@@ -98,16 +98,20 @@ void QMLFolderListModel::setFolder(const QUrl &folder)
     if (folder == d->folder)
         return;
 
+    QUrl oldFolder = d->folder;
     QModelIndex index = d->model.index(folder.toLocalFile());
     if ((index.isValid() && d->model.isDir(index)) || folder.toLocalFile().isEmpty())
     {
-        // настраиваем watcher
-        if(!d->folder.isEmpty())
-            watcher.removePath(d->folder.toLocalFile());
-        watcher.addPath(folder.toLocalFile());
         d->folder = folder;
+        // настраиваем watcher
+        if(!oldFolder.isEmpty())
+        {
+            // удаляем старый путь, за которым следили
+            watcher.removePath(oldFolder.toLocalFile());
+        }
+        watcher.addPath(folder.toLocalFile());
         d->model.refresh();
-        emit folderChanged();
+    //    emit folderChanged();
     }
 }
 //----------------------------------------------------------------------------------------/

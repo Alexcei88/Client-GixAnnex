@@ -44,11 +44,11 @@ Rectangle
                         iconSource:"qrc:back"
                         onClicked: {
                             var folder = toolBar.folderModel.parentFolder;
-                            console.log(folder)
                             // если итоговый путь будет подкорнем корня репозитория, то переходим назад
                             // иначе ничего не делаем
                             if(windowContent.isSubRootRepositoryDirectory(folder))
                             {
+                                windowContent.changeParentFolder(folder)
                                 toolBar.folderModel.folder = folder;
                                 toolBar.folderModel.lastIndex = -1;
                                 toolBar.folderView.currentIndex = -1;
@@ -63,6 +63,8 @@ Rectangle
                             {
                                 var fileName = toolBar.folderView.currentItem.curFileName;
                                 var folder = toolBar.folderModel.folder == "file:///" ? toolBar.folderModel.folder + fileName : toolBar.folderModel.folder +"/" + fileName;;
+
+                                windowContent.changeParentFolder(folder)
                                 toolBar.folderModel.folder = folder;
                                 toolBar.folderView.currentIndex = -1;
                                 toolBar.folderModel.lastIndex = -1;
