@@ -28,6 +28,9 @@ public:
     /** @brief берет состояние репозитория */
     Q_INVOKABLE QVariant    getStateRepository(QUrl path) const;
 
+    /** @brief включает/выключает синхронизацию репозитория */
+    Q_INVOKABLE void        setEnableRepository(bool enable) const;
+
     /** @brief путь до репозитория по умолчанию */
     Q_INVOKABLE QVariant    getDefaultRepositoryPath() const;
 

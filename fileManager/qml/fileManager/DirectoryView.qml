@@ -20,7 +20,6 @@ FocusScope{
 
     ControllerIcons {
         id: contrIcons
-       // currentPath: dirModel.folder
     }
 
     MessageBox{
@@ -65,11 +64,11 @@ FocusScope{
     // функция обновления состояния иконок у текущего списка
     function updateIconsStateFileSync()
     {
-        //dirModel.updateModel();
-//        if(dirModel.lastIndex < dirModel.count)
-//        {
-//            view.currentIndex = dirModel.lastIndex;
-//        }
+        dirModel.updateModel();
+        if(dirModel.lastIndex < dirModel.count)
+        {
+            view.currentIndex = dirModel.lastIndex;
+        }
     }
     //------------------------------------------------------------------------/
     // функция проверки нахождения свойства folder впределах корневого пути репозитория
@@ -149,6 +148,11 @@ FocusScope{
         showDirsFirst: true
         showOnlyReadable: false
         sortField: NewFolderListModel.Type
+
+        Component.onCompleted: {
+            contrIcons.currentPath = folder
+        }
+
     }
 
     GridView
@@ -265,8 +269,6 @@ FocusScope{
 
                                 }
                             }
-
-                            // папка с автосинхронизацией контента(посмотреть, это будет отдельным состоянием, или просто как)
                         ]
                 }
 

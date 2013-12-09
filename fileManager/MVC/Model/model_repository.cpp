@@ -32,6 +32,20 @@ const QString ModelQmlAndCRepository::GetStateRepository(const QString& path) co
     return repository->GetState();
 }
 //----------------------------------------------------------------------------------------/
+void ModelQmlAndCRepository::SetEnableRepository(bool enable) const
+{
+    auto iterRepo = FacadeApplication::instance->currentRepository;
+    if(iterRepo != FacadeApplication::instance->repository.end())
+    {
+        IRepository* curRepo = iterRepo->second.get();
+        enable ? curRepo->SetState(IRepository::Synced) : curRepo->SetState(IRepository::Disable_sincing);
+        FacadeApplication::instance->systemTray->ReLoadListRepository();
+    }
+    else{
+        assert("CurrentRepo is NULL" && false);
+    }
+}
+//----------------------------------------------------------------------------------------/
 GANN_DEFINE::RESULT_EXEC_PROCESS ModelQmlAndCRepository::CloneRepository(const QString& localURL, const QString& remoteURL, const QString& nameRepo)
 {
     FacadeApplication *facade = FacadeApplication::getInstance();

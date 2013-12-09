@@ -16,13 +16,17 @@ ControllerRepository::ControllerRepository( ):
         QMutexLocker mutexLocker(&mutex);
         // здесь захватить мьютексом поток синхронизации иконки
         model->ChangeCurrentRepository(dir.toLocalFile());
-
     });
 }
 //----------------------------------------------------------------------------------------/
 QVariant ControllerRepository::getStateRepository(QUrl path) const
 {
     return model->GetStateRepository(path.toString());
+}
+//----------------------------------------------------------------------------------------/
+void ControllerRepository::setEnableRepository(bool enable) const
+{
+    model->SetEnableRepository(enable);
 }
 //----------------------------------------------------------------------------------------/
 QVariant ControllerRepository::getDefaultRepositoryPath() const

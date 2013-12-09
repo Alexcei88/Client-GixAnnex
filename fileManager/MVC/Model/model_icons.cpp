@@ -17,7 +17,6 @@ ModelQmlAndCIcons::~ModelQmlAndCIcons()
 //----------------------------------------------------------------------------------------/
 void ModelQmlAndCIcons::UpdateFileSyncIcons()
 {
-    return;
     FacadeApplication* facade = FacadeApplication::getInstance();
     QMutex& mutex = FacadeApplication::threadModel.mutexSyncIcons;
 
@@ -28,8 +27,6 @@ void ModelQmlAndCIcons::UpdateFileSyncIcons()
             // здесь захватить мьютексом потока синхронизации иконок
             mutex.lock();
 
-            static int number = 0;
-            std::cout<<number++<<"Thread Work"<<std::endl;
             auto iterRepo = facade->currentRepository;
             if(iterRepo != facade->repository.end())
             {
@@ -40,7 +37,7 @@ void ModelQmlAndCIcons::UpdateFileSyncIcons()
             facade->systemTray->ReLoadDirectoryView();
 
             mutex.unlock();
-            sleep(3);
+            sleep(1);
         }
     }
 }
