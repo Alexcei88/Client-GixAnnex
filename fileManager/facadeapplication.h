@@ -83,8 +83,6 @@ private:
     /** @brief Функция-слот, срабатывающий при тайм-айте таймера синхронизации данных*/
     void                TimeOutTimeSync();
 
-    /** @brief путь к файлу конфигов репозитория, формат xml */
-    const QString       pathFileRepoConfig;
     /** @brief вектор репозиториев, хранящиеся на клиенте */
     std::map<QString, std::unique_ptr<IRepository> > repository;
     /** @brief итератор на текущий репозиторий */
@@ -95,11 +93,15 @@ private:
 
     /** @brief системный трей */
     SystemTray*         systemTray;
-    QFile               fileRepoConfig;
 
     /** @brief последнее сообщение об ошибке в клиенте */
     QString             lastError;
 
+    /** @brief Возвращает путь к готовому файлу конфигурации */
+    const QString       GetPathToFileConfig() const;
+
+    /** @brief Герерирует пустой файл конфигурации */
+    void                GenerateEmptyFileConfig(const QString file) const;
 
 signals:
     void            stopThreadIconsSync();

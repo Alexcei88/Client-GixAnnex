@@ -59,6 +59,9 @@ public:
     /** @brief возвращает последнее сообщение об ошибке */
     const QString&      GetLastError() const;
 
+    /** @brief возвращает полный путь до файла конфигурации */
+    const QString GetFullPathFileConfigRepositories() const;
+
 };
 
 }

@@ -34,7 +34,7 @@ FocusScope {
     {
         property int lastIndex: 0;
         id: modelRepoXML
-        source: "../../ganx-repository.xml"
+        source: repository.pathRepoConfig
         query: "/reporegistry/repo"
 
         XmlRole { name: "localPath"; query: "@localUrl/string()"; }

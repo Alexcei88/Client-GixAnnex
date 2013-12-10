@@ -88,16 +88,13 @@ void ControllerIcons::StopThreadIconsSync()
 //----------------------------------------------------------------------------------------/
 void ControllerIcons::OnChangeParentDirectory(QUrl curDir)
 {
-    if(curDir.isEmpty())
+    if(curDir.isEmpty() or !(QDir(curDir.toLocalFile()).exists()));
         return;
 
     assert(dir.exists(curDir.toLocalFile()));
 
     QMutex& mutex = FacadeApplication::threadModel.mutexSyncIcons;
     QMutexLocker mutexLocker(&mutex);
-
-    static int number = 0;
-    std::cout<<number++<<"Change Parent Directory"<<curDir.toLocalFile().toStdString().c_str()<<std::endl;
 
     // посылаем модели сигнал о смене текущей директории отображения в текущем репозитории
     mainModel->ChangeCurrentViewDirectory(curDir.toLocalFile());

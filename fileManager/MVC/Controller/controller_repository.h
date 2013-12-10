@@ -22,8 +22,13 @@ public:
 
     Q_PROPERTY(QUrl currentPathRepo READ GetCurrentPathRepo WRITE SetCurrentPathRepo NOTIFY currentPathRepoChanged)
 
+    // путь до файла с конфигурацией репозиториев
+    Q_PROPERTY(QVariant pathRepoConfig READ GetPathRepoConfig CONSTANT)
+
     QUrl                    GetCurrentPathRepo() { return currentPathRepo; };
     void                    SetCurrentPathRepo(QUrl path) { currentPathRepo = path; emit currentPathRepoChanged(path);};
+
+    const QVariant          GetPathRepoConfig() const;
 
     /** @brief берет состояние репозитория */
     Q_INVOKABLE QVariant    getStateRepository(QUrl path) const;

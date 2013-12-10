@@ -69,4 +69,9 @@ const QVariant ControllerRepository::getLastError() const
     return model->GetLastError();
 }
 //----------------------------------------------------------------------------------------/
+const QVariant ControllerRepository::GetPathRepoConfig() const
+{
+    return model->GetFullPathFileConfigRepositories();
+}
+//----------------------------------------------------------------------------------------/
 

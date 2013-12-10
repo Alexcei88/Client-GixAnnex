@@ -187,4 +187,12 @@ const QString& ModelQmlAndCRepository::GetLastError() const
     return FacadeApplication::getInstance()->lastError;
 }
 //----------------------------------------------------------------------------------------/
+const QString ModelQmlAndCRepository::GetFullPathFileConfigRepositories() const
+{
+    const QString fileName = "ganx-repository.xml";
+    const QString fullPath = QDir::homePath() + "/.config/GitAnnexClient/" + fileName;
+    assert(QFile::exists(fullPath));
+    return fullPath;
+}
+//----------------------------------------------------------------------------------------/
 
