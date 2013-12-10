@@ -72,6 +72,12 @@ void IRepository::SetState(const STATE_REPOSITORY& state)
 {
     QByteArray str = metaEnumState.valueToKey(int(state));
     paramSyncRepo.currentState = QString(str);
+
+    if(state == Disable_sincing)
+    {
+        // репозитория отключен, никаких дейтсвия выполнить над ним нельзя
+        // слежение за ним тоже надо отключать
+    }
 }
 //----------------------------------------------------------------------------------------/
 QString IRepository::GetState() const

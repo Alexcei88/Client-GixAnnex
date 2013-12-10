@@ -50,6 +50,10 @@ Rectangle {
                 contenItem.changeRepository(path)
                 propertyFile.folderPath = path;
             }
+            onSetEnableRepository: {
+                contenItem.enabled = enable;
+            }
+
         }
         DirectoryView
         {
@@ -63,7 +67,6 @@ Rectangle {
                 propertyFile.folderPath = folderModel.folder.toString();
                 propertyFile.updateData(currentName)
             }
-
         }
 
         // Вывод информации о файле,директории

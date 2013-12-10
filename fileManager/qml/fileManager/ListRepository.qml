@@ -12,6 +12,9 @@ FocusScope {
     // сигнал о выборе нового репозитория
     signal selectNewRepository(string path)
 
+    // сигнал об вкл/выкл режиме синхронизации репозитория
+    signal setEnableRepository(bool enable)
+
     function reloadModel()
     {
         modelRepoXML.reload();
@@ -20,6 +23,7 @@ FocusScope {
     function switchEnableRepository(enabled)
     {
         repository.setEnableRepository(enabled)
+        setEnableRepository(enabled)
     }
 
     ControllerRepository {
@@ -47,11 +51,13 @@ FocusScope {
 
     SystemPalette { id: sysPal }
 
+    id: focusScope
     Rectangle
     {
         id: rect
         color: sysPal.window
         anchors.fill: parent
+        focus: true
 
         Menu
         {
@@ -78,10 +84,6 @@ FocusScope {
             MenuItem { action: removeRepository }
         }
 
-        MouseArea {
-
-        }
-
         GridView
         {
             id: viewModel
@@ -94,7 +96,17 @@ FocusScope {
 
             anchors.fill: parent
 
-            keyNavigationWraps: true
+            MouseArea {
+                anchors.fill: parent
+                // разрешаем распостраняться сигналу по иерархии вверх
+                propagateComposedEvents: true
+                onClicked: {
+                    focusScope.focus = true;
+                    // сигнал до конца не обработали, прокидываем по иерархии дальше
+                    mouse.accepted = false;
+                }
+            }
+
             delegate:
                 Item
                 {
@@ -195,6 +207,7 @@ FocusScope {
                                 viewModel.currentIndex = model.index
                                 modelRepoXML.lastIndex = model.index
                                 selectNewRepository(localPath)
+                                setEnableRepository(repository.getStateRepository(localPath) !== "Disable_sincing")
                             }
                             if(mouse.button === Qt.RightButton)
                             {
@@ -225,8 +238,11 @@ FocusScope {
             Component.onCompleted:
             {
                 if(GridView.isCurrentItem)
+                {
                     selectNewRepository(localPath)
+                    setEnableRepository(repository.getStateRepository(localPath) !== "Disable_sincing" )
+                }
             }
-        }
+        } // end GridView
     }
 }

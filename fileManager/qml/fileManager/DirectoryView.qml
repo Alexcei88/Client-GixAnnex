@@ -301,7 +301,10 @@ FocusScope{
                     view.currentIndex = model.index;
                     dirModel.lastIndex = model.index;
                     if(mouse.button === Qt.RightButton)
+                    {
                         menudirectory.popup()
+                        focusScope.focus = true
+                    }
                 }
                 onDoubleClicked:
                 {
