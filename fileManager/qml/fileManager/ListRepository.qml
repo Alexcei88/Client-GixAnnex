@@ -17,30 +17,32 @@ FocusScope {
         modelRepoXML.reload();
     }
     //-------------------------------------------------------------------------/
-    function switchEnableRepository(path, enabled)
+    function switchEnableRepository(enabled)
     {
         repository.setEnableRepository(enabled)
-        if(enabled)
-        {
-            console.log("Enable Repository")
-        }
-        else
-        {
-            console.log("Disable Repository")
-        }
     }
 
     ControllerRepository {
         id: repository
     }
 
-    XmlListModel{
+    XmlListModel
+    {
+        property int lastIndex: 0;
         id: modelRepoXML
         source: "../../ganx-repository.xml"
         query: "/reporegistry/repo"
 
-        XmlRole { name: "localPath"; query: "@localUrl/string()" }
-        XmlRole { name: "nameRepo"; query: "@nameRepo/string()" }
+        XmlRole { name: "localPath"; query: "@localUrl/string()"; }
+        XmlRole { name: "nameRepo"; query: "@nameRepo/string()"; }
+        onStatusChanged: {
+            if(status === XmlListModel.Ready)
+            {
+                // устанавливаем индекс, который был до этого
+                if(modelRepoXML.count > lastIndex)
+                    viewModel.currentIndex = lastIndex;
+            }
+        }
     }
 
     SystemPalette { id: sysPal }
@@ -58,11 +60,10 @@ FocusScope {
             Action
             {
                 id: switchEnable
-                property string enableText: "&Enable Syncronization"
-                text: enableText
+                text: ""
                 onTriggered:
                 {
-                    switchEnableRepository(text === "&Enable Syncronization" ? false : true);
+                    switchEnableRepository(text === "&Enable Syncronization" ? true : false);
                 }
             }
             Action
@@ -91,7 +92,6 @@ FocusScope {
             cellHeight: 32
             cellWidth: parent.width
 
-            currentIndex: 0
             anchors.fill: parent
 
             keyNavigationWraps: true
@@ -119,7 +119,7 @@ FocusScope {
                             id: repoSync
                             anchors.leftMargin: 5
                             source: "qrc:/repo_on.png"
-                            state: "SYNCING"
+                            state: "SYNCED"
                             Component.onCompleted: {
                                 widthRepoSync = width
                                 itemText.width = viewItem.width - width
@@ -150,6 +150,7 @@ FocusScope {
                             State {
                                 name: "SYNCING"
                                 when: { repository.getStateRepository(localPath) === "Syncing";}
+                               // StateChangeScript { script: console.log("state = SYNCING") }
                                 PropertyChanges {
                                     target: repoSync
                                     source: "qrc:/repo_on.png"
@@ -160,6 +161,7 @@ FocusScope {
                             State {
                                 name: "SYNCED"
                                 when: { repository.getStateRepository(localPath) === "Synced";}
+                               // StateChangeScript { script: console.log("state = SYNCED") }
                                 PropertyChanges {
                                     target: repoSync
                                     source: "qrc:/repo_on.png"
@@ -170,6 +172,7 @@ FocusScope {
                             State {
                                 name: "DISABLE SYNC"
                                 when: { repository.getStateRepository(localPath) === "Disable_sincing";}
+                                //StateChangeScript { script: console.log("state = DISABLE_SYNC") }
                                 PropertyChanges {
                                     target: repoSync
                                     source: "qrc:/images/clear.png"
@@ -190,16 +193,18 @@ FocusScope {
                             {
                                 // выбрали новый репозиторий
                                 viewModel.currentIndex = model.index
+                                modelRepoXML.lastIndex = model.index
                                 selectNewRepository(localPath)
                             }
                             if(mouse.button === Qt.RightButton)
                             {
-                                if(repoSync.state === "DISABLE_SYNC")
-                                    switchEnable.enableText = "&Enable Syncronization";
+                                if(repository.getStateRepository(localPath) === "Disable_sincing")
+                                    switchEnable.text = "&Enable Syncronization";
                                 else
-                                    switchEnable.enableText = "&Disable Syncronization";
+                                    switchEnable.text = "&Disable Syncronization";
                                 menuRepository.popup()
                             }
+
                         }
                     }
                 }
