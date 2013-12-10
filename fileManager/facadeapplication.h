@@ -6,7 +6,7 @@
  * В ЕГО ОТВЕТСТВЕННОСТЬ ВХОДИТ:
  * - КОНФИГУРИРОВАНИЕ ПРИЛОЖЕНИЯ
  * - ЧТЕНИЕ СПИСКА РЕПОЗИТОРИЕВ ИЗ КОНФИНУРАЦИОННОГО ФАЙЛА
- * - ЗАПУСК ПОТОКА СИНХРОНИЗАЦИИ СУЩЕСТВУЮЩИХ РЕПОЗИТОРИЕВ
+ * - ЗАПУСК СИНХРОНИЗАЦИИ ДАННЫХ
  */
 
 // std stuff
@@ -40,7 +40,7 @@ public:
     static void         RemoveInstance();
     ~FacadeApplication();
 
-    /** @brief модель для работы с потоками, содержащая переменный синхронизации */
+    /** @brief модель для работы с потоками, содержащая переменные синхронизации */
     static ThreadModel  threadModel;
 
     /** @brief установка системного трея для фасада, он создается извне */
@@ -77,18 +77,18 @@ private:
     /** @brief начать клонирование репозитория */
     GANN_DEFINE::RESULT_EXEC_PROCESS StartCloneRepository(QString& localURL, const QString& remoteURL, const QString& nameRepo);
 
-    /** @brief Сменить итератор текущий репозиторий */
+    /** @brief Сменить итератор, указывающий на текущий репозиторий */
     void                ChangeCurrentRepository(const QString &dir);
 
-    /** @brief Функция-слот, срабатывающий при тайм-айте таймера синхронизации данных*/
+    /** @brief Функция-слот, срабатывающий при тайм-ауте таймера синхронизации данных*/
     void                TimeOutTimeSync();
 
-    /** @brief вектор репозиториев, хранящиеся на клиенте */
+    /** @brief вектор зарегистрированных репозиториев */
     std::map<QString, std::unique_ptr<IRepository> > repository;
     /** @brief итератор на текущий репозиторий */
     std::map<QString, std::unique_ptr<IRepository> >::iterator currentRepository;
 
-    /** @brief таймер, отвественный за синхронизацию контента с другими репозиториями */
+    /** @brief таймер синхронизации */
     QTimer              timeSync;
 
     /** @brief системный трей */
@@ -97,14 +97,14 @@ private:
     /** @brief последнее сообщение об ошибке в клиенте */
     QString             lastError;
 
-    /** @brief Возвращает путь к готовому файлу конфигурации */
+    /** @brief Возвращает путь к файлу конфигурации */
     const QString       GetPathToFileConfig() const;
 
-    /** @brief Герерирует пустой файл конфигурации */
+    /** @brief Генерирует пустой файл конфигурации */
     void                GenerateEmptyFileConfig(const QString file) const;
 
 signals:
-    void            stopThreadIconsSync();
+    void                stopThreadIconsSync();
 
 
 };

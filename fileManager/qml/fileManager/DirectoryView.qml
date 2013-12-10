@@ -77,7 +77,6 @@ FocusScope{
     {
         return repository.dirIsSubRootDirRepository(path)
     }
-
     //-------------------------------------------------------------------------/
 
     SystemPalette { id: sysPal }
@@ -182,7 +181,7 @@ FocusScope{
         {
             // запускаем поток обновления состояния иконок
             contrIcons.startThreadIconsSync();
-            showPropertyFile("/")
+            //showPropertyFile("/")
         }
 
         highlightMoveDuration: 0

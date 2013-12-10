@@ -90,7 +90,7 @@ private:
     Q_DISABLE_COPY(QMLFolderListModel);
     QMLFolderListModelPrivate* d;
     QHash<int, QByteArray> roles_;
-    QFileSystemWatcher watcher;
+    QFileSystemWatcher  watcher;
 };
 
 

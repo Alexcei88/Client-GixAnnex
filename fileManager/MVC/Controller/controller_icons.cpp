@@ -59,6 +59,7 @@ QVariant ControllerIcons::getSizeFile(QUrl file) const
 //----------------------------------------------------------------------------------------/
 void ControllerIcons::startThreadIconsSync()
 {
+    return;
     if(thread != 0 && thread->isRunning())
         return;
 
