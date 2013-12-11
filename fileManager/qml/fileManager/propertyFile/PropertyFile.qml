@@ -18,11 +18,10 @@ Rectangle
     // СВО-ВА, СИГНАЛЫ, МЕТОДЫ
     //-------------------------------------------------------------------------/
     property var folderView: null
-    property string folderPath: ""
     property string lastFileName: ""
 
     // сигнал, которые говорит, что нужно обновить данные о свойствах папки(файла)
-    signal updateData(var currentName)
+    signal updateData(var fullPath, var currentName)
     onUpdateData:
     {
         if(folderView) // проверка, инициализировали ли представление
@@ -31,32 +30,13 @@ Rectangle
                 // у данного файла уже выведены параметр на экран, еще раз не выводим
                 return;
 
-            if(currentName === "/")
-                name.text = "Path To Repo";
-            else
-                name.text = currentName;
-
+            name.text = currentName;
             lastFileName = currentName;
-            propertyWhereis.nameOption = "New Data";
-            propertyLastModified.valueOption = repositoryIcons.getLastModifiedFile(folderPath + "/" + currentName);
-            propertySize.valueOption = repositoryIcons.getSizeFile(folderPath + "/" + currentName);
-            iconsImage.source = getResourceImage(currentName);
+            propertyLastModified.valueOption = repositoryIcons.getLastModifiedFile(fullPath);
+            propertySize.valueOption = repositoryIcons.getSizeFile(fullPath);
+            iconsImage.source = repositoryIcons.getPathIconsFilePropertyFile(fullPath);
         }
     }
-
-    // функция взятия пути до иконки в зависимости от mymetype файла
-    function getResourceImage(fileName)
-    {
-        var path = folderPath + "/"+fileName;
-        return repositoryIcons.getPathIconsFilePropertyFile(path);
-    }
-    //-------------------------------------------------------------------------/
-
-//        BorderImage {
-//            source: "qrc:images/lineedit_bg.png"
-//            width: parent.width; height: parent.height
-//            border { left: 4; top: 4; right: 4; bottom: 4 }
-//        }
 
     width: parent.width
     height: parent.height
@@ -104,15 +84,6 @@ Rectangle
         anchors.topMargin: 5
         anchors.horizontalCenter: columnHead.horizontalCenter
         anchors.horizontalCenterOffset: -maxWidthNameField
-
-        PropertyValue
-        {
-            id: propertyWhereis
-            nameOption: "WhereIs: "
-            valueOption: "here"
-            widthFieldOption: column.maxWidthNameField
-            height: 20
-        }
 
         PropertyValue
         {

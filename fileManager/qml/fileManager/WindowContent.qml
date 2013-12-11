@@ -47,8 +47,7 @@ Rectangle {
             Layout.maximumWidth: 3 * parent.width/5
             onSelectNewRepository:
             {
-                contenItem.changeRepository(path)
-                propertyFile.folderPath = path;
+                contenItem.changeRepository(path, name)
             }
             onSetEnableRepository: {
                 contenItem.enabled = enable;
@@ -64,8 +63,7 @@ Rectangle {
             width: 3 * parent.width/5
             onShowPropertyFile:
             {
-                propertyFile.folderPath = folderModel.folder.toString();
-                propertyFile.updateData(currentName)
+                propertyFile.updateData(folder, currentName )
             }
         }
 

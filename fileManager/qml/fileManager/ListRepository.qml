@@ -10,7 +10,7 @@ FocusScope {
     //-------------------------------------------------------------------------/
     property int widthRepoSync: 0
     // сигнал о выборе нового репозитория
-    signal selectNewRepository(string path)
+    signal selectNewRepository(string path, string name)
 
     // сигнал об вкл/выкл режиме синхронизации репозитория
     signal setEnableRepository(bool enable)
@@ -39,12 +39,23 @@ FocusScope {
 
         XmlRole { name: "localPath"; query: "@localUrl/string()"; }
         XmlRole { name: "nameRepo"; query: "@nameRepo/string()"; }
+
         onStatusChanged: {
             if(status === XmlListModel.Ready)
             {
                 // устанавливаем индекс, который был до этого
                 if(modelRepoXML.count > lastIndex)
+                {
                     viewModel.currentIndex = lastIndex;
+                    var localPath = modelRepoXML.get(lastIndex).localPath
+                    var nameRepo = modelRepoXML.get(lastIndex).nameRepo
+                    selectNewRepository(localPath, nameRepo)
+                    setEnableRepository(repository.getStateRepository(localPath) !== "Disable_sincing" )
+                }
+                else
+                {
+                    setEnableRepository(false);
+                }
             }
         }
     }
@@ -206,7 +217,7 @@ FocusScope {
                                 // выбрали новый репозиторий
                                 viewModel.currentIndex = model.index
                                 modelRepoXML.lastIndex = model.index
-                                selectNewRepository(localPath)
+                                selectNewRepository(localPath, nameRepo)
                                 setEnableRepository(repository.getStateRepository(localPath) !== "Disable_sincing")
                             }
                             if(mouse.button === Qt.RightButton)
@@ -217,7 +228,6 @@ FocusScope {
                                     switchEnable.text = "&Disable Syncronization";
                                 menuRepository.popup()
                             }
-
                         }
                     }
                 }
@@ -235,14 +245,6 @@ FocusScope {
             }
             highlightMoveDuration: 0
 
-            Component.onCompleted:
-            {
-                if(GridView.isCurrentItem)
-                {
-                    selectNewRepository(localPath)
-                    setEnableRepository(repository.getStateRepository(localPath) !== "Disable_sincing" )
-                }
-            }
         } // end GridView
     }
 }

@@ -31,11 +31,11 @@ FocusScope{
     property alias folderModel: dirModel
     property alias folderView: view
     // сигнал, что нужно показать свойства у директории
-    signal showPropertyFile(var currentName)
+    signal showPropertyFile(var folder, var currentName)
 
     //------------------------------------------------------------------------/
     // сигнал о смене родительской директории
-    signal changeRepository(string path)
+    signal changeRepository(string path, string name)
     onChangeRepository:
     {
         // меняем рабочую директорию у модели
@@ -44,7 +44,7 @@ FocusScope{
         dirModel.folder = path;
         folderView.currentIndex = -1;
         dirModel.lastIndex = -1;
-        showPropertyFile("/")
+        showPropertyFile("file://" + path, name)
     }
     //------------------------------------------------------------------------/
     // функция взятия пути до иконки в зависимости от mymetype файла
@@ -181,7 +181,6 @@ FocusScope{
         {
             // запускаем поток обновления состояния иконок
             contrIcons.startThreadIconsSync();
-            //showPropertyFile("/")
         }
 
         highlightMoveDuration: 0
@@ -318,7 +317,7 @@ FocusScope{
                 }
                 onEntered: {
                     // посылаем сигнал, что необходимо вывести свойства объекта, на который навели
-                    showPropertyFile(curFileName)
+                    showPropertyFile(dirModel.folder, curFileName)
                 }
             }
         }
