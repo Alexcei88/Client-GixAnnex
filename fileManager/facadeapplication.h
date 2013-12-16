@@ -12,10 +12,6 @@
 // std stuff
 #include <map>
 
-// boost stuff
-#include <boost/shared_ptr.hpp>
-#include <boost/make_shared.hpp>
-
 // Qt stuff
 #include <QString>
 #include <QFile>
@@ -63,10 +59,13 @@ private:
     /** @brief Загрузка репозиториев из сохраненных конфигов */
     void                LoadRepositories();
 
-    /** @brief Сохранения репозитория в конфигах */
+    /** @brief Сохранения нового репозитория в конфигах */
     void                SaveRepository(const QString& localURL, const QString& remoteURL, const QString& nameRepo,
                                        const bool autosync = true, const bool autosyncContent = true
-                                       );
+                                       ) const;
+
+    /** @brief Сохранения параметров репозиториев в конфигах */
+    void                SaveOptionsRepositories();
 
     /** @brief Запуск/Остановка демона просмотра(watch) за директориями у репозиториев */
     void                WatchRepositories(const bool start = true) const;

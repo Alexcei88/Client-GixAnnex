@@ -70,14 +70,19 @@ RESULT_EXEC_PROCESS IRepository::StopWatchRepository() const
 //----------------------------------------------------------------------------------------/
 void IRepository::SetState(const STATE_REPOSITORY& state)
 {
-    QByteArray str = metaEnumState.valueToKey(int(state));
-    paramSyncRepo.currentState = QString(str);
-
     if(state == Disable_sincing)
     {
         // репозитория отключен, никаких дейтсвия выполнить над ним нельзя
         // слежение за ним тоже надо отключать
+        paramSyncRepo.autosync = false;
     }
+    else if(state == Synced)
+    {
+        paramSyncRepo.autosync = true;
+    }
+    QByteArray str = metaEnumState.valueToKey(int(state));
+    paramSyncRepo.currentState = QString(str);
+
 }
 //----------------------------------------------------------------------------------------/
 QString IRepository::GetState() const

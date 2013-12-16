@@ -89,7 +89,7 @@ void ControllerIcons::StopThreadIconsSync()
 //----------------------------------------------------------------------------------------/
 void ControllerIcons::OnChangeParentDirectory(QUrl curDir)
 {
-    if(curDir.isEmpty() or !(QDir(curDir.toLocalFile()).exists()));
+    if(curDir.isEmpty())
         return;
 
     assert(dir.exists(curDir.toLocalFile()));

@@ -66,6 +66,8 @@ FacadeApplication::~FacadeApplication()
     // останавливаем поток синхронизации иконок
     emit stopThreadIconsSync();
 
+    SaveOptionsRepositories();
+
 #warning NOT_WORK
     // все остальные задачи нужно убивать к чертовой матери, и останавливать демоны
     // ждем секунду, чтобы QThreadPool уничтожил все свои потоки
@@ -142,7 +144,7 @@ void FacadeApplication::LoadRepositories()
 //----------------------------------------------------------------------------------------/
 void FacadeApplication::SaveRepository(const QString& localURL, const QString& remoteURL, const QString& nameRepo,
                                        const bool autosync, const bool autosyncContent
-                                       )
+                                       ) const
 {
     QDomDocument doc;
 
@@ -198,6 +200,64 @@ void FacadeApplication::SaveRepository(const QString& localURL, const QString& r
     }
     // теперь устанавливаем этот элемент как дочерний к элементу newRepo
     newRepo.appendChild(paramSync);
+
+    fileRepoConfig.reset();
+    QTextStream(&fileRepoConfig) << doc.toString();
+    fileRepoConfig.close();
+}
+//----------------------------------------------------------------------------------------/
+void FacadeApplication::SaveOptionsRepositories()
+{
+    QDomDocument doc;
+
+    QFile fileRepoConfig(GetPathToFileConfig());
+
+    if(!fileRepoConfig.open(QIODevice::ReadWrite))
+    {
+        std::cout<<fileRepoConfig.errorString().toStdString().c_str()<<std::endl;
+        printf("ERROR: Unable to open file. Repositories was not save!!!");
+        exit(1);
+        return;
+    }
+
+    if(!doc.setContent(&fileRepoConfig))
+    {
+        printf("ERROR: file parsing error!!!");
+        fileRepoConfig.close();
+        exit(1);
+        return;
+    }
+
+    QDomElement elRepoRegistry = doc.firstChildElement("reporegistry");
+    QDomNodeList listRepo = elRepoRegistry.elementsByTagName("repo");
+    assert(unsigned(listRepo.size()) == repository.size());
+
+    for(int countRepo = 0; countRepo < listRepo.size(); ++countRepo)
+    {
+        // парсим и заполняем вектор репозиториев
+        QDomNamedNodeMap nodeMap = listRepo.at(countRepo).attributes();
+        assert(nodeMap.count() == 3);
+
+        QDomAttr attrLocalUrl = nodeMap.namedItem("localUrl").toAttr();
+        const QString localUrl = attrLocalUrl.value();
+
+        const IRepository* repo = repository[localUrl].get();
+        const bool autoSync = repo->GetParamSyncRepository();
+        const bool autoSyncContent = repo->GetParamSyncContentRepository();
+
+        // читаем список параметров автосинхронизации
+        {
+            QDomNodeList nodeSync = listRepo.at(countRepo).childNodes();
+            assert(nodeSync.size() == 1);
+            QDomNamedNodeMap nodeSyncMap = nodeSync.at(0).attributes();
+            assert(nodeSyncMap.count() == 2);
+
+            QDomAttr attrSyncRepo = nodeSyncMap.namedItem("autosync").toAttr();
+            attrSyncRepo.setValue(QString::number(autoSync));
+            QDomAttr attrSyncRepoContent = nodeSyncMap.namedItem("autosyncContent").toAttr();
+            attrSyncRepoContent.setValue(QString::number(autoSyncContent));
+        }
+    }
 
     fileRepoConfig.reset();
     QTextStream(&fileRepoConfig) << doc.toString();

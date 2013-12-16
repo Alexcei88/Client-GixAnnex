@@ -11,7 +11,6 @@ QMLFolderListModelPrivate::QMLFolderListModelPrivate():
     nameFilters << QLatin1String("*");
     // запрещаем разруливание символических ссылок(нам это не нужно)
     model.setResolveSymlinks(false);
-
 }
 //----------------------------------------------------------------------------------------/
 void QMLFolderListModelPrivate::UpdateSorting()
@@ -68,7 +67,8 @@ QMLFolderListModel::QMLFolderListModel(QObject *parent):
 //----------------------------------------------------------------------------------------/
 QMLFolderListModel::~QMLFolderListModel()
 {
-    watcher.removePath(d->folder.toLocalFile());
+    if(!d->folder.isEmpty())
+        watcher.removePath(d->folder.toLocalFile());
     delete d;
 }
 //----------------------------------------------------------------------------------------/
@@ -81,7 +81,6 @@ void QMLFolderListModel::componentComplete()
 {
     if (!d->folder.isValid() || d->folder.toLocalFile().isEmpty() || !QDir().exists(d->folder.toLocalFile()))
         d->count = 0;
-        //            setFolder(QUrl(QLatin1String("file://")+QDir::currentPath()));
 
     if (!d->folderIndex.isValid())
     {
