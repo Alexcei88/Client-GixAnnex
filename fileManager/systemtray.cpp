@@ -68,9 +68,8 @@ bool SystemTray::ReLoadListRepository() const
     if(mainView)
     {
         QObjectList parent = mainView->rootObject()->children();
-        QObjectList parentItem = parent[0]->children();
-        QObjectList itemChildren = parentItem[2]->children();
-        return QMetaObject::invokeMethod(itemChildren[0], "reloadModel");
+        QList<QObject*> object = parent[1]->findChildren<QObject*>(QString("listRepository"));
+        return QMetaObject::invokeMethod(object[0], "reloadModel");
     }
     return false;
 }

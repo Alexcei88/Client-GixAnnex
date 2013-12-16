@@ -23,8 +23,9 @@ public:
     enum STATE_REPOSITORY
     {
             Syncing = 0,        // идет синхронизация
-            Synced = 1,         // синхронизация включена и выполнена
-            Disable_sincing = 2 // синхронизация выключена
+            Synced,             // синхронизация включена и выполнена
+            SyncedError,        // при синхронизации была ошибка
+            Disable_sincing     // синхронизация выключена
     };
 
     // состояния файла
@@ -74,8 +75,11 @@ public:
     void                SetParamSyncRepository(const bool& autosync, const bool& autosyncContent);
 
     /** @brief взятие параметров автосинхронизации репозитория */
-    bool                GetParamSyncRepository() const { return paramSyncRepo.autosync; };
-    bool                GetParamSyncContentRepository() const { return paramSyncRepo.autosyncContent; };
+    inline bool          GetParamSyncRepository() const { return paramSyncRepo.autosync; }
+    inline bool          GetParamSyncContentRepository() const { return paramSyncRepo.autosyncContent; }
+
+    /** @brief Возвращает локальный путь, по которому храниться репозиторий */
+    inline QString       GetLocalURL() const { return localURL; }
 
     /**
     @brief клонирование репозитория

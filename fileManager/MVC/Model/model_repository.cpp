@@ -32,6 +32,20 @@ const QString ModelQmlAndCRepository::GetStateRepository(const QString& path) co
     return repository->GetState();
 }
 //----------------------------------------------------------------------------------------/
+void ModelQmlAndCRepository::SetEnableRepository(bool enable) const
+{
+    auto iterRepo = FacadeApplication::instance->currentRepository;
+    if(iterRepo != FacadeApplication::instance->repository.end())
+    {
+        IRepository* curRepo = iterRepo->second.get();
+        enable ? curRepo->SetState(IRepository::Synced) : curRepo->SetState(IRepository::Disable_sincing);
+        FacadeApplication::instance->systemTray->ReLoadListRepository();
+    }
+    else{
+        assert("CurrentRepo is NULL" && false);
+    }
+}
+//----------------------------------------------------------------------------------------/
 GANN_DEFINE::RESULT_EXEC_PROCESS ModelQmlAndCRepository::CloneRepository(const QString& localURL, const QString& remoteURL, const QString& nameRepo)
 {
     FacadeApplication *facade = FacadeApplication::getInstance();
@@ -171,6 +185,14 @@ bool ModelQmlAndCRepository::DirIsSubRootDirRepository(const QString& dir) const
 const QString& ModelQmlAndCRepository::GetLastError() const
 {
     return FacadeApplication::getInstance()->lastError;
+}
+//----------------------------------------------------------------------------------------/
+const QString ModelQmlAndCRepository::GetFullPathFileConfigRepositories() const
+{
+    const QString fileName = "ganx-repository.xml";
+    const QString fullPath = QDir::homePath() + "/.config/GitAnnexClient/" + fileName;
+    assert(QFile::exists(fullPath));
+    return fullPath;
 }
 //----------------------------------------------------------------------------------------/
 

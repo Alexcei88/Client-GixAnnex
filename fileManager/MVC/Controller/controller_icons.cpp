@@ -12,7 +12,6 @@
 #include <assert.h>
 #include <iostream>
 
-
 using namespace GANN_MVC;
 
 QThread* ControllerIcons::thread = 0l;
@@ -40,7 +39,7 @@ QVariant ControllerIcons::getPathIconsFileDirectoryView(QUrl file) const
 }
 //----------------------------------------------------------------------------------------/
 QVariant ControllerIcons::getPathIconsFilePropertyFile(QUrl file) const
-{
+{    
     static const QMimeDatabase dataBase;
     const QFileInfo fileInfo(file.toLocalFile());
     const QMimeType type = dataBase.mimeTypeForFile(fileInfo);
@@ -60,6 +59,7 @@ QVariant ControllerIcons::getSizeFile(QUrl file) const
 //----------------------------------------------------------------------------------------/
 void ControllerIcons::startThreadIconsSync()
 {
+    return;
     if(thread != 0 && thread->isRunning())
         return;
 
@@ -93,6 +93,10 @@ void ControllerIcons::OnChangeParentDirectory(QUrl curDir)
         return;
 
     assert(dir.exists(curDir.toLocalFile()));
+
+    QMutex& mutex = FacadeApplication::threadModel.mutexSyncIcons;
+    QMutexLocker mutexLocker(&mutex);
+
     // посылаем модели сигнал о смене текущей директории отображения в текущем репозитории
     mainModel->ChangeCurrentViewDirectory(curDir.toLocalFile());
 

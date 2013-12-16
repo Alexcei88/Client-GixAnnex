@@ -18,7 +18,7 @@ Item
     Text
     {
         id: value
-        text: qsTr("dffddsffdfffffff")
+        text: qsTr("")
         anchors.left: option.right
         anchors.leftMargin: 10
     }

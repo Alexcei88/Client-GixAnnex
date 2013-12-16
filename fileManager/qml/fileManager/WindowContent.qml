@@ -38,24 +38,21 @@ Rectangle {
         anchors.fill: parent
         orientation: Qt.Horizontal
 
-        // функция перезагрузки модели списка репозиториев
-        function reloadModel()
-        {
-            listRepository.reloadModel();
-        }
-
         ListRepository
         {
             id: listRepository
+            objectName: "listRepository"
             width: parent.width/5
             Layout.minimumWidth: parent.width/8
             Layout.maximumWidth: 3 * parent.width/5
-            color: sysPal.window
             onSelectNewRepository:
             {
-                contenItem.changeRepository(path)
-                propertyFile.folderPath = path;
+                contenItem.changeRepository(path, name)
             }
+            onSetEnableRepository: {
+                contenItem.enabled = enable;
+            }
+
         }
         DirectoryView
         {
@@ -66,10 +63,8 @@ Rectangle {
             width: 3 * parent.width/5
             onShowPropertyFile:
             {
-                propertyFile.folderPath = folderModel.folder.toString();
-                propertyFile.updateData(currentName)
+                propertyFile.updateData(folder, currentName )
             }
-
         }
 
         // Вывод информации о файле,директории

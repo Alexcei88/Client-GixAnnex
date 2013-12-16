@@ -58,8 +58,13 @@ RESULT_EXEC_PROCESS TRepository::DeleteRepository()
 //----------------------------------------------------------------------------------------/
 RESULT_EXEC_PROCESS TRepository::GetContentFile(const QString& file)
 {
+    // если репозитория выключен, то ничего не делаем
+    if(paramSyncRepo.currentState == "Disable_sincing")
+        return IGNORE_COMMAND;
+
     // сразу же заносим данную директорию в список файлов, получающих контент в данный момент времени
 //    emit this->startGetContentFile(file);
+
     shellCommand->SetWorkingDirectory(this->localURL);
     RESULT_EXEC_PROCESS result = shellCommand->GetContentFile(file, this);
     if(result != NO_ERROR)
@@ -72,6 +77,9 @@ RESULT_EXEC_PROCESS TRepository::GetContentFile(const QString& file)
 //----------------------------------------------------------------------------------------/
 RESULT_EXEC_PROCESS TRepository::DropContentFile(const QString& file)
 {
+    if(paramSyncRepo.currentState == "Disable_sincing")
+        return IGNORE_COMMAND;
+
     shellCommand->SetWorkingDirectory(this->localURL);
     RESULT_EXEC_PROCESS result = shellCommand->DropContentFile(file, this);
     if(result != NO_ERROR)
@@ -84,6 +92,9 @@ RESULT_EXEC_PROCESS TRepository::DropContentFile(const QString& file)
 //----------------------------------------------------------------------------------------/
 RESULT_EXEC_PROCESS TRepository::RemoveFile(const QString& file)
 {
+    if(paramSyncRepo.currentState == "Disable_sincing")
+        return IGNORE_COMMAND;
+
     // сначала удалим контент
     DropContentFile(file);
     // а теперь удаляем и сам файл
@@ -99,6 +110,9 @@ RESULT_EXEC_PROCESS TRepository::RemoveFile(const QString& file)
 //----------------------------------------------------------------------------------------/
 RESULT_EXEC_PROCESS TRepository::WhereisFile(const QString& file)
 {
+    if(paramSyncRepo.currentState == "Disable_sincing")
+        return IGNORE_COMMAND;
+
     shellCommand->SetWorkingDirectory(this->localURL);
     RESULT_EXEC_PROCESS result = shellCommand->WhereisFiles(file, this);
     if(result != NO_ERROR)
@@ -111,6 +125,9 @@ RESULT_EXEC_PROCESS TRepository::WhereisFile(const QString& file)
 //----------------------------------------------------------------------------------------/
 GANN_DEFINE::RESULT_EXEC_PROCESS TRepository::SyncRepository() const
 {
+    if(paramSyncRepo.currentState == "Disable_sincing")
+        return IGNORE_COMMAND;
+
     shellCommand->SetWorkingDirectory(this->localURL);
     RESULT_EXEC_PROCESS result = shellCommand->Sync();
     if(result != NO_ERROR)

@@ -11,7 +11,6 @@ QMLFolderListModelPrivate::QMLFolderListModelPrivate():
     nameFilters << QLatin1String("*");
     // запрещаем разруливание символических ссылок(нам это не нужно)
     model.setResolveSymlinks(false);
-
 }
 //----------------------------------------------------------------------------------------/
 void QMLFolderListModelPrivate::UpdateSorting()
@@ -68,7 +67,8 @@ QMLFolderListModel::QMLFolderListModel(QObject *parent):
 //----------------------------------------------------------------------------------------/
 QMLFolderListModel::~QMLFolderListModel()
 {
-    watcher.removePath(d->folder.toLocalFile());
+    if(!d->folder.isEmpty())
+        watcher.removePath(d->folder.toLocalFile());
     delete d;
 }
 //----------------------------------------------------------------------------------------/
@@ -80,7 +80,7 @@ void QMLFolderListModel::classBegin()
 void QMLFolderListModel::componentComplete()
 {
     if (!d->folder.isValid() || d->folder.toLocalFile().isEmpty() || !QDir().exists(d->folder.toLocalFile()))
-            setFolder(QUrl(QLatin1String("file://")+QDir::currentPath()));
+        d->count = 0;
 
     if (!d->folderIndex.isValid())
     {
@@ -111,7 +111,6 @@ void QMLFolderListModel::setFolder(const QUrl &folder)
         }
         watcher.addPath(folder.toLocalFile());
         d->model.refresh();
-    //    emit folderChanged();
     }
 }
 //----------------------------------------------------------------------------------------/
@@ -195,8 +194,6 @@ void QMLFolderListModel::updateModel()
 //----------------------------------------------------------------------------------------/
 void QMLFolderListModel::refresh()
 {
-//    static int number = 0;
-//    std::cout<<++number<<"RefreshModel"<<std::endl;
     d->folderIndex = QModelIndex();
     if (d->count)
     {
@@ -204,12 +201,20 @@ void QMLFolderListModel::refresh()
         d->count = 0;
         emit endRemoveRows();
     }
-    d->folderIndex = d->model.index(d->folder.toLocalFile());
-    int newcount = d->model.rowCount(d->folderIndex);
-    if (newcount) {
-        emit beginInsertRows(QModelIndex(), 0, newcount-1);
-        d->count = newcount;
-        emit endInsertRows();
+    if(d->folder.toLocalFile().isEmpty())
+    {
+        // указан невалидный путь
+        d->count = 0;
+    }
+    else
+    {
+        d->folderIndex = d->model.index(d->folder.toLocalFile());
+        int newcount = d->model.rowCount(d->folderIndex);
+        if (newcount) {
+            emit beginInsertRows(QModelIndex(), 0, newcount-1);
+            d->count = newcount;
+            emit endInsertRows();
+        }
     }
 }
 //----------------------------------------------------------------------------------------/
@@ -220,7 +225,8 @@ void QMLFolderListModel::fullRefresh()
 //----------------------------------------------------------------------------------------/
 void QMLFolderListModel::inserted(const QModelIndex &index, int start, int end)
 {
-    if (index == d->folderIndex) {
+    if (index == d->folderIndex)
+    {
         emit beginInsertRows(QModelIndex(), start, end);
         d->count = d->model.rowCount(d->folderIndex);
         emit endInsertRows();

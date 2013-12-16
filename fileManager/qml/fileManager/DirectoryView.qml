@@ -20,7 +20,6 @@ FocusScope{
 
     ControllerIcons {
         id: contrIcons
-       // currentPath: dirModel.folder
     }
 
     MessageBox{
@@ -32,11 +31,11 @@ FocusScope{
     property alias folderModel: dirModel
     property alias folderView: view
     // сигнал, что нужно показать свойства у директории
-    signal showPropertyFile(var currentName)
+    signal showPropertyFile(var folder, var currentName)
 
     //------------------------------------------------------------------------/
     // сигнал о смене родительской директории
-    signal changeRepository(string path)
+    signal changeRepository(string path, string name)
     onChangeRepository:
     {
         // меняем рабочую директорию у модели
@@ -45,7 +44,7 @@ FocusScope{
         dirModel.folder = path;
         folderView.currentIndex = -1;
         dirModel.lastIndex = -1;
-        showPropertyFile("/")
+        showPropertyFile("file://" + path, name)
     }
     //------------------------------------------------------------------------/
     // функция взятия пути до иконки в зависимости от mymetype файла
@@ -65,11 +64,11 @@ FocusScope{
     // функция обновления состояния иконок у текущего списка
     function updateIconsStateFileSync()
     {
-        //dirModel.updateModel();
-//        if(dirModel.lastIndex < dirModel.count)
-//        {
-//            view.currentIndex = dirModel.lastIndex;
-//        }
+        dirModel.updateModel();
+        if(dirModel.lastIndex < dirModel.count)
+        {
+            view.currentIndex = dirModel.lastIndex;
+        }
     }
     //------------------------------------------------------------------------/
     // функция проверки нахождения свойства folder впределах корневого пути репозитория
@@ -78,7 +77,6 @@ FocusScope{
     {
         return repository.dirIsSubRootDirRepository(path)
     }
-
     //-------------------------------------------------------------------------/
 
     SystemPalette { id: sysPal }
@@ -149,6 +147,11 @@ FocusScope{
         showDirsFirst: true
         showOnlyReadable: false
         sortField: NewFolderListModel.Type
+
+        Component.onCompleted: {
+            contrIcons.currentPath = folder
+        }
+
     }
 
     GridView
@@ -178,7 +181,6 @@ FocusScope{
         {
             // запускаем поток обновления состояния иконок
             contrIcons.startThreadIconsSync();
-            showPropertyFile("/")
         }
 
         highlightMoveDuration: 0
@@ -265,8 +267,6 @@ FocusScope{
 
                                 }
                             }
-
-                            // папка с автосинхронизацией контента(посмотреть, это будет отдельным состоянием, или просто как)
                         ]
                 }
 
@@ -299,7 +299,10 @@ FocusScope{
                     view.currentIndex = model.index;
                     dirModel.lastIndex = model.index;
                     if(mouse.button === Qt.RightButton)
+                    {
                         menudirectory.popup()
+                        focusScope.focus = true
+                    }
                 }
                 onDoubleClicked:
                 {
@@ -314,7 +317,7 @@ FocusScope{
                 }
                 onEntered: {
                     // посылаем сигнал, что необходимо вывести свойства объекта, на который навели
-                    showPropertyFile(curFileName)
+                    showPropertyFile(dirModel.folder, curFileName)
                 }
             }
         }

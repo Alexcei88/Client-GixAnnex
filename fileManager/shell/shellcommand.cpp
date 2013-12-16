@@ -77,6 +77,7 @@ RESULT_EXEC_PROCESS ShellCommand::WatchRepository(const QString& path, const boo
 RESULT_EXEC_PROCESS ShellCommand::AddFile(const QString& path) const
 {
     const QString strCommand = baseCommand + "add " + path;
+    return NO_ERROR;
 //    return shell->ExecuteProcess(strCommand, receiverParsing[ADD_FILE]);
 }
 //----------------------------------------------------------------------------------------/

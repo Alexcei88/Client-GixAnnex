@@ -13,26 +13,24 @@
 
 using namespace GANN_DEFINE;
 
+ThreadModel FacadeApplication::threadModel;
+
 FacadeApplication* FacadeApplication::instance = 0;
 //----------------------------------------------------------------------------------------/
 FacadeApplication::FacadeApplication() :
     QObject()
-  , pathFileRepoConfig("ganx-repository.xml")
   , currentRepository(repository.end())
   , systemTray(0l)
-//    pathFileRepoConfig(":/config/config_repo")
 {
-    fileRepoConfig.setFileName(pathFileRepoConfig);
-
-    // генерируем список путей до иконок
-    ResourceGenerator::getInstance();
-
     // разрешаем выполнять задачу git-annex только в одном потоке
     // больше 1 процесса git-annex создать все равно не даст
     QThreadPool::globalInstance()->setMaxThreadCount(1);
 
     // загружаем из конфигов существующие репозитории
     LoadRepositories();
+
+    // генерируем список путей до иконок
+    ResourceGenerator::getInstance();
 
     // запускаем демон за просмотром директорий с репозиториями
     WatchRepositories();
@@ -68,6 +66,8 @@ FacadeApplication::~FacadeApplication()
     // останавливаем поток синхронизации иконок
     emit stopThreadIconsSync();
 
+    SaveOptionsRepositories();
+
 #warning NOT_WORK
     // все остальные задачи нужно убивать к чертовой матери, и останавливать демоны
     // ждем секунду, чтобы QThreadPool уничтожил все свои потоки
@@ -84,20 +84,20 @@ FacadeApplication::~FacadeApplication()
 //----------------------------------------------------------------------------------------/
 void FacadeApplication::LoadRepositories()
 {
-    // проверка есть ли нужный нам файл в домашнем каталоге(если нет, то создаем пустой)
-#warning MUST_DO
-
     QDomDocument doc;   
 
+    QFile fileRepoConfig(GetPathToFileConfig());
     if(!fileRepoConfig.open(QIODevice::ReadOnly))
     {
-        printf("ERROR: Unable to open file. Repositories was not load!!!");
+        printf("ERROR: Unable to open config file. List repositories was not loaded!!!");
+        exit(1);
         return;
     }
     if(!doc.setContent(&fileRepoConfig))
     {
         printf("ERROR: file parsing error!!!");
         fileRepoConfig.close();
+        exit(1);
         return;
     }
 
@@ -144,20 +144,23 @@ void FacadeApplication::LoadRepositories()
 //----------------------------------------------------------------------------------------/
 void FacadeApplication::SaveRepository(const QString& localURL, const QString& remoteURL, const QString& nameRepo,
                                        const bool autosync, const bool autosyncContent
-                                       )
+                                       ) const
 {
     QDomDocument doc;
 
+    QFile fileRepoConfig(GetPathToFileConfig());
     if(!fileRepoConfig.open(QIODevice::ReadWrite))
     {
         std::cout<<fileRepoConfig.errorString().toStdString().c_str()<<std::endl;
         printf("ERROR: Unable to open file. Repository was not save!!!");
+        exit(1);
         return;
     }
     if(!doc.setContent(&fileRepoConfig))
     {
         printf("ERROR: file parsing error!!!");
         fileRepoConfig.close();
+        exit(1);
         return;
     }
     // cодержимое тега зарегистрированных репозиториев
@@ -197,6 +200,64 @@ void FacadeApplication::SaveRepository(const QString& localURL, const QString& r
     }
     // теперь устанавливаем этот элемент как дочерний к элементу newRepo
     newRepo.appendChild(paramSync);
+
+    fileRepoConfig.reset();
+    QTextStream(&fileRepoConfig) << doc.toString();
+    fileRepoConfig.close();
+}
+//----------------------------------------------------------------------------------------/
+void FacadeApplication::SaveOptionsRepositories()
+{
+    QDomDocument doc;
+
+    QFile fileRepoConfig(GetPathToFileConfig());
+
+    if(!fileRepoConfig.open(QIODevice::ReadWrite))
+    {
+        std::cout<<fileRepoConfig.errorString().toStdString().c_str()<<std::endl;
+        printf("ERROR: Unable to open file. Repositories was not save!!!");
+        exit(1);
+        return;
+    }
+
+    if(!doc.setContent(&fileRepoConfig))
+    {
+        printf("ERROR: file parsing error!!!");
+        fileRepoConfig.close();
+        exit(1);
+        return;
+    }
+
+    QDomElement elRepoRegistry = doc.firstChildElement("reporegistry");
+    QDomNodeList listRepo = elRepoRegistry.elementsByTagName("repo");
+    assert(unsigned(listRepo.size()) == repository.size());
+
+    for(int countRepo = 0; countRepo < listRepo.size(); ++countRepo)
+    {
+        // парсим и заполняем вектор репозиториев
+        QDomNamedNodeMap nodeMap = listRepo.at(countRepo).attributes();
+        assert(nodeMap.count() == 3);
+
+        QDomAttr attrLocalUrl = nodeMap.namedItem("localUrl").toAttr();
+        const QString localUrl = attrLocalUrl.value();
+
+        const IRepository* repo = repository[localUrl].get();
+        const bool autoSync = repo->GetParamSyncRepository();
+        const bool autoSyncContent = repo->GetParamSyncContentRepository();
+
+        // читаем список параметров автосинхронизации
+        {
+            QDomNodeList nodeSync = listRepo.at(countRepo).childNodes();
+            assert(nodeSync.size() == 1);
+            QDomNamedNodeMap nodeSyncMap = nodeSync.at(0).attributes();
+            assert(nodeSyncMap.count() == 2);
+
+            QDomAttr attrSyncRepo = nodeSyncMap.namedItem("autosync").toAttr();
+            attrSyncRepo.setValue(QString::number(autoSync));
+            QDomAttr attrSyncRepoContent = nodeSyncMap.namedItem("autosyncContent").toAttr();
+            attrSyncRepoContent.setValue(QString::number(autoSyncContent));
+        }
+    }
 
     fileRepoConfig.reset();
     QTextStream(&fileRepoConfig) << doc.toString();
@@ -251,6 +312,57 @@ void FacadeApplication::ChangeCurrentRepository(const QString& dir)
         auto iterator = repository.find(dir);
         assert(iterator != repository.end());
         currentRepository = iterator;
+    }
+}
+//----------------------------------------------------------------------------------------/
+const QString FacadeApplication::GetPathToFileConfig() const
+{
+    // в linux путь следующий: homeDirecoty/.config/GitAnnexClient/ganx-repository.xml
+    const QString fileName = "ganx-repository.xml";
+    const QString fullPath = QDir::homePath() + "/.config/GitAnnexClient/" + fileName;
+    if(QFile::exists(fullPath))
+        return fullPath;
+
+    QDir dir(QDir::homePath());
+    // 1.
+    QString tempDir = ".config";
+    if(!dir.exists(tempDir))
+    {
+        // создаем директорию
+        dir.mkdir(tempDir);
+    }
+    dir.setPath(dir.path() + "/" + tempDir);
+
+    // 2.
+    tempDir = "GitAnnexClient";
+    if(!dir.exists(tempDir))
+    {
+        // создаем директорию
+        dir.mkdir(tempDir);
+    }
+    dir.setPath(dir.path() + "/" + tempDir);
+
+    // 3.
+    if(!QFile::exists(dir.path() + "/" + fileName))
+    {
+        // создаем пустой конфигурационный файл
+        GenerateEmptyFileConfig(dir.path() + "/" + fileName);
+    }
+    return dir.path() + "/" + fileName;
+}
+//----------------------------------------------------------------------------------------/
+void FacadeApplication::GenerateEmptyFileConfig(const QString file) const
+{
+    QFile fileRepoConfig(file);
+    if (fileRepoConfig.open(QIODevice::WriteOnly | QIODevice::Append))
+    {
+        printf("Will Empty config file");
+
+        QDomDocument doc;
+        doc.setContent(QString("<?xml version=\'1.0\' encoding=\'UTF-8\'?>\n<reporegistry>\n</reporegistry>"));
+        fileRepoConfig.reset();
+        QTextStream(&fileRepoConfig) << doc.toString();
+        fileRepoConfig.close();
     }
 }
 //----------------------------------------------------------------------------------------/

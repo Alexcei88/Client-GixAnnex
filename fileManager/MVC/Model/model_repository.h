@@ -21,6 +21,9 @@ public:
     /** @brief берет состояние репозитория */
     const QString       GetStateRepository(const QString& path) const;
 
+    /** @brief включает/выключает синхронизацию репозитория */
+    void                SetEnableRepository(bool enable) const;
+
     /** @brief Клонировать репозиторий */
     GANN_DEFINE::RESULT_EXEC_PROCESS CloneRepository(const QString& localUlr, const QString& remoteURL, const QString& nameRepo);
 
@@ -55,6 +58,9 @@ public:
 
     /** @brief возвращает последнее сообщение об ошибке */
     const QString&      GetLastError() const;
+
+    /** @brief возвращает полный путь до файла конфигурации */
+    const QString GetFullPathFileConfigRepositories() const;
 
 };
 
