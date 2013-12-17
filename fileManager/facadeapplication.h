@@ -64,8 +64,11 @@ private:
                                        const bool autosync = true, const bool autosyncContent = true
                                        ) const;
 
-    /** @brief Сохранения параметров репозиториев в конфигах */
-    void                SaveOptionsRepositories();
+    /** @brief Сохранения параметров репозитория в конфигах */
+    void                SaveOptionsRepository(const QString &localURL);
+
+    /** @brief Удаление репозитория из конфигов */
+    void                DeleteRepository(const QString& localURL);
 
     /** @brief Запуск/Остановка демона просмотра(watch) за директориями у репозиториев */
     void                WatchRepositories(const bool start = true) const;

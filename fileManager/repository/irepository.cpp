@@ -34,6 +34,7 @@ void IRepository::InitClass()
     metaEnumStateF = mo.enumerator(enum_indexF);
 
     // сигналы/слоты
+    //----------------------------------------------------------------------------------------/
     QObject::connect(this, &IRepository::startGetContentFile, this, &IRepository::OnStartGetContentFile, Qt::DirectConnection);
     QObject::connect(this, &IRepository::endGetContentFile, this, &IRepository::OnEndGetContentFile, Qt::DirectConnection);
     QObject::connect(this, &IRepository::errorGetContentFile, this, &IRepository::OnErrorGetContentFile, Qt::DirectConnection);
@@ -41,6 +42,7 @@ void IRepository::InitClass()
     QObject::connect(this, &IRepository::endDropContentFile, this, &IRepository::OnEndDropContentFile, Qt::DirectConnection);
     QObject::connect(this, &IRepository::errorDropContentFile, this, &IRepository::OnErrorDropContentFile, Qt::DirectConnection);
     QObject::connect(this, &IRepository::errorCloneRepository, this, &IRepository::OnErrorCloneRepository, Qt::DirectConnection);
+    //----------------------------------------------------------------------------------------/
 
     dir.setPath("");
     dir.setFilter(QDir::NoDotAndDotDot | QDir::AllEntries | QDir::System);

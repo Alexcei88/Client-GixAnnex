@@ -24,6 +24,11 @@ QVariant ControllerRepository::getStateRepository(QUrl path) const
     return model->GetStateRepository(path.toString());
 }
 //----------------------------------------------------------------------------------------/
+void ControllerRepository::deleteRepository(QUrl path) const
+{
+    model->DeleteRepository(path.toString());
+}
+//----------------------------------------------------------------------------------------/
 void ControllerRepository::setEnableRepository(bool enable) const
 {
     model->SetEnableRepository(enable);
