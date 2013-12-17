@@ -18,8 +18,11 @@ public:
     /** @brief Получить дефалтный репозиторий */
     const QString       GetDefaultRepository() const;
 
-    /** @brief берет состояние репозитория */
+    /** @brief Берет состояние репозитория */
     const QString       GetStateRepository(const QString& path) const;
+
+    /** @brief Удаление репозитория */
+    void                DeleteRepository(const QString &path) const;
 
     /** @brief включает/выключает синхронизацию репозитория */
     void                SetEnableRepository(bool enable) const;

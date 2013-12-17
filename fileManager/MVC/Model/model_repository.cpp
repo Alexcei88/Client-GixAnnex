@@ -32,6 +32,22 @@ const QString ModelQmlAndCRepository::GetStateRepository(const QString& path) co
     return repository->GetState();
 }
 //----------------------------------------------------------------------------------------/
+void ModelQmlAndCRepository::DeleteRepository(const QString& path) const
+{
+    auto iterRepo = FacadeApplication::instance->currentRepository;
+    if(iterRepo != FacadeApplication::instance->repository.end())
+    {
+        FacadeApplication::instance->DeleteRepository(path);
+        FacadeApplication::instance->systemTray->ReLoadListRepository();
+    }
+    else
+    {
+        ChangeCurrentRepository(path);
+        FacadeApplication::instance->DeleteRepository(path);
+        FacadeApplication::instance->systemTray->ReLoadListRepository();
+    }
+}
+//----------------------------------------------------------------------------------------/
 void ModelQmlAndCRepository::SetEnableRepository(bool enable) const
 {
     auto iterRepo = FacadeApplication::instance->currentRepository;
@@ -39,6 +55,9 @@ void ModelQmlAndCRepository::SetEnableRepository(bool enable) const
     {
         IRepository* curRepo = iterRepo->second.get();
         enable ? curRepo->SetState(IRepository::Synced) : curRepo->SetState(IRepository::Disable_sincing);
+        // пересохраняем настройки конфиг-файла
+        FacadeApplication::instance->SaveOptionsRepository(iterRepo->second.get()->GetLocalURL());
+        // перезагружаем представление
         FacadeApplication::instance->systemTray->ReLoadListRepository();
     }
     else{

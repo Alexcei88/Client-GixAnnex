@@ -44,7 +44,7 @@ Rectangle {
             objectName: "listRepository"
             width: parent.width/5
             Layout.minimumWidth: parent.width/8
-            Layout.maximumWidth: 3 * parent.width/5
+            Layout.maximumWidth: parent.width/4
             onSelectNewRepository:
             {
                 contenItem.changeRepository(path, name)
@@ -58,7 +58,7 @@ Rectangle {
         {
             id: contenItem
             objectName: "directoryView"
-            Layout.minimumWidth: parent.width/5
+            Layout.minimumWidth: parent.width/4
             Layout.fillWidth: true
             width: 3 * parent.width/5
             onShowPropertyFile:
@@ -73,7 +73,7 @@ Rectangle {
             id: propertyFile
             width: parent.width/5
             Layout.minimumWidth: parent.width/5
-            Layout.maximumWidth: 3 * parent.width/5
+            Layout.maximumWidth: 2 * parent.width/5
             color: sysPal.window
 
             // инициализация представления

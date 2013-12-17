@@ -3,6 +3,7 @@ import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
 import QtQuick.XmlListModel 2.0
 import Repository 1.0
+import Message 1.0
 
 FocusScope {
 
@@ -29,6 +30,9 @@ FocusScope {
     ControllerRepository {
         id: repository
     }
+    MessageBox{
+        id: message
+    }
 
     XmlListModel
     {
@@ -44,8 +48,9 @@ FocusScope {
             if(status === XmlListModel.Ready)
             {
                 // устанавливаем индекс, который был до этого
-                if(modelRepoXML.count > lastIndex)
+                if(modelRepoXML.count > 0)
                 {
+                    console.log("lastIndex = " + lastIndex)
                     viewModel.currentIndex = lastIndex;
                     var localPath = modelRepoXML.get(lastIndex).localPath
                     var nameRepo = modelRepoXML.get(lastIndex).nameRepo
@@ -54,8 +59,15 @@ FocusScope {
                 }
                 else
                 {
+                    lastIndex = 0;
+                    viewModel.currentIndex = -1;
                     setEnableRepository(false);
                 }
+            }
+            else
+            {
+                console.log(errorString())
+                console.log("Status = " + status);
             }
         }
     }
@@ -88,8 +100,16 @@ FocusScope {
                 id: removeRepository
                 text: "&Delete"
                 shortcut: "Del"
-    //            onTriggered:
-
+                onTriggered:
+                {
+                    if(viewModel.currentItem)
+                    {
+                        var name = viewModel.currentItem.curNameRepo
+                        var text = "Do you really want to delete a repository <i>" + name + "</i>?<br>"
+                        if(message.showConfirmMessage("Warning", text))
+                            repository.deleteRepository(viewModel.currentItem.curPathRepo)
+                    }
+                }
             }
             MenuItem { action: switchEnable }
             MenuItem { action: removeRepository }
@@ -122,6 +142,9 @@ FocusScope {
                 Item
                 {
                     id: viewItem
+                    property var curNameRepo: nameRepo
+                    property var curPathRepo: localPath
+
                     height: viewModel.cellHeight
                     width: viewModel.cellWidth
 
