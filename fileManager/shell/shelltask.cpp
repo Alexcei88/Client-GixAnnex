@@ -8,8 +8,8 @@ using namespace GANN_DEFINE;
 //----------------------------------------------------------------------------------------/
 ShellTask::ShellTask(const QString strCommand, const QString localURL, boost::shared_ptr<IParsingCommandOut> parsingCommand):
     command(strCommand)
-  , localURL(localURL)
   , parsingCommand(parsingCommand)
+  , localURL(localURL)
 {}
 //----------------------------------------------------------------------------------------/
 ShellTask::~ShellTask()

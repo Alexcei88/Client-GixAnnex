@@ -5,6 +5,7 @@
 
 // Qt stuff
 #include <QString>
+#include <QJsonArray>
 
 class ParsingCommandGet : public IParsingCommandOut
 {
@@ -23,7 +24,6 @@ private:
     void                EndGetContentFile();
     // скачивание файла завершилось с ошибкой
     void                ErrorGetContentFile();
-
 
 };
 

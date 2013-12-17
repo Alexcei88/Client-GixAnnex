@@ -14,7 +14,7 @@
 using namespace GANN_DEFINE;
 //----------------------------------------------------------------------------------------/
 ShellCommand::ShellCommand():
-    baseCommand("git-annex ")
+    baseCommand("git-annex -j ")
 {}
 //----------------------------------------------------------------------------------------/
 ShellCommand::~ShellCommand(){}

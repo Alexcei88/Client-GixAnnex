@@ -6,32 +6,14 @@ ParsingCommandGet::ParsingCommandGet(IRepository* repository) :
     IParsingCommandOut(repository)
   , startGet(false)
 {
-    // регулярное выражение в случаи успешного начала скачивания файла текущего файла
-    QString succes1 = "(^ ?get )(.*)";
-    QString succes2 = "(^ ?get )(.*)(\\(from.*)";
+//    // регулярное выражение в случаи успешного начала скачивания файла текущего файла
+    QString startGet = "(\{\"command\":\"get\")(.*)";
+    QString endGet = "(\"success\":.*\})(.*)" ;
+    QString JsonStr = "(\".*\":\".*\")";
 
-    // регулярное выражение в случаи успешного окончания скачивания файла(может быть как отдельной строкой идти,а может и совмещенно)
-    QString succesEnd = "(.*)(ok)(.*)";
-
-    //  ресурс недоступен
-    QString unsucces = "(.*)(failed)(.*)";
-    QString unsuccesAdd = "(.*)(\\d+ failed)(.*)";
-    // причина ошибки
-    QString error = "(error: )(.*)";
-
-    // процесс скачивания ресурса из интернета(пока нереализованно)
-    QString processDownLoad = "()";
-
-    // итоговый результат копирования
-    // количество файлов, которые не удалось скопировать-
-//    QString summaryFailed = "";
-
-    listRegExpPossible.push_back(succes1);
-    listRegExpPossible.push_back(succes2);
-    listRegExpPossible.push_back(unsucces);
-    listRegExpPossible.push_back(unsuccesAdd);
-    listRegExpPossible.push_back(error);
-    listRegExpPossible.push_back(succesEnd);
+    listRegExpPossible.push_back(startGet);
+    listRegExpPossible.push_back(endGet);
+    listRegExpPossible.push_back(JsonStr);
 }
 //----------------------------------------------------------------------------------------/
 void ParsingCommandGet::ParsingData()
@@ -49,15 +31,11 @@ void ParsingCommandGet::ParsingData()
             QString tempStr = *it;
             while(!tempStr.isEmpty())
             {
-                // в случаи неудачи начала скачивания
-                regExp.setPattern(listRegExpPossible[2]);
+                // в случаи удачи начала скачивания
+                regExp.setPattern(listRegExpPossible[0]);
                 if(regExp.indexIn(tempStr) != -1)
                 {
-                    regExp.setPattern(listRegExpPossible[3]);
-                    if(regExp.indexIn(tempStr) == -1)
-                    {
-                        ErrorGetContentFile();
-                    }
+                    StartGetContentFile();
                     tempStr = "";
                     continue;
                 }

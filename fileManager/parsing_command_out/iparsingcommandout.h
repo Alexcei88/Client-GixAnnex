@@ -2,8 +2,11 @@
 #define IPARSINGCOMMANDOUT_H
 
 #include <iostream>
+
+
 #include <QStringList>
 #include <QRegExp>
+#include <QJsonArray>
 
 #include "../define.h"
 
@@ -41,7 +44,6 @@ public:
     /** @brief установка shellа, откуда будут браться данные */
     void                SetShell(TShell *shell);
 
-
 protected:
     /** @brief список данных, поступивших на входной поток данных */
     QStringList         dataStdOut;
@@ -69,9 +71,16 @@ protected:
     /** @brief репозиторий, который вызвал команду */
     IRepository*        repository;
 
-signals:
-    // сигнал, которым сообщаем, что новые данные готовы после парсинга
-    void                readyNewDataStdOut() {};
+    // QJSON объект
+    std::vector<QJsonArray> arrayJSON;
+    QJsonArray          currentJSONArray;
 
+private:
+    void                ClearCurrentJSonArray();
+    // функция фильтр строки, которая отбрасывает все, что не относиться к JSON-фрмату
+    void                FilterInputString(const QString &str);
+
+    // флаги управления начала/окончания создания нового массива данных
+    bool                startNewArray;
 };
 #endif // IPARSINGCOMMANDOUT_H
