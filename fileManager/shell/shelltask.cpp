@@ -12,12 +12,19 @@ ShellTask::ShellTask(const QString strCommand, const QString localURL, boost::sh
   , parsingCommand(parsingCommand)
 {}
 //----------------------------------------------------------------------------------------/
+ShellTask::~ShellTask()
+{
+    shell->TerminateProcess();
+    delete shell;
+    shell = 0;
+}
+//----------------------------------------------------------------------------------------/
 void ShellTask::run()
 {
-    TShell shell;
-    shell.SetWorkingDirectory(localURL);
-    parsingCommand->SetShell(&shell);
-    shell.ExecuteProcess(command, parsingCommand.get());
+    shell = new TShell;
+    shell->SetWorkingDirectory(localURL);
+    parsingCommand->SetShell(shell);
+    shell->ExecuteProcess(command, parsingCommand.get());
 }
 //----------------------------------------------------------------------------------------/
 

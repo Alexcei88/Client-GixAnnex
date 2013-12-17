@@ -21,6 +21,8 @@ private:
     void                StartDropContentFile();
     // конец удаления файла
     void                EndDropContentFile();
+    // удаление файла завершилось с ошибкой
+    void                ErrorDropContentFile();
 };
 
 #endif // PARSINGCOMMANDDROP_H

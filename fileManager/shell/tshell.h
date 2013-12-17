@@ -29,6 +29,9 @@ public:
     // выполнение команды без аргументов
     GANN_DEFINE::RESULT_EXEC_PROCESS ExecuteProcess(const QString& str, IParsingCommandOut *receiverParsing) const;
 
+    // Прервать выполнение процесса
+    void                TerminateProcess() const;
+
     // смена рабочего каталога
     void                SetWorkingDirectory(const QString& dir) const;
 

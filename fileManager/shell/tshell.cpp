@@ -62,6 +62,11 @@ RESULT_EXEC_PROCESS TShell::ExecuteProcess(const QString &str, IParsingCommandOu
     return NO_ERROR;
 }
 //----------------------------------------------------------------------------------------/
+void TShell::TerminateProcess() const
+{
+    process->terminate();
+}
+//----------------------------------------------------------------------------------------/
 void TShell::SetWorkingDirectory(const QString& dir) const
 {
     process->setWorkingDirectory(dir);

@@ -5,6 +5,7 @@
 #include <QMimeDatabase>
 #include <QIcon>
 #include <QRegExp>
+#include <QCoreApplication>
 
 // iniparser stuff
 #include "iniparser/iniparser.h"
@@ -12,12 +13,12 @@
 
 using namespace boost::filesystem;
 
-boost::shared_ptr<ResourceGenerator> ResourceGenerator::instance = boost::shared_ptr<ResourceGenerator>();
+ResourceGenerator* ResourceGenerator::instance = 0l;
 //----------------------------------------------------------------------------------------/
 ResourceGenerator::ResourceGenerator() :
-    listAllMimeType(QMimeDatabase().allMimeTypes())
-  , sizeIcons(48, 48)
+    sizeIcons(48, 48)
   , sizeIconsPropertyFile(128, 128)
+  , listAllMimeType(QMimeDatabase().allMimeTypes())
 {
     currentThemeName = QIcon::themeName();
     subPathSearchIcons.push_back("mimetypes");
@@ -30,9 +31,15 @@ ResourceGenerator::~ResourceGenerator()
 //----------------------------------------------------------------------------------------/
 ResourceGenerator* ResourceGenerator::getInstance()
 {
-    if(instance.get() == 0)
-        instance = boost::shared_ptr<ResourceGenerator>(new ResourceGenerator());
-    return instance.get();
+    if(instance == 0l)
+        instance = new ResourceGenerator();
+    return instance;
+}
+//----------------------------------------------------------------------------------------/
+void ResourceGenerator::RemoveInstance()
+{
+    delete instance;
+    instance = 0l;
 }
 //----------------------------------------------------------------------------------------/
 const QString ResourceGenerator::GetResourcePathDirectoryView(const QMimeType& type)
@@ -73,48 +80,31 @@ const QString ResourceGenerator::GetResourcePathPropertyFile(const QMimeType& ty
 //----------------------------------------------------------------------------------------/
 void ResourceGenerator::GenerateResource()
 {
+    pathToIconsDirectoryView.clear();
+    pathToIconsPropertyFile.clear();
+
     // список директорий для просмотра
     QStringList possiblePathToSearch = QIcon::themeSearchPaths();
 
-    // находим все файлы index.theme, и запоминаем директорию, в которой нашли
-    std::vector<boost::filesystem::path> searchedDir;
-
-    // путь, в котором содержатся иконки темы, которая сейчас выбрана в системе
-    path themeDirIcons;
+    // находим директорию с названием темы
+    boost::filesystem::path searchDir;
     bool findedThemeDirIcons = false;
+    // пробуем найти директорию с названием темы
+    for(auto path = possiblePathToSearch.begin(); path != possiblePathToSearch.end(); ++path)
     {
-        const std::string fileName = "index.theme";
-        // пробуем найти файл с текущим названием
-        for(auto path = possiblePathToSearch.begin(); path != possiblePathToSearch.end(); ++path)
+        boost::filesystem::path rootSearchDir((*path).toStdString());
+        if(FindDirectory(rootSearchDir, currentThemeName.toStdString(), searchDir, false))
         {
-            boost::filesystem::path rootSearchDir((*path).toStdString());
-            FindFile(rootSearchDir, fileName, searchedDir);
-        }
-
-        dictionary* ini = 0l;
-        // да, есть такие файлы, начинаем каждый просматривать, находя файл, который описывает текущую тему
-        foreach (path dir, searchedDir)
-        {
-            ini = iniparser_load(dir.c_str());
-            const char* curName = iniparser_getstring(ini, "Icon Theme:Name", '\0');
-            iniparser_freedict(ini);
-            ini = 0l;
-            // если нашли текущую тему, то запоминаем путь с текущей темой
-            if(strcmp(curName, currentThemeName.toStdString().c_str()))
-            {
-                findedThemeDirIcons = true;
-                themeDirIcons = dir;
-                break;
-            }
+            findedThemeDirIcons = true;
+            break;
         }
     }
-    assert(findedThemeDirIcons && "Не смогли найти файл с описанием текущей темы. Это критическая ошибка. Программа будет закрыта");
     if(!findedThemeDirIcons){
         std::cout<<"Не смогли найти файл с описанием текущей темы. Это критическая ошибка. Программа будет закрыта"<<std::endl;
         exit(1);
     }
     // генерация иконок нужных размеров
-    GenerateResourceIconsDirectoryView(themeDirIcons);
+    GenerateResourceIconsDirectoryView(searchDir);
 }
 //----------------------------------------------------------------------------------------/
 void ResourceGenerator::GenerateResourceIconsDirectoryView(const boost::filesystem::path& pathCurTheme)
@@ -175,7 +165,6 @@ void ResourceGenerator::GenerateResourceIconsForAllMimeTypes(const QVector<boost
             // мы не нашли, соответственно загружаем какой-то ресурс по умолчанию
         }
     }
-    // теперь загружаем ресурсы для folder-ов
 }
 //----------------------------------------------------------------------------------------/
 bool ResourceGenerator::FindFile(const boost::filesystem::path& dirPath, const std::string& fileName, boost::filesystem::path& pathFound)
@@ -236,14 +225,40 @@ bool ResourceGenerator::FindFile(const boost::filesystem::path& dirPath, const s
         return true;
 }
 //----------------------------------------------------------------------------------------/
+bool ResourceGenerator::FindDirectory(const boost::filesystem::path& dirPath, const std::string &dirName, boost::filesystem::path& pathFound, const bool recursive)
+{
+    if(!exists(dirPath)) return false;
+    directory_iterator endItr;
+
+    // path, указывающий на путь, который ищем
+    const QString fullPath = QString(dirPath.c_str()) + "/" + QString(dirName.c_str());
+    boost::filesystem::path searchFile(fullPath.toStdString().c_str());
+
+    for (directory_iterator itr(dirPath ); itr != endItr; ++itr)
+    {
+        if (is_directory( *itr ) )
+        {
+            if(*itr == searchFile)
+            {
+                pathFound = searchFile;
+                return true;
+            }
+            if(recursive)// если установлен флаг рекурсии, то проходим еще и по поддиректориям
+                if(FindDirectory(*itr, dirName, pathFound, recursive))
+                    return true;
+        }
+    }
+    return false;
+}
+//----------------------------------------------------------------------------------------/
 void ResourceGenerator::GenerateListPathInCurTheme(const boost::filesystem::path& pathCurrentTheme, QVector<boost::filesystem::path>& pathSearch, const QSize& sizeIcons) const
 {
     dictionary* ini = 0l;
     const QString fileName("index.theme");
-    // вычеркиваем из полного пути имя файла, оно не нужно будет
-    QString path = QString(pathCurrentTheme.c_str()).remove(fileName);
+    const QString pathTheme = QString(pathCurrentTheme.c_str()) + "/";
 
-    ini = iniparser_load(pathCurrentTheme.c_str());
+    const QString fullPathToFile = pathTheme + fileName;
+    ini = iniparser_load(fullPathToFile.toStdString().c_str());
     const QString sizeString = QString::number(sizeIcons.width()) + "x"+QString::number(sizeIcons.height());
     for(auto it = subPathSearchIcons.begin(); it != subPathSearchIcons.end(); ++it)
     {
@@ -251,14 +266,14 @@ void ResourceGenerator::GenerateListPathInCurTheme(const boost::filesystem::path
         // ищем интересующие нас директории в ini файле для темы
         if(iniparser_find_entry(ini, str.toStdString().c_str()) )
         {
-            const QString fullPath = path + str;
+            const QString fullPath =  pathTheme + str;
             boost::filesystem::path findedPath(fullPath.toStdString().c_str());
             assert(exists(findedPath));
             pathSearch.push_back(findedPath);
         }
         else
         {
-            std::cout<<"WARNING!!! При поиске путей для генерации ресурсов в текущей теме нет иконко подходящего размера!!!"<<std::endl;
+            std::cout<<"WARNING!!! При поиске путей для генерации ресурсов в текущей теме нет иконок подходящего размера!!!"<<std::endl;
         }
 
     }

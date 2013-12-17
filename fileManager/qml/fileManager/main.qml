@@ -12,10 +12,13 @@ Rectangle
     width: 900
     height:570
 
+    SystemPalette { id: sysPal }
+
+    color: sysPal.window
+
     Column
     {
         id: mainColumn
-        Keys.forwardTo: [windowContent, toolBar]
 
         spacing: 1
         visible: parent.visible
@@ -28,25 +31,26 @@ Rectangle
         RowLayout
         {
             id: rowToolBar
+            width: parent.width
             ToolBar
             {
                 id: toolBar
-                property var folderModel: windowContent.folderModel
-                property var folderView: windowContent.folderView
-
+                property alias folderModel: windowContent.folderModel
+                property alias folderView: windowContent.folderView
+                implicitWidth: parent.width
                 RowLayout
                 {
-                    width: parent.width
                     ToolButton{
                         iconSource:"qrc:back"
                         onClicked: {
                             var folder = toolBar.folderModel.parentFolder;
                             // если итоговый путь будет подкорнем корня репозитория, то переходим назад
                             // иначе ничего не делаем
-                            if(windowContent.direcotoryIsSubRootRepositoryDirectory(folder))
+                            if(windowContent.isSubRootRepositoryDirectory(folder))
                             {
-                                windowContent.updateListFileSync(folder);
+                                windowContent.changeParentFolder(folder)
                                 toolBar.folderModel.folder = folder;
+                                toolBar.folderModel.lastIndex = -1;
                                 toolBar.folderView.currentIndex = -1;
                             }
                         }
@@ -59,33 +63,33 @@ Rectangle
                             {
                                 var fileName = toolBar.folderView.currentItem.curFileName;
                                 var folder = toolBar.folderModel.folder == "file:///" ? toolBar.folderModel.folder + fileName : toolBar.folderModel.folder +"/" + fileName;;
+
+                                windowContent.changeParentFolder(folder)
                                 toolBar.folderModel.folder = folder;
                                 toolBar.folderView.currentIndex = -1;
+                                toolBar.folderModel.lastIndex = -1;
                             }
                         }
                     }
+                    // фильтр вывода файлов(директории к сож нет)
+                    FilterBox
+                    {
+                        id: filterDir;
+                        onFilterChanges: {
+                            toolBar.folderModel.nameFilters = textFilter.toString() + "*";
+                            toolBar.folderView.currentIndex = -1;
+                            toolBar.folderModel.lastIndex = -1;
+                            toolBar.folderView.update();
+                        }
+                    }
+
                     ToolButton{
                         text: "аав1"
                     }
-                }
-            }
-            // фильтр вывода файлов(директории к сож нет)
-            FilterBox
-            {
-                id: filterDir;
-                onFilterChanges: {
-                    toolBar.folderModel.nameFilters = textFilter.toString() + "*";
-                    toolBar.folderView.currentIndex = -1;
-                    toolBar.folderView.update();
-                }
+                }               
             }
         }
 
-        GetContent{
-            width: 100
-            height: 20
-            visible: false
-        }
 
         WindowContent
         {

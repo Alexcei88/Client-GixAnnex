@@ -18,13 +18,14 @@ class ResourceGenerator
 {
 public:
     static ResourceGenerator* getInstance();
+    static void         RemoveInstance();
     ~ResourceGenerator();
     const QString       GetResourcePathDirectoryView(const QMimeType& type);
     const QString       GetResourcePathPropertyFile(const QMimeType& type);
 
 
 private:
-    static boost::shared_ptr<ResourceGenerator> instance;
+    static ResourceGenerator* instance;
     ResourceGenerator();
 
     /** @brief Генерация ресурсов */
@@ -45,7 +46,6 @@ private:
     const QSize         sizeIcons;
     /** @brief размер иконок для отображения в свойствах файла(по умолчанию 128*128) */
     const QSize         sizeIconsPropertyFile;
-
 
     /** @brief список поддиректорий, где ищем иконки */
     QStringList         subPathSearchIcons;
@@ -71,10 +71,20 @@ private:
     /** @brief поиск файла в директории(и в его поддиректориях)
         @param dirPath - в этом каталоге
         @param fileName - искать такое имя
-        @param pathFound - вектор номеров, где нашли такие пути
+        @param pathFound - вектор путей, где нашли такие пути
         @return false - не найдено, true - найдено
     */
     bool                FindFile(const boost::filesystem::path& dirPath, const std::string &fileName, std::vector<boost::filesystem::path>& pathFound);
+
+    /** @brief поиск директории в директории
+        @param dirPath - в этом каталоге
+        @param dirName - искать такое имя
+        @param pathFound - путь, где нашли
+        @param recursive - признак рекурсивного поиска
+        @return false - не найдено, true - найдено
+    */
+    bool                FindDirectory(const boost::filesystem::path& dirPath, const std::string &dirName, boost::filesystem::path& pathFound, const bool recursive = false);
+
 
     /** @brief формирование списка поддиректорий в текущем пути темы в системе в зависимости
      *  от требуемого размера и списка поддиректорий

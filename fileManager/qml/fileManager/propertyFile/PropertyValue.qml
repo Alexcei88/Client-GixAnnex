@@ -12,13 +12,13 @@ Item
     Text
     {
         id: option
-        text: qsTr("SDFGDFfdfdf:")        
+        text: qsTr("SDFGDFfdfdf:")
     }
 
     Text
     {
         id: value
-        text: qsTr("dffddsffdfffffff")
+        text: qsTr("")
         anchors.left: option.right
         anchors.leftMargin: 10
     }

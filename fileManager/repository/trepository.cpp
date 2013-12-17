@@ -58,7 +58,14 @@ RESULT_EXEC_PROCESS TRepository::DeleteRepository()
 //----------------------------------------------------------------------------------------/
 RESULT_EXEC_PROCESS TRepository::GetContentFile(const QString& file)
 {
-    shellCommand->SetWorkingDirectory(this->localURL);
+    // если репозитория выключен, то ничего не делаем
+    if(paramSyncRepo.currentState == "Disable_sincing")
+        return IGNORE_COMMAND;
+
+    // сразу же заносим данную директорию в список файлов, получающих контент в данный момент времени
+//    emit this->startGetContentFile(file);
+
+    shellCommand->SetWorkingDirectory(dir.path());
     RESULT_EXEC_PROCESS result = shellCommand->GetContentFile(file, this);
     if(result != NO_ERROR)
     {
@@ -70,7 +77,10 @@ RESULT_EXEC_PROCESS TRepository::GetContentFile(const QString& file)
 //----------------------------------------------------------------------------------------/
 RESULT_EXEC_PROCESS TRepository::DropContentFile(const QString& file)
 {
-    shellCommand->SetWorkingDirectory(this->localURL);
+    if(paramSyncRepo.currentState == "Disable_sincing")
+        return IGNORE_COMMAND;
+
+    shellCommand->SetWorkingDirectory(dir.path());
     RESULT_EXEC_PROCESS result = shellCommand->DropContentFile(file, this);
     if(result != NO_ERROR)
     {
@@ -80,10 +90,31 @@ RESULT_EXEC_PROCESS TRepository::DropContentFile(const QString& file)
     return result;
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS TRepository::WhereisFile(const QString& file) const
+RESULT_EXEC_PROCESS TRepository::RemoveFile(const QString& file)
 {
-    shellCommand->SetWorkingDirectory(this->localURL);
-    RESULT_EXEC_PROCESS result = shellCommand->WhereisFiles(file);
+    if(paramSyncRepo.currentState == "Disable_sincing")
+        return IGNORE_COMMAND;
+
+    // сначала удалим контент
+    DropContentFile(file);
+    // а теперь удаляем и сам файл
+    shellCommand->SetWorkingDirectory(dir.path());
+    RESULT_EXEC_PROCESS result = shellCommand->RemoveFile(file, QFileInfo(dir.path() + "/" + file).isDir());
+    if(result != NO_ERROR)
+    {
+        printf("Error git rm file: %s \n", file.toStdString().c_str());
+        return result;
+    }
+    return result;
+}
+//----------------------------------------------------------------------------------------/
+RESULT_EXEC_PROCESS TRepository::WhereisFile(const QString& file)
+{
+    if(paramSyncRepo.currentState == "Disable_sincing")
+        return IGNORE_COMMAND;
+
+    shellCommand->SetWorkingDirectory(dir.path());
+    RESULT_EXEC_PROCESS result = shellCommand->WhereisFiles(file, this);
     if(result != NO_ERROR)
     {
         printf("Error git-annex drop content of file: %s \n", file.toStdString().c_str());
@@ -94,6 +125,9 @@ RESULT_EXEC_PROCESS TRepository::WhereisFile(const QString& file) const
 //----------------------------------------------------------------------------------------/
 GANN_DEFINE::RESULT_EXEC_PROCESS TRepository::SyncRepository() const
 {
+    if(paramSyncRepo.currentState == "Disable_sincing")
+        return IGNORE_COMMAND;
+
     shellCommand->SetWorkingDirectory(this->localURL);
     RESULT_EXEC_PROCESS result = shellCommand->Sync();
     if(result != NO_ERROR)

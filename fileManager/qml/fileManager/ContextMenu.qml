@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
 
@@ -8,6 +8,7 @@ Menu
     signal openDirectory()
     signal getContentDirectory()
     signal dropContentDirectory()
+    signal removeDirectory()
 
     Action
     {
@@ -44,12 +45,25 @@ Menu
         //       tooltip: "Open an image"
     }
 
+    Action
+    {
+        id: removeDirectoryAction
+        text: "&Delete"
+        shortcut: "Del"
+        //       iconSource: "images/document-open.png"
+        onTriggered: {
+            removeDirectory()
+        }
+        //       tooltip: "Open an image"
+    }
+
 
 
     title: "ActionDirectory"
     MenuItem { action: openAction }
     MenuItem { action: getContentAction }
     MenuItem { action: dropContentAction }
+    MenuItem { action: removeDirectoryAction }
     MenuItem { text: "On/Off autoget content" }
     MenuItem { text: "Close" }
 }

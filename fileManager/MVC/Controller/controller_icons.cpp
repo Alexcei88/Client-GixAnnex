@@ -1,5 +1,6 @@
 #include "controller_icons.h"
 #include "../../resourcegenerator.h"
+#include "../../facadeapplication.h"
 
 // Qt stuff
 #include <QFileInfo>
@@ -11,77 +12,96 @@
 #include <assert.h>
 #include <iostream>
 
-
 using namespace GANN_MVC;
+
+QThread* ControllerIcons::thread = 0l;
 //----------------------------------------------------------------------------------------/
 ControllerIcons::ControllerIcons() :
     mainModel(QSharedPointer<ModelQmlAndCRepository>(new ModelQmlAndCRepository()))
-  , modelIcons(QSharedPointer<ModelQmlAndCIcons>(new ModelQmlAndCIcons(this)))
-  , thread(0l)
+  , modelIcons(new ModelQmlAndCIcons(this))
 {
-    QObject::connect(this, &ControllerIcons::changedParentDIrectory, this, &ControllerIcons::OnChangeParrentDirectory);
+    QObject::connect(this, &ControllerIcons::changedParentDirectory, this, &ControllerIcons::OnChangeParentDirectory);
+    dir.setFilter(QDir::NoDotAndDotDot | QDir::Files | QDir::AllDirs | QDir::System);
 }
 ControllerIcons::~ControllerIcons()
 {
-    // посылаем сигнал о завершении потока обновлении иконок синхронизации
-    if(thread != 0 && thread->isRunning())
-    {
-        emit stopThread();
-    }
+    delete modelIcons;
+    modelIcons = 0;
 }
 //----------------------------------------------------------------------------------------/
-QVariant ControllerIcons::GetPathIconsFileDirecoctoryView(QVariant file) const
+QVariant ControllerIcons::getPathIconsFileDirectoryView(QUrl file) const
 {    
     static const QMimeDatabase dataBase;
-    const QFileInfo fileInfo(file.toString());
+    const QFileInfo fileInfo(file.toLocalFile());
     const QMimeType type = dataBase.mimeTypeForFile(fileInfo);
     const QString pathIcons = ResourceGenerator::getInstance()->GetResourcePathDirectoryView(type);
     return QVariant(pathIcons);
 }
 //----------------------------------------------------------------------------------------/
-QVariant ControllerIcons::GetPathIconsFilePropertyFile(QVariant file) const
-{
+QVariant ControllerIcons::getPathIconsFilePropertyFile(QUrl file) const
+{    
     static const QMimeDatabase dataBase;
-    const QFileInfo fileInfo(file.toString());
+    const QFileInfo fileInfo(file.toLocalFile());
     const QMimeType type = dataBase.mimeTypeForFile(fileInfo);
     const QString pathIcons = ResourceGenerator::getInstance()->GetResourcePathPropertyFile(type);
     return QVariant(pathIcons);
 }
 //----------------------------------------------------------------------------------------/
-QVariant ControllerIcons::GetLastModifiedFile(QVariant file) const
+QVariant ControllerIcons::getLastModifiedFile(QUrl file) const
 {
-    return mainModel->GetLastModifiedFile(file.toString());
+    return mainModel->GetLastModifiedFile(file.toLocalFile());
 }
 //----------------------------------------------------------------------------------------/
-QVariant ControllerIcons::GetSizeFile(QVariant file) const
+QVariant ControllerIcons::getSizeFile(QUrl file) const
 {
-    return mainModel->GetSizeFile(file.toString());
+    return mainModel->GetSizeFile(file.toLocalFile());
 }
 //----------------------------------------------------------------------------------------/
-void ControllerIcons::StartThreadIconsSync()
+void ControllerIcons::startThreadIconsSync()
 {
     if(thread != 0 && thread->isRunning())
         return;
 
     // запускаем поток обновления иконок синхронизации
-    thread = new QThread(this);
+    thread = new QThread();
     modelIcons->moveToThread(thread);
     QObject::connect(thread, &QThread::started, [=] {modelIcons->UpdateFileSyncIcons(); });
-    QObject::connect(this, SIGNAL(stopThread()), thread, SLOT(quit()));
+
+    FacadeApplication* facade = FacadeApplication::getInstance();
+    QObject::connect(facade, &FacadeApplication::stopThreadIconsSync, [=] { ControllerIcons::StopThreadIconsSync(); });
     thread->start();
 }
 //----------------------------------------------------------------------------------------/
-void ControllerIcons::OnChangeParrentDirectory(QString curDir)
+void ControllerIcons::StopThreadIconsSync()
 {
-    if(curDir == "/Empty")
+    if(thread)
+    {
+        if(thread->isRunning())
+        {
+            thread->quit();
+            thread->wait();
+        }
+        delete thread;
+        thread = 0;
+    }
+}
+//----------------------------------------------------------------------------------------/
+void ControllerIcons::OnChangeParentDirectory(QUrl curDir)
+{
+    if(curDir.isEmpty())
         return;
-    assert(dir.exists(curDir));
+
+    assert(dir.exists(curDir.toLocalFile()));
+
+    QMutex& mutex = FacadeApplication::threadModel.mutexSyncIcons;
+    QMutexLocker mutexLocker(&mutex);
+
     // посылаем модели сигнал о смене текущей директории отображения в текущем репозитории
-    mainModel->ChangeCurrentViewDirectory(curDir);
+    mainModel->ChangeCurrentViewDirectory(curDir.toLocalFile());
 
-    dir.setPath(curDir);
+    dir.setPath(curDir.toLocalFile());
 
-    // обновляем полностю список состояния иконок синхронизации
+    // обновляем полностью список состояния иконок синхронизации
     UpdateStateIconsFileSync();
 }
 //----------------------------------------------------------------------------------------/
@@ -93,13 +113,7 @@ void ControllerIcons::UpdateStateIconsFileSync()
     QStringList nameAllFilesAndDir = dir.entryList();
     for(auto iterator = nameAllFilesAndDir.begin(); iterator !=  nameAllFilesAndDir.end(); ++iterator)
     {
-        if(*iterator == "." || *iterator == "..") continue;
         IRepository::PARAMETR_FILEFOLDER_GIT_ANNEX paramSyncCur = paramSync[*iterator];
-        if(paramSyncCur.currentState == "SyncingF")
-        {
-            std::cout<<"We have update state!!!"<<std::endl;
-//            assert(0);
-        }
         stateIconsFileSync[*iterator] = paramSyncCur.currentState;
     }
 }

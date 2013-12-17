@@ -5,6 +5,7 @@
 #include <QSharedPointer>
 #include <QString>
 #include <QVariantList>
+#include <QUrl>
 
 #include "../Model/model_repository.h"
 #include "controller_icons.h"
@@ -19,41 +20,55 @@ class ControllerRepository: public QObject
 public:
     ControllerRepository( );
 
-    Q_PROPERTY(QString currentPathRepo READ GetCurrentPathRepo WRITE SetCurrentPathRepo NOTIFY currentPathRepoChanged)
+    Q_PROPERTY(QUrl currentPathRepo READ GetCurrentPathRepo WRITE SetCurrentPathRepo NOTIFY currentPathRepoChanged)
 
-    QString                 GetCurrentPathRepo() { return currentPathRepo; };
-    void                    SetCurrentPathRepo(QString path) { currentPathRepo = path; emit currentPathRepoChanged(path);};
+    // путь до файла с конфигурацией репозиториев
+    Q_PROPERTY(QVariant pathRepoConfig READ GetPathRepoConfig CONSTANT)
+
+    QUrl                    GetCurrentPathRepo() { return currentPathRepo; };
+    void                    SetCurrentPathRepo(QUrl path) { currentPathRepo = path; emit currentPathRepoChanged(path);};
+
+    const QVariant          GetPathRepoConfig() const;
 
     /** @brief берет состояние репозитория */
-    Q_INVOKABLE QVariant    GetStateRepository(QVariant path) const;
+    Q_INVOKABLE QVariant    getStateRepository(QUrl path) const;
+
+    /** @brief Удаление репозитория */
+    Q_INVOKABLE void        deleteRepository(QUrl path) const;
+
+    /** @brief включает/выключает синхронизацию репозитория */
+    Q_INVOKABLE void        setEnableRepository(bool enable) const;
 
     /** @brief путь до репозитория по умолчанию */
-    Q_INVOKABLE QVariant    GetDefaultRepositoryPath() const;
+    Q_INVOKABLE QVariant    getDefaultRepositoryPath() const;
 
     /** @brief Начать клонирование репозитория */
-    Q_INVOKABLE QVariant    StartCloneRepository(QVariant localUlr, QVariant remoteURL, QVariant nameRepo);
+    Q_INVOKABLE QVariant    startCloneRepository(QVariant localUlr, QVariant remoteURL, QVariant nameRepo);
 
     /** @brief Отмена клонирования репозитория */
-    Q_INVOKABLE void        CancelCloneRepository() const;
+    Q_INVOKABLE void        cancelCloneRepository() const;
 
     /** @brief взять контент у файла(директории)*/
-    Q_INVOKABLE QVariant    GetContentDirectory(QVariant dir) const;
+    Q_INVOKABLE QVariant    getContentDirectory(QUrl dir) const;
 
     /** @brief удалить контент у файла(директории)*/
-    Q_INVOKABLE QVariant    DropContentDirectory(QVariant dir) const;
+    Q_INVOKABLE QVariant    dropContentDirectory(QUrl dir) const;
+
+    /** @brief удалить файл(директорию) из репозитория */
+    Q_INVOKABLE QVariant    removeDirectory(QUrl dir) const;
 
     /** @brief явяеться ли выбранный путь поддиректорией корневого пути репозитория*/
-    Q_INVOKABLE QVariant    DirIsSubRootDirRepository(QVariant dir) const;
+    Q_INVOKABLE QVariant    dirIsSubRootDirRepository(QUrl dir) const;
 
     /** @brief возвращает последнее сообщение об ошибке */
-    Q_INVOKABLE const QVariant GetLastError() const;
+    Q_INVOKABLE const QVariant getLastError() const;
 
 private:
     const QSharedPointer<ModelQmlAndCRepository>  model;
-    QString                 currentPathRepo;
+    QUrl                    currentPathRepo;
 
 signals:
-    void                    currentPathRepoChanged(QString);
+    void                    currentPathRepoChanged(QUrl);
 };
 
 }

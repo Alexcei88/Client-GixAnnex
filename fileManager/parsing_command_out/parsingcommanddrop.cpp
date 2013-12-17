@@ -8,7 +8,7 @@ ParsingCommandDrop::ParsingCommandDrop(IRepository* repository) :
 {
     // регулярные выражение в случаи успешного удаления
     QString succes1 = "(^ ?drop )(.*)";
-    QString succes2 = "(^ ?drop )(.*)(ок)";
+    QString succes2 = "(^ ?drop )(.*)(\\s+ok)";
 
     // регулярное выражение в случаи успешного окончания скачивания файла(может быть как отдельной строкой идти,а может и совмещенно)
     QString succesEnd = "(.*)(ok)(.*)";
@@ -49,8 +49,7 @@ void ParsingCommandDrop::ParsingData()
                     regExp.setPattern(listRegExpPossible[4]);
                     if(regExp.indexIn(tempStr) == -1)
                     {
-                        startDrop = false;
-                        wasErrorCommand = true;
+                        ErrorDropContentFile();
                     }
                     tempStr = "";
                     continue;
@@ -113,5 +112,14 @@ void ParsingCommandDrop::EndDropContentFile()
     dataAfterParsing << regExp.cap(1);
     wasErrorCommand = false;
     emit repository->endDropContentFile(nameFileGetContent);
+}
+//----------------------------------------------------------------------------------------/
+void ParsingCommandDrop::ErrorDropContentFile()
+{
+    assert(startDrop && "Удаление ресурса не было запущено");
+    startDrop = false;
+    dataAfterParsing << regExp.cap(1);
+    wasErrorCommand = false;
+    emit repository->errorDropContentFile(nameFileGetContent, "Error");
 }
 //----------------------------------------------------------------------------------------/
