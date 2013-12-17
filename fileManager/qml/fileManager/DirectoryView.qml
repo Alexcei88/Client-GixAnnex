@@ -317,7 +317,7 @@ FocusScope{
                 }
                 onEntered: {
                     // посылаем сигнал, что необходимо вывести свойства объекта, на который навели
-                    showPropertyFile(dirModel.folder, curFileName)
+                    showPropertyFile(dirModel.folder + "/" + curFileName, curFileName)
                 }
             }
         }

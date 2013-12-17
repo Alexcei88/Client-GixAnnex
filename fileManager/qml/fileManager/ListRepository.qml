@@ -50,6 +50,11 @@ FocusScope {
                 // устанавливаем индекс, который был до этого
                 if(modelRepoXML.count > 0)
                 {
+                    if(lastIndex + 1> modelRepoXML.count)
+                    {
+                        // если удалии последний репозиторий, то устанавливаем на последний доступный индекс
+                        lastIndex = modelRepoXML.count - 1;
+                    }
                     console.log("lastIndex = " + lastIndex)
                     viewModel.currentIndex = lastIndex;
                     var localPath = modelRepoXML.get(lastIndex).localPath
@@ -59,15 +64,21 @@ FocusScope {
                 }
                 else
                 {
+                    console.log("Empty model")
+                    if(viewModel.highlightItem)
+                    {
+                    }
                     lastIndex = 0;
                     viewModel.currentIndex = -1;
+                    // у нас нет больше репозиториев для показа
+                    //selectNewRepository(" ", " ");
                     setEnableRepository(false);
                 }
             }
             else
             {
-                console.log(errorString())
-                console.log("Status = " + status);
+//                console.log(errorString())
+//                console.log("Status = " + status);
             }
         }
     }
@@ -126,6 +137,7 @@ FocusScope {
             cellWidth: parent.width
 
             anchors.fill: parent
+            currentIndex: -1
 
             MouseArea {
                 anchors.fill: parent
@@ -256,9 +268,9 @@ FocusScope {
                 }
             highlight:
             Item {
-                anchors.left: parent.left
+                anchors.left: parent ? parent.left : anchors.left
                 anchors.leftMargin: widthRepoSync
-                width: parent.width
+                width: viewModel.cellWidth
                 Rectangle {
                     color: sysPal.highlight
                     radius: 1
