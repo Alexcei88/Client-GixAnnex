@@ -3,10 +3,12 @@
 
 #include <iostream>
 
-
+//  Qt stuff
 #include <QStringList>
 #include <QRegExp>
-#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonParseError>
+
 
 #include "../define.h"
 
@@ -71,16 +73,24 @@ protected:
     /** @brief репозиторий, который вызвал команду */
     IRepository*        repository;
 
-    // QJSON объект
-    std::vector<QJsonArray> arrayJSON;
-    QJsonArray          currentJSONArray;
+    // QJSON документы
+    // вектор документов, которые пропарсины(или начат их парсинг), этот вектор документов уже далее в подклассах анализируется
+    std::vector<QJsonDocument> arrayJSONDocument;
+    QJsonDocument       lastJSONDocument;
+    // временная JSON строка, которая накапливается, пока не будет получен весь ответ от JSON строки
+    QString             strJSONData;
+
 
 private:
-    void                ClearCurrentJSonArray();
-    // функция фильтр строки, которая отбрасывает все, что не относиться к JSON-фрмату
+    /** @brief функция фильтр строки, которая отбрасывает все, что не относиться к JSON-формату */
     void                FilterInputString(const QString &str);
 
-    // флаги управления начала/окончания создания нового массива данных
-    bool                startNewArray;
+    /** @brief функция обработки ошибок в парсинге JSON
+    \details обрабатывает ошибки и заполняет поле класса strJSONData
+    @return возвращает строку, с которой документ обязательно создаться */
+    QString             ProcessingErrorString(const QString& str, const QJsonParseError* parseError);
+
+    // флаги управления начала/окончания создания нового документа
+    bool                startNewDocument;
 };
 #endif // IPARSINGCOMMANDOUT_H

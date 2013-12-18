@@ -30,6 +30,7 @@ ParsingCommandDrop::ParsingCommandDrop(IRepository* repository) :
 //----------------------------------------------------------------------------------------/
 void ParsingCommandDrop::ParsingData()
 {
+    return;
     // команда стартовала, но еще не завершилась
     if(commandStart && !commandEnd)
     {

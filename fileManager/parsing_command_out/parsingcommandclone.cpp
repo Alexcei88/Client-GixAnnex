@@ -19,6 +19,7 @@ ParsingCommandClone::ParsingCommandClone(IRepository * repository):
 //----------------------------------------------------------------------------------------/
 void ParsingCommandClone::ParsingData()
 {
+    return;
     if(!commandStart && commandEnd && !dataStdOut.empty())
     {
         // выполняем парсинг

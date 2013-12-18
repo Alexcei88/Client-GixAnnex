@@ -2,6 +2,9 @@
 #include "../shell/tshell.h"
 #include "../repository/irepository.h"
 
+// Qt stuff
+#include <QJsonObject>
+
 using namespace GANN_DEFINE;
 
 //----------------------------------------------------------------------------------------/
@@ -11,7 +14,7 @@ IParsingCommandOut::IParsingCommandOut(IRepository *repository):
  ,exitCodeCommand(0)
  ,wasErrorCommand(false)
  ,repository(repository)
- ,startNewArray(false)
+ ,startNewDocument(false)
 {}
 //----------------------------------------------------------------------------------------/
 IParsingCommandOut::~IParsingCommandOut(){};
@@ -33,8 +36,12 @@ void IParsingCommandOut::SetNewDataStdOut()
     std::cout<<"1. "<<newData.toStdString()<<std::endl;
 
     FilterInputString(newData);
-    //ParsingData();
-
+    ParsingData();
+    // сохраняем последний документ
+    if(!arrayJSONDocument.empty())
+        lastJSONDocument = arrayJSONDocument.back();
+    // чистим вектор документов
+    arrayJSONDocument.clear();
 }
 //----------------------------------------------------------------------------------------/
 void IParsingCommandOut::SetParamAfterEndCommand(int exitCode)
@@ -44,7 +51,7 @@ void IParsingCommandOut::SetParamAfterEndCommand(int exitCode)
     exitCodeCommand = exitCode;
 
     // выполняем парсинг после выполнения команды
-   // ParsingData();
+    ParsingData();
 }
 //----------------------------------------------------------------------------------------/
 QStringList IParsingCommandOut::GetParsingData() const
@@ -77,60 +84,148 @@ RESULT_EXEC_PROCESS IParsingCommandOut::GetCodeError() const
     }
 }
 //----------------------------------------------------------------------------------------/
-void IParsingCommandOut::ClearCurrentJSonArray()
-{
-    // чистим только те объекты, которые уже побывали в парсинге и являются завершенными
-    for(auto it = currentJSONArray.begin(); it != currentJSONArray.end(); ++it)
-    {
-        currentJSONArray.erase(it);
-    }
-}
-//----------------------------------------------------------------------------------------/
 void IParsingCommandOut::FilterInputString(const QString& str)
 {
-    static const QString JSONStr = "(\".*\":\".*\")";
-    static const QString startNewAray = "(\{\"command\":\".*\")";
-    static const QString endNewAray = "(\"success\":.*\})(.*)";
+    static const QString keyStartDoc = "command";
+    static const QString keyEndDoc = "success";
+
+    std::vector<QJsonDocument> parseNewDocument;
+    QJsonDocument lastDoc;
+    // идем построчно
     QStringList strLines = str.split("\n", QString::SkipEmptyParts);
     for(auto it = strLines.begin(); it != strLines.end(); ++it)
     {
         QString tempStr = *it;
         while(!tempStr.isEmpty())
         {
-            // ищем строку, нет ли там строки начала парсинга
-            // 1.
-            regExp.setPattern(startNewAray);
-            if(regExp.indexIn(tempStr) != -1)
+            if(!startNewDocument)
             {
-                assert("Констуирование старого JSON объекта еще не закончилось, а мы начинаем новое"
-                       "Что то пошло не так" && !this->startNewArray);
-                // мы начинаем конструирование нового объекта
-                this->startNewArray = true;
-                tempStr.remove(regExp.cap(1));
-                break;
+                assert("Накапливаемая JSON строка должна быть пустой. Что то пошло не так" && strJSONData.isEmpty());
+                // документ еще не создан, поэтому создаем его заново, во входной строке должен быть параметр command
+                QJsonParseError error;
+                QJsonDocument doc = QJsonDocument::fromJson(tempStr.toUtf8(), &error);
+                if(doc.isNull())
+                {
+                    QString strNoError = ProcessingErrorString(str, &error);
+                    if(!strNoError.isEmpty())
+                    {
+                        doc = QJsonDocument::fromJson(strNoError.toUtf8(), &error);
+                        assert(!doc.isNull());
+                        assert(doc.isObject());
+                        if(doc.isObject())
+                        {
+                            QJsonObject object = doc.object();
+                            assert(object.find(keyStartDoc) != object.end());
+                            startNewDocument = true;
+
+                            // сохраняем временный документ
+                            lastDoc = doc;
+                        }
+                    }
+                }
+                else
+                {
+                    // документ уже создаем готовый
+                    // в этом документе должны быть параметры command и success
+                    assert(doc.isObject());
+                    if(doc.isObject())
+                    {
+                        QJsonObject object = doc.object();
+                        assert(object.find(keyStartDoc) != object.end());
+                        assert(object.find(keyEndDoc) != object.end());
+
+                        // сохранили этот документ
+                        parseNewDocument.push_back(doc);
+                    }
+                }
             }
-            // 2.
-            regExp.setPattern(endNewAray);
-            if(regExp.indexIn(tempStr) != -1)
+            else
             {
-                assert("Констуирование старого JSON объекта еще не начиналось, а мы начинаем уже заканчиваем"
-                       "Что то пошло не так" && this->startNewArray);
-                // мы закончили конструирование
-                this->startNewArray = false;
-                tempStr.remove(regExp.cap(1));
-                break;
-            }
-            // 3.
-            // 2.
-            regExp.setPattern(JSONStr);
-            if(regExp.indexIn(tempStr) != -1)
-            {
-                tempStr.remove(regExp.cap(1));
-                break;
+                assert("Накапливаемая JSON строка не должна быть пустой. Что то пошло не так" && !strJSONData.isEmpty());
+                // документ уже создан
+                QJsonParseError error;
+                const QString commonStr = strJSONData + tempStr;
+                QJsonDocument doc = QJsonDocument::fromJson(commonStr.toUtf8(), &error);
+                if(doc.isNull())
+                {
+                    QString strNoError = ProcessingErrorString(commonStr, &error);
+                    if(!strNoError.isEmpty())
+                    {
+                        doc = QJsonDocument::fromJson(strNoError.toUtf8(), &error);
+                        assert(!doc.isNull());
+                        assert(doc.isObject());
+                        if(doc.isObject())
+                        {
+                            QJsonObject object = doc.object();
+                            assert(object.find(keyEndDoc) == object.end());
+                            // сохраняем временный документ
+                            lastDoc = doc;
+                        }
+                    }
+                }
+                else
+                {
+                    // в этом документе должны быть параметры success
+                    assert(doc.isObject());
+                    if(doc.isObject())
+                    {
+                        QJsonObject object = doc.object();
+                        assert(object.find(keyStartDoc) != object.end());
+                        assert(object.find(keyEndDoc) != object.end());
+
+                        // сохраняем этот документ
+                        parseNewDocument.push_back(doc);
+
+                        // сбрасываем последний хранившийся документ
+                        lastDoc = QJsonDocument::fromJson("ffgg");
+                        // сбрасываем флаг начала получения нового документа
+                        startNewDocument = false;
+
+                        strJSONData = "";
+                    }
+                }
             }
             tempStr = "";
         }
     }
+
+    arrayJSONDocument.assign(parseNewDocument.begin(), parseNewDocument.end());
+    if(!lastDoc.isNull())
+        arrayJSONDocument.push_back(lastDoc);
 }
 //----------------------------------------------------------------------------------------/
+QString IParsingCommandOut::ProcessingErrorString(const QString& str, const QJsonParseError* parseError)
+{
+    QString retStr = str;
+    int offset = parseError->offset;
+    if(offset != str.length())
+    {
+        std::cout<<"lengthString"<<str.length()<<std::endl;
+        retStr.remove(offset -1, str.length() - offset + 1);
+    }
+    if(!retStr.isEmpty())
+    {
+        switch(parseError->error)
+        {
+            case QJsonParseError::UnterminatedObject: // не хватает в конце закрывающей круглой скобки
+                            strJSONData = retStr;
+                            retStr += "}";break;
 
+            case QJsonParseError::UnterminatedString: // не хватает в конце закрывающей круглой скобки
+                            strJSONData = retStr;
+                            retStr += "}";break;
+
+            case QJsonParseError::UnterminatedArray: // не хватает в конце закрывающей квадратной скобки
+                            strJSONData = retStr;
+                            retStr += "]"; break;
+            case QJsonParseError::IllegalValue: // неверное значение, поэтому приравниваем пустую строку
+                            // strJSONData не трогаем
+                            retStr = ""; break;
+
+            default:
+                assert("При парсинге JSON-строки произошла неизвестная ошибка." && false);
+        }
+    }
+    return retStr;
+}
+//----------------------------------------------------------------------------------------/

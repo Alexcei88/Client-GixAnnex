@@ -55,7 +55,6 @@ FocusScope {
                         // если удалии последний репозиторий, то устанавливаем на последний доступный индекс
                         lastIndex = modelRepoXML.count - 1;
                     }
-                    console.log("lastIndex = " + lastIndex)
                     viewModel.currentIndex = lastIndex;
                     var localPath = modelRepoXML.get(lastIndex).localPath
                     var nameRepo = modelRepoXML.get(lastIndex).nameRepo

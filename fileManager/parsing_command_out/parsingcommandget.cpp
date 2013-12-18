@@ -18,6 +18,7 @@ ParsingCommandGet::ParsingCommandGet(IRepository* repository) :
 //----------------------------------------------------------------------------------------/
 void ParsingCommandGet::ParsingData()
 {
+    return;
     // команда стартовала, но еще не завершилась
     if(commandStart && !commandEnd)
     {

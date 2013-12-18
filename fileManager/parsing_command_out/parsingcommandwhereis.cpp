@@ -18,6 +18,7 @@ ParsingCommandWhereIs::ParsingCommandWhereIs(): IParsingCommandOut()
 //----------------------------------------------------------------------------------------/
 void ParsingCommandWhereIs::ParsingData()
 {
+    return;
     if(commandStart && !commandEnd)
     {
         // команда стартовала, но еще не завершилась
