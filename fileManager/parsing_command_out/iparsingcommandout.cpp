@@ -205,14 +205,26 @@ QString IParsingCommandOut::ProcessingErrorString(const QString& str, const QJso
 {
     QString retStr = str;
     int offset = parseError->offset;
+    QString tempStr = retStr;
 
     switch(parseError->error)
     {
         case QJsonParseError::UnterminatedObject: // не хватает в конце закрывающей круглой скобки
-            offset--;
-            retStr.remove(offset, str.length() - offset);
+            // у нас здесь два варианта, либо offset без смещения, либо со смещением влево, так работает Qt класс
+            tempStr.remove(offset, str.length() - offset);
+            if(!QJsonDocument::fromJson((tempStr + "}").toUtf8()).isNull())
+            {
+               retStr = tempStr;
+            }
+            else
+            {
+                --offset;
+                retStr.remove(offset, str.length() - offset);
+            }
+
             strJSONData = retStr;
-            retStr += "}";break;
+            retStr += "}";
+            break;
 
         case QJsonParseError::UnterminatedString: // не хватает в конце закрывающей круглой скобки
             retStr.remove(offset, str.length() - offset);
