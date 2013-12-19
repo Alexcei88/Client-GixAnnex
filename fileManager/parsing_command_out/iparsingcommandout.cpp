@@ -9,12 +9,14 @@ using namespace GANN_DEFINE;
 
 //----------------------------------------------------------------------------------------/
 IParsingCommandOut::IParsingCommandOut(IRepository *repository):
-  commandStart(false)
- ,commandEnd(false)
- ,exitCodeCommand(0)
- ,wasErrorCommand(false)
- ,repository(repository)
- ,startNewDocument(false)
+   commandStart(false)
+ , commandEnd(false)
+ , exitCodeCommand(0)
+ , wasErrorCommand(false)
+ , repository(repository)
+ , keyStartDoc("command")
+ , keyEndDoc("success")
+ , startNewDocument(false)
 {}
 //----------------------------------------------------------------------------------------/
 IParsingCommandOut::~IParsingCommandOut(){};
@@ -22,7 +24,6 @@ IParsingCommandOut::~IParsingCommandOut(){};
 void IParsingCommandOut::SetParamBeforeStartCommand()
 {
     dataStdOut.clear();
-    dataAfterParsing.clear();
     commandStart    = true;
     commandEnd      = false;
     exitCodeCommand = -2;
@@ -54,11 +55,6 @@ void IParsingCommandOut::SetParamAfterEndCommand(int exitCode)
     ParsingData();
 }
 //----------------------------------------------------------------------------------------/
-QStringList IParsingCommandOut::GetParsingData() const
-{
-    return dataAfterParsing;
-}
-//----------------------------------------------------------------------------------------/
 void IParsingCommandOut::SetShell(TShell* shell)
 {
     this->shell = shell;
@@ -84,11 +80,22 @@ RESULT_EXEC_PROCESS IParsingCommandOut::GetCodeError() const
     }
 }
 //----------------------------------------------------------------------------------------/
+bool IParsingCommandOut::IsEndCommand(const QJsonDocument& doc, bool& ok) const
+{
+    assert(doc.isObject());
+    QJsonObject object = doc.object();
+    if(object.find(keyEndDoc) != object.end())
+    {
+        ok = object.take(keyEndDoc).toBool();
+        return true;
+    }
+    ok = false;
+    return false;
+
+}
+//----------------------------------------------------------------------------------------/
 void IParsingCommandOut::FilterInputString(const QString& str)
 {
-    static const QString keyStartDoc = "command";
-    static const QString keyEndDoc = "success";
-
     std::vector<QJsonDocument> parseNewDocument;
     QJsonDocument lastDoc;
     // идем построчно
@@ -106,7 +113,7 @@ void IParsingCommandOut::FilterInputString(const QString& str)
                 QJsonDocument doc = QJsonDocument::fromJson(tempStr.toUtf8(), &error);
                 if(doc.isNull())
                 {
-                    QString strNoError = ProcessingErrorString(str, &error);
+                    QString strNoError = ProcessingErrorString(tempStr, &error);
                     if(!strNoError.isEmpty())
                     {
                         doc = QJsonDocument::fromJson(strNoError.toUtf8(), &error);
@@ -198,33 +205,30 @@ QString IParsingCommandOut::ProcessingErrorString(const QString& str, const QJso
 {
     QString retStr = str;
     int offset = parseError->offset;
-    if(offset != str.length())
+
+    switch(parseError->error)
     {
-        std::cout<<"lengthString"<<str.length()<<std::endl;
-        retStr.remove(offset -1, str.length() - offset + 1);
-    }
-    if(!retStr.isEmpty())
-    {
-        switch(parseError->error)
-        {
-            case QJsonParseError::UnterminatedObject: // не хватает в конце закрывающей круглой скобки
-                            strJSONData = retStr;
-                            retStr += "}";break;
+        case QJsonParseError::UnterminatedObject: // не хватает в конце закрывающей круглой скобки
+            offset--;
+            retStr.remove(offset, str.length() - offset);
+            strJSONData = retStr;
+            retStr += "}";break;
 
-            case QJsonParseError::UnterminatedString: // не хватает в конце закрывающей круглой скобки
-                            strJSONData = retStr;
-                            retStr += "}";break;
+        case QJsonParseError::UnterminatedString: // не хватает в конце закрывающей круглой скобки
+            retStr.remove(offset, str.length() - offset);
+            strJSONData = retStr;
+            retStr += "}";break;
 
-            case QJsonParseError::UnterminatedArray: // не хватает в конце закрывающей квадратной скобки
-                            strJSONData = retStr;
-                            retStr += "]"; break;
-            case QJsonParseError::IllegalValue: // неверное значение, поэтому приравниваем пустую строку
-                            // strJSONData не трогаем
-                            retStr = ""; break;
+        case QJsonParseError::UnterminatedArray: // не хватает в конце закрывающей квадратной скобки
+            retStr.remove(offset, str.length() - offset);
+            strJSONData = retStr;
+            retStr += "]"; break;
+        case QJsonParseError::IllegalValue: // неверное значение, поэтому приравниваем пустую строку
+            // strJSONData не трогаем
+            retStr = ""; break;
 
-            default:
-                assert("При парсинге JSON-строки произошла неизвестная ошибка." && false);
-        }
+        default:
+            assert("При парсинге JSON-строки произошла неизвестная ошибка." && false);
     }
     return retStr;
 }

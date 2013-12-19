@@ -4,22 +4,12 @@
 //----------------------------------------------------------------------------------------/
 ParsingCommandClone::ParsingCommandClone(IRepository * repository):
     IParsingCommandOut(repository)
-{
-    // регулярное выражение в случаи успешного парсинга
-    QString succes = "(Cloning into ')(.*)(')(.*)";
-    //  в случаи ошибки
-    QString unsucces = "(fatal: )(.*)";
-    // причина ошибки
-    QString error = "(error: )(.*)";
-
-    listRegExpPossible.push_back(succes);
-    listRegExpPossible.push_back(unsucces);
-    listRegExpPossible.push_back(error);
-}
+{}
 //----------------------------------------------------------------------------------------/
 void ParsingCommandClone::ParsingData()
 {
     return;
+#if 0
     if(!commandStart && commandEnd && !dataStdOut.empty())
     {
         // выполняем парсинг
@@ -67,6 +57,7 @@ void ParsingCommandClone::ParsingData()
     {
         // иначе ничего не делаем
     }
+#endif
 }
 //----------------------------------------------------------------------------------------/
 

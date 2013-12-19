@@ -2,71 +2,39 @@
 #include "../repository/irepository.h"
 #include <assert.h>
 
+//  Qt stuff
+#include <QJsonObject>
+
 ParsingCommandGet::ParsingCommandGet(IRepository* repository) :
     IParsingCommandOut(repository)
   , startGet(false)
-{
-//    // регулярное выражение в случаи успешного начала скачивания файла текущего файла
-    QString startGet = "(\{\"command\":\"get\")(.*)";
-    QString endGet = "(\"success\":.*\})(.*)" ;
-    QString JsonStr = "(\".*\":\".*\")";
-
-    listRegExpPossible.push_back(startGet);
-    listRegExpPossible.push_back(endGet);
-    listRegExpPossible.push_back(JsonStr);
-}
+{}
 //----------------------------------------------------------------------------------------/
 void ParsingCommandGet::ParsingData()
 {
-    return;
     // команда стартовала, но еще не завершилась
     if(commandStart && !commandEnd)
     {
-        // посл полученная строка из потока вывода
-        const QString str = dataStdOut.back();
-
-        // идем построчно
-        QStringList strLines = str.split("\n", QString::SkipEmptyParts);
-        for(auto it = strLines.begin(); it != strLines.end(); ++it)
+        for(std::vector<QJsonDocument>::iterator it = arrayJSONDocument.begin(); it != arrayJSONDocument.end(); ++it)
         {
-            QString tempStr = *it;
-            while(!tempStr.isEmpty())
+            const QJsonDocument& doc = (*it);
+            if(!lastJSONDocument.isNull())
             {
-                // в случаи удачи начала скачивания
-                regExp.setPattern(listRegExpPossible[0]);
-                if(regExp.indexIn(tempStr) != -1)
+                if(doc.object().take("file").toString() != lastJSONDocument.object().take("file").toString())
                 {
-                    StartGetContentFile();
-                    tempStr = "";
-                    continue;
+                    // документ не был в обработке, запускаем
+                    StartGetContentFile(doc);
                 }
-
-                //  в случаи успеха начала скачивания
-                regExp.setPattern(listRegExpPossible[1]);
-                if(regExp.indexIn(tempStr) != -1)
-                {
-                    StartGetContentFile();
-                    tempStr = regExp.cap(3);
-                    continue;
-                }
-                regExp.setPattern(listRegExpPossible[0]);
-                if(regExp.indexIn(tempStr) != -1)
-                {
-                    StartGetContentFile();
-                    tempStr = "";
-                    continue;
-                }
-
-                // в случаи окончания скачивания файла
-                regExp.setPattern(listRegExpPossible[5]);
-                if(regExp.indexIn(tempStr) != -1)
-                {
-                    EndGetContentFile();
-                    tempStr = regExp.cap(3);
-                    continue;
-                }
-                // не нашли соответствие, перрываем парсинг текущей строки
-                tempStr = "";
+            }
+            else
+            {
+                StartGetContentFile(doc);
+            }
+            bool ok = false;
+            if(IsEndCommand(doc, ok))
+            {
+                // команда завершилась
+                ok ? EndGetContentFile() : ErrorGetContentFile(doc);
             }
         }
     }
@@ -76,14 +44,12 @@ void ParsingCommandGet::ParsingData()
     }
 }
 //----------------------------------------------------------------------------------------/
-void ParsingCommandGet::StartGetContentFile()
+void ParsingCommandGet::StartGetContentFile(const QJsonDocument &doc)
 {
     assert(!startGet && "Предыдущий ресурс еще не скачался, и началось новое скачивание. Что то пошло не так!!!");
     startGet = true;
-    wasErrorCommand = false;
 
-    dataAfterParsing << regExp.cap(2);
-    nameFileGetContent = regExp.cap(2);
+    nameFileGetContent = doc.object().take("file").toString();
     emit repository->startGetContentFile(nameFileGetContent);
 }
 //----------------------------------------------------------------------------------------/
@@ -91,19 +57,14 @@ void ParsingCommandGet::EndGetContentFile()
 {
     assert(startGet && "Скачивание ресурса не было запущено");
     startGet = false;
-    dataAfterParsing << regExp.cap(1);
     emit repository->endGetContentFile(nameFileGetContent);
-    wasErrorCommand = false;
 }
 //----------------------------------------------------------------------------------------/
-void ParsingCommandGet::ErrorGetContentFile()
+void ParsingCommandGet::ErrorGetContentFile(const QJsonDocument &doc)
 {
     assert(startGet && "Скачивание ресурса не было запущено");
     startGet = false;
-    wasErrorCommand = true;
-    dataAfterParsing << regExp.cap(1);
     emit repository->errorGetContentFile(nameFileGetContent, "ffff");
-    wasErrorCommand = true;
 }
 //----------------------------------------------------------------------------------------/
 

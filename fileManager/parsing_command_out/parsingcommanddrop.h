@@ -18,11 +18,11 @@ private:
     // имя текущего удаляемого ресурса
     QString             nameFileGetContent;
     //  начала удаления файла
-    void                StartDropContentFile();
+    void                StartDropContentFile(const QJsonDocument& doc);
     // конец удаления файла
     void                EndDropContentFile();
     // удаление файла завершилось с ошибкой
-    void                ErrorDropContentFile();
+    void                ErrorDropContentFile(const QJsonDocument &doc);
 };
 
 #endif // PARSINGCOMMANDDROP_H

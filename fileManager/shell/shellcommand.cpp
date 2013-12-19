@@ -38,6 +38,7 @@ void ShellCommand::SetWorkingDirectory(const QString& localURL)
 //----------------------------------------------------------------------------------------/
 RESULT_EXEC_PROCESS ShellCommand::CloneRepositories(const QString& remoteURL, QString& folderClone, IRepository *repository)
 {
+    assert(0);
     const QString strCommand = "git clone " + remoteURL;
     boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandClone(repository));
     ShellTask* shellTask = new ShellTask(strCommand, localURL, receiverParsing);
@@ -50,9 +51,9 @@ RESULT_EXEC_PROCESS ShellCommand::CloneRepositories(const QString& remoteURL, QS
     if(codeError != NO_ERROR)
         return codeError;
 
-    QStringList parsingData = receiverParsing->GetParsingData();
+//    QStringList parsingData = receiverParsing->GetParsingData();
     // иначе нет ошибок
-    folderClone = parsingData.at(0);
+//    folderClone = parsingData.at(0);
     return NO_ERROR;
 }
 //----------------------------------------------------------------------------------------/
