@@ -268,6 +268,11 @@ FocusScope{
                                 }
                             }
                         ]
+                    transitions: [
+                        Transition {
+                            to: "SYNCING"
+                        }
+                    ]
                 }
 
                 Text
@@ -301,7 +306,6 @@ FocusScope{
                     if(mouse.button === Qt.RightButton)
                     {
                         menudirectory.popup()
-                        focusScope.focus = true
                     }
                 }
                 onDoubleClicked:

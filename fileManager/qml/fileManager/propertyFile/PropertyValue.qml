@@ -13,12 +13,14 @@ Item
     {
         id: option
         text: qsTr("SDFGDFfdfdf:")
+        font.pixelSize: 10
     }
 
     Text
     {
         id: value
         text: qsTr("")
+        font.pixelSize: 10
         anchors.left: option.right
         anchors.leftMargin: 10
     }

@@ -45,12 +45,13 @@ Rectangle
     {
         columnHead.width = width
         separatorRect.width = width - 30
+//        name.width = width
     }
 
     ColumnLayout {
         width: parent.width
-        anchors.horizontalCenter: parent.horizontalCenter
         id: columnHead
+        anchors.horizontalCenter: parent.horizontalCenter
 
         Image {
             id: iconsImage
@@ -61,6 +62,9 @@ Rectangle
             id: name
             text: "FileName"
             anchors.horizontalCenter: parent.horizontalCenter
+            font.bold: true
+//            wrapMode: Text.WordWrap
+            width: parent.width
         }
         // разделитель(взят из ToolBarStyle)
         Rectangle {
@@ -90,7 +94,7 @@ Rectangle
             id: propertySize
             nameOption: "Size: "
             widthFieldOption: column.maxWidthNameField
-            height: 20
+            height: 10
         }
 
         PropertyValue
@@ -98,7 +102,7 @@ Rectangle
             id: propertyLastModified
             nameOption: "LastModified: "
             widthFieldOption: column.maxWidthNameField
-            height: 20
+            height: 10
         }
     }
 
