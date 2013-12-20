@@ -48,6 +48,8 @@ public:
         bool        autosyncContent;
         // состояние, в котором щас находимся
         QString     currentState;
+        // режим работы репозитория(прямой, косвенный)(true - прямой, false - косвенный)
+        bool        directMode;
     };
 
     /**
@@ -75,8 +77,8 @@ public:
     void                SetParamSyncRepository(const bool& autosync, const bool& autosyncContent);
 
     /** @brief взятие параметров автосинхронизации репозитория */
-    inline bool          GetParamSyncRepository() const { return paramSyncRepo.autosync; }
-    inline bool          GetParamSyncContentRepository() const { return paramSyncRepo.autosyncContent; }
+    inline bool          GetParamSyncRepository() const { return paramRepo.autosync; }
+    inline bool          GetParamSyncContentRepository() const { return paramRepo.autosyncContent; }
 
     /** @brief Возвращает локальный путь, по которому храниться репозиторий */
     inline QString       GetLocalURL() const { return localURL; }
@@ -140,6 +142,11 @@ public:
     */
     virtual GANN_DEFINE::RESULT_EXEC_PROCESS StopWatchRepository() const;
 
+    /**
+    @brief перевод репозитория в прямой/косвенный режим
+    */
+    virtual GANN_DEFINE::RESULT_EXEC_PROCESS SetDirectMode(const bool& direct);
+
     /** @brief Установка состояния репозитория */
     void                SetState(const STATE_REPOSITORY& state);
 
@@ -186,7 +193,7 @@ protected:
     QString             nameRepo;
 
     // параметры репозитория
-    PARAMETR_REPOSITORY_GI_ANNEX paramSyncRepo;
+    PARAMETR_REPOSITORY_GI_ANNEX paramRepo;
 
     // перечисление состояний репозитория, в которых мы находимся
     // репозитория в целом
@@ -206,6 +213,7 @@ protected:
 private:
 
     void                InitClass();
+    void                InitSignalAndSlots();
     // вектор, содержащий файлы, которые сейчас скачиваются(или дано задание на скачивание)
     QList<QString>      gettingContentFile;
     // вектор, содержащий файлы, которые сейчас удаляются(или дано задание на удаление)
@@ -241,6 +249,9 @@ private slots:
     // неудачное клонирование репозитория
     void                OnErrorCloneRepository(const QString&);
 
+    // смена режима доступа репозитория(прямого/обратного)
+    void                OnChangeDirectMode(const bool mode);
+
 signals:
     // сигналы начала/конца get
     void                startGetContentFile(const QString&);
@@ -252,6 +263,11 @@ signals:
     void                errorDropContentFile(const QString&, const QString&);
     // неудачное клонирование
     void                errorCloneRepository(const QString&);
+
+    // смена режима доступа репозитория(прямого/обратного)
+    void                changeDirectMode(const bool);
+
+
 
 };
 

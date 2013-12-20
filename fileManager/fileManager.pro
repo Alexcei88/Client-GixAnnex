@@ -38,7 +38,8 @@ SOURCES += main.cpp \
     MVC/Model/model_icons.cpp \
     parsing_command_out/parsingcommandempty.cpp \
     qml/components/folder_model/folderlistmodel.cpp \
-    qml/components/message_box/qmlmessage.cpp
+    qml/components/message_box/qmlmessage.cpp \
+    parsing_command_out/parsingcommanddirectmode.cpp
 
 # Installation path
 # target.path =
@@ -85,7 +86,8 @@ HEADERS += \
     parsing_command_out/parsingcommandempty.h \
     qml/components/folder_model/folderlistmodel.h \
     qml/components/message_box/qmlmessage.h \
-    threadmodel.h
+    threadmodel.h \
+    parsing_command_out/parsingcommanddirectmode.h
 
 # Включаем поддержку С++11
 QMAKE_CXXFLAGS += -std=c++0x

@@ -32,7 +32,6 @@ Menu
         onTriggered: {
             getContentDirectory()
         }
-        //       tooltip: "Open an image"
     }
 
     Action
@@ -44,7 +43,6 @@ Menu
         onTriggered: {
             dropContentDirectory()
         }
-        //       tooltip: "Open an image"
     }
 
     Action
@@ -56,18 +54,17 @@ Menu
         onTriggered: {
             removeDirectory()
         }
-        //       tooltip: "Open an image"
     }
-
-
 
     title: "ActionDirectory"
     MenuItem { action: openAction }
     MenuItem { action: getContentAction }
     MenuItem { action: dropContentAction }
     MenuItem { action: removeDirectoryAction }
-    MenuItem { text: "On/Off autoget content" }
-    MenuItem { text: "Close" }
+
+    onPopupVisibleChanged:{
+        isPopup = !isPopup;
+    }
 }
 
 

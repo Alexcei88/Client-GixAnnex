@@ -8,6 +8,7 @@
 #include "../parsing_command_out/parsingcommandget.h"
 #include "../parsing_command_out/parsingcommanddrop.h"
 #include "../parsing_command_out/parsingcommandempty.h"
+#include "../parsing_command_out/parsingcommanddirectmode.h"
 
 #include <QThreadPool>
 
@@ -134,4 +135,13 @@ RESULT_EXEC_PROCESS ShellCommand::WhereisFiles(const QString& path, IRepository*
     return NO_ERROR;
 }
 //----------------------------------------------------------------------------------------/
+RESULT_EXEC_PROCESS ShellCommand::SetDirectMode(const bool& direct, IRepository *repository) const
+{
+    const QString strCommand = baseCommand + (direct ? " direct" : " indirect");
+    boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandDirectMode(repository));
+    ShellTask* shellTask = new ShellTask(strCommand, localURL, receiverParsing);
 
+    QThreadPool::globalInstance()->start(shellTask);
+    return NO_ERROR;
+}
+//----------------------------------------------------------------------------------------/

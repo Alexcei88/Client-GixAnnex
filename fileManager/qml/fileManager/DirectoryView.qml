@@ -117,9 +117,6 @@ FocusScope{
                     repository.removeDirectory(fileName);
             }
         }
-        onPopupVisibleChanged:{
-            isPopup = !isPopup;
-        }
     }
 
     id: focusScope

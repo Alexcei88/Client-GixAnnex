@@ -21,9 +21,10 @@ void IRepository::InitClass()
     shellCommand = boost::make_shared<ShellCommand>();
 
     // устанавливаем состояние репозитория по умолчанию
-    paramSyncRepo.autosync = true;
-    paramSyncRepo.autosyncContent = true;
-    paramSyncRepo.currentState = "Synced";
+    paramRepo.autosync = true;
+    paramRepo.autosyncContent = true;
+    paramRepo.currentState = "Synced";
+    paramRepo.directMode = true;
 
     // init Q_Enums
     const QMetaObject &mo = staticMetaObject;
@@ -34,6 +35,15 @@ void IRepository::InitClass()
     metaEnumStateF = mo.enumerator(enum_indexF);
 
     // сигналы/слоты
+    InitSignalAndSlots();
+
+    dir.setPath("");
+    dir.setFilter(QDir::NoDotAndDotDot | QDir::AllEntries | QDir::System);
+}
+//----------------------------------------------------------------------------------------/
+void IRepository::InitSignalAndSlots()
+{
+    // сигналы/слоты
     //----------------------------------------------------------------------------------------/
     QObject::connect(this, &IRepository::startGetContentFile, this, &IRepository::OnStartGetContentFile, Qt::DirectConnection);
     QObject::connect(this, &IRepository::endGetContentFile, this, &IRepository::OnEndGetContentFile, Qt::DirectConnection);
@@ -42,10 +52,8 @@ void IRepository::InitClass()
     QObject::connect(this, &IRepository::endDropContentFile, this, &IRepository::OnEndDropContentFile, Qt::DirectConnection);
     QObject::connect(this, &IRepository::errorDropContentFile, this, &IRepository::OnErrorDropContentFile, Qt::DirectConnection);
     QObject::connect(this, &IRepository::errorCloneRepository, this, &IRepository::OnErrorCloneRepository, Qt::DirectConnection);
+    QObject::connect(this, &IRepository::changeDirectMode, this, &IRepository::OnChangeDirectMode, Qt::DirectConnection);
     //----------------------------------------------------------------------------------------/
-
-    dir.setPath("");
-    dir.setFilter(QDir::NoDotAndDotDot | QDir::AllEntries | QDir::System);
 }
 //----------------------------------------------------------------------------------------/
 RESULT_EXEC_PROCESS IRepository::StartWatchRepository() const
@@ -70,26 +78,36 @@ RESULT_EXEC_PROCESS IRepository::StopWatchRepository() const
     return result;
 }
 //----------------------------------------------------------------------------------------/
+GANN_DEFINE::RESULT_EXEC_PROCESS IRepository::SetDirectMode(const bool& direct)
+{
+    RESULT_EXEC_PROCESS result = shellCommand->SetDirectMode(direct, this);
+    if(result != NO_ERROR)
+    {
+        printf("Error SetDirectMode repositories: %s \n", localURL.toStdString().c_str());
+        return result;
+    }
+    return result;
+}
+//----------------------------------------------------------------------------------------/
 void IRepository::SetState(const STATE_REPOSITORY& state)
 {
     if(state == Disable_sincing)
     {
         // репозитория отключен, никаких дейтсвия выполнить над ним нельзя
         // слежение за ним тоже надо отключать
-        paramSyncRepo.autosync = false;
+        paramRepo.autosync = false;
     }
     else if(state == Synced)
     {
-        paramSyncRepo.autosync = true;
+        paramRepo.autosync = true;
     }
     QByteArray str = metaEnumState.valueToKey(int(state));
-    paramSyncRepo.currentState = QString(str);
-
+    paramRepo.currentState = QString(str);
 }
 //----------------------------------------------------------------------------------------/
 QString IRepository::GetState() const
 {
-    return paramSyncRepo.currentState;
+    return paramRepo.currentState;
 }
 //----------------------------------------------------------------------------------------/
 void IRepository::SetStateFileDir(const QString& fileDirName, const STATE_FILE_AND_DIR &state)
@@ -107,8 +125,8 @@ QString IRepository::GetStateFileDir(const QString& fileDirName) const
 //----------------------------------------------------------------------------------------/
 void IRepository::SetParamSyncRepository(const bool& autosync, const bool& autosyncContent)
 {
-    paramSyncRepo.autosync = autosync;
-    paramSyncRepo.autosyncContent = autosyncContent;
+    paramRepo.autosync = autosync;
+    paramRepo.autosyncContent = autosyncContent;
 }
 //----------------------------------------------------------------------------------------/
 void IRepository::UpdateParamSyncFileDirFull(const QString& curDir)
@@ -207,7 +225,7 @@ QString IRepository::CalculateStateFileDir(const QString& file) const
 {
     // текущее состояние
     QByteArray curState;
-    if(paramSyncRepo.currentState == metaEnumState.valueToKey(Disable_sincing))
+    if(paramRepo.currentState == metaEnumState.valueToKey(Disable_sincing))
     {
         curState = metaEnumStateF.valueToKey(Disable_sincingF);
     }
@@ -325,3 +343,10 @@ void IRepository::OnErrorCloneRepository(const QString &error)
     lastError = error;
 }
 //----------------------------------------------------------------------------------------/
+void IRepository::OnChangeDirectMode(const bool mode)
+{
+    assert(paramRepo.directMode != mode);
+    paramRepo.directMode = mode;
+}
+//----------------------------------------------------------------------------------------/
+
