@@ -32,10 +32,6 @@ FacadeApplication::FacadeApplication() :
     // генерируем список путей до иконок
     ResourceGenerator::getInstance();
 
-    for(auto itRepo = repository.begin(); itRepo != repository.end(); ++itRepo)
-    {
-        itRepo->second->SetDirectMode(true);
-    }
     // запускаем демон за просмотром директорий с репозиториями
     WatchRepositories();
 
