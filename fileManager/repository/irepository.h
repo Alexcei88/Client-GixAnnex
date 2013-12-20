@@ -251,6 +251,7 @@ private slots:
 
     // смена режима доступа репозитория(прямого/обратного)
     void                OnChangeDirectMode(const bool mode);
+    void                OnErrorChangeDirectMode(const QString& error);
 
 signals:
     // сигналы начала/конца get
@@ -266,8 +267,7 @@ signals:
 
     // смена режима доступа репозитория(прямого/обратного)
     void                changeDirectMode(const bool);
-
-
+    void                errorChangeDirectMode(const QString&);
 
 };
 

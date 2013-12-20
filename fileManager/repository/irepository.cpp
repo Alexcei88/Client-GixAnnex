@@ -80,6 +80,7 @@ RESULT_EXEC_PROCESS IRepository::StopWatchRepository() const
 //----------------------------------------------------------------------------------------/
 GANN_DEFINE::RESULT_EXEC_PROCESS IRepository::SetDirectMode(const bool& direct)
 {
+    shellCommand->SetWorkingDirectory(localURL);
     RESULT_EXEC_PROCESS result = shellCommand->SetDirectMode(direct, this);
     if(result != NO_ERROR)
     {
@@ -347,6 +348,11 @@ void IRepository::OnChangeDirectMode(const bool mode)
 {
     assert(paramRepo.directMode != mode);
     paramRepo.directMode = mode;
+}
+//----------------------------------------------------------------------------------------/
+void IRepository::OnErrorChangeDirectMode(const QString& error)
+{
+
 }
 //----------------------------------------------------------------------------------------/
 
