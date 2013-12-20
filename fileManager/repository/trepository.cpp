@@ -59,7 +59,7 @@ RESULT_EXEC_PROCESS TRepository::DeleteRepository()
 RESULT_EXEC_PROCESS TRepository::GetContentFile(const QString& file)
 {
     // если репозитория выключен, то ничего не делаем
-    if(paramSyncRepo.currentState == "Disable_sincing")
+    if(paramRepo.currentState == "Disable_sincing")
         return IGNORE_COMMAND;
 
     // сразу же заносим данную директорию в список файлов, получающих контент в данный момент времени
@@ -77,7 +77,7 @@ RESULT_EXEC_PROCESS TRepository::GetContentFile(const QString& file)
 //----------------------------------------------------------------------------------------/
 RESULT_EXEC_PROCESS TRepository::DropContentFile(const QString& file)
 {
-    if(paramSyncRepo.currentState == "Disable_sincing")
+    if(paramRepo.currentState == metaEnumState.valueToKey(Disable_sincing))
         return IGNORE_COMMAND;
 
     shellCommand->SetWorkingDirectory(dir.path());
@@ -92,7 +92,7 @@ RESULT_EXEC_PROCESS TRepository::DropContentFile(const QString& file)
 //----------------------------------------------------------------------------------------/
 RESULT_EXEC_PROCESS TRepository::RemoveFile(const QString& file)
 {
-    if(paramSyncRepo.currentState == "Disable_sincing")
+    if(paramRepo.currentState == metaEnumState.valueToKey(Disable_sincing))
         return IGNORE_COMMAND;
 
     // сначала удалим контент
@@ -110,7 +110,7 @@ RESULT_EXEC_PROCESS TRepository::RemoveFile(const QString& file)
 //----------------------------------------------------------------------------------------/
 RESULT_EXEC_PROCESS TRepository::WhereisFile(const QString& file)
 {
-    if(paramSyncRepo.currentState == "Disable_sincing")
+    if(paramRepo.currentState == metaEnumState.valueToKey(Disable_sincing))
         return IGNORE_COMMAND;
 
     shellCommand->SetWorkingDirectory(dir.path());
@@ -125,7 +125,7 @@ RESULT_EXEC_PROCESS TRepository::WhereisFile(const QString& file)
 //----------------------------------------------------------------------------------------/
 GANN_DEFINE::RESULT_EXEC_PROCESS TRepository::SyncRepository() const
 {
-    if(paramSyncRepo.currentState == "Disable_sincing")
+    if(paramRepo.currentState == metaEnumState.valueToKey(Disable_sincing))
         return IGNORE_COMMAND;
 
     shellCommand->SetWorkingDirectory(this->localURL);

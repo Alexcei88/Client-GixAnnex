@@ -55,7 +55,6 @@ FocusScope {
                         // если удалии последний репозиторий, то устанавливаем на последний доступный индекс
                         lastIndex = modelRepoXML.count - 1;
                     }
-                    console.log("lastIndex = " + lastIndex)
                     viewModel.currentIndex = lastIndex;
                     var localPath = modelRepoXML.get(lastIndex).localPath
                     var nameRepo = modelRepoXML.get(lastIndex).nameRepo
@@ -64,7 +63,6 @@ FocusScope {
                 }
                 else
                 {
-                    console.log("Empty model")
                     if(viewModel.highlightItem)
                     {
                     }
@@ -74,11 +72,6 @@ FocusScope {
                     //selectNewRepository(" ", " ");
                     setEnableRepository(false);
                 }
-            }
-            else
-            {
-//                console.log(errorString())
-//                console.log("Status = " + status);
             }
         }
     }
@@ -174,7 +167,9 @@ FocusScope {
                         width: parent.width
 
                         Image{
-                            id: repoSync
+                            property bool on: false
+
+                            id: repoOn
                             anchors.leftMargin: 5
                             source: "qrc:/repo_on.png"
                             state: "SYNCED"
@@ -182,6 +177,10 @@ FocusScope {
                                 widthRepoSync = width
                                 itemText.width = viewItem.width - width
                                 textNameRepo.width = itemText.width - 4 - 7
+                            }
+
+                            Image {
+                                id: repoSync
                             }
                         }
 
@@ -210,7 +209,7 @@ FocusScope {
                                 when: { repository.getStateRepository(localPath) === "Syncing";}
                                // StateChangeScript { script: console.log("state = SYNCING") }
                                 PropertyChanges {
-                                    target: repoSync
+                                    target: repoOn
                                     source: "qrc:/repo_on.png"
                                 }
                             },
@@ -221,7 +220,7 @@ FocusScope {
                                 when: { repository.getStateRepository(localPath) === "Synced";}
                                // StateChangeScript { script: console.log("state = SYNCED") }
                                 PropertyChanges {
-                                    target: repoSync
+                                    target: repoOn
                                     source: "qrc:/repo_on.png"
                                 }
                             },
@@ -232,7 +231,7 @@ FocusScope {
                                 when: { repository.getStateRepository(localPath) === "Disable_sincing";}
                                 //StateChangeScript { script: console.log("state = DISABLE_SYNC") }
                                 PropertyChanges {
-                                    target: repoSync
+                                    target: repoOn
                                     source: "qrc:/images/clear.png"
 
                                 }

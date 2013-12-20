@@ -5,6 +5,7 @@
 
 // Qt stuff
 #include <QString>
+#include <QJsonArray>
 
 class ParsingCommandGet : public IParsingCommandOut
 {
@@ -18,12 +19,11 @@ private:
     // имя текущего скачиваемого ресурса
     QString             nameFileGetContent;
     //  начала скачивания файла
-    void                StartGetContentFile();
+    void                StartGetContentFile(const QJsonDocument& doc);
     // конец скачивания файла
     void                EndGetContentFile();
     // скачивание файла завершилось с ошибкой
-    void                ErrorGetContentFile();
-
+    void                ErrorGetContentFile(const QJsonDocument &doc);
 
 };
 

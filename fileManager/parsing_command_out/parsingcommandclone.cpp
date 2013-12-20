@@ -31,7 +31,7 @@ void ParsingCommandClone::ParsingData()
             {
                 QString errorString;
                 // была ошибка, формируем сообщение об ошибке
-                dataAfterParsing<<regExp.cap(1)<<regExp.cap(2);
+//                dataAfterParsing<<regExp.cap(1)<<regExp.cap(2);
 
                 errorString += regExp.cap(1);
                 errorString += regExp.cap(2);
@@ -42,7 +42,7 @@ void ParsingCommandClone::ParsingData()
                     const QString str = dataStdOut[j];
                     if(regExp.indexIn(str) != -1)
                     {
-                        dataAfterParsing<<regExp.cap(1)<<regExp.cap(2);
+//                        dataAfterParsing<<regExp.cap(1)<<regExp.cap(2);
                         errorString += regExp.cap(1);
                         errorString += regExp.cap(2);
                     }
@@ -58,7 +58,7 @@ void ParsingCommandClone::ParsingData()
         if(regExp.indexIn(str) != -1)
         {
             const QString nameFolder = regExp.cap(2);
-            dataAfterParsing << nameFolder;
+//            dataAfterParsing << nameFolder;
         }
         wasErrorCommand = false;
     }
