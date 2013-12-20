@@ -63,7 +63,6 @@ FocusScope {
                 }
                 else
                 {
-                    console.log("Empty model")
                     if(viewModel.highlightItem)
                     {
                     }
@@ -73,11 +72,6 @@ FocusScope {
                     //selectNewRepository(" ", " ");
                     setEnableRepository(false);
                 }
-            }
-            else
-            {
-//                console.log(errorString())
-//                console.log("Status = " + status);
             }
         }
     }

@@ -4,12 +4,21 @@
 //----------------------------------------------------------------------------------------/
 ParsingCommandClone::ParsingCommandClone(IRepository * repository):
     IParsingCommandOut(repository)
-{}
+{
+    // регулярное выражение в случаи успешного парсинга
+    QString succes = "(Cloning into ')(.*)(')(.*)";
+    //  в случаи ошибки
+    QString unsucces = "(fatal: )(.*)";
+    // причина ошибки
+    QString error = "(error: )(.*)";
+
+    listRegExpPossible.push_back(succes);
+    listRegExpPossible.push_back(unsucces);
+    listRegExpPossible.push_back(error);
+}
 //----------------------------------------------------------------------------------------/
 void ParsingCommandClone::ParsingData()
 {
-    return;
-#if 0
     if(!commandStart && commandEnd && !dataStdOut.empty())
     {
         // выполняем парсинг
@@ -22,7 +31,7 @@ void ParsingCommandClone::ParsingData()
             {
                 QString errorString;
                 // была ошибка, формируем сообщение об ошибке
-                dataAfterParsing<<regExp.cap(1)<<regExp.cap(2);
+//                dataAfterParsing<<regExp.cap(1)<<regExp.cap(2);
 
                 errorString += regExp.cap(1);
                 errorString += regExp.cap(2);
@@ -33,7 +42,7 @@ void ParsingCommandClone::ParsingData()
                     const QString str = dataStdOut[j];
                     if(regExp.indexIn(str) != -1)
                     {
-                        dataAfterParsing<<regExp.cap(1)<<regExp.cap(2);
+//                        dataAfterParsing<<regExp.cap(1)<<regExp.cap(2);
                         errorString += regExp.cap(1);
                         errorString += regExp.cap(2);
                     }
@@ -49,7 +58,7 @@ void ParsingCommandClone::ParsingData()
         if(regExp.indexIn(str) != -1)
         {
             const QString nameFolder = regExp.cap(2);
-            dataAfterParsing << nameFolder;
+//            dataAfterParsing << nameFolder;
         }
         wasErrorCommand = false;
     }
@@ -57,7 +66,6 @@ void ParsingCommandClone::ParsingData()
     {
         // иначе ничего не делаем
     }
-#endif
 }
 //----------------------------------------------------------------------------------------/
 

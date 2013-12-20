@@ -4,6 +4,8 @@ import QtQuick.Layouts 1.0
 
 Menu
 {
+    property bool isPopup: false
+
     // Меню будет отправлять соот сигналы, а в файле приемнике будет обработка нужной функцией
     signal openDirectory()
     signal getContentDirectory()

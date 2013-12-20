@@ -2,7 +2,9 @@ import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Controls.Private 1.0
 import QtQuick.Layouts 1.0
-import Qt.labs.folderlistmodel 1.0
+import QtGraphicalEffects 1.0
+
+//  our stuff
 import Repository 1.0
 import Icons 1.0
 import FolderListModel 1.0
@@ -115,6 +117,9 @@ FocusScope{
                     repository.removeDirectory(fileName);
             }
         }
+        onPopupVisibleChanged:{
+            isPopup = !isPopup;
+        }
     }
 
     id: focusScope
@@ -132,7 +137,10 @@ FocusScope{
             anchors.rightMargin: 0
             anchors.bottomMargin: 1
             source: Settings.style + "/../Base/images/focusframe.png"
-            visible: focusScope.activeFocus ? true : false
+            visible: if(focusScope.activeFocus || menudirectory.isPopup)
+                         true;
+                     else
+                        false;
             border { left: 4; top: 4; right: 4; bottom: 4 }
         }
     }
@@ -166,6 +174,8 @@ FocusScope{
 
         cellHeight: 70
         cellWidth: 70
+
+        cacheBuffer: 80000
 
         keyNavigationWraps: true
         highlight:
@@ -222,9 +232,17 @@ FocusScope{
                         id: dirSync
                         anchors.bottom: parent.bottom
                         anchors.left: parent.left
-                        anchors.leftMargin: 2
+//                        anchors.leftMargin: 2
                         source: "qrc:/synced.png"
                         state: "SYNCING"
+                    }
+
+                    ColorOverlay
+                    {
+                        id: colorEffect
+                        anchors.fill: imgFolder
+                        source: imgFolder
+                        color: "#BEBEBEFF"
                     }
 
                     // различные состояния, в которых может находиться директория(или файл)
@@ -237,6 +255,11 @@ FocusScope{
                                     target: dirSync
                                     source: "qrc:/syncing.png"
                                 }
+                                PropertyChanges {
+                                    target: colorEffect
+                                    enabled: false
+                                    visible: false
+                                }
                             },
                             // 2. Синхронизация завершилась
                             State {
@@ -245,6 +268,11 @@ FocusScope{
                                 PropertyChanges {
                                     target: dirSync
                                     source: "qrc:/synced.png"
+                                }
+                                PropertyChanges {
+                                    target: colorEffect
+                                    enabled: false
+                                    visible: false
                                 }
                             },
                             // 3. Синхронизация завершилась неудачно
@@ -255,16 +283,25 @@ FocusScope{
                                     target: dirSync
                                     source: "qrc:/disable_sync.png"
                                 }
+                                PropertyChanges {
+                                    target: colorEffect
+                                    enabled: false
+                                    visible: false
+                                }
                             },
 
                             // 4. Синхронизация выключена
                             State {
                                 name: "DISABLE_SYNC"
-                                when: { contrIcons.stateIconsFileSyncQML[curFileName] === "sinssng"  }
+                                when: { contrIcons.stateIconsFileSyncQML[curFileName] === "Disable_sincingF"  }
                                 PropertyChanges {
                                     target: dirSync
                                     source: "qrc:/synced.png"
-
+                                }
+                                PropertyChanges {
+                                    target: colorEffect
+                                    enabled: true
+                                    visible: true
                                 }
                             }
                         ]
@@ -301,7 +338,6 @@ FocusScope{
                     if(mouse.button === Qt.RightButton)
                     {
                         menudirectory.popup()
-                        focusScope.focus = true
                     }
                 }
                 onDoubleClicked:

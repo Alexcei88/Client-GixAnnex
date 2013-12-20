@@ -207,7 +207,11 @@ QString IRepository::CalculateStateFileDir(const QString& file) const
 {
     // текущее состояние
     QByteArray curState;
-    if(IsGettingContentFileDir(file) || IsDroppingContentFileDir(file))
+    if(paramSyncRepo.currentState == metaEnumState.valueToKey(Disable_sincing))
+    {
+        curState = metaEnumStateF.valueToKey(Disable_sincingF);
+    }
+    else if(IsGettingContentFileDir(file) || IsDroppingContentFileDir(file))
     {
         curState = metaEnumStateF.valueToKey(SyncingF);
     }
