@@ -33,9 +33,8 @@ public:
     QUrl                GetCurrentPath() { return currentPathView; };
 
     /** @brief вектор состояний иконок */
-    Q_PROPERTY(QVariantMap stateIconsFileSyncQML READ GetStateIconsFileSync WRITE SetStateIconsFileSync NOTIFY changedStateIconsFileSync);
+    Q_PROPERTY(QVariantMap stateIconsFileSyncQML READ GetStateIconsFileSync NOTIFY changedStateIconsFileSync);
 
-    void                SetStateIconsFileSync(QVariantMap stateIcons) { stateIconsFileSync = stateIcons;};
     QVariantMap         GetStateIconsFileSync() { return stateIconsFileSync; };
 
     /** @brief возвращает путь иконки для проводника в зависимости от mimetype файла
