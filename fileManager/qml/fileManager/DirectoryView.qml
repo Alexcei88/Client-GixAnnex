@@ -178,7 +178,6 @@ FocusScope{
             cellHeight: 70
             cellWidth: 70
 
-            cacheBuffer: 80000
             // запрещаем свойства объекта Flickable
             interactive: false
 
@@ -191,13 +190,13 @@ FocusScope{
                     z: 50
                     anchors.margins: 20
                 }
-
             highlightMoveDuration: 0
 
             Component.onCompleted:
             {
-                // запускаем поток обновления состояния иконок
+                // запускаем поток и таймер обновления состояния иконок
                 contrIcons.startThreadIconsSync();
+                timeSyncIcons.start();
             }
 
             MouseArea {
@@ -243,13 +242,15 @@ FocusScope{
                             state: "SYNCING"
                         }
 
-                        ColorOverlay
-                        {
-                            id: colorEffect
-                            anchors.fill: imgFolder
-                            source: imgFolder
-                            color: "#BEBEBEFF"
-                        }
+//                        ColorOverlay
+//                        {
+//                            id: colorEffect
+//                            anchors.fill: imgFolder
+//                            source: imgFolder
+//                            color: "#BEBEBEFF"
+//                            enabled: false
+//                            visible: false
+//                        }
 
                         // различные состояния, в которых может находиться директория(или файл)
                         states:[
@@ -261,11 +262,11 @@ FocusScope{
                                         target: dirSync
                                         source: "qrc:/syncing.png"
                                     }
-                                    PropertyChanges {
-                                        target: colorEffect
-                                        enabled: false
-                                        visible: false
-                                    }
+//                                    PropertyChanges {
+//                                        target: colorEffect
+//                                        enabled: false
+//                                        visible: false
+//                                    }
                                 },
                                 // 2. Синхронизация завершилась
                                 State {
@@ -275,11 +276,11 @@ FocusScope{
                                         target: dirSync
                                         source: "qrc:/synced.png"
                                     }
-                                    PropertyChanges {
-                                        target: colorEffect
-                                        enabled: false
-                                        visible: false
-                                    }
+//                                    PropertyChanges {
+//                                        target: colorEffect
+//                                        enabled: false
+//                                        visible: false
+//                                    }
                                 },
                                 // 3. Синхронизация завершилась неудачно
                                 State {
@@ -289,11 +290,11 @@ FocusScope{
                                         target: dirSync
                                         source: "qrc:/disable_sync.png"
                                     }
-                                    PropertyChanges {
-                                        target: colorEffect
-                                        enabled: false
-                                        visible: false
-                                    }
+//                                    PropertyChanges {
+//                                        target: colorEffect
+//                                        enabled: false
+//                                        visible: false
+//                                    }
                                 },
 
                                 // 4. Синхронизация выключена
@@ -304,11 +305,11 @@ FocusScope{
                                         target: dirSync
                                         source: "qrc:/synced.png"
                                     }
-                                    PropertyChanges {
-                                        target: colorEffect
-                                        enabled: true
-                                        visible: true
-                                    }
+//                                    PropertyChanges {
+//                                        target: colorEffect
+//                                        enabled: true
+//                                        visible: true
+//                                    }
                                 }
                             ]
                     }
@@ -365,4 +366,12 @@ FocusScope{
             }
         }   // end GridView
     } // end ScrolView
+    Timer
+    {
+        id: timeSyncIcons
+        repeat: true
+        onTriggered: {
+            updateIconsStateFileSync()
+        }
+    }
 }
