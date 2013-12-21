@@ -27,7 +27,7 @@ void ParsingCommandDirectMode::ParsingData()
         else
         {
             QJsonObject object = lastJSONDocument.object();
-            assert(object.take("file").toString("dffsdf") != "");
+            assert(object.take("file").toString("dffsdf") == "");
             bool ok;
             IsEndCommand(lastJSONDocument, ok);
             if(!ok)

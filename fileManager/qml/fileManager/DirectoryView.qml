@@ -261,6 +261,7 @@ FocusScope{
                                     PropertyChanges {
                                         target: dirSync
                                         source: "qrc:/syncing.png"
+                                        rotation: 360
                                     }
 //                                    PropertyChanges {
 //                                        target: colorEffect
@@ -312,6 +313,17 @@ FocusScope{
 //                                    }
                                 }
                             ]
+                            transitions: [
+                        		Transition {
+                            to: "SYNCING"
+                            RotationAnimation{
+                                from: 0
+                                to: 360
+                                duration: 4000
+                                loops: Animation.Infinite
+                            }
+                        }
+                    ]
                     }
 
                     Text
