@@ -36,7 +36,7 @@ void ModelQmlAndCIcons::UpdateFileSyncIcons()
                 contrIcons->UpdateStateIconsFileSync();
             }
             mutex.unlock();
-            sleep(1);
+            usleep(10000);
         }
     }
 }

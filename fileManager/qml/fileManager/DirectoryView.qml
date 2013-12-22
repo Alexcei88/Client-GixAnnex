@@ -67,10 +67,11 @@ FocusScope{
     function updateIconsStateFileSync()
     {
         dirModel.updateModel();
-        if(dirModel.lastIndex < dirModel.count)
-        {
-            view.currentIndex = dirModel.lastIndex;
-        }
+//        if(dirModel.lastIndex < dirModel.count)
+//        {
+//        console.log(dirModel.lastIndex)
+//            view.currentIndex = -1;
+//        }
     }
     //------------------------------------------------------------------------/
     // функция проверки нахождения свойства folder впределах корневого пути репозитория
@@ -240,6 +241,7 @@ FocusScope{
     //                        anchors.leftMargin: 2
                             source: "qrc:/synced.png"
                             state: "SYNCING"
+                            cache: true
                         }
 
 //                        ColorOverlay
@@ -352,17 +354,22 @@ FocusScope{
 
                     onClicked:
                     {
+                        console.log("onClicked");
                         view.currentIndex = model.index;
                         dirModel.lastIndex = model.index;
                         if(mouse.button === Qt.RightButton)
                         {
                             menudirectory.popup()
                         }
+                        console.log("onEndClicked");
+
                     }
                     onDoubleClicked:
                     {
+                        console.log("onDoubleClicked");
                         if(dirModel.isFolder(model.index))
                         {
+                            console.log("onDoubleClicked2");
                             var folder = dirModel.folder == "file:///" ? dirModel.folder + curFileName : dirModel.folder +"/" + curFileName;
                             changeParentFolder(folder)
                             dirModel.folder = folder
@@ -382,6 +389,7 @@ FocusScope{
     {
         id: timeSyncIcons
         repeat: true
+        interval: 10
         onTriggered: {
             updateIconsStateFileSync()
         }

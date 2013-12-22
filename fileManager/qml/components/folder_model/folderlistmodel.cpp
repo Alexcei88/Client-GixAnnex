@@ -189,11 +189,14 @@ bool QMLFolderListModel::isFolder(int index) const
 //----------------------------------------------------------------------------------------/
 void QMLFolderListModel::updateModel()
 {
-    QMetaObject::invokeMethod(this, "refresh", Qt::DirectConnection);
+    fullRefresh();
+    //QMetaObject::invokeMethod(this, "refresh", Qt::DirectConnection);
 }
 //----------------------------------------------------------------------------------------/
 void QMLFolderListModel::refresh()
 {
+    static int number = 0;
+    std::cout << number++<<__FUNCTION__<<std::endl;
     d->folderIndex = QModelIndex();
     if (d->count)
     {
