@@ -88,7 +88,7 @@ FocusScope{
     {
         id: menudirectory
         onOpenDirectory: {
-            if(dirModel.isFolder(dirModel.index) && view.currentItem)
+            if(view.currentItem && dirModel.isFolder(dirModel.index))
             {
                 var fileName = view.currentItem.curFileName;
                 var folder = dirModel.folder == "file:///" ? dirModel.folder + fileName : dirModel.folder +"/" + fileName;
@@ -157,7 +157,13 @@ FocusScope{
         Component.onCompleted: {
             contrIcons.currentPath = folder
         }
-
+        onStatusChanged: {
+            if(status === NewFolderListModel.Ready)
+            {
+//                console.log(dirModel.lastIndex)
+//                view.currentIndex = dirModel.lastIndex;
+            }
+        }
     }
 
     ScrollView
@@ -168,6 +174,7 @@ FocusScope{
         anchors.bottomMargin: 1
         GridView
         {
+            objectName: "gridView";
             id: view
             model: dirModel
             width: parent.width
@@ -199,7 +206,6 @@ FocusScope{
                 contrIcons.startThreadIconsSync();
                 timeSyncIcons.start();
             }
-
             MouseArea {
                 anchors.fill: parent
                 acceptedButtons: Qt.LeftButton | Qt.RightButton
@@ -263,7 +269,7 @@ FocusScope{
                                     PropertyChanges {
                                         target: dirSync
                                         source: "qrc:/syncing.png"
-                                        rotation: 360
+                                        rotation: 1
                                     }
                                     PropertyChanges {
                                         target: colorEffect
@@ -379,8 +385,9 @@ FocusScope{
                         }
                     }
                     onEntered: {
-                        // посылаем сигнал, что необходимо вывести свойства объекта, на который навели
-                        showPropertyFile(dirModel.folder + "/" + curFileName, curFileName)
+                        if(model.index !== -1)
+                            // посылаем сигнал, что необходимо вывести свойства объекта, на который навели
+                            showPropertyFile(dirModel.folder + "/" + curFileName, curFileName)
                     }
                 }
             }
@@ -390,9 +397,26 @@ FocusScope{
     {
         id: timeSyncIcons
         repeat: true
-        interval: 1000
+        interval: 3300
         onTriggered: {
-            updateIconsStateFileSync()
+        if(view.currentItem)
+        {
+            var item = view.currentItem.children[0].children[0].children[0];
+//            if(contrIcons.stateIconsFileSyncQML[view.currentItem.curFileName] === "Disable_sincingF")
+//                item.source = "qrc:/synced.png";
+//            else if(contrIcons.stateIconsFileSyncQML[view.currentItem.curFileName] === "SyncedFError")
+//                item.source = "qrc:/disable_sync.png"
+//            else if(contrIcons.stateIconsFileSyncQML[view.currentItem.curFileName] === "SyncedF")
+//                item.source = "qrc:/synced.png"
+//            else if(contrIcons.stateIconsFileSyncQML[view.currentItem.curFileName] === "SyncingF")
+//            {
+//                console.log("Dfdfd")
+//                item.source = "qrc:/syncing.png"
+//            }
+            item.state = "SYNCING";
+
+        }
+//            updateIconsStateFileSync()
         }
     }
 }

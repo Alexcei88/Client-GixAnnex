@@ -194,6 +194,9 @@ void QMLFolderListModel::updateModel()
 //----------------------------------------------------------------------------------------/
 void QMLFolderListModel::refresh()
 {
+    status_ = Null;
+    emit statusChanged(status_);
+
     d->folderIndex = QModelIndex();
     if (d->count)
     {
@@ -216,6 +219,8 @@ void QMLFolderListModel::refresh()
             emit endInsertRows();
         }
     }
+    status_ = Ready;
+    emit statusChanged(status_);
 }
 //----------------------------------------------------------------------------------------/
 void QMLFolderListModel::fullRefresh()
