@@ -397,26 +397,24 @@ FocusScope{
     {
         id: timeSyncIcons
         repeat: true
-        interval: 3300
-        onTriggered: {
-        if(view.currentItem)
+        interval: 300
+        onTriggered:
         {
-            var item = view.currentItem.children[0].children[0].children[0];
-//            if(contrIcons.stateIconsFileSyncQML[view.currentItem.curFileName] === "Disable_sincingF")
-//                item.source = "qrc:/synced.png";
-//            else if(contrIcons.stateIconsFileSyncQML[view.currentItem.curFileName] === "SyncedFError")
-//                item.source = "qrc:/disable_sync.png"
-//            else if(contrIcons.stateIconsFileSyncQML[view.currentItem.curFileName] === "SyncedF")
-//                item.source = "qrc:/synced.png"
-//            else if(contrIcons.stateIconsFileSyncQML[view.currentItem.curFileName] === "SyncingF")
-//            {
-//                console.log("Dfdfd")
-//                item.source = "qrc:/syncing.png"
-//            }
-            item.state = "SYNCING";
-
-        }
+            if(view.currentItem)
+            {
+                var item = view.currentItem.children[0].children[0];
+                if(contrIcons.stateIconsFileSyncQML[view.currentItem.curFileName] === "Disable_sincingF")
+                    item.state = "DISABLE_SYNC";
+                else if(contrIcons.stateIconsFileSyncQML[view.currentItem.curFileName] === "SyncedFError")
+                    item.state = "SYNCED_ERROR"
+                else if(contrIcons.stateIconsFileSyncQML[view.currentItem.curFileName] === "SyncedF")
+                    item.state = "SYNCED"
+                else if(contrIcons.stateIconsFileSyncQML[view.currentItem.curFileName] === "SyncingF")
+                {
+                    item.state = "SYNCING"
+                }
+            }
 //            updateIconsStateFileSync()
-        }
+        } // end Triggered
     }
 }
