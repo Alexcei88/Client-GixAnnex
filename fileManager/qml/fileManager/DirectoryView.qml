@@ -244,15 +244,15 @@ FocusScope{
                             cache: true
                         }
 
-//                        ColorOverlay
-//                        {
-//                            id: colorEffect
-//                            anchors.fill: imgFolder
-//                            source: imgFolder
-//                            color: "#BEBEBEFF"
-//                            enabled: false
-//                            visible: false
-//                        }
+                        ColorOverlay
+                        {
+                            id: colorEffect
+                            anchors.fill: imgFolder
+                            source: imgFolder
+                            color: "#BEBEBEFF"
+                            enabled: false
+                            visible: false
+                        }
 
                         // различные состояния, в которых может находиться директория(или файл)
                         states:[
@@ -265,11 +265,11 @@ FocusScope{
                                         source: "qrc:/syncing.png"
                                         rotation: 360
                                     }
-//                                    PropertyChanges {
-//                                        target: colorEffect
-//                                        enabled: false
-//                                        visible: false
-//                                    }
+                                    PropertyChanges {
+                                        target: colorEffect
+                                        enabled: false
+                                        visible: false
+                                    }
                                 },
                                 // 2. Синхронизация завершилась
                                 State {
@@ -279,11 +279,11 @@ FocusScope{
                                         target: dirSync
                                         source: "qrc:/synced.png"
                                     }
-//                                    PropertyChanges {
-//                                        target: colorEffect
-//                                        enabled: false
-//                                        visible: false
-//                                    }
+                                    PropertyChanges {
+                                        target: colorEffect
+                                        enabled: false
+                                        visible: false
+                                    }
                                 },
                                 // 3. Синхронизация завершилась неудачно
                                 State {
@@ -293,11 +293,11 @@ FocusScope{
                                         target: dirSync
                                         source: "qrc:/disable_sync.png"
                                     }
-//                                    PropertyChanges {
-//                                        target: colorEffect
-//                                        enabled: false
-//                                        visible: false
-//                                    }
+                                    PropertyChanges {
+                                        target: colorEffect
+                                        enabled: false
+                                        visible: false
+                                    }
                                 },
 
                                 // 4. Синхронизация выключена
@@ -308,11 +308,11 @@ FocusScope{
                                         target: dirSync
                                         source: "qrc:/synced.png"
                                     }
-//                                    PropertyChanges {
-//                                        target: colorEffect
-//                                        enabled: true
-//                                        visible: true
-//                                    }
+                                    PropertyChanges {
+                                        target: colorEffect
+                                        enabled: true
+                                        visible: true
+                                    }
                                 }
                             ]
                             transitions: [
@@ -321,7 +321,7 @@ FocusScope{
                             RotationAnimation{
                                 from: 0
                                 to: 360
-                                duration: 4000
+                                duration: 3300
                                 loops: Animation.Infinite
                             }
                         }
@@ -354,27 +354,28 @@ FocusScope{
 
                     onClicked:
                     {
-                        console.log("onClicked");
-                        view.currentIndex = model.index;
-                        dirModel.lastIndex = model.index;
-                        if(mouse.button === Qt.RightButton)
+                        if(model.index !== -1)
                         {
-                            menudirectory.popup()
+                            view.currentIndex = model.index;
+                            dirModel.lastIndex = model.index;
+                            if(mouse.button === Qt.RightButton)
+                            {
+                                menudirectory.popup()
+                            }
                         }
-                        console.log("onEndClicked");
-
                     }
                     onDoubleClicked:
                     {
-                        console.log("onDoubleClicked");
-                        if(dirModel.isFolder(model.index))
+                        if(model.index !== -1)
                         {
-                            console.log("onDoubleClicked2");
-                            var folder = dirModel.folder == "file:///" ? dirModel.folder + curFileName : dirModel.folder +"/" + curFileName;
-                            changeParentFolder(folder)
-                            dirModel.folder = folder
-                            dirModel.lastIndex = -1;
-                            view.currentIndex = -1;
+                            if(dirModel.isFolder(model.index))
+                            {
+                                var folder = dirModel.folder == "file:///" ? dirModel.folder + curFileName : dirModel.folder +"/" + curFileName;
+                                changeParentFolder(folder)
+                                dirModel.folder = folder
+                                dirModel.lastIndex = -1;
+                                view.currentIndex = -1;
+                            }
                         }
                     }
                     onEntered: {
@@ -389,7 +390,7 @@ FocusScope{
     {
         id: timeSyncIcons
         repeat: true
-        interval: 10
+        interval: 1000
         onTriggered: {
             updateIconsStateFileSync()
         }

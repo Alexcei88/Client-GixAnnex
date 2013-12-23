@@ -17,7 +17,6 @@ ModelQmlAndCIcons::~ModelQmlAndCIcons()
 //----------------------------------------------------------------------------------------/
 void ModelQmlAndCIcons::UpdateFileSyncIcons()
 {
-    return;
     FacadeApplication* facade = FacadeApplication::getInstance();
     QMutex& mutex = FacadeApplication::threadModel.mutexSyncIcons;
 
@@ -36,7 +35,7 @@ void ModelQmlAndCIcons::UpdateFileSyncIcons()
                 contrIcons->UpdateStateIconsFileSync();
             }
             mutex.unlock();
-            usleep(10000);
+            sleep(1);
         }
     }
 }
