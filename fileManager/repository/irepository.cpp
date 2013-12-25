@@ -25,9 +25,6 @@ IRepository::IRepository(const QString& localUrl, const QString& remoteUrl, cons
 //----------------------------------------------------------------------------------------/
 void IRepository::InitClass()
 {
-    static bool init = false;
-
-    assert(!init);
     shellCommand = boost::make_shared<ShellCommand>();
 
     facadeAnalyzeCommand = boost::make_shared<FacadeAnalyzeCommand>();
@@ -51,16 +48,15 @@ void IRepository::InitClass()
 
     dir.setPath("");
     dir.setFilter(QDir::NoDotAndDotDot | QDir::AllEntries | QDir::System);
-    init = true;
 }
 //----------------------------------------------------------------------------------------/
 void IRepository::InitSignalAndSlots()
 {
     // сигналы/слоты
     //----------------------------------------------------------------------------------------/
-    QObject::connect(this, &IRepository::startGetContentFile, this, &IRepository::OnStartGetContentFile, Qt::DirectConnection);
-    QObject::connect(this, &IRepository::endGetContentFile, this, &IRepository::OnEndGetContentFile, Qt::DirectConnection);
-    QObject::connect(this, &IRepository::errorGetContentFile, this, &IRepository::OnErrorGetContentFile, Qt::DirectConnection);
+//    QObject::connect(this, &IRepository::startGetContentFile, this, &IRepository::OnStartGetContentFile, Qt::DirectConnection);
+//    QObject::connect(this, &IRepository::endGetContentFile, this, &IRepository::OnEndGetContentFile, Qt::DirectConnection);
+//    QObject::connect(this, &IRepository::errorGetContentFile, this, &IRepository::OnErrorGetContentFile, Qt::DirectConnection);
     QObject::connect(this, &IRepository::startDropContentFile, this, &IRepository::OnStartDropContentFile, Qt::DirectConnection);
     QObject::connect(this, &IRepository::endDropContentFile, this, &IRepository::OnEndDropContentFile, Qt::DirectConnection);
     QObject::connect(this, &IRepository::errorDropContentFile, this, &IRepository::OnErrorDropContentFile, Qt::DirectConnection);
@@ -94,7 +90,7 @@ RESULT_EXEC_PROCESS IRepository::StopWatchRepository() const
 GANN_DEFINE::RESULT_EXEC_PROCESS IRepository::SetDirectMode(const bool& direct)
 {
     shellCommand->SetWorkingDirectory(localURL);
-    RESULT_EXEC_PROCESS result = shellCommand->SetDirectMode(direct, this);
+    RESULT_EXEC_PROCESS result = shellCommand->SetDirectMode(direct, facadeAnalyzeCommand.get());
     if(result != NO_ERROR)
     {
         printf("Error SetDirectMode repositories: %s \n", localURL.toStdString().c_str());
@@ -257,51 +253,51 @@ QString IRepository::CalculateStateFileDir(const QString& file) const
 //----------------------------------------------------------------------------------------/
 //    СЛУЖЕБНЫЕ СЛОТЫ
 //----------------------------------------------------------------------------------------/
-void IRepository::OnStartGetContentFile(const QString& file)
-{
-    if(std::find(gettingContentFile.begin(), gettingContentFile.end(), file) == gettingContentFile.end()){
-        gettingContentFile.push_back(file);
-    }
-}
-//----------------------------------------------------------------------------------------/
-void IRepository::OnEndGetContentFile(const QString& file)
-{
-    auto itErase = std::find(gettingContentFile.begin(), gettingContentFile.end(), file);
-    if(itErase != gettingContentFile.end())
-    {
-        gettingContentFile.erase(itErase);
-        // убираем файл из вектора ошибок
-        if(errorGettingContentFile.contains(file))
-            errorGettingContentFile.remove(file);
-    }
-    else
-    {
-        std::cout<<"WARNING!!!! В списке получаемых в текущий момент файлов нет файла, получение контента которого закончилось!!!"<<std::endl;
-        #ifdef DEBUG
-                assert(0);
-        #endif
-    }
-}
-//----------------------------------------------------------------------------------------/
-void IRepository::OnErrorGetContentFile(const QString& file, const QString &error)
-{
-    auto itErase = std::find(gettingContentFile.begin(), gettingContentFile.end(), file);
-    if(itErase != gettingContentFile.end()) {
-        gettingContentFile.erase(itErase);
-    }
-    else
-    {
-        std::cout<<"WARNING!!!! В списке получаемых в текущий момент файлов нет файла, получение контента которого закончилось!!!"<<std::endl;
-        #ifdef DEBUG
-                assert(0);
-        #endif
-    }
-    // помещаем файл в вектор ошибок
-    if(errorGettingContentFile.contains(file))
-        errorGettingContentFile.remove(file);
+//void IRepository::OnStartGetContentFile(const QString& file)
+//{
+//    if(std::find(gettingContentFile.begin(), gettingContentFile.end(), file) == gettingContentFile.end()){
+//        gettingContentFile.push_back(file);
+//    }
+//}
+////----------------------------------------------------------------------------------------/
+//void IRepository::OnEndGetContentFile(const QString& file)
+//{
+//    auto itErase = std::find(gettingContentFile.begin(), gettingContentFile.end(), file);
+//    if(itErase != gettingContentFile.end())
+//    {
+//        gettingContentFile.erase(itErase);
+//        // убираем файл из вектора ошибок
+//        if(errorGettingContentFile.contains(file))
+//            errorGettingContentFile.remove(file);
+//    }
+//    else
+//    {
+//        std::cout<<"WARNING!!!! В списке получаемых в текущий момент файлов нет файла, получение контента которого закончилось!!!"<<std::endl;
+//        #ifdef DEBUG
+//                assert(0);
+//        #endif
+//    }
+//}
+////----------------------------------------------------------------------------------------/
+//void IRepository::OnErrorGetContentFile(const QString& file, const QString &error)
+//{
+//    auto itErase = std::find(gettingContentFile.begin(), gettingContentFile.end(), file);
+//    if(itErase != gettingContentFile.end()) {
+//        gettingContentFile.erase(itErase);
+//    }
+//    else
+//    {
+//        std::cout<<"WARNING!!!! В списке получаемых в текущий момент файлов нет файла, получение контента которого закончилось!!!"<<std::endl;
+//        #ifdef DEBUG
+//                assert(0);
+//        #endif
+//    }
+//    // помещаем файл в вектор ошибок
+//    if(errorGettingContentFile.contains(file))
+//        errorGettingContentFile.remove(file);
 
-    errorGettingContentFile[file] = error;
-}
+//    errorGettingContentFile[file] = error;
+//}
 //----------------------------------------------------------------------------------------/
 void IRepository::OnStartDropContentFile(const QString& file)
 {

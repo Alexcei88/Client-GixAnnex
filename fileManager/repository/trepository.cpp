@@ -22,7 +22,7 @@ RESULT_EXEC_PROCESS TRepository::CloneRepository(QString& localURL, const QStrin
     shellCommand->SetWorkingDirectory(localURL);
 
     QString folderToClone = "";
-    RESULT_EXEC_PROCESS result = shellCommand->CloneRepositories(remoteURL, folderToClone, this);
+    RESULT_EXEC_PROCESS result = shellCommand->CloneRepositories(remoteURL, folderToClone, facadeAnalyzeCommand.get());
     if(result != int(NO_ERROR))
     {
         printf("Error clone repositories: %s \n", remoteURL.toStdString().c_str());
@@ -66,7 +66,7 @@ RESULT_EXEC_PROCESS TRepository::GetContentFile(const QString& file)
 //    emit this->startGetContentFile(file);
 
     shellCommand->SetWorkingDirectory(dir.path());
-    RESULT_EXEC_PROCESS result = shellCommand->GetContentFile(file, this);
+    RESULT_EXEC_PROCESS result = shellCommand->GetContentFile(file, facadeAnalyzeCommand.get());
     if(result != NO_ERROR)
     {
         printf("Error git-annex get content of file: %s \n", file.toStdString().c_str());
@@ -81,7 +81,7 @@ RESULT_EXEC_PROCESS TRepository::DropContentFile(const QString& file)
         return IGNORE_COMMAND;
 
     shellCommand->SetWorkingDirectory(dir.path());
-    RESULT_EXEC_PROCESS result = shellCommand->DropContentFile(file, this);
+    RESULT_EXEC_PROCESS result = shellCommand->DropContentFile(file, facadeAnalyzeCommand.get());
     if(result != NO_ERROR)
     {
         printf("Error git-annex drop content of file: %s \n", file.toStdString().c_str());
@@ -114,7 +114,7 @@ RESULT_EXEC_PROCESS TRepository::WhereisFile(const QString& file)
         return IGNORE_COMMAND;
 
     shellCommand->SetWorkingDirectory(dir.path());
-    RESULT_EXEC_PROCESS result = shellCommand->WhereisFiles(file, this);
+    RESULT_EXEC_PROCESS result = shellCommand->WhereisFiles(file, facadeAnalyzeCommand.get());
     if(result != NO_ERROR)
     {
         printf("Error git-annex drop content of file: %s \n", file.toStdString().c_str());

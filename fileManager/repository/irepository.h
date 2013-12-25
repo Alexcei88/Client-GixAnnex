@@ -246,9 +246,9 @@ private:
 
 private slots:
     // слот, говорящий о начале получения контента у файла
-    void                OnStartGetContentFile(const QString&);
-    void                OnEndGetContentFile(const QString&);
-    void                OnErrorGetContentFile(const QString&, const QString&);
+//    void                OnStartGetContentFile(const QString&);
+//    void                OnEndGetContentFile(const QString&);
+//    void                OnErrorGetContentFile(const QString&, const QString&);
     // начало/конец удаления
     void                OnStartDropContentFile(const QString&);
     void                OnEndDropContentFile(const QString&);
@@ -263,9 +263,9 @@ private slots:
 
 signals:
     // сигналы начала/конца get
-    void                startGetContentFile(const QString&);
-    void                endGetContentFile(const QString&);
-    void                errorGetContentFile(const QString&, const QString&);
+//    void                startGetContentFile(const QString&);
+//    void                endGetContentFile(const QString&);
+//    void                errorGetContentFile(const QString&, const QString&);
     // сигналы начала/конца удаления
     void                startDropContentFile(const QString&);
     void                endDropContentFile(const QString&);

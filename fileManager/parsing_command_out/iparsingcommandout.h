@@ -23,7 +23,8 @@ namespace AnalyzeCommand
 class IParsingCommandOut
 {
 public:
-    IParsingCommandOut(AnalyzeCommand::AnalyzeExecuteCommand* analyzeCommand = 0);
+    IParsingCommandOut();
+    IParsingCommandOut(boost::shared_ptr<AnalyzeCommand::AnalyzeExecuteCommand> analyzeCommand);
     virtual ~IParsingCommandOut();
 
     /** @brief действия перед запуском команды */
@@ -68,7 +69,7 @@ protected:
     /** @brief класс, выполняющий команду shell*/
     TShell*             shell;
     /** @brief анализатор команды, если таковой имеется */
-    AnalyzeCommand::AnalyzeExecuteCommand* analyzeCommand;
+    boost::shared_ptr<AnalyzeCommand::AnalyzeExecuteCommand> analyzeCommand;
 
     // QJSON документы
     // вектор документов, которые пропарсины(или начат их парсинг), этот вектор документов уже далее в подклассах анализируется
@@ -77,11 +78,11 @@ protected:
     // временная JSON строка, которая накапливается, пока не будет получен весь ответ от JSON строки
     QString             strJSONData;
 
-    /** @brief закончилась ли команда
+    /** @brief закончилась ли промежуточная команда
      *  @param ок - удачно, неудачно закончилась
         @return true - команда закночилась, false - не закончилась
     */
-    bool                IsEndCommand(const QJsonDocument &doc, bool& ok) const;
+    bool                IsEndMiniCommand(const QJsonDocument &doc, bool& ok) const;
 
     /** @brief ключи начала/окончания команды */
     const QString       keyStartDoc;

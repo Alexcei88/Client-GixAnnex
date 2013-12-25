@@ -6,8 +6,8 @@
 //  Qt stuff
 #include <QJsonObject>
 
-ParsingCommandDirectMode::ParsingCommandDirectMode(IRepository *repository):
-    IParsingCommandOut(repository)
+ParsingCommandDirectMode::ParsingCommandDirectMode(boost::shared_ptr<AnalyzeCommand::AnalyzeExecuteCommand> analyzeCommand):
+    IParsingCommandOut(analyzeCommand)
 {}
 //----------------------------------------------------------------------------------------/
 void ParsingCommandDirectMode::ParsingData()
@@ -22,22 +22,22 @@ void ParsingCommandDirectMode::ParsingData()
         // команда завершилась
         if(lastJSONDocument.isNull())
         {
-            emit repository->errorChangeDirectMode("dffsdf");
+            //emit repository->errorChangeDirectMode("dffsdf");
         }
         else
         {
             QJsonObject object = lastJSONDocument.object();
             assert(object.take("file").toString("dffsdf") == "");
             bool ok;
-            IsEndCommand(lastJSONDocument, ok);
+            IsEndMiniCommand(lastJSONDocument, ok);
             if(!ok)
             {
-                emit repository->errorChangeDirectMode("undefined");
+                //emit repository->errorChangeDirectMode("undefined");
             }
             else
             {
                 const bool mode = object.take("command").toString() == "direct";
-                emit repository->changeDirectMode(mode);
+                //emit repository->changeDirectMode(mode);
             }
         }
 

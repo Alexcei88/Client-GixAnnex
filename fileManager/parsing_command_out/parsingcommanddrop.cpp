@@ -5,8 +5,8 @@
 //  Qt stuff
 #include <QJsonObject>
 
-ParsingCommandDrop::ParsingCommandDrop(IRepository* repository) :
-    IParsingCommandOut(repository)
+ParsingCommandDrop::ParsingCommandDrop(boost::shared_ptr<AnalyzeCommand::AnalyzeExecuteCommand> analyzeCommand) :
+    IParsingCommandOut(analyzeCommand)
   , startDrop(false)
 {}
 //----------------------------------------------------------------------------------------/
@@ -31,7 +31,7 @@ void ParsingCommandDrop::ParsingData()
                 StartDropContentFile(doc);
             }
             bool ok = false;
-            if(IsEndCommand(doc, ok))
+            if(IsEndMiniCommand(doc, ok))
             {
                 // команда завершилась
                 ok ? EndDropContentFile() : ErrorDropContentFile(doc);
@@ -53,20 +53,20 @@ void ParsingCommandDrop::StartDropContentFile(const QJsonDocument &doc)
     assert(!startDrop && "Предыдущий ресурс еще не удалился, и началось новое удаление. Что то пошло не так!!!");
     startDrop = true;
     nameFileGetContent = doc.object().take("file").toString();
-    emit repository->startDropContentFile(nameFileGetContent);
+    //emit repository->startDropContentFile(nameFileGetContent);
 }
 //----------------------------------------------------------------------------------------/
 void ParsingCommandDrop::EndDropContentFile()
 {
     assert(startDrop && "Удаление ресурса не было запущено");
     startDrop = false;
-    emit repository->endDropContentFile(nameFileGetContent);
+    //emit repository->endDropContentFile(nameFileGetContent);
 }
 //----------------------------------------------------------------------------------------/
 void ParsingCommandDrop::ErrorDropContentFile(const QJsonDocument &doc)
 {
     assert(startDrop && "Удаление ресурса не было запущено");
     startDrop = false;
-    emit repository->errorDropContentFile(nameFileGetContent, "Error");
+    //emit repository->errorDropContentFile(nameFileGetContent, "Error");
 }
 //----------------------------------------------------------------------------------------/

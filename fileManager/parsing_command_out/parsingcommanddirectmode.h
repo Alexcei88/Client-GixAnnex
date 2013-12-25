@@ -6,7 +6,7 @@
 class ParsingCommandDirectMode: public IParsingCommandOut
 {
 public:
-    ParsingCommandDirectMode(IRepository* repository);
+    ParsingCommandDirectMode(boost::shared_ptr<AnalyzeCommand::AnalyzeExecuteCommand> analyzeCommand);
     virtual void ParsingData();
 };
 

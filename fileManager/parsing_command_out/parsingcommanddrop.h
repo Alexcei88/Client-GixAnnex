@@ -9,7 +9,7 @@
 class ParsingCommandDrop : public IParsingCommandOut
 {
 public:
-    ParsingCommandDrop(IRepository* repository);
+    ParsingCommandDrop(boost::shared_ptr<AnalyzeCommand::AnalyzeExecuteCommand> analyzeCommand);
     virtual void        ParsingData();
 
 private:

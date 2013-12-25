@@ -9,7 +9,17 @@ using namespace GANN_DEFINE;
 using namespace AnalyzeCommand;
 
 //----------------------------------------------------------------------------------------/
-IParsingCommandOut::IParsingCommandOut(AnalyzeExecuteCommand *analyzeCommand):
+IParsingCommandOut::IParsingCommandOut():
+   commandStart(false)
+ , commandEnd(false)
+ , exitCodeCommand(0)
+ , wasErrorCommand(false)
+ , keyStartDoc("command")
+ , keyEndDoc("success")
+ , startNewDocument(false)
+{}
+//----------------------------------------------------------------------------------------/
+IParsingCommandOut::IParsingCommandOut(boost::shared_ptr<AnalyzeExecuteCommand> analyzeCommand):
    commandStart(false)
  , commandEnd(false)
  , exitCodeCommand(0)
@@ -28,6 +38,9 @@ void IParsingCommandOut::SetParamBeforeStartCommand()
     commandStart    = true;
     commandEnd      = false;
     exitCodeCommand = -2;
+
+    if(analyzeCommand.get())
+        analyzeCommand->StartExecuteCommand();
 }
 //----------------------------------------------------------------------------------------/
 void IParsingCommandOut::SetParamAfterEndCommand(int exitCode)
@@ -36,13 +49,14 @@ void IParsingCommandOut::SetParamAfterEndCommand(int exitCode)
     commandStart    = false;
     exitCodeCommand = exitCode;
 
+    if(analyzeCommand.get())
+        analyzeCommand->EndExecuteCommand();
     // выполняем парсинг после выполнения команды
     ParsingData();
 }
 //----------------------------------------------------------------------------------------/
 void IParsingCommandOut::SetParamErrorExecuteCommand(QProcess::ProcessError& error)
 {
-
 }
 //----------------------------------------------------------------------------------------/
 void IParsingCommandOut::SetNewDataStdOut()
@@ -86,7 +100,7 @@ RESULT_EXEC_PROCESS IParsingCommandOut::GetCodeError() const
     }
 }
 //----------------------------------------------------------------------------------------/
-bool IParsingCommandOut::IsEndCommand(const QJsonDocument& doc, bool& ok) const
+bool IParsingCommandOut::IsEndMiniCommand(const QJsonDocument& doc, bool& ok) const
 {
     assert(doc.isObject());
     QJsonObject object = doc.object();

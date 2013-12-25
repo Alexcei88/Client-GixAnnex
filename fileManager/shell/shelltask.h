@@ -7,7 +7,6 @@
 
 // boost stuff
 #include <boost/shared_ptr.hpp>
-#include <boost/weak_ptr.hpp>
 
 class TShell;
 class IParsingCommandOut;

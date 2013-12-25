@@ -11,7 +11,7 @@ namespace AnalyzeCommand
 class ParsingCommandClone : public IParsingCommandOut
 {
 public:
-    ParsingCommandClone(AnalyzeCommand::AnalyzeExecuteCommand* analyzeCommand);
+    ParsingCommandClone(boost::shared_ptr<AnalyzeCommand::AnalyzeExecuteCommand> analyzeCommand);
     virtual void        ParsingData();
 
 private:

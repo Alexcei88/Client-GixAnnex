@@ -7,10 +7,15 @@
 #include <QString>
 #include <QJsonArray>
 
+namespace AnalyzeCommand
+{
+    class FacadeAnalyzeCommand;
+}
+
 class ParsingCommandGet : public IParsingCommandOut
 {
 public:
-    ParsingCommandGet(IRepository* repository);
+    ParsingCommandGet(boost::shared_ptr<AnalyzeCommand::AnalyzeExecuteCommand> analyzeCommand);
     virtual void        ParsingData();
 
 private:

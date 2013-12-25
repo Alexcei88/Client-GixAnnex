@@ -2,7 +2,7 @@
 #include "../repository/irepository.h"
 
 //----------------------------------------------------------------------------------------/
-ParsingCommandClone::ParsingCommandClone(AnalyzeCommand::AnalyzeExecuteCommand *analyzeCommand):
+ParsingCommandClone::ParsingCommandClone(boost::shared_ptr<AnalyzeCommand::AnalyzeExecuteCommand> analyzeCommand):
     IParsingCommandOut(analyzeCommand)
 {
     // регулярное выражение в случаи успешного парсинга
@@ -47,7 +47,7 @@ void ParsingCommandClone::ParsingData()
                         errorString += regExp.cap(2);
                     }
                 }
-                emit repository->errorCloneRepository(errorString);
+                //emit repository->errorCloneRepository(errorString);
                 wasErrorCommand = true;
                 return;
             }
