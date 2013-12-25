@@ -27,19 +27,20 @@ public:
     ~TShell();
 
     // выполнение команды без аргументов
-    GANN_DEFINE::RESULT_EXEC_PROCESS ExecuteProcess(const QString& str, IParsingCommandOut *receiverParsing) const;
+    GANN_DEFINE::RESULT_EXEC_PROCESS ExecuteProcess(const QString& str, IParsingCommandOut *receiverParsing);
 
     // Прервать выполнение процесса
     void                TerminateProcess() const;
-
     // смена рабочего каталога
     void                SetWorkingDirectory(const QString& dir) const;
-
     // чтение стандартного потока данных
     QByteArray          readStandartOutput() const;
+    // команда, которая выполняется
+    inline const QString GetStrCommand() { return strCommand; };
 
-//private:
     boost::shared_ptr<QProcess> process;
+private:
+    QString             strCommand;
 };
 
 #endif // TSHELL_H
