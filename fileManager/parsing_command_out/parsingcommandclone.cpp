@@ -2,8 +2,8 @@
 #include "../repository/irepository.h"
 
 //----------------------------------------------------------------------------------------/
-ParsingCommandClone::ParsingCommandClone(IRepository * repository):
-    IParsingCommandOut(repository)
+ParsingCommandClone::ParsingCommandClone(AnalyzeCommand::AnalyzeExecuteCommand *analyzeCommand):
+    IParsingCommandOut(analyzeCommand)
 {
     // регулярное выражение в случаи успешного парсинга
     QString succes = "(Cloning into ')(.*)(')(.*)";

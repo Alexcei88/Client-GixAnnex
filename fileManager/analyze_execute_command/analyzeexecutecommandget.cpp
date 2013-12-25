@@ -4,25 +4,29 @@
 using namespace AnalyzeCommand;
 
 //----------------------------------------------------------------------------------------/
-AnalyzeExecuteCommandGet::AnalyzeExecuteCommandGet(FacadeAnalyzeCommand &facadeAnalyzeCommand):
+AnalyzeExecuteCommandGet::AnalyzeExecuteCommandGet(FacadeAnalyzeCommand &facadeAnalyzeCommand, bool autosync):
     AnalyzeExecuteCommand(facadeAnalyzeCommand)
+  , autosync(autosync)
 {
 
 }
 //----------------------------------------------------------------------------------------/
-void AnalyzeExecuteCommandGet::OnStartGetContentFile(const QString&)
+void AnalyzeExecuteCommandGet::StartGetContentFile(const QString& file)
 {
-
+    if(!autosync)
+        facadeAnalyzeCommand.StartGetContentFile(file);
 }
 //----------------------------------------------------------------------------------------/
-void AnalyzeExecuteCommandGet::OnEndGetContentFile(const QString&)
+void AnalyzeExecuteCommandGet::EndGetContentFile(const QString&file)
 {
-
+    if(!autosync)
+        facadeAnalyzeCommand.EndGetContentFile(file);
 }
 //----------------------------------------------------------------------------------------/
-void AnalyzeExecuteCommandGet::OnErrorGetContentFile(const QString&, const QString&)
+void AnalyzeExecuteCommandGet::ErrorGetContentFile(const QString& file, const QString& error)
 {
-
+    if(!autosync)
+        facadeAnalyzeCommand.ErrorGetContentFile(file, error);
 }
 //----------------------------------------------------------------------------------------/
 

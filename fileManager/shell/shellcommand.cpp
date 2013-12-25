@@ -13,6 +13,8 @@
 #include <QThreadPool>
 
 using namespace GANN_DEFINE;
+using namespace AnalyzeCommand;
+
 //----------------------------------------------------------------------------------------/
 ShellCommand::ShellCommand():
     baseCommand("git-annex -j ")
@@ -37,10 +39,10 @@ void ShellCommand::SetWorkingDirectory(const QString& localURL)
     this->localURL = localURL;
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS ShellCommand::CloneRepositories(const QString& remoteURL, QString& folderClone, IRepository *repository)
+RESULT_EXEC_PROCESS ShellCommand::CloneRepositories(const QString& remoteURL, QString& folderClone, AnalyzeCommand::AnalyzeExecuteCommand* analize)
 {
     const QString strCommand = "git clone " + remoteURL;
-    boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandClone(repository));
+    boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandClone(analize));
     ShellTask* shellTask = new ShellTask(strCommand, localURL, receiverParsing);
 
     QThreadPool::globalInstance()->start(shellTask);

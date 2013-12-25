@@ -1,9 +1,13 @@
 #include "irepository.h"
+#include "analyze_execute_command/facadeanalyzecommand.h"
 
 // boost stuff
 #include <boost/make_shared.hpp>
 
+
 using namespace GANN_DEFINE;
+using namespace AnalyzeCommand;
+
 
 //----------------------------------------------------------------------------------------/
 IRepository::IRepository()
@@ -21,7 +25,12 @@ IRepository::IRepository(const QString& localUrl, const QString& remoteUrl, cons
 //----------------------------------------------------------------------------------------/
 void IRepository::InitClass()
 {
+    static bool init = false;
+
+    assert(!init);
     shellCommand = boost::make_shared<ShellCommand>();
+
+    facadeAnalyzeCommand = boost::make_shared<FacadeAnalyzeCommand>();
 
     // устанавливаем состояние репозитория по умолчанию
     paramRepo.autosync = true;
@@ -42,6 +51,7 @@ void IRepository::InitClass()
 
     dir.setPath("");
     dir.setFilter(QDir::NoDotAndDotDot | QDir::AllEntries | QDir::System);
+    init = true;
 }
 //----------------------------------------------------------------------------------------/
 void IRepository::InitSignalAndSlots()

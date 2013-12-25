@@ -14,11 +14,9 @@ class FacadeAnalyzeCommand
 public:
     FacadeAnalyzeCommand();
 
-    void                OnStartGetContentFile(const QString&);
-    void                OnEndGetContentFile(const QString&);
-    void                OnErrorGetContentFile(const QString&, const QString&);
-
-
+    void                StartGetContentFile(const QString&file);
+    void                EndGetContentFile(const QString&file);
+    void                ErrorGetContentFile(const QString&, const QString&);
 
 private:
     // вектор, содержащий файлы, которые сейчас скачиваются(или дано задание на скачивание)

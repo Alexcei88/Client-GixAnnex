@@ -3,10 +3,15 @@
 
 #include "iparsingcommandout.h"
 
+namespace AnalyzeCommand
+{
+    class AnalyzeExecuteCommand;
+}
+
 class ParsingCommandClone : public IParsingCommandOut
 {
 public:
-    ParsingCommandClone(IRepository* repository);
+    ParsingCommandClone(AnalyzeCommand::AnalyzeExecuteCommand* analyzeCommand);
     virtual void        ParsingData();
 
 private:

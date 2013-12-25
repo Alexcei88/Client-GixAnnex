@@ -12,6 +12,11 @@
 #include <QVector>
 #include <QFileInfo>
 
+namespace AnalyzeCommand
+{
+    class FacadeAnalyzeCommand;
+}
+
 class IRepository : public QObject
 {
     Q_OBJECT
@@ -184,6 +189,9 @@ protected:
     void                SetStateFileDir(const QString& fileDirName, const STATE_FILE_AND_DIR& state);
 
     boost::shared_ptr<ShellCommand> shellCommand;
+
+    /** @brief Фасад системы анализа хода выполнения команд */
+    boost::shared_ptr<AnalyzeCommand::FacadeAnalyzeCommand> facadeAnalyzeCommand;
 
     /** @brief удаленный адрес репозитория */
     QString             remoteURL;

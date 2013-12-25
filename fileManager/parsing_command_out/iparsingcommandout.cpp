@@ -1,19 +1,20 @@
 #include "iparsingcommandout.h"
 #include "../shell/tshell.h"
-#include "../repository/irepository.h"
+#include "../analyze_execute_command/analyzeexecutecommand.h"
 
 // Qt stuff
 #include <QJsonObject>
 
 using namespace GANN_DEFINE;
+using namespace AnalyzeCommand;
 
 //----------------------------------------------------------------------------------------/
-IParsingCommandOut::IParsingCommandOut(IRepository *repository):
+IParsingCommandOut::IParsingCommandOut(AnalyzeExecuteCommand *analyzeCommand):
    commandStart(false)
  , commandEnd(false)
  , exitCodeCommand(0)
  , wasErrorCommand(false)
- , repository(repository)
+ , analyzeCommand(analyzeCommand)
  , keyStartDoc("command")
  , keyEndDoc("success")
  , startNewDocument(false)

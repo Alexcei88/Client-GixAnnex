@@ -15,10 +15,15 @@
 class IRepository;
 class TShell;
 
+namespace AnalyzeCommand
+{
+    class AnalyzeExecuteCommand;
+}
+
 class IParsingCommandOut
 {
 public:
-    IParsingCommandOut(IRepository* repository = 0);
+    IParsingCommandOut(AnalyzeCommand::AnalyzeExecuteCommand* analyzeCommand = 0);
     virtual ~IParsingCommandOut();
 
     /** @brief действия перед запуском команды */
@@ -62,8 +67,8 @@ protected:
 
     /** @brief класс, выполняющий команду shell*/
     TShell*             shell;
-    /** @brief репозиторий, который вызвал команду */
-    IRepository*        repository;
+    /** @brief анализатор команды, если таковой имеется */
+    AnalyzeCommand::AnalyzeExecuteCommand* analyzeCommand;
 
     // QJSON документы
     // вектор документов, которые пропарсины(или начат их парсинг), этот вектор документов уже далее в подклассах анализируется

@@ -9,6 +9,11 @@
 
 class IRepository;
 
+namespace AnalyzeCommand
+{
+    class AnalyzeExecuteCommand;
+}
+
 class ShellCommand
 {
 public:
@@ -28,8 +33,8 @@ public:
     @param folderClone - папка, куда будет скопирован репозиторий
     @return 0 - нет ошибок
     */
-    GANN_DEFINE::RESULT_EXEC_PROCESS CloneRepositories( const QString& remoteURL, QString &folderClone
-                                                       ,IRepository* repository);
+    GANN_DEFINE::RESULT_EXEC_PROCESS CloneRepositories(const QString& remoteURL, QString &folderClone
+                                                       ,AnalyzeCommand::AnalyzeExecuteCommand *analize);
 
     /** @brief запустить/остановить демон просмотра за рабочей директорией
         @param start - true - запускает службу, false - останавливаем службу
