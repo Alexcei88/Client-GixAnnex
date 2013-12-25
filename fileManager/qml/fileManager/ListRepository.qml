@@ -155,7 +155,6 @@ FocusScope {
 
                     onWidthChanged:
                     {
-                        rowLayout = viewModel.cellWidth
                         itemText.width = width - widthRepoSync
                         textNameRepo.width = itemText.width - textNameRepo.anchors.leftMargin - 7
                     }

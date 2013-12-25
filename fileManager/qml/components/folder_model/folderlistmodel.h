@@ -24,6 +24,7 @@ class QMLFolderListModel: public QAbstractListModel, public QQmlParserStatus
     Q_PROPERTY(bool showDotAndDotDot READ showDotAndDotDot WRITE setShowDotAndDotDot)
     Q_PROPERTY(bool showOnlyReadable READ showOnlyReadable WRITE setShowOnlyReadable)
     Q_PROPERTY(bool showDirsFirst READ showDirsFirst WRITE setShowDirsFirst)
+    Q_PROPERTY(Status status READ status NOTIFY statusChanged)
     Q_PROPERTY(int count READ count)
 
     enum Roles
@@ -49,6 +50,11 @@ public:
 
     SortField           sortField() const;
     void                setSortField(SortField field);
+
+    enum Status { Null, Ready };
+    Q_ENUMS(Status)
+
+    Status              status() const { return status_; };
 
     bool                sortReversed() const;
     void                setSortReversed(bool rev);
@@ -78,6 +84,7 @@ public:
 
 signals:
     void                folderChanged();
+    void                statusChanged(Status status);
 
 private slots:
     void                refresh();
@@ -91,6 +98,7 @@ private:
     QMLFolderListModelPrivate* d;
     QHash<int, QByteArray> roles_;
     QFileSystemWatcher  watcher;
+    Status              status_;
 };
 
 

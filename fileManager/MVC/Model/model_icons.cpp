@@ -34,8 +34,6 @@ void ModelQmlAndCIcons::UpdateFileSyncIcons()
                 curRepo->UpdateParamSyncFileDir();
                 contrIcons->UpdateStateIconsFileSync();
             }
-            facade->systemTray->ReLoadDirectoryView();
-
             mutex.unlock();
             sleep(1);
         }

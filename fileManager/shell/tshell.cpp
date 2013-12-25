@@ -1,5 +1,7 @@
 #include "tshell.h"
 #include <stdio.h>
+
+// Qt stuff
 #include <QProcess>
 
 using namespace GANN_DEFINE;
@@ -13,18 +15,23 @@ TShell::TShell()
 //----------------------------------------------------------------------------------------/
 TShell::~TShell(){}
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS TShell::ExecuteProcess(const QString &str, IParsingCommandOut *receiverParsing) const
+RESULT_EXEC_PROCESS TShell::ExecuteProcess(const QString &str, IParsingCommandOut *receiverParsing)
 {
+    // сохраняем команду, которую будем выполнять
+    this->strCommand = str;
+
     // соединяем сигнал получения данных со стандартного потока вывода с соот классом
     QMetaObject::Connection m_connection_readOut;
-//    QMetaObject::Connection m_connection_readOut1;
     QMetaObject::Connection m_connection_started;
     QMetaObject::Connection m_connection_finished;
+    QMetaObject::Connection m_connection_error;
 
-    m_connection_readOut  = QObject::connect(process.get(), &QProcess::readyReadStandardOutput, [=](){receiverParsing->SetNewDataStdOut(); });
-//    m_connection_readOut1  = QObject::connect(process.get(), &QProcess::readyRead, [=](){receiverParsing->GetNewDataStdOut(); });
+    m_connection_readOut  = QObject::connect(process.get(), &QProcess::readyReadStandardOutput, [=](){ receiverParsing->SetNewDataStdOut(); });
     m_connection_started  = QObject::connect(process.get(), &QProcess::started, [=](){receiverParsing->SetParamBeforeStartCommand(); });
-    m_connection_finished = QObject::connect(process.get(), &QProcess::finished, [=](int exitCode){ receiverParsing->SetParamAfterEndCommand(exitCode); });
+    m_connection_finished = QObject::connect(process.get(), static_cast<void (QProcess::*)(int exitCode)>(&QProcess::finished),
+                            [=](int exitCode){ receiverParsing->SetParamAfterEndCommand(exitCode); });
+    m_connection_error    = QObject::connect(process.get(), static_cast<void (QProcess::*)(QProcess::ProcessError error)>(&QProcess::error),
+                            [=](QProcess::ProcessError error){ receiverParsing->SetParamErrorExecuteCommand(error); });
 
     QString strCommand = "";
     #ifdef Q_WS_WIN
@@ -42,6 +49,7 @@ RESULT_EXEC_PROCESS TShell::ExecuteProcess(const QString &str, IParsingCommandOu
         QObject::disconnect(m_connection_readOut);
         QObject::disconnect(m_connection_started);
         QObject::disconnect(m_connection_finished);
+        QObject::disconnect(m_connection_error);
         return ERROR_NO_STARTED;
     }
 
@@ -53,12 +61,14 @@ RESULT_EXEC_PROCESS TShell::ExecuteProcess(const QString &str, IParsingCommandOu
         QObject::disconnect(m_connection_readOut);
         QObject::disconnect(m_connection_started);
         QObject::disconnect(m_connection_finished);
+        QObject::disconnect(m_connection_error);
         return ERROR_NO_FINISHED;
     }
 
     QObject::disconnect(m_connection_readOut);
     QObject::disconnect(m_connection_started);
     QObject::disconnect(m_connection_finished);
+    QObject::disconnect(m_connection_error);
     return NO_ERROR;
 }
 //----------------------------------------------------------------------------------------/

@@ -8,7 +8,7 @@
 #include <QRegExp>
 #include <QJsonDocument>
 #include <QJsonParseError>
-
+#include <QProcess>
 
 #include "../define.h"
 
@@ -24,15 +24,18 @@ public:
     /** @brief действия перед запуском команды */
     virtual void        SetParamBeforeStartCommand();
 
+    /** @brief действия по окончанию выполнения команды */
+    virtual void        SetParamAfterEndCommand(int exitCode);
+
+    /** @brief действия команда при выполнении команды возникла ошибка */
+    virtual void        SetParamErrorExecuteCommand(QProcess::ProcessError& error);
+
     /**
      * @brief слот, в который будут поступать данные со стандартного потока вывода при выполнении команды
      * @param listData - список данных, заполненный согласно протоколу парсинга каждой команды
      * @return 0 - нет ошибок
      */
     void                SetNewDataStdOut();
-
-    /** @brief действия по окончанию выполнения команды */
-    virtual void        SetParamAfterEndCommand(int exitCode);
 
     /** @brief функция парсинга, у каждого класса будет своя реализация */
     virtual void        ParsingData() = 0;

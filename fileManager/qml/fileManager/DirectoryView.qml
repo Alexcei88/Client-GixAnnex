@@ -67,10 +67,11 @@ FocusScope{
     function updateIconsStateFileSync()
     {
         dirModel.updateModel();
-        if(dirModel.lastIndex < dirModel.count)
-        {
-            view.currentIndex = dirModel.lastIndex;
-        }
+//        if(dirModel.lastIndex < dirModel.count)
+//        {
+//        console.log(dirModel.lastIndex)
+//            view.currentIndex = -1;
+//        }
     }
     //------------------------------------------------------------------------/
     // функция проверки нахождения свойства folder впределах корневого пути репозитория
@@ -87,7 +88,7 @@ FocusScope{
     {
         id: menudirectory
         onOpenDirectory: {
-            if(dirModel.isFolder(dirModel.index) && view.currentItem)
+            if(view.currentItem && dirModel.isFolder(dirModel.index))
             {
                 var fileName = view.currentItem.curFileName;
                 var folder = dirModel.folder == "file:///" ? dirModel.folder + fileName : dirModel.folder +"/" + fileName;
@@ -156,7 +157,13 @@ FocusScope{
         Component.onCompleted: {
             contrIcons.currentPath = folder
         }
-
+        onStatusChanged: {
+            if(status === NewFolderListModel.Ready)
+            {
+//                console.log(dirModel.lastIndex)
+//                view.currentIndex = dirModel.lastIndex;
+            }
+        }
     }
 
     ScrollView
@@ -167,6 +174,7 @@ FocusScope{
         anchors.bottomMargin: 1
         GridView
         {
+            objectName: "gridView";
             id: view
             model: dirModel
             width: parent.width
@@ -178,7 +186,6 @@ FocusScope{
             cellHeight: 70
             cellWidth: 70
 
-            cacheBuffer: 80000
             // запрещаем свойства объекта Flickable
             interactive: false
 
@@ -191,15 +198,14 @@ FocusScope{
                     z: 50
                     anchors.margins: 20
                 }
-
             highlightMoveDuration: 0
 
             Component.onCompleted:
             {
-                // запускаем поток обновления состояния иконок
+                // запускаем поток и таймер обновления состояния иконок
                 contrIcons.startThreadIconsSync();
+                timeSyncIcons.start();
             }
-
             MouseArea {
                 anchors.fill: parent
                 acceptedButtons: Qt.LeftButton | Qt.RightButton
@@ -241,6 +247,7 @@ FocusScope{
     //                        anchors.leftMargin: 2
                             source: "qrc:/synced.png"
                             state: "SYNCING"
+                            cache: true
                         }
 
                         ColorOverlay
@@ -249,6 +256,8 @@ FocusScope{
                             anchors.fill: imgFolder
                             source: imgFolder
                             color: "#BEBEBEFF"
+                            enabled: false
+                            visible: false
                         }
 
                         // различные состояния, в которых может находиться директория(или файл)
@@ -260,7 +269,7 @@ FocusScope{
                                     PropertyChanges {
                                         target: dirSync
                                         source: "qrc:/syncing.png"
-                                        rotation: 360
+                                        rotation: 1
                                     }
                                     PropertyChanges {
                                         target: colorEffect
@@ -318,7 +327,7 @@ FocusScope{
                             RotationAnimation{
                                 from: 0
                                 to: 360
-                                duration: 4000
+                                duration: 3300
                                 loops: Animation.Infinite
                             }
                         }
@@ -351,30 +360,82 @@ FocusScope{
 
                     onClicked:
                     {
-                        view.currentIndex = model.index;
-                        dirModel.lastIndex = model.index;
-                        if(mouse.button === Qt.RightButton)
+                        if(model.index !== -1)
                         {
-                            menudirectory.popup()
+                            view.currentIndex = model.index;
+                            dirModel.lastIndex = model.index;
+                            if(mouse.button === Qt.RightButton)
+                            {
+                                menudirectory.popup()
+                            }
                         }
                     }
                     onDoubleClicked:
                     {
-                        if(dirModel.isFolder(model.index))
+                        if(model.index !== -1)
                         {
-                            var folder = dirModel.folder == "file:///" ? dirModel.folder + curFileName : dirModel.folder +"/" + curFileName;
-                            changeParentFolder(folder)
-                            dirModel.folder = folder
-                            dirModel.lastIndex = -1;
-                            view.currentIndex = -1;
+                            if(dirModel.isFolder(model.index))
+                            {
+                                var folder = dirModel.folder == "file:///" ? dirModel.folder + curFileName : dirModel.folder +"/" + curFileName;
+                                changeParentFolder(folder)
+                                dirModel.folder = folder
+                                dirModel.lastIndex = -1;
+                                view.currentIndex = -1;
+                            }
                         }
                     }
                     onEntered: {
-                        // посылаем сигнал, что необходимо вывести свойства объекта, на который навели
-                        showPropertyFile(dirModel.folder + "/" + curFileName, curFileName)
+                        if(model.index !== -1)
+                            // посылаем сигнал, что необходимо вывести свойства объекта, на который навели
+                            showPropertyFile(dirModel.folder + "/" + curFileName, curFileName)
                     }
                 }
             }
         }   // end GridView
-    } // end ScrolView
+    } // end ScrollView
+    Timer
+    {
+        id: timeSyncIcons
+        repeat: true
+        interval: 300
+        onTriggered:
+        {
+            // Обнолвение состояния иконок синхронизации у делегатов компонента GridView
+            var item = view.children[0];
+            // этот итем является родителем для делегатов, дальше пойдут итемы делегатов
+            // их количество зависит от количества объектов модели
+            for(var i = 0; i < dirModel.count; ++i)
+            {
+                var itemDelegate = item.children[i];
+                var itemImage = itemDelegate.children[0].children[0];
+                if(contrIcons.stateIconsFileSyncQML[itemDelegate.curFileName] === "Disable_sincingF")
+                    itemImage.state = "DISABLE_SYNC";
+                else if(contrIcons.stateIconsFileSyncQML[itemDelegate.curFileName] === "SyncedFError")
+                    itemImage.state = "SYNCED_ERROR"
+                else if(contrIcons.stateIconsFileSyncQML[itemDelegate.curFileName] === "SyncedF")
+                    itemImage.state = "SYNCED"
+                else if(contrIcons.stateIconsFileSyncQML[itemDelegate.curFileName] === "SyncingF")
+                {
+                    itemImage.state = "SYNCING"
+                }
+            }
+
+//            //view.model.get(0).width = 10;
+//            if(view.currentItem)
+//            {
+//                var item = view.currentItem.children[0].children[0];
+//                if(contrIcons.stateIconsFileSyncQML[view.currentItem.curFileName] === "Disable_sincingF")
+//                    item.state = "DISABLE_SYNC";
+//                else if(contrIcons.stateIconsFileSyncQML[view.currentItem.curFileName] === "SyncedFError")
+//                    item.state = "SYNCED_ERROR"
+//                else if(contrIcons.stateIconsFileSyncQML[view.currentItem.curFileName] === "SyncedF")
+//                    item.state = "SYNCED"
+//                else if(contrIcons.stateIconsFileSyncQML[view.currentItem.curFileName] === "SyncingF")
+//                {
+//                    item.state = "SYNCING"
+//                }
+//            }
+     //       updateIconsStateFileSync()
+        } // end Triggered
+    }
 }

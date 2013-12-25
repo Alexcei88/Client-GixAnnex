@@ -29,6 +29,21 @@ void IParsingCommandOut::SetParamBeforeStartCommand()
     exitCodeCommand = -2;
 }
 //----------------------------------------------------------------------------------------/
+void IParsingCommandOut::SetParamAfterEndCommand(int exitCode)
+{
+    commandEnd      = true;
+    commandStart    = false;
+    exitCodeCommand = exitCode;
+
+    // выполняем парсинг после выполнения команды
+    ParsingData();
+}
+//----------------------------------------------------------------------------------------/
+void IParsingCommandOut::SetParamErrorExecuteCommand(QProcess::ProcessError& error)
+{
+
+}
+//----------------------------------------------------------------------------------------/
 void IParsingCommandOut::SetNewDataStdOut()
 {
     QString newData(shell->readStandartOutput());
@@ -43,16 +58,6 @@ void IParsingCommandOut::SetNewDataStdOut()
         lastJSONDocument = arrayJSONDocument.back();
     // чистим вектор документов
     arrayJSONDocument.clear();
-}
-//----------------------------------------------------------------------------------------/
-void IParsingCommandOut::SetParamAfterEndCommand(int exitCode)
-{
-    commandEnd      = true;
-    commandStart    = false;
-    exitCodeCommand = exitCode;
-
-    // выполняем парсинг после выполнения команды
-    ParsingData();
 }
 //----------------------------------------------------------------------------------------/
 void IParsingCommandOut::SetShell(TShell* shell)

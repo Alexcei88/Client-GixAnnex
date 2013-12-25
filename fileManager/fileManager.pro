@@ -3,7 +3,6 @@ folder_01.source = qml/fileManager
 folder_01.target = qml
 DEPLOYMENTFOLDERS = folder_01
 
-
 QT += qml quick \
         widgets \
         xml
@@ -55,7 +54,7 @@ OTHER_FILES += \
     qml/fileManager/getContent/GetContent.qml \
     qml/fileManager/repository/Clone.qml \
 
-INCLUDEPATH += iniparser/
+QMAKE_LIBDIR += $$_PRO_FILE_PWD_/iniparser/
 
 RESOURCES += \
     Resource.qrc \
@@ -92,6 +91,7 @@ HEADERS += \
 # Включаем поддержку С++11
 QMAKE_CXXFLAGS += -std=c++0x
 
+
 LIBS += -lboost_system \
         -lboost_filesystem \
-        libiniparser.a
+        -liniparser

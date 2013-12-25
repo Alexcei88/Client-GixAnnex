@@ -166,29 +166,26 @@ bool IRepository::DirIsSubRootDirRepository(const QString& dir) const
 //----------------------------------------------------------------------------------------/
 bool IRepository::IsGettingContentFileDir(const QString& file) const
 {
+    const QString relativePath = QString(dir.path() + "/" + file).replace(localURL +"/", "");
     for(auto iterator = gettingContentFile.constBegin(); iterator != gettingContentFile.constEnd(); ++iterator)
     {       
-#if 0
-        const QString gettingFile = *iterator;
-        QString fullPathFile = dir.path() + "/" + file;
-        // из fullPath нужно убрать ту часть, которая содержит localURL
-        const QString relativePath = fullPathFile.replace(localURL +"/", "");
-        std::cout<<"GettingFile = "<<gettingFile.toStdString().c_str()<<std::endl;
-        std::cout<<"Full Path = "<<fullPathFile.toStdString().c_str()<<std::endl;
-        std::cout<<"Relative Path = "<<relativePath.toStdString().c_str()<<std::endl;
-#endif
-        const QString relativePath = QString(dir.path() + "/" + file).replace(localURL +"/", "");
+        std::cout<<"relativePath ="<<relativePath.toStdString()<<std::endl;
+        std::cout<<"*iterator ="<<iterator->toStdString()<<std::endl;
+
         if(DirContainsFile(*iterator, relativePath))
+        {
+            std::cout<<"Getting file true"<<std::endl;
             return true;
+        }
     }
     return false;
 }
 //----------------------------------------------------------------------------------------/
 bool IRepository::IsDroppingContentFileDir(const QString& file) const
 {
+    const QString relativePath = QString(dir.path() + "/" + file).replace(localURL +"/", "");
     for(auto iterator = droppingContentFile.constBegin(); iterator != droppingContentFile.constEnd(); ++iterator)
     {
-        const QString relativePath = QString(dir.path() + "/" + file).replace(localURL +"/", "");
         if(DirContainsFile(*iterator, relativePath))
             return true;
     }
