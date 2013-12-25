@@ -392,7 +392,7 @@ FocusScope{
                 }
             }
         }   // end GridView
-    } // end ScrolView
+    } // end ScrollView
     Timer
     {
         id: timeSyncIcons
@@ -400,21 +400,42 @@ FocusScope{
         interval: 300
         onTriggered:
         {
-            if(view.currentItem)
+            // Обнолвение состояния иконок синхронизации у делегатов компонента GridView
+            var item = view.children[0];
+            // этот итем является родителем для делегатов, дальше пойдут итемы делегатов
+            // их количество зависит от количества объектов модели
+            for(var i = 0; i < dirModel.count; ++i)
             {
-                var item = view.currentItem.children[0].children[0];
-                if(contrIcons.stateIconsFileSyncQML[view.currentItem.curFileName] === "Disable_sincingF")
-                    item.state = "DISABLE_SYNC";
-                else if(contrIcons.stateIconsFileSyncQML[view.currentItem.curFileName] === "SyncedFError")
-                    item.state = "SYNCED_ERROR"
-                else if(contrIcons.stateIconsFileSyncQML[view.currentItem.curFileName] === "SyncedF")
-                    item.state = "SYNCED"
-                else if(contrIcons.stateIconsFileSyncQML[view.currentItem.curFileName] === "SyncingF")
+                var itemDelegate = item.children[i];
+                var itemImage = itemDelegate.children[0].children[0];
+                if(contrIcons.stateIconsFileSyncQML[itemDelegate.curFileName] === "Disable_sincingF")
+                    itemImage.state = "DISABLE_SYNC";
+                else if(contrIcons.stateIconsFileSyncQML[itemDelegate.curFileName] === "SyncedFError")
+                    itemImage.state = "SYNCED_ERROR"
+                else if(contrIcons.stateIconsFileSyncQML[itemDelegate.curFileName] === "SyncedF")
+                    itemImage.state = "SYNCED"
+                else if(contrIcons.stateIconsFileSyncQML[itemDelegate.curFileName] === "SyncingF")
                 {
-                    item.state = "SYNCING"
+                    itemImage.state = "SYNCING"
                 }
             }
-//            updateIconsStateFileSync()
+
+//            //view.model.get(0).width = 10;
+//            if(view.currentItem)
+//            {
+//                var item = view.currentItem.children[0].children[0];
+//                if(contrIcons.stateIconsFileSyncQML[view.currentItem.curFileName] === "Disable_sincingF")
+//                    item.state = "DISABLE_SYNC";
+//                else if(contrIcons.stateIconsFileSyncQML[view.currentItem.curFileName] === "SyncedFError")
+//                    item.state = "SYNCED_ERROR"
+//                else if(contrIcons.stateIconsFileSyncQML[view.currentItem.curFileName] === "SyncedF")
+//                    item.state = "SYNCED"
+//                else if(contrIcons.stateIconsFileSyncQML[view.currentItem.curFileName] === "SyncingF")
+//                {
+//                    item.state = "SYNCING"
+//                }
+//            }
+     //       updateIconsStateFileSync()
         } // end Triggered
     }
 }
