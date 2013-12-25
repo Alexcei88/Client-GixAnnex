@@ -48,13 +48,18 @@ public:
     GANN_DEFINE::RESULT_EXEC_PROCESS Sync() const;
     // 7. оказывает местонахождение файла в других репозиториях
     GANN_DEFINE::RESULT_EXEC_PROCESS WhereisFiles(const QString& path, IRepository *repository) const;
-    /** @brief установка прямого/косвенного режима репозитория */
+    /** @brief установка прямого/косвенного режима работы репозитория */
     GANN_DEFINE::RESULT_EXEC_PROCESS SetDirectMode(const bool &direct, IRepository *repository) const;
 
+    inline const QString getStrCommand() const { return strCommand; }
+    inline const QString getLocalURL() const { return localURL; }
 
 private:
-    const QString  baseCommand;
-    // локальный путь, откуда запускаеться shell
+    const QString   baseCommand;
+
+    /** @brief команда, которая выполняется */
+    QString         strCommand;
+    /** @brief путь, откуда запускаеться shell */
     QString         localURL;
 
 };

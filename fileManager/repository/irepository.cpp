@@ -1,5 +1,8 @@
 #include "irepository.h"
 
+// boost stuff
+#include <boost/make_shared.hpp>
+
 using namespace GANN_DEFINE;
 
 //----------------------------------------------------------------------------------------/

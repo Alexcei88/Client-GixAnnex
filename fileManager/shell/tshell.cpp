@@ -1,8 +1,11 @@
 #include "tshell.h"
+#include "../parsing_command_out/iparsingcommandout.h"
+
 #include <stdio.h>
 
-// Qt stuff
-#include <QProcess>
+// boost stuff
+#include <boost/make_shared.hpp>
+
 
 using namespace GANN_DEFINE;
 
