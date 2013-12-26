@@ -3,10 +3,15 @@
 
 #include "iparsingcommandout.h"
 
+namespace AnalyzeCommand
+{
+    class AnalyzeExecuteCommand;
+}
+
 class ParsingCommandClone : public IParsingCommandOut
 {
 public:
-    ParsingCommandClone(IRepository* repository);
+    ParsingCommandClone(boost::shared_ptr<AnalyzeCommand::AnalyzeExecuteCommand> analyzeCommand);
     virtual void        ParsingData();
 
 private:

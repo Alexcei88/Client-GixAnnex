@@ -1,6 +1,9 @@
 #ifndef DEFINE_H
 #define DEFINE_H
 
+// boost stuff
+#include <boost/shared_ptr.hpp>
+
 namespace GANN_DEFINE {
 
     enum RESULT_EXEC_PROCESS {

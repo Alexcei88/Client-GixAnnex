@@ -38,7 +38,11 @@ SOURCES += main.cpp \
     parsing_command_out/parsingcommandempty.cpp \
     qml/components/folder_model/folderlistmodel.cpp \
     qml/components/message_box/qmlmessage.cpp \
-    parsing_command_out/parsingcommanddirectmode.cpp
+    parsing_command_out/parsingcommanddirectmode.cpp \
+    analyze_execute_command/analyzeexecutecommandget.cpp \
+    analyze_execute_command/analyzeexecutecommand.cpp \
+    analyze_execute_command/facadeanalyzecommand.cpp \
+    analyze_execute_command/analyzeexecutecommanddrop.cpp
 
 # Installation path
 # target.path =
@@ -75,7 +79,6 @@ HEADERS += \
     MVC/Controller/controller_repository.h \
     MVC/Model/model_repository.h \
     define.h \
-    MVC/Model/model_updateviewer.h \
     shell/shelltask.h \
     resourcegenerator.h \
     MVC/Controller/controller_icons.h \
@@ -86,7 +89,12 @@ HEADERS += \
     qml/components/folder_model/folderlistmodel.h \
     qml/components/message_box/qmlmessage.h \
     threadmodel.h \
-    parsing_command_out/parsingcommanddirectmode.h
+    parsing_command_out/parsingcommanddirectmode.h \
+    analyze_execute_command/analyzeexecutecommandget.h \
+    analyze_execute_command/analyzeexecutecommand.h \
+    analyze_execute_command/facadeanalyzecommand.h \
+    utils/utils.h \
+    analyze_execute_command/analyzeexecutecommanddrop.h
 
 # Включаем поддержку С++11
 QMAKE_CXXFLAGS += -std=c++0x

@@ -7,10 +7,15 @@
 #include <QString>
 #include <QJsonArray>
 
+namespace AnalyzeCommand
+{
+    class AnalyzeExecuteCommandGet;
+}
+
 class ParsingCommandGet : public IParsingCommandOut
 {
 public:
-    ParsingCommandGet(IRepository* repository);
+    ParsingCommandGet(boost::shared_ptr<AnalyzeCommand::AnalyzeExecuteCommandGet> analyzeCommand);
     virtual void        ParsingData();
 
 private:
@@ -24,6 +29,8 @@ private:
     void                EndGetContentFile();
     // скачивание файла завершилось с ошибкой
     void                ErrorGetContentFile(const QJsonDocument &doc);
+
+    boost::shared_ptr<AnalyzeCommand::AnalyzeExecuteCommandGet> analizeCommandGet;
 
 };
 

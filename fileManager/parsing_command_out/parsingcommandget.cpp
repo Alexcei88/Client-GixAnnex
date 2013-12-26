@@ -1,13 +1,16 @@
 #include "parsingcommandget.h"
 #include "../repository/irepository.h"
+#include "../analyze_execute_command/analyzeexecutecommandget.h"
+
 #include <assert.h>
 
 //  Qt stuff
 #include <QJsonObject>
 
-ParsingCommandGet::ParsingCommandGet(IRepository* repository) :
-    IParsingCommandOut(repository)
+ParsingCommandGet::ParsingCommandGet(boost::shared_ptr<AnalyzeCommand::AnalyzeExecuteCommandGet> analyzeCommand) :
+    IParsingCommandOut(analyzeCommand)
   , startGet(false)
+  , analizeCommandGet(analyzeCommand)
 {}
 //----------------------------------------------------------------------------------------/
 void ParsingCommandGet::ParsingData()
@@ -31,7 +34,7 @@ void ParsingCommandGet::ParsingData()
                 StartGetContentFile(doc);
             }
             bool ok = false;
-            if(IsEndCommand(doc, ok))
+            if(IsEndMiniCommand(doc, ok))
             {
                 // команда завершилась
                 ok ? EndGetContentFile() : ErrorGetContentFile(doc);
@@ -50,21 +53,22 @@ void ParsingCommandGet::StartGetContentFile(const QJsonDocument &doc)
     startGet = true;
 
     nameFileGetContent = doc.object().take("file").toString();
-    emit repository->startGetContentFile(nameFileGetContent);
+    analizeCommandGet->StartGetContentFile(nameFileGetContent);
 }
 //----------------------------------------------------------------------------------------/
 void ParsingCommandGet::EndGetContentFile()
 {
     assert(startGet && "Скачивание ресурса не было запущено");
     startGet = false;
-    emit repository->endGetContentFile(nameFileGetContent);
+    analizeCommandGet->EndGetContentFile(nameFileGetContent);
 }
 //----------------------------------------------------------------------------------------/
 void ParsingCommandGet::ErrorGetContentFile(const QJsonDocument &doc)
 {
     assert(startGet && "Скачивание ресурса не было запущено");
     startGet = false;
-    emit repository->errorGetContentFile(nameFileGetContent, "ffff");
+    Q_UNUSED(doc);
+    analizeCommandGet->ErrorGetContentFile(nameFileGetContent, "fff");
 }
 //----------------------------------------------------------------------------------------/
 

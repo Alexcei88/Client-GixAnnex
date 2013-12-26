@@ -6,10 +6,15 @@
 // Qt stuff
 #include <QString>
 
+namespace AnalyzeCommand
+{
+    class AnalyzeExecuteCommandDrop;
+}
+
 class ParsingCommandDrop : public IParsingCommandOut
 {
 public:
-    ParsingCommandDrop(IRepository* repository);
+    ParsingCommandDrop(boost::shared_ptr<AnalyzeCommand::AnalyzeExecuteCommandDrop> analyzeCommand);
     virtual void        ParsingData();
 
 private:
@@ -23,6 +28,9 @@ private:
     void                EndDropContentFile();
     // удаление файла завершилось с ошибкой
     void                ErrorDropContentFile(const QJsonDocument &doc);
+
+    boost::shared_ptr<AnalyzeCommand::AnalyzeExecuteCommandDrop> analizeCommandDrop;
+
 };
 
 #endif // PARSINGCOMMANDDROP_H

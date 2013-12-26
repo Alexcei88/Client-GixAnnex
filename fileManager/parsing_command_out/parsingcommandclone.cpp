@@ -2,8 +2,8 @@
 #include "../repository/irepository.h"
 
 //----------------------------------------------------------------------------------------/
-ParsingCommandClone::ParsingCommandClone(IRepository * repository):
-    IParsingCommandOut(repository)
+ParsingCommandClone::ParsingCommandClone(boost::shared_ptr<AnalyzeCommand::AnalyzeExecuteCommand> analyzeCommand):
+    IParsingCommandOut(analyzeCommand)
 {
     // регулярное выражение в случаи успешного парсинга
     QString succes = "(Cloning into ')(.*)(')(.*)";
@@ -47,7 +47,7 @@ void ParsingCommandClone::ParsingData()
                         errorString += regExp.cap(2);
                     }
                 }
-                emit repository->errorCloneRepository(errorString);
+                //emit repository->errorCloneRepository(errorString);
                 wasErrorCommand = true;
                 return;
             }

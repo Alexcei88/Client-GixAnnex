@@ -12,6 +12,11 @@
 #include <QVector>
 #include <QFileInfo>
 
+namespace AnalyzeCommand
+{
+    class FacadeAnalyzeCommand;
+}
+
 class IRepository : public QObject
 {
     Q_OBJECT
@@ -165,8 +170,8 @@ public:
     */
     inline const QMap<QString, PARAMETR_FILEFOLDER_GIT_ANNEX>& GetStateFileDir() const { return paramSyncFileDir; };
 
-    /** @brief Получить полностью новые параметры синхронизации(при смене рабочей директории) */
-    void                UpdateParamSyncFileDirFull(const QString& curDir);
+    /** @brief Изменение  рабочей директории */
+    void                ChangeCurrentDirectory(const QString& curDir);
 
     /** @brief Обновить параметры синхронизации у текущей директории(список файлов постоянный) */
     void                UpdateParamSyncFileDir();
@@ -184,6 +189,9 @@ protected:
     void                SetStateFileDir(const QString& fileDirName, const STATE_FILE_AND_DIR& state);
 
     boost::shared_ptr<ShellCommand> shellCommand;
+
+    /** @brief Фасад системы анализа хода выполнения команд */
+    boost::shared_ptr<AnalyzeCommand::FacadeAnalyzeCommand> facadeAnalyzeCommand;
 
     /** @brief удаленный адрес репозитория */
     QString             remoteURL;
@@ -214,38 +222,11 @@ private:
 
     void                InitClass();
     void                InitSignalAndSlots();
-    // вектор, содержащий файлы, которые сейчас скачиваются(или дано задание на скачивание)
-    QList<QString>      gettingContentFile;
-    // вектор, содержащий файлы, которые сейчас удаляются(или дано задание на удаление)
-    QList<QString>      droppingContentFile;
-    // вектор, содержащий файлы, которые не удалось скачать(ключ - имя файла, значение - причина ошибки)
-    QMap<QString, QString> errorGettingContentFile;
-    // вектор, содержащий файлы, которые не удалось удалить(ключ - имя файла, значение - причина ошибки)
-    QMap<QString, QString> errorDroppingContentFile;
 
-    /** @brief идет ли в текущей директории(или сам текущий файл) получение контента в текущий момент времени */
-    bool                IsGettingContentFileDir(const QString& file) const;
-    /** @brief идет ли в текущей директории(или сам текущий файл) удаление контента в текущий момент времени */
-    bool                IsDroppingContentFileDir(const QString& file) const;
-    /** @brief есть ли ошибка получения контента в текущей директории(или сам текущий файл) в текущий момент времени */
-    bool                IsErrorGettingContentFileDir(const QString& file) const;
-    /** @brief есть ли ошибка получения контента в текущей директории(или сам текущий файл) в текущий момент времени */
-    bool                IsErrorDroppingContentFileDir(const QString& file) const;
-    /** @brief Содержит ли директория файл в поддиректориях */
-    bool                DirContainsFile(const QString& dir, const QString& file) const;
     /** @brief высчитать текущее состояние файла/директории */
     QString             CalculateStateFileDir(const QString& file) const;
 
 private slots:
-    // слот, говорящий о начале получения контента у файла
-    void                OnStartGetContentFile(const QString&);
-    void                OnEndGetContentFile(const QString&);
-    void                OnErrorGetContentFile(const QString&, const QString&);
-    // начало/конец удаления
-    void                OnStartDropContentFile(const QString&);
-    void                OnEndDropContentFile(const QString&);
-    void                OnErrorDropContentFile(const QString&, const QString&);
-
     // неудачное клонирование репозитория
     void                OnErrorCloneRepository(const QString&);
 
@@ -254,14 +235,6 @@ private slots:
     void                OnErrorChangeDirectMode(const QString& error);
 
 signals:
-    // сигналы начала/конца get
-    void                startGetContentFile(const QString&);
-    void                endGetContentFile(const QString&);
-    void                errorGetContentFile(const QString&, const QString&);
-    // сигналы начала/конца удаления
-    void                startDropContentFile(const QString&);
-    void                endDropContentFile(const QString&);
-    void                errorDropContentFile(const QString&, const QString&);
     // неудачное клонирование
     void                errorCloneRepository(const QString&);
 
