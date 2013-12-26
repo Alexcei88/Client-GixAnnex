@@ -13,7 +13,7 @@
 // analize stuff
 #include "../analyze_execute_command/analyzeexecutecommand.h"
 #include "../analyze_execute_command/analyzeexecutecommandget.h"
-
+#include "../analyze_execute_command/analyzeexecutecommanddrop.h"
 
 #include <QThreadPool>
 
@@ -106,7 +106,7 @@ RESULT_EXEC_PROCESS ShellCommand::GetContentFile(const QString& path, FacadeAnal
 RESULT_EXEC_PROCESS ShellCommand::DropContentFile(const QString& path, FacadeAnalyzeCommand *facade) const
 {
     const QString strCommand = baseCommand + "drop " + path;
-    boost::shared_ptr<AnalyzeExecuteCommand> analizeCommand(new AnalyzeExecuteCommand(*facade));
+    boost::shared_ptr<AnalyzeExecuteCommandDrop> analizeCommand(new AnalyzeExecuteCommandDrop(*facade));
     analizeCommand->SetPathExecuteCommand(localURL);
     boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandDrop(analizeCommand));
     ShellTask* shellTask = new ShellTask(strCommand, localURL, receiverParsing);

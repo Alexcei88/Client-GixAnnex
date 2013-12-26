@@ -41,7 +41,8 @@ SOURCES += main.cpp \
     parsing_command_out/parsingcommanddirectmode.cpp \
     analyze_execute_command/analyzeexecutecommandget.cpp \
     analyze_execute_command/analyzeexecutecommand.cpp \
-    analyze_execute_command/facadeanalyzecommand.cpp
+    analyze_execute_command/facadeanalyzecommand.cpp \
+    analyze_execute_command/analyzeexecutecommanddrop.cpp
 
 # Installation path
 # target.path =
@@ -92,7 +93,8 @@ HEADERS += \
     analyze_execute_command/analyzeexecutecommandget.h \
     analyze_execute_command/analyzeexecutecommand.h \
     analyze_execute_command/facadeanalyzecommand.h \
-    utils/utils.h
+    utils/utils.h \
+    analyze_execute_command/analyzeexecutecommanddrop.h
 
 # Включаем поддержку С++11
 QMAKE_CXXFLAGS += -std=c++0x

@@ -416,13 +416,11 @@ FocusScope{
                 if(contrIcons.stateIconsFileSyncQML[itemDelegate.curFileName] === "Disable_sincingF")
                     itemDelegate.state = "DISABLE_SYNC";
                 else if(contrIcons.stateIconsFileSyncQML[itemDelegate.curFileName] === "SyncedFError")
-                    itemDelegate.state = "SYNCED_ERROR"
+                    itemDelegate.state = "SYNCED_ERROR";
                 else if(contrIcons.stateIconsFileSyncQML[itemDelegate.curFileName] === "SyncedF")
-                    itemDelegate.state = "SYNCED"
+                    itemDelegate.state = "SYNCED";
                 else if(contrIcons.stateIconsFileSyncQML[itemDelegate.curFileName] === "SyncingF")
-                {
-                    itemDelegate.state = "SYNCING"
-                }
+                    itemDelegate.state = "SYNCING";
             }
 
 //            //view.model.get(0).width = 10;

@@ -53,9 +53,6 @@ void IRepository::InitSignalAndSlots()
 {
     // сигналы/слоты
     //----------------------------------------------------------------------------------------/
-    QObject::connect(this, &IRepository::startDropContentFile, this, &IRepository::OnStartDropContentFile, Qt::DirectConnection);
-    QObject::connect(this, &IRepository::endDropContentFile, this, &IRepository::OnEndDropContentFile, Qt::DirectConnection);
-    QObject::connect(this, &IRepository::errorDropContentFile, this, &IRepository::OnErrorDropContentFile, Qt::DirectConnection);
     QObject::connect(this, &IRepository::errorCloneRepository, this, &IRepository::OnErrorCloneRepository, Qt::DirectConnection);
     QObject::connect(this, &IRepository::changeDirectMode, this, &IRepository::OnChangeDirectMode, Qt::DirectConnection);
     //----------------------------------------------------------------------------------------/
@@ -169,44 +166,6 @@ bool IRepository::DirIsSubRootDirRepository(const QString& dir) const
     return (dir.length() >= localURL.length() && dir.contains(localURL, Qt::CaseSensitive) );
 }
 //----------------------------------------------------------------------------------------/
-bool IRepository::IsDroppingContentFileDir(const QString& file) const
-{
-//    const QString relativePath = QString(dir.path() + "/" + file).replace(localURL +"/", "");
-//    for(auto iterator = droppingContentFile.constBegin(); iterator != droppingContentFile.constEnd(); ++iterator)
-//    {
-//        if(DirContainsFile(*iterator, relativePath))
-//            return true;
-//    }
-    return false;
-}
-//----------------------------------------------------------------------------------------/
-bool IRepository::IsErrorGettingContentFileDir(const QString& file) const
-{
-//    for(auto iterator = errorGettingContentFile.constBegin(); iterator != errorGettingContentFile.constEnd(); ++iterator)
-//    {
-//        const QString relativePath = QString(dir.path() + "/" + file).replace(localURL +"/", "");
-//        if(DirContainsFile(iterator.key(), relativePath))
-//            return true;
-//    }
-    return false;
-}
-//----------------------------------------------------------------------------------------/
-bool IRepository::IsErrorDroppingContentFileDir(const QString& file) const
-{/*
-    for(auto iterator = errorDroppingContentFile.constBegin(); iterator != errorDroppingContentFile.constEnd(); ++iterator)
-    {
-        const QString relativePath = QString(dir.path() + "/" + file).replace(localURL +"/", "");
-        if(DirContainsFile(iterator.key(), relativePath))
-            return true;
-    }*/
-    return false;
-}
-////----------------------------------------------------------------------------------------/
-//bool IRepository::DirContainsFile(const QString& dir, const QString& file) const
-//{
-//    return dir.contains(file, Qt::CaseSensitive);
-//}
-//----------------------------------------------------------------------------------------/
 QString IRepository::CalculateStateFileDir(const QString& file) const
 {
     // текущее состояние
@@ -215,13 +174,13 @@ QString IRepository::CalculateStateFileDir(const QString& file) const
     {
         curState = metaEnumStateF.valueToKey(Disable_sincingF);
     }
-    else if(facadeAnalyzeCommand->IsGettingContentFileDir(file) || IsDroppingContentFileDir(file))
-    {
-        curState = metaEnumStateF.valueToKey(SyncingF);
-    }
-    else if(IsErrorDroppingContentFileDir(file) || IsErrorGettingContentFileDir(file))
+    else if(facadeAnalyzeCommand->IsErrorDroppingContentFileDir(file) || facadeAnalyzeCommand->IsErrorGettingContentFileDir(file))
     {
         curState = metaEnumStateF.valueToKey(SyncedFError);
+    }
+    else if(facadeAnalyzeCommand->IsGettingContentFileDir(file) || facadeAnalyzeCommand->IsDroppingContentFileDir(file))
+    {
+        curState = metaEnumStateF.valueToKey(SyncingF);
     }
     else
     {
@@ -231,53 +190,6 @@ QString IRepository::CalculateStateFileDir(const QString& file) const
 }
 //----------------------------------------------------------------------------------------/
 //    СЛУЖЕБНЫЕ СЛОТЫ
-//----------------------------------------------------------------------------------------/
-//----------------------------------------------------------------------------------------/
-void IRepository::OnStartDropContentFile(const QString& file)
-{
-    if(std::find(droppingContentFile.begin(), droppingContentFile.end(), file) == droppingContentFile.end()){
-        droppingContentFile.push_back(file);
-    }
-}
-//----------------------------------------------------------------------------------------/
-void IRepository::OnEndDropContentFile(const QString& file)
-{
-    auto itErase = std::find(droppingContentFile.begin(), droppingContentFile.end(), file);
-    if(itErase != droppingContentFile.end())
-    {
-        droppingContentFile.erase(itErase);
-        // убираем файл из вектора ошибок
-        if(errorDroppingContentFile.contains(file))
-            errorDroppingContentFile.remove(file);
-    }
-    else
-    {
-        std::cout<<"WARNING!!!! В списке удаляемых в текущий момент файлов нет файла, удаление контента которого закончилось!!!"<<std::endl;
-        #ifdef DEBUG
-                assert(0);
-        #endif
-    }
-}
-//----------------------------------------------------------------------------------------/
-void IRepository::OnErrorDropContentFile(const QString& file, const QString& error)
-{
-    auto itErase = std::find(droppingContentFile.begin(), droppingContentFile.end(), file);
-    if(itErase != droppingContentFile.end()) {
-        droppingContentFile.erase(itErase);
-    }
-    else
-    {
-        std::cout<<"WARNING!!!! В списке удаляемых в текущий момент файлов нет файла, удаление контента которого закончилось!!!"<<std::endl;
-        #ifdef DEBUG
-                assert(0);
-        #endif
-    }
-    // помещаем файл в вектор ошибок
-    if(errorDroppingContentFile.contains(file))
-        errorDroppingContentFile.remove(file);
-
-    errorDroppingContentFile[file] = error;
-}
 //----------------------------------------------------------------------------------------/
 void IRepository::OnErrorCloneRepository(const QString &error)
 {

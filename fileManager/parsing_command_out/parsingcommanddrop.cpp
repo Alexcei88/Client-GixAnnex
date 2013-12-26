@@ -1,13 +1,15 @@
 #include "parsingcommanddrop.h"
-#include <assert.h>
 #include "../repository/irepository.h"
+#include "../analyze_execute_command/analyzeexecutecommanddrop.h"
 
+#include <assert.h>
 //  Qt stuff
 #include <QJsonObject>
 
-ParsingCommandDrop::ParsingCommandDrop(boost::shared_ptr<AnalyzeCommand::AnalyzeExecuteCommand> analyzeCommand) :
+ParsingCommandDrop::ParsingCommandDrop(boost::shared_ptr<AnalyzeCommand::AnalyzeExecuteCommandDrop> analyzeCommand) :
     IParsingCommandOut(analyzeCommand)
   , startDrop(false)
+  , analizeCommandDrop(analyzeCommand)
 {}
 //----------------------------------------------------------------------------------------/
 void ParsingCommandDrop::ParsingData()
@@ -53,20 +55,21 @@ void ParsingCommandDrop::StartDropContentFile(const QJsonDocument &doc)
     assert(!startDrop && "Предыдущий ресурс еще не удалился, и началось новое удаление. Что то пошло не так!!!");
     startDrop = true;
     nameFileGetContent = doc.object().take("file").toString();
-    //emit repository->startDropContentFile(nameFileGetContent);
+    analizeCommandDrop->StartDropContentFile(nameFileGetContent);
 }
 //----------------------------------------------------------------------------------------/
 void ParsingCommandDrop::EndDropContentFile()
 {
     assert(startDrop && "Удаление ресурса не было запущено");
     startDrop = false;
-    //emit repository->endDropContentFile(nameFileGetContent);
+    analizeCommandDrop->EndDropContentFile(nameFileGetContent);
 }
 //----------------------------------------------------------------------------------------/
 void ParsingCommandDrop::ErrorDropContentFile(const QJsonDocument &doc)
 {
     assert(startDrop && "Удаление ресурса не было запущено");
     startDrop = false;
-    //emit repository->errorDropContentFile(nameFileGetContent, "Error");
+    Q_UNUSED(doc);
+    analizeCommandDrop->ErrorDropContentFile(nameFileGetContent, "Error");
 }
 //----------------------------------------------------------------------------------------/

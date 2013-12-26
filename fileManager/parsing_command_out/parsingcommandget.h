@@ -9,7 +9,6 @@
 
 namespace AnalyzeCommand
 {
-    class FacadeAnalyzeCommand;
     class AnalyzeExecuteCommandGet;
 }
 
@@ -30,6 +29,7 @@ private:
     void                EndGetContentFile();
     // скачивание файла завершилось с ошибкой
     void                ErrorGetContentFile(const QJsonDocument &doc);
+
     boost::shared_ptr<AnalyzeCommand::AnalyzeExecuteCommandGet> analizeCommandGet;
 
 };

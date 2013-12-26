@@ -6,28 +6,26 @@ using namespace Utils;
 
 
 //----------------------------------------------------------------------------------------/
-AnalyzeExecuteCommandGet::AnalyzeExecuteCommandGet(FacadeAnalyzeCommand &facadeAnalyzeCommand, bool autosync):
+AnalyzeExecuteCommandGet::AnalyzeExecuteCommandGet(FacadeAnalyzeCommand &facadeAnalyzeCommand, bool autocall):
     AnalyzeExecuteCommand(facadeAnalyzeCommand)
-  , autosync(autosync)
-{
-
-}
+  , autocall(autocall)
+{}
 //----------------------------------------------------------------------------------------/
 void AnalyzeExecuteCommandGet::StartGetContentFile(const QString& file)
 {
-    if(!autosync)
+    if(!autocall)
         facadeAnalyzeCommand.StartGetContentFile(CatDirFile(pathExecuteCommand, file));
 }
 //----------------------------------------------------------------------------------------/
 void AnalyzeExecuteCommandGet::EndGetContentFile(const QString&file)
 {
-    if(!autosync)
+    if(!autocall)
         facadeAnalyzeCommand.EndGetContentFile(CatDirFile(pathExecuteCommand, file));
 }
 //----------------------------------------------------------------------------------------/
 void AnalyzeExecuteCommandGet::ErrorGetContentFile(const QString& file, const QString& error)
 {
-    if(!autosync)
+    if(!autocall)
         facadeAnalyzeCommand.ErrorGetContentFile(CatDirFile(pathExecuteCommand, file), error);
 }
 //----------------------------------------------------------------------------------------/

@@ -40,7 +40,6 @@ void ParsingCommandDirectMode::ParsingData()
                 //emit repository->changeDirectMode(mode);
             }
         }
-
     }
 }
 //----------------------------------------------------------------------------------------/

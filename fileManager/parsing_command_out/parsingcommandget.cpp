@@ -54,7 +54,6 @@ void ParsingCommandGet::StartGetContentFile(const QJsonDocument &doc)
 
     nameFileGetContent = doc.object().take("file").toString();
     analizeCommandGet->StartGetContentFile(nameFileGetContent);
-    //emit repository->startGetContentFile(nameFileGetContent);
 }
 //----------------------------------------------------------------------------------------/
 void ParsingCommandGet::EndGetContentFile()
@@ -62,15 +61,14 @@ void ParsingCommandGet::EndGetContentFile()
     assert(startGet && "Скачивание ресурса не было запущено");
     startGet = false;
     analizeCommandGet->EndGetContentFile(nameFileGetContent);
-    //emit repository->endGetContentFile(nameFileGetContent);
 }
 //----------------------------------------------------------------------------------------/
 void ParsingCommandGet::ErrorGetContentFile(const QJsonDocument &doc)
 {
     assert(startGet && "Скачивание ресурса не было запущено");
     startGet = false;
+    Q_UNUSED(doc);
     analizeCommandGet->ErrorGetContentFile(nameFileGetContent, "fff");
-    //emit repository->errorGetContentFile(nameFileGetContent, "ffff");
 }
 //----------------------------------------------------------------------------------------/
 

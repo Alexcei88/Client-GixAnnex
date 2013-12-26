@@ -3,7 +3,6 @@
 
 // Qt stuff
 #include <QList>
-#include <QString>
 
 #include "analyzeexecutecommand.h"
 
@@ -15,7 +14,7 @@ class FacadeAnalyzeCommand;
 class AnalyzeExecuteCommandGet: public AnalyzeExecuteCommand
 {
 public:
-    AnalyzeExecuteCommandGet(FacadeAnalyzeCommand& facadeAnalyzeCommand, bool autosync = false);
+    AnalyzeExecuteCommandGet(FacadeAnalyzeCommand& facadeAnalyzeCommand, bool autocall = false);
 
     void                StartGetContentFile(const QString&file);
     void                EndGetContentFile(const QString& file);
@@ -23,7 +22,7 @@ public:
 private:
     // флаг, означающий, запущена команда пользователем или вызвана автоматически
     // несколько разное поведение будет
-    bool                autosync;
+    bool                autocall;
 
 };
 }
