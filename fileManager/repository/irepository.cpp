@@ -8,12 +8,10 @@
 using namespace GANN_DEFINE;
 using namespace AnalyzeCommand;
 
-
 //----------------------------------------------------------------------------------------/
 IRepository::IRepository()
 {
     InitClass();
-    facadeAnalyzeCommand = boost::make_shared<FacadeAnalyzeCommand>();
 }
 //----------------------------------------------------------------------------------------/
 IRepository::IRepository(const QString& localUrl, const QString& remoteUrl, const QString& nameRepo):
@@ -22,12 +20,13 @@ IRepository::IRepository(const QString& localUrl, const QString& remoteUrl, cons
   ,nameRepo(nameRepo)
 {
     InitClass();
-    facadeAnalyzeCommand = boost::make_shared<FacadeAnalyzeCommand>(localURL);
 }
 //----------------------------------------------------------------------------------------/
 void IRepository::InitClass()
 {
     shellCommand = boost::make_shared<ShellCommand>();
+
+    facadeAnalyzeCommand = boost::make_shared<FacadeAnalyzeCommand>();
 
     // устанавливаем состояние репозитория по умолчанию
     paramRepo.autosync = true;

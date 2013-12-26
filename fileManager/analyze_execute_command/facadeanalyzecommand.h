@@ -4,6 +4,8 @@
 #include <QString>
 #include <QList>
 #include <QMap>
+#include <QDir>
+
 
 /* КЛАСС ФАСАД, В КОТОРОМ СОБИРАЕТСЯ ВСЯ ИНФА ПО АНАЛИЗУ ВЫПОЛНЕНИЯ КОМАНДЫ */
 
@@ -14,10 +16,6 @@ class FacadeAnalyzeCommand
 {
 public:
     FacadeAnalyzeCommand();
-    FacadeAnalyzeCommand(const QString& rootPathRepository);
-
-    /** @brief Установка корневого пути репозитория */
-    void                SetRootPathRepository(const QString& rootPath);
 
     /** @brief Установка текущего пути репозитория */
     void                SetCurrentPathRepository(const QString& currentPath);
@@ -39,11 +37,8 @@ private:
     /** @brief Содержит ли директория файл в поддиректориях */
     bool                DirContainsFile(const QString& dir, const QString& file) const;
 
-    /** @brief Корневой путь репозиротория, в котором создаеться фасад */
-    QString             rootPathRepository;
-
     /** @brief Текущий путь в репозитории */
-    QString             currentPathRepository;
+    QDir                currentPathRepository;
 
 
 

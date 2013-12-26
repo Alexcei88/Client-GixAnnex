@@ -1,27 +1,20 @@
 #include "facadeanalyzecommand.h"
 #include "../define.h"
+#include "utils/utils.h"
 
 // std stuff
 #include <iostream>
 #include <assert.h>
 
 using namespace AnalyzeCommand;
+using namespace Utils;
 
 FacadeAnalyzeCommand::FacadeAnalyzeCommand()
 {}
 //----------------------------------------------------------------------------------------/
-FacadeAnalyzeCommand::FacadeAnalyzeCommand(const QString &rootPathRepository):
-    rootPathRepository(rootPathRepository)
-{}
-//----------------------------------------------------------------------------------------/
-void FacadeAnalyzeCommand::SetRootPathRepository(const QString& rootPath)
-{
-    rootPathRepository = rootPath;
-}
-//----------------------------------------------------------------------------------------/
 void FacadeAnalyzeCommand::SetCurrentPathRepository(const QString& currentPath)
 {
-    currentPathRepository = currentPath;
+    currentPathRepository.setPath(currentPath);
 }
 //----------------------------------------------------------------------------------------/
 void FacadeAnalyzeCommand::StartGetContentFile(const QString& file)
@@ -72,15 +65,10 @@ void FacadeAnalyzeCommand::ErrorGetContentFile(const QString& file, const QStrin
 //----------------------------------------------------------------------------------------/
 bool FacadeAnalyzeCommand::IsGettingContentFileDir(const QString& file) const
 {
-    const QString relativePath = QString(currentPathRepository + "/" + file).replace(rootPathRepository +"/", "");
     for(auto iterator = gettingContentFile.constBegin(); iterator != gettingContentFile.constEnd(); ++iterator)
     {
-        std::cout<<"relativePath ="<<relativePath.toStdString()<<std::endl;
-        std::cout<<"*iterator ="<<iterator->toStdString()<<std::endl;
-
-        if(DirContainsFile(*iterator, relativePath))
+        if(DirContainsFile(catDirFile(currentPathRepository.path(), file), *iterator))
         {
-            std::cout<<"Getting file true"<<std::endl;
             return true;
         }
     }
@@ -89,5 +77,7 @@ bool FacadeAnalyzeCommand::IsGettingContentFileDir(const QString& file) const
 //----------------------------------------------------------------------------------------/
 bool FacadeAnalyzeCommand::DirContainsFile(const QString& dir, const QString& file) const
 {
-    return dir.contains(file, Qt::CaseSensitive);
+    return file.startsWith(dir);
 }
+//----------------------------------------------------------------------------------------/
+

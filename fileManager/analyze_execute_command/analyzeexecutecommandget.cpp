@@ -1,7 +1,9 @@
 #include "analyzeexecutecommandget.h"
-
+#include "utils/utils.h"
 
 using namespace AnalyzeCommand;
+using namespace Utils;
+
 
 //----------------------------------------------------------------------------------------/
 AnalyzeExecuteCommandGet::AnalyzeExecuteCommandGet(FacadeAnalyzeCommand &facadeAnalyzeCommand, bool autosync):
@@ -14,19 +16,19 @@ AnalyzeExecuteCommandGet::AnalyzeExecuteCommandGet(FacadeAnalyzeCommand &facadeA
 void AnalyzeExecuteCommandGet::StartGetContentFile(const QString& file)
 {
     if(!autosync)
-        facadeAnalyzeCommand.StartGetContentFile(file);
+        facadeAnalyzeCommand.StartGetContentFile(catDirFile(pathExecuteCommand, file));
 }
 //----------------------------------------------------------------------------------------/
 void AnalyzeExecuteCommandGet::EndGetContentFile(const QString&file)
 {
     if(!autosync)
-        facadeAnalyzeCommand.EndGetContentFile(file);
+        facadeAnalyzeCommand.EndGetContentFile(catDirFile(pathExecuteCommand, file));
 }
 //----------------------------------------------------------------------------------------/
 void AnalyzeExecuteCommandGet::ErrorGetContentFile(const QString& file, const QString& error)
 {
     if(!autosync)
-        facadeAnalyzeCommand.ErrorGetContentFile(file, error);
+        facadeAnalyzeCommand.ErrorGetContentFile(catDirFile(pathExecuteCommand, file), error);
 }
 //----------------------------------------------------------------------------------------/
 

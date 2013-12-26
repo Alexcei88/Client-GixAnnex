@@ -154,9 +154,9 @@ const QMap<QString, IRepository::PARAMETR_FILEFOLDER_GIT_ANNEX> &ModelQmlAndCRep
     }
 }
 //----------------------------------------------------------------------------------------/
-const QString ModelQmlAndCRepository::GetLastModifiedFile(const QString &file) const
+const QString ModelQmlAndCRepository::GetLastModifiedFile(const QString &file)
 {
-    const QFileInfo fileInfo(file);
+    fileInfo.setFile(file);
     if(!fileInfo.isFile() && fileInfo.isSymLink())
     {
         return "undefined";
@@ -164,9 +164,9 @@ const QString ModelQmlAndCRepository::GetLastModifiedFile(const QString &file) c
     return fileInfo.lastModified().date().toString("dd.MM.yyyy");
 }
 //----------------------------------------------------------------------------------------/
-const QString ModelQmlAndCRepository::GetSizeFile(const QString& file) const
+const QString ModelQmlAndCRepository::GetSizeFile(const QString& file)
 {
-    const QFileInfo fileInfo(file);
+    fileInfo.setFile(file);
     if(fileInfo.isFile())
     {
         quint64 nSize = fileInfo.size();
