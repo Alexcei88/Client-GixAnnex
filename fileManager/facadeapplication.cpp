@@ -22,6 +22,7 @@ FacadeApplication::FacadeApplication() :
   , currentRepository(repository.end())
   , systemTray(0l)
 {
+
     // разрешаем выполнять задачу git-annex только в одном потоке
     // больше 1 процесса git-annex создать все равно не даст
     QThreadPool::globalInstance()->setMaxThreadCount(1);

@@ -4,6 +4,9 @@
 // boost stuff
 #include <boost/shared_ptr.hpp>
 
+
+typedef unsigned long long uint64t;
+
 namespace GANN_DEFINE {
 
     enum RESULT_EXEC_PROCESS {

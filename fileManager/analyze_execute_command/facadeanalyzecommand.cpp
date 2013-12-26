@@ -18,45 +18,28 @@ void FacadeAnalyzeCommand::SetCurrentPathRepository(const QString& currentPath)
     currentPathRepository.setPath(currentPath);
 }
 //----------------------------------------------------------------------------------------/
+void FacadeAnalyzeCommand::AddGetContentFileQueue(const QString& file)
+{
+    gettingContentFilQueue.push_back(file);
+}
+//----------------------------------------------------------------------------------------/
 void FacadeAnalyzeCommand::StartGetContentFile(const QString& file)
 {
-    if(std::find(gettingContentFile.begin(), gettingContentFile.end(), file) == gettingContentFile.end()){
-        gettingContentFile.push_back(file);
-    }
+    gettingContentFile = file;
 }
 //----------------------------------------------------------------------------------------/
 void FacadeAnalyzeCommand::EndGetContentFile(const QString& file)
 {
-    auto itErase = std::find(gettingContentFile.begin(), gettingContentFile.end(), file);
-    if(itErase != gettingContentFile.end())
-    {
-        gettingContentFile.erase(itErase);
-        // убираем файл из вектора ошибок, если он там есть
-        if(errorGettingContentFile.contains(file))
-            errorGettingContentFile.remove(file);
-    }
-    else
-    {
-        std::cout<<"WARNING!!!! В списке получаемых в текущий момент файлов нет файла, получение контента которого закончилось!!!"<<std::endl;
-        #ifdef DEBUG
-                assert(0);
-        #endif
-    }
+    Q_UNUSED(file)
+    assert(!gettingContentFile.isEmpty());
+    gettingContentFile = "";
 }
 //----------------------------------------------------------------------------------------/
 void FacadeAnalyzeCommand::ErrorGetContentFile(const QString& file, const QString& error)
 {
-    auto itErase = std::find(gettingContentFile.begin(), gettingContentFile.end(), file);
-    if(itErase != gettingContentFile.end()) {
-        gettingContentFile.erase(itErase);
-    }
-    else
-    {
-        std::cout<<"WARNING!!!! В списке получаемых в текущий момент файлов нет файла, получение контента которого закончилось!!!"<<std::endl;
-#ifdef DEBUG
-        assert(0);
-#endif
-    }
+    assert(!gettingContentFile.isEmpty());
+    gettingContentFile = "";
+
     // помещаем файл в вектор ошибок
     if(errorGettingContentFile.contains(file))
         errorGettingContentFile.remove(file);
@@ -66,12 +49,9 @@ void FacadeAnalyzeCommand::ErrorGetContentFile(const QString& file, const QStrin
 //----------------------------------------------------------------------------------------/
 bool FacadeAnalyzeCommand::IsGettingContentFileDir(const QString& file) const
 {
-    for(auto iterator = gettingContentFile.constBegin(); iterator != gettingContentFile.constEnd(); ++iterator)
+    if(DirContainsFile(CatDirFile(currentPathRepository.path(), file), gettingContentFile))
     {
-        if(DirContainsFile(CatDirFile(currentPathRepository.path(), file), *iterator))
-        {
-            return true;
-        }
+        return true;
     }
     return false;
 }
@@ -90,43 +70,26 @@ bool FacadeAnalyzeCommand::IsErrorGettingContentFileDir(const QString& file) con
 //----------------------------------------------------------------------------------------/
 void FacadeAnalyzeCommand::StartDropContentFile(const QString& file)
 {
-    if(std::find(droppingContentFile.begin(), droppingContentFile.end(), file) == droppingContentFile.end()){
-        droppingContentFile.push_back(file);
-    }
+    droppingContentFile = file;
+}
+//----------------------------------------------------------------------------------------/
+void FacadeAnalyzeCommand::AddDropContentFileQueue(const QString& file)
+{
+    droppingContentFileQueue.push_back(file);
 }
 //----------------------------------------------------------------------------------------/
 void FacadeAnalyzeCommand::EndDropContentFile(const QString& file)
 {
-    auto itErase = std::find(droppingContentFile.begin(), droppingContentFile.end(), file);
-    if(itErase != droppingContentFile.end())
-    {
-        droppingContentFile.erase(itErase);
-        // убираем файл из вектора ошибок
-        if(errorDroppingContentFile.contains(file))
-            errorDroppingContentFile.remove(file);
-    }
-    else
-    {
-        std::cout<<"WARNING!!!! В списке удаляемых в текущий момент файлов нет файла, удаление контента которого закончилось!!!"<<std::endl;
-#ifdef DEBUG
-        assert(0);
-#endif
-    }
+    Q_UNUSED(file);
+    assert(!droppingContentFile.isEmpty());
+    droppingContentFile = "";
 }
 //----------------------------------------------------------------------------------------/
 void FacadeAnalyzeCommand::ErrorDropContentFile(const QString& file, const QString& error)
 {
-    auto itErase = std::find(droppingContentFile.begin(), droppingContentFile.end(), file);
-    if(itErase != droppingContentFile.end()) {
-        droppingContentFile.erase(itErase);
-    }
-    else
-    {
-        std::cout<<"WARNING!!!! В списке удаляемых в текущий момент файлов нет файла, удаление контента которого закончилось!!!"<<std::endl;
-#ifdef DEBUG
-        assert(0);
-#endif
-    }
+    assert(!droppingContentFile.isEmpty());
+    droppingContentFile = "";
+
     // помещаем файл в вектор ошибок
     if(errorDroppingContentFile.contains(file))
         errorDroppingContentFile.remove(file);
@@ -136,12 +99,9 @@ void FacadeAnalyzeCommand::ErrorDropContentFile(const QString& file, const QStri
 //----------------------------------------------------------------------------------------/
 bool FacadeAnalyzeCommand::IsDroppingContentFileDir(const QString& file) const
 {
-    for(auto iterator = droppingContentFile.constBegin(); iterator != droppingContentFile.constEnd(); ++iterator)
+    if(DirContainsFile(CatDirFile(currentPathRepository.path(), file), droppingContentFile))
     {
-        if(DirContainsFile(CatDirFile(currentPathRepository.path(), file), *iterator))
-        {
-            return true;
-        }
+        return true;
     }
     return false;
 }
