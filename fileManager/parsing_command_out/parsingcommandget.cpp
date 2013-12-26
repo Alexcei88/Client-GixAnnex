@@ -1,13 +1,16 @@
 #include "parsingcommandget.h"
 #include "../repository/irepository.h"
+#include "../analyze_execute_command/analyzeexecutecommandget.h"
+
 #include <assert.h>
 
 //  Qt stuff
 #include <QJsonObject>
 
-ParsingCommandGet::ParsingCommandGet(boost::shared_ptr<AnalyzeCommand::AnalyzeExecuteCommand> analyzeCommand) :
+ParsingCommandGet::ParsingCommandGet(boost::shared_ptr<AnalyzeCommand::AnalyzeExecuteCommandGet> analyzeCommand) :
     IParsingCommandOut(analyzeCommand)
   , startGet(false)
+  , analizeCommandGet(analyzeCommand)
 {}
 //----------------------------------------------------------------------------------------/
 void ParsingCommandGet::ParsingData()
@@ -50,6 +53,7 @@ void ParsingCommandGet::StartGetContentFile(const QJsonDocument &doc)
     startGet = true;
 
     nameFileGetContent = doc.object().take("file").toString();
+    analizeCommandGet->StartGetContentFile(nameFileGetContent);
     //emit repository->startGetContentFile(nameFileGetContent);
 }
 //----------------------------------------------------------------------------------------/
@@ -57,6 +61,7 @@ void ParsingCommandGet::EndGetContentFile()
 {
     assert(startGet && "Скачивание ресурса не было запущено");
     startGet = false;
+    analizeCommandGet->EndGetContentFile(nameFileGetContent);
     //emit repository->endGetContentFile(nameFileGetContent);
 }
 //----------------------------------------------------------------------------------------/
@@ -64,6 +69,7 @@ void ParsingCommandGet::ErrorGetContentFile(const QJsonDocument &doc)
 {
     assert(startGet && "Скачивание ресурса не было запущено");
     startGet = false;
+    analizeCommandGet->ErrorGetContentFile(nameFileGetContent, "fff");
     //emit repository->errorGetContentFile(nameFileGetContent, "ffff");
 }
 //----------------------------------------------------------------------------------------/

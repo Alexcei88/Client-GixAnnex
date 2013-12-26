@@ -11,6 +11,7 @@ class AnalyzeExecuteCommand
 {
 public:
     AnalyzeExecuteCommand(FacadeAnalyzeCommand& facadeAnalyzeCommand);
+    AnalyzeExecuteCommand(FacadeAnalyzeCommand& facadeAnalyzeCommand, const QString& pathExecuteCommand);
 
     /** @brief Начало выполнения команды */
     void                StartExecuteCommand();

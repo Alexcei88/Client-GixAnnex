@@ -170,8 +170,8 @@ public:
     */
     inline const QMap<QString, PARAMETR_FILEFOLDER_GIT_ANNEX>& GetStateFileDir() const { return paramSyncFileDir; };
 
-    /** @brief Получить полностью новые параметры синхронизации(при смене рабочей директории) */
-    void                UpdateParamSyncFileDirFull(const QString& curDir);
+    /** @brief Изменение  рабочей директории */
+    void                ChangeCurrentDirectory(const QString& curDir);
 
     /** @brief Обновить параметры синхронизации у текущей директории(список файлов постоянный) */
     void                UpdateParamSyncFileDir();
@@ -232,7 +232,7 @@ private:
     QMap<QString, QString> errorDroppingContentFile;
 
     /** @brief идет ли в текущей директории(или сам текущий файл) получение контента в текущий момент времени */
-    bool                IsGettingContentFileDir(const QString& file) const;
+//    bool                IsGettingContentFileDir(const QString& file) const;
     /** @brief идет ли в текущей директории(или сам текущий файл) удаление контента в текущий момент времени */
     bool                IsDroppingContentFileDir(const QString& file) const;
     /** @brief есть ли ошибка получения контента в текущей директории(или сам текущий файл) в текущий момент времени */
@@ -240,7 +240,7 @@ private:
     /** @brief есть ли ошибка получения контента в текущей директории(или сам текущий файл) в текущий момент времени */
     bool                IsErrorDroppingContentFileDir(const QString& file) const;
     /** @brief Содержит ли директория файл в поддиректориях */
-    bool                DirContainsFile(const QString& dir, const QString& file) const;
+//    bool                DirContainsFile(const QString& dir, const QString& file) const;
     /** @brief высчитать текущее состояние файла/директории */
     QString             CalculateStateFileDir(const QString& file) const;
 

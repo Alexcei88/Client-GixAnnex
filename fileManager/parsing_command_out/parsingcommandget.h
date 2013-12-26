@@ -10,12 +10,13 @@
 namespace AnalyzeCommand
 {
     class FacadeAnalyzeCommand;
+    class AnalyzeExecuteCommandGet;
 }
 
 class ParsingCommandGet : public IParsingCommandOut
 {
 public:
-    ParsingCommandGet(boost::shared_ptr<AnalyzeCommand::AnalyzeExecuteCommand> analyzeCommand);
+    ParsingCommandGet(boost::shared_ptr<AnalyzeCommand::AnalyzeExecuteCommandGet> analyzeCommand);
     virtual void        ParsingData();
 
 private:
@@ -29,6 +30,7 @@ private:
     void                EndGetContentFile();
     // скачивание файла завершилось с ошибкой
     void                ErrorGetContentFile(const QJsonDocument &doc);
+    boost::shared_ptr<AnalyzeCommand::AnalyzeExecuteCommandGet> analizeCommandGet;
 
 };
 

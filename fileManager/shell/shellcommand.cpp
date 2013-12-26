@@ -94,7 +94,7 @@ RESULT_EXEC_PROCESS ShellCommand::AddFile(const QString& path) const
 RESULT_EXEC_PROCESS ShellCommand::GetContentFile(const QString& path, FacadeAnalyzeCommand *facade) const
 {
     const QString strCommand = baseCommand + "get " + path;
-    boost::shared_ptr<AnalyzeExecuteCommand> analizeCommand(new AnalyzeExecuteCommand(*facade));
+    boost::shared_ptr<AnalyzeExecuteCommandGet> analizeCommand(new AnalyzeExecuteCommandGet(*facade));
     analizeCommand->SetPathExecuteCommand(localURL);
     boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandGet(analizeCommand));
     ShellTask* shellTask = new ShellTask(strCommand, localURL, receiverParsing);

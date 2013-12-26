@@ -78,7 +78,6 @@ HEADERS += \
     MVC/Controller/controller_repository.h \
     MVC/Model/model_repository.h \
     define.h \
-    MVC/Model/model_updateviewer.h \
     shell/shelltask.h \
     resourcegenerator.h \
     MVC/Controller/controller_icons.h \

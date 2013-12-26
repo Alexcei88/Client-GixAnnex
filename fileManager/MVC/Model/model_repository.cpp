@@ -137,7 +137,7 @@ void ModelQmlAndCRepository::ChangeCurrentViewDirectory(const QString &dir) cons
     if(iterRepo != FacadeApplication::instance->repository.end())
     {
         IRepository* curRepo = iterRepo->second.get();
-        curRepo->UpdateParamSyncFileDirFull(dir);
+        curRepo->ChangeCurrentDirectory(dir);
     }
 }
 //----------------------------------------------------------------------------------------/

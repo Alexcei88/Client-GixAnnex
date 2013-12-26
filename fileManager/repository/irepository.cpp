@@ -13,6 +13,7 @@ using namespace AnalyzeCommand;
 IRepository::IRepository()
 {
     InitClass();
+    facadeAnalyzeCommand = boost::make_shared<FacadeAnalyzeCommand>();
 }
 //----------------------------------------------------------------------------------------/
 IRepository::IRepository(const QString& localUrl, const QString& remoteUrl, const QString& nameRepo):
@@ -21,13 +22,12 @@ IRepository::IRepository(const QString& localUrl, const QString& remoteUrl, cons
   ,nameRepo(nameRepo)
 {
     InitClass();
+    facadeAnalyzeCommand = boost::make_shared<FacadeAnalyzeCommand>(localURL);
 }
 //----------------------------------------------------------------------------------------/
 void IRepository::InitClass()
 {
     shellCommand = boost::make_shared<ShellCommand>();
-
-    facadeAnalyzeCommand = boost::make_shared<FacadeAnalyzeCommand>();
 
     // устанавливаем состояние репозитория по умолчанию
     paramRepo.autosync = true;
@@ -139,7 +139,7 @@ void IRepository::SetParamSyncRepository(const bool& autosync, const bool& autos
     paramRepo.autosyncContent = autosyncContent;
 }
 //----------------------------------------------------------------------------------------/
-void IRepository::UpdateParamSyncFileDirFull(const QString& curDir)
+void IRepository::ChangeCurrentDirectory(const QString& curDir)
 {
    // std::cout<<"New Dir = "<<curDir.toStdString().c_str()<<std::endl;
    // std::cout<<"Local URL Dir = "<<localURL.toStdString().c_str()<<std::endl;
@@ -147,6 +147,9 @@ void IRepository::UpdateParamSyncFileDirFull(const QString& curDir)
     // проверка на то, что текущий путь является поддиректорией к корню репозитория
     assert(curDir.length() >= localURL.length() && curDir.contains(localURL, Qt::CaseSensitive));
     dir.setPath(curDir);
+
+    // устанавливаем новый путь в фасаде анализа
+    facadeAnalyzeCommand->SetCurrentPathRepository(curDir);
 
     paramSyncFileDir.clear();
     QStringList nameAllFilesAndDir = dir.entryList();
@@ -172,61 +175,61 @@ bool IRepository::DirIsSubRootDirRepository(const QString& dir) const
 {
     return (dir.length() >= localURL.length() && dir.contains(localURL, Qt::CaseSensitive) );
 }
-//----------------------------------------------------------------------------------------/
-bool IRepository::IsGettingContentFileDir(const QString& file) const
-{
-    const QString relativePath = QString(dir.path() + "/" + file).replace(localURL +"/", "");
-    for(auto iterator = gettingContentFile.constBegin(); iterator != gettingContentFile.constEnd(); ++iterator)
-    {       
-        std::cout<<"relativePath ="<<relativePath.toStdString()<<std::endl;
-        std::cout<<"*iterator ="<<iterator->toStdString()<<std::endl;
+////----------------------------------------------------------------------------------------/
+//bool IRepository::IsGettingContentFileDir(const QString& file) const
+//{
+//    const QString relativePath = QString(dir.path() + "/" + file).replace(localURL +"/", "");
+//    for(auto iterator = gettingContentFile.constBegin(); iterator != gettingContentFile.constEnd(); ++iterator)
+//    {
+//        std::cout<<"relativePath ="<<relativePath.toStdString()<<std::endl;
+//        std::cout<<"*iterator ="<<iterator->toStdString()<<std::endl;
 
-        if(DirContainsFile(*iterator, relativePath))
-        {
-            std::cout<<"Getting file true"<<std::endl;
-            return true;
-        }
-    }
-    return false;
-}
+//        if(DirContainsFile(*iterator, relativePath))
+//        {
+//            std::cout<<"Getting file true"<<std::endl;
+//            return true;
+//        }
+//    }
+//    return false;
+//}
 //----------------------------------------------------------------------------------------/
 bool IRepository::IsDroppingContentFileDir(const QString& file) const
 {
-    const QString relativePath = QString(dir.path() + "/" + file).replace(localURL +"/", "");
-    for(auto iterator = droppingContentFile.constBegin(); iterator != droppingContentFile.constEnd(); ++iterator)
-    {
-        if(DirContainsFile(*iterator, relativePath))
-            return true;
-    }
+//    const QString relativePath = QString(dir.path() + "/" + file).replace(localURL +"/", "");
+//    for(auto iterator = droppingContentFile.constBegin(); iterator != droppingContentFile.constEnd(); ++iterator)
+//    {
+//        if(DirContainsFile(*iterator, relativePath))
+//            return true;
+//    }
     return false;
 }
 //----------------------------------------------------------------------------------------/
 bool IRepository::IsErrorGettingContentFileDir(const QString& file) const
 {
-    for(auto iterator = errorGettingContentFile.constBegin(); iterator != errorGettingContentFile.constEnd(); ++iterator)
-    {
-        const QString relativePath = QString(dir.path() + "/" + file).replace(localURL +"/", "");
-        if(DirContainsFile(iterator.key(), relativePath))
-            return true;
-    }
+//    for(auto iterator = errorGettingContentFile.constBegin(); iterator != errorGettingContentFile.constEnd(); ++iterator)
+//    {
+//        const QString relativePath = QString(dir.path() + "/" + file).replace(localURL +"/", "");
+//        if(DirContainsFile(iterator.key(), relativePath))
+//            return true;
+//    }
     return false;
 }
 //----------------------------------------------------------------------------------------/
 bool IRepository::IsErrorDroppingContentFileDir(const QString& file) const
-{
+{/*
     for(auto iterator = errorDroppingContentFile.constBegin(); iterator != errorDroppingContentFile.constEnd(); ++iterator)
     {
         const QString relativePath = QString(dir.path() + "/" + file).replace(localURL +"/", "");
         if(DirContainsFile(iterator.key(), relativePath))
             return true;
-    }
+    }*/
     return false;
 }
-//----------------------------------------------------------------------------------------/
-bool IRepository::DirContainsFile(const QString& dir, const QString& file) const
-{
-    return dir.contains(file, Qt::CaseSensitive);
-}
+////----------------------------------------------------------------------------------------/
+//bool IRepository::DirContainsFile(const QString& dir, const QString& file) const
+//{
+//    return dir.contains(file, Qt::CaseSensitive);
+//}
 //----------------------------------------------------------------------------------------/
 QString IRepository::CalculateStateFileDir(const QString& file) const
 {
@@ -236,7 +239,7 @@ QString IRepository::CalculateStateFileDir(const QString& file) const
     {
         curState = metaEnumStateF.valueToKey(Disable_sincingF);
     }
-    else if(IsGettingContentFileDir(file) || IsDroppingContentFileDir(file))
+    else if(facadeAnalyzeCommand->IsGettingContentFileDir(file) || IsDroppingContentFileDir(file))
     {
         curState = metaEnumStateF.valueToKey(SyncingF);
     }
