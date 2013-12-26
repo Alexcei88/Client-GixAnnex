@@ -231,8 +231,6 @@ private:
     // вектор, содержащий файлы, которые не удалось удалить(ключ - имя файла, значение - причина ошибки)
     QMap<QString, QString> errorDroppingContentFile;
 
-    /** @brief идет ли в текущей директории(или сам текущий файл) получение контента в текущий момент времени */
-//    bool                IsGettingContentFileDir(const QString& file) const;
     /** @brief идет ли в текущей директории(или сам текущий файл) удаление контента в текущий момент времени */
     bool                IsDroppingContentFileDir(const QString& file) const;
     /** @brief есть ли ошибка получения контента в текущей директории(или сам текущий файл) в текущий момент времени */
@@ -245,10 +243,6 @@ private:
     QString             CalculateStateFileDir(const QString& file) const;
 
 private slots:
-    // слот, говорящий о начале получения контента у файла
-//    void                OnStartGetContentFile(const QString&);
-//    void                OnEndGetContentFile(const QString&);
-//    void                OnErrorGetContentFile(const QString&, const QString&);
     // начало/конец удаления
     void                OnStartDropContentFile(const QString&);
     void                OnEndDropContentFile(const QString&);
@@ -262,10 +256,6 @@ private slots:
     void                OnErrorChangeDirectMode(const QString& error);
 
 signals:
-    // сигналы начала/конца get
-//    void                startGetContentFile(const QString&);
-//    void                endGetContentFile(const QString&);
-//    void                errorGetContentFile(const QString&, const QString&);
     // сигналы начала/конца удаления
     void                startDropContentFile(const QString&);
     void                endDropContentFile(const QString&);

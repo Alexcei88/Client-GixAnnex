@@ -67,8 +67,10 @@ bool FacadeAnalyzeCommand::IsGettingContentFileDir(const QString& file) const
 {
     for(auto iterator = gettingContentFile.constBegin(); iterator != gettingContentFile.constEnd(); ++iterator)
     {
-        if(DirContainsFile(catDirFile(currentPathRepository.path(), file), *iterator))
+        std::cout<<"*iterator = "<<(*iterator).toStdString()<<std::endl;
+        if(DirContainsFile(CatDirFile(currentPathRepository.path(), file), *iterator))
         {
+            std::cout<<"RetTrue"<<std::endl;
             return true;
         }
     }

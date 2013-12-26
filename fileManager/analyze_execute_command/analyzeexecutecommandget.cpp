@@ -16,19 +16,19 @@ AnalyzeExecuteCommandGet::AnalyzeExecuteCommandGet(FacadeAnalyzeCommand &facadeA
 void AnalyzeExecuteCommandGet::StartGetContentFile(const QString& file)
 {
     if(!autosync)
-        facadeAnalyzeCommand.StartGetContentFile(catDirFile(pathExecuteCommand, file));
+        facadeAnalyzeCommand.StartGetContentFile(CatDirFile(pathExecuteCommand, file));
 }
 //----------------------------------------------------------------------------------------/
 void AnalyzeExecuteCommandGet::EndGetContentFile(const QString&file)
 {
     if(!autosync)
-        facadeAnalyzeCommand.EndGetContentFile(catDirFile(pathExecuteCommand, file));
+        facadeAnalyzeCommand.EndGetContentFile(CatDirFile(pathExecuteCommand, file));
 }
 //----------------------------------------------------------------------------------------/
 void AnalyzeExecuteCommandGet::ErrorGetContentFile(const QString& file, const QString& error)
 {
     if(!autosync)
-        facadeAnalyzeCommand.ErrorGetContentFile(catDirFile(pathExecuteCommand, file), error);
+        facadeAnalyzeCommand.ErrorGetContentFile(CatDirFile(pathExecuteCommand, file), error);
 }
 //----------------------------------------------------------------------------------------/
 

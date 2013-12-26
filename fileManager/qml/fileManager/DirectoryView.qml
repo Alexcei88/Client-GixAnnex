@@ -234,7 +234,8 @@ FocusScope{
                     spacing: 8
                     width: view.cellWidth
 
-                    Image{
+                    Image
+                    {
 
                         id: imgFolder
                         source: getResourceImage(curFileName);
@@ -260,78 +261,6 @@ FocusScope{
                             visible: false
                         }
 
-                        // различные состояния, в которых может находиться директория(или файл)
-                        states:[
-                                State {
-                                    // 1. Идет синхронизация
-                                    name: "SYNCING"
-                                    when: { contrIcons.stateIconsFileSyncQML[curFileName] === "SyncingF" }
-                                    PropertyChanges {
-                                        target: dirSync
-                                        source: "qrc:/syncing.png"
-                                        rotation: 1
-                                    }
-                                    PropertyChanges {
-                                        target: colorEffect
-                                        enabled: false
-                                        visible: false
-                                    }
-                                },
-                                // 2. Синхронизация завершилась
-                                State {
-                                    name: "SYNCED"
-                                    when: { contrIcons.stateIconsFileSyncQML[curFileName] === "SyncedF" }
-                                    PropertyChanges {
-                                        target: dirSync
-                                        source: "qrc:/synced.png"
-                                    }
-                                    PropertyChanges {
-                                        target: colorEffect
-                                        enabled: false
-                                        visible: false
-                                    }
-                                },
-                                // 3. Синхронизация завершилась неудачно
-                                State {
-                                    name: "SYNCED_ERROR"
-                                    when: { contrIcons.stateIconsFileSyncQML[curFileName] === "SyncedFError"  }
-                                    PropertyChanges {
-                                        target: dirSync
-                                        source: "qrc:/disable_sync.png"
-                                    }
-                                    PropertyChanges {
-                                        target: colorEffect
-                                        enabled: false
-                                        visible: false
-                                    }
-                                },
-
-                                // 4. Синхронизация выключена
-                                State {
-                                    name: "DISABLE_SYNC"
-                                    when: { contrIcons.stateIconsFileSyncQML[curFileName] === "Disable_sincingF"  }
-                                    PropertyChanges {
-                                        target: dirSync
-                                        source: "qrc:/synced.png"
-                                    }
-                                    PropertyChanges {
-                                        target: colorEffect
-                                        enabled: true
-                                        visible: true
-                                    }
-                                }
-                            ]
-                            transitions: [
-                        		Transition {
-                            to: "SYNCING"
-                            RotationAnimation{
-                                from: 0
-                                to: 360
-                                duration: 3300
-                                loops: Animation.Infinite
-                            }
-                        }
-                    ]
                     }
 
                     Text
@@ -351,6 +280,80 @@ FocusScope{
                         }
                     }
                 }
+                // различные состояния, в которых может находиться директория(или файл)
+                states:[
+                    State {
+                        // 1. Идет синхронизация
+                        name: "SYNCING"
+                        when: { contrIcons.stateIconsFileSyncQML[curFileName] === "SyncingF" }
+                        PropertyChanges {
+                            target: dirSync
+                            source: "qrc:/syncing.png"
+                            rotation: 1
+                        }
+                        PropertyChanges {
+                            target: colorEffect
+                            enabled: false
+                            visible: false
+                        }
+                    },
+                    // 2. Синхронизация завершилась
+                    State {
+                        name: "SYNCED"
+                        when: { contrIcons.stateIconsFileSyncQML[curFileName] === "SyncedF" }
+                        PropertyChanges {
+                            target: dirSync
+                            source: "qrc:/synced.png"
+                        }
+                        PropertyChanges {
+                            target: colorEffect
+                            enabled: false
+                            visible: false
+                        }
+                    },
+                    // 3. Синхронизация завершилась неудачно
+                    State {
+                        name: "SYNCED_ERROR"
+                        when: { contrIcons.stateIconsFileSyncQML[curFileName] === "SyncedFError"  }
+                        PropertyChanges {
+                            target: dirSync
+                            source: "qrc:/disable_sync.png"
+                        }
+                        PropertyChanges {
+                            target: colorEffect
+                            enabled: false
+                            visible: false
+                        }
+                    },
+
+                    // 4. Синхронизация выключена
+                    State {
+                        name: "DISABLE_SYNC"
+                        when: { contrIcons.stateIconsFileSyncQML[curFileName] === "Disable_sincingF"  }
+                        PropertyChanges {
+                            target: dirSync
+                            source: "qrc:/synced.png"
+                        }
+                        PropertyChanges {
+                            target: colorEffect
+                            enabled: true
+                            visible: true
+                        }
+                    }
+                ]
+                transitions:
+                    [
+                    Transition {
+                        to: "SYNCING"
+                        RotationAnimation
+                        {
+                            from: 0
+                            to: 360
+                            duration: 3300
+                            loops: Animation.Infinite
+                        }
+                    }
+                ]
                 MouseArea
                 {
                     id: contextMenu
@@ -400,23 +403,25 @@ FocusScope{
         interval: 300
         onTriggered:
         {
-            // Обнолвение состояния иконок синхронизации у делегатов компонента GridView
+            if(dirModel.status === NewFolderListModel.Null)
+                return;
+
+            // Обновление состояния иконок синхронизации у делегатов компонента GridView
             var item = view.children[0];
             // этот итем является родителем для делегатов, дальше пойдут итемы делегатов
             // их количество зависит от количества объектов модели
             for(var i = 0; i < dirModel.count; ++i)
             {
                 var itemDelegate = item.children[i];
-                var itemImage = itemDelegate.children[0].children[0];
                 if(contrIcons.stateIconsFileSyncQML[itemDelegate.curFileName] === "Disable_sincingF")
-                    itemImage.state = "DISABLE_SYNC";
+                    itemDelegate.state = "DISABLE_SYNC";
                 else if(contrIcons.stateIconsFileSyncQML[itemDelegate.curFileName] === "SyncedFError")
-                    itemImage.state = "SYNCED_ERROR"
+                    itemDelegate.state = "SYNCED_ERROR"
                 else if(contrIcons.stateIconsFileSyncQML[itemDelegate.curFileName] === "SyncedF")
-                    itemImage.state = "SYNCED"
+                    itemDelegate.state = "SYNCED"
                 else if(contrIcons.stateIconsFileSyncQML[itemDelegate.curFileName] === "SyncingF")
                 {
-                    itemImage.state = "SYNCING"
+                    itemDelegate.state = "SYNCING"
                 }
             }
 
