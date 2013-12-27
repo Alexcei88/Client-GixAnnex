@@ -20,15 +20,11 @@ public:
     /** @brief Установка пути, откуда запущен бонус */
     void                SetPathExecuteCommand(const QString& path);
 
-
-
 protected:
     /** @brief фасад, управляющий анализом выполнения команд */
     FacadeAnalyzeCommand& facadeAnalyzeCommand;
     // путь относительно корня репозитория, откуда была запущена команда
     QString             pathExecuteCommand;
-
-
 
 private:
     bool startCommand;

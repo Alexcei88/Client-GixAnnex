@@ -1,10 +1,14 @@
 #ifndef FACADEANALYZECOMMAND_H
 #define FACADEANALYZECOMMAND_H
 
+// Qt stuff
 #include <QString>
 #include <QList>
 #include <QMap>
 #include <QDir>
+
+// std stuff
+#include <atomic>
 
 /*
  * КЛАСС ФАСАД, В КОТОРОМ СОБИРАЕТСЯ ВСЯ ИНФА ПО АНАЛИЗУ ВЫПОЛНЕНИЯ КОМАНДЫ
@@ -17,6 +21,7 @@ class FacadeAnalyzeCommand
 {
 public:
     FacadeAnalyzeCommand();
+    ~FacadeAnalyzeCommand();
 
     /** @brief Установка текущего пути репозитория */
     void                SetCurrentPathRepository(const QString& currentPath);
@@ -65,6 +70,8 @@ private:
     /** @brief Текущий путь в репозитории */
     QDir                currentPathRepository;
 
+    // атомарный флаг для потоков, выполняющий команды во threadPool
+    std::atomic_flag*   atomicFlagExecuteCommand;
 
 
 };

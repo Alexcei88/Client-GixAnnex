@@ -1,4 +1,5 @@
 #include "facadeanalyzecommand.h"
+#include "facadeapplication.h"
 #include "../define.h"
 #include "utils/utils.h"
 
@@ -10,8 +11,14 @@ using namespace AnalyzeCommand;
 using namespace Utils;
 
 //----------------------------------------------------------------------------------------/
-FacadeAnalyzeCommand::FacadeAnalyzeCommand()
+FacadeAnalyzeCommand::FacadeAnalyzeCommand():
+    atomicFlagExecuteCommand(new std::atomic_flag(ATOMIC_FLAG_INIT))
 {}
+//----------------------------------------------------------------------------------------/
+FacadeAnalyzeCommand::~FacadeAnalyzeCommand()
+{
+    delete atomicFlagExecuteCommand;
+}
 //----------------------------------------------------------------------------------------/
 void FacadeAnalyzeCommand::SetCurrentPathRepository(const QString& currentPath)
 {
@@ -20,16 +27,24 @@ void FacadeAnalyzeCommand::SetCurrentPathRepository(const QString& currentPath)
 //----------------------------------------------------------------------------------------/
 void FacadeAnalyzeCommand::AddGetContentFileQueue(const QString& file)
 {
+    AtomicLock flag(atomicFlagExecuteCommand);
+    Q_UNUSED(flag)
     gettingContentFilQueue.push_back(file);
 }
 //----------------------------------------------------------------------------------------/
 void FacadeAnalyzeCommand::StartGetContentFile(const QString& file)
 {
+    AtomicLock flag(atomicFlagExecuteCommand);
+    Q_UNUSED(flag)
+
     gettingContentFile = file;
 }
 //----------------------------------------------------------------------------------------/
 void FacadeAnalyzeCommand::EndGetContentFile(const QString& file)
 {
+    AtomicLock flag(atomicFlagExecuteCommand);
+    Q_UNUSED(flag)
+
     Q_UNUSED(file)
     assert(!gettingContentFile.isEmpty());
     gettingContentFile = "";
@@ -37,6 +52,9 @@ void FacadeAnalyzeCommand::EndGetContentFile(const QString& file)
 //----------------------------------------------------------------------------------------/
 void FacadeAnalyzeCommand::ErrorGetContentFile(const QString& file, const QString& error)
 {
+    AtomicLock flag(atomicFlagExecuteCommand);
+    Q_UNUSED(flag)
+
     assert(!gettingContentFile.isEmpty());
     gettingContentFile = "";
 
@@ -49,6 +67,9 @@ void FacadeAnalyzeCommand::ErrorGetContentFile(const QString& file, const QStrin
 //----------------------------------------------------------------------------------------/
 bool FacadeAnalyzeCommand::IsGettingContentFileDir(const QString& file) const
 {
+    AtomicLock flag(atomicFlagExecuteCommand);
+    Q_UNUSED(flag)
+
     if(DirContainsFile(CatDirFile(currentPathRepository.path(), file), gettingContentFile))
     {
         return true;
@@ -58,6 +79,9 @@ bool FacadeAnalyzeCommand::IsGettingContentFileDir(const QString& file) const
 //----------------------------------------------------------------------------------------/
 bool FacadeAnalyzeCommand::IsErrorGettingContentFileDir(const QString& file) const
 {
+    AtomicLock flag(atomicFlagExecuteCommand);
+    Q_UNUSED(flag)
+
     for(auto iterator = errorGettingContentFile.constBegin(); iterator != errorGettingContentFile.constEnd(); ++iterator)
     {
         if(DirContainsFile(CatDirFile(currentPathRepository.path(), file), iterator.key()))
@@ -70,16 +94,25 @@ bool FacadeAnalyzeCommand::IsErrorGettingContentFileDir(const QString& file) con
 //----------------------------------------------------------------------------------------/
 void FacadeAnalyzeCommand::StartDropContentFile(const QString& file)
 {
+    AtomicLock flag(atomicFlagExecuteCommand);
+    Q_UNUSED(flag)
+
     droppingContentFile = file;
 }
 //----------------------------------------------------------------------------------------/
 void FacadeAnalyzeCommand::AddDropContentFileQueue(const QString& file)
 {
+    AtomicLock flag(atomicFlagExecuteCommand);
+    Q_UNUSED(flag)
+
     droppingContentFileQueue.push_back(file);
 }
 //----------------------------------------------------------------------------------------/
 void FacadeAnalyzeCommand::EndDropContentFile(const QString& file)
 {
+    AtomicLock flag(atomicFlagExecuteCommand);
+    Q_UNUSED(flag)
+
     Q_UNUSED(file);
     assert(!droppingContentFile.isEmpty());
     droppingContentFile = "";
@@ -87,6 +120,9 @@ void FacadeAnalyzeCommand::EndDropContentFile(const QString& file)
 //----------------------------------------------------------------------------------------/
 void FacadeAnalyzeCommand::ErrorDropContentFile(const QString& file, const QString& error)
 {
+    AtomicLock flag(atomicFlagExecuteCommand);
+    Q_UNUSED(flag)
+
     assert(!droppingContentFile.isEmpty());
     droppingContentFile = "";
 
@@ -99,6 +135,9 @@ void FacadeAnalyzeCommand::ErrorDropContentFile(const QString& file, const QStri
 //----------------------------------------------------------------------------------------/
 bool FacadeAnalyzeCommand::IsDroppingContentFileDir(const QString& file) const
 {
+    AtomicLock flag(atomicFlagExecuteCommand);
+    Q_UNUSED(flag)
+
     if(DirContainsFile(CatDirFile(currentPathRepository.path(), file), droppingContentFile))
     {
         return true;
@@ -108,6 +147,9 @@ bool FacadeAnalyzeCommand::IsDroppingContentFileDir(const QString& file) const
 //----------------------------------------------------------------------------------------/
 bool FacadeAnalyzeCommand::IsErrorDroppingContentFileDir(const QString& file) const
 {
+    AtomicLock flag(atomicFlagExecuteCommand);
+    Q_UNUSED(flag)
+
     for(auto iterator = errorDroppingContentFile.constBegin(); iterator != errorDroppingContentFile.constEnd(); ++iterator)
     {
         if(DirContainsFile(CatDirFile(currentPathRepository.path(), file), iterator.key()))
