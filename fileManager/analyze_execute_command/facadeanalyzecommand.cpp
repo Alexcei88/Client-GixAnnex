@@ -1,7 +1,6 @@
 #include "facadeanalyzecommand.h"
-#include "facadeapplication.h"
-#include "../define.h"
 #include "utils/utils.h"
+#include "analizediraction.h"
 
 // std stuff
 #include <iostream>
@@ -29,7 +28,7 @@ void FacadeAnalyzeCommand::AddGetContentFileQueue(const QString& file)
 {
     AtomicLock flag(atomicFlagExecuteCommand);
     Q_UNUSED(flag)
-    gettingContentFilQueue.push_back(file);
+//    gettingContentFilQueue.push_back(file);
 }
 //----------------------------------------------------------------------------------------/
 void FacadeAnalyzeCommand::StartGetContentFile(const QString& file)
@@ -105,7 +104,7 @@ void FacadeAnalyzeCommand::AddDropContentFileQueue(const QString& file)
     AtomicLock flag(atomicFlagExecuteCommand);
     Q_UNUSED(flag)
 
-    droppingContentFileQueue.push_back(file);
+//    droppingContentFileQueue.push_back(file);
 }
 //----------------------------------------------------------------------------------------/
 void FacadeAnalyzeCommand::EndDropContentFile(const QString& file)
@@ -160,9 +159,22 @@ bool FacadeAnalyzeCommand::IsErrorDroppingContentFileDir(const QString& file) co
     return false;
 }
 //----------------------------------------------------------------------------------------/
+void FacadeAnalyzeCommand::ModificationAllListFiles()
+{
+
+}
+//----------------------------------------------------------------------------------------/
 bool FacadeAnalyzeCommand::DirContainsFile(const QString& dir, const QString& file) const
 {
-    return file.startsWith(dir);
+    fileInfo.setFile(dir);
+    if(fileInfo.isFile() || fileInfo.isSymLink())
+        return dir == file;
+    else
+    {
+        const QString file_ = file + "/";
+        const QString dir_ = dir + "/";
+        return file_.startsWith(dir_);
+    }
 }
 //----------------------------------------------------------------------------------------/
 

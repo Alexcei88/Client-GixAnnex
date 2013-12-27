@@ -17,6 +17,8 @@
 namespace AnalyzeCommand
 {
 
+class AnalizeDirOnAction;
+
 class FacadeAnalyzeCommand
 {
 public:
@@ -25,7 +27,6 @@ public:
 
     /** @brief Установка текущего пути репозитория */
     void                SetCurrentPathRepository(const QString& currentPath);
-
 
     //-------------------  GET  ----------------------------------------------/
     /** @brief Добавить файл в очередь файлов, на которых дано задание за скачивание */
@@ -49,30 +50,47 @@ public:
     /** @brief есть ли ошибка получения контента в текущей директории(или сам текущий файл) в текущий момент времени */
     bool                IsErrorDroppingContentFileDir(const QString& file) const;
 
+    /** @brief функция модификация списка файлов
+    // данную функцию дергать только из потока синхронизации иконок
+        \details например, объединение списка файлов в одну директорию(и наоборот)
+    */
+    void                ModificationAllListFiles();
+
 private:
-    // вектор, содержащий файлы/директории, на которые дано задание на скачивание
-    QList<QString>      gettingContentFilQueue;
-    // файл, который сейчас скачивается
+
+     //-------------------  GET  ----------------------------------------------/
+    /** @brief вектор, содержащий файлы/директории, на которые дано задание на скачивание */
+    QList<AnalizeDirOnAction> gettingContentFileQueue;
+    /** @brief файл, который сейчас скачивается */
     QString             gettingContentFile;
+
+#warning MUST_TO_BE_REFACTORING
     // вектор, содержащий файлы, которые не удалось скачать(ключ - имя файла, значение - причина ошибки)
+    // нужно тоже объединят в более крупные стуктуры данных(в папки)
+    // а то слишком слишком много памяти будет съедать
     QMap<QString, QString> errorGettingContentFile;
 
-    // вектор, содержащий файлы, которые сейчас удаляются(или дано задание на удаление)
-    QList<QString>      droppingContentFileQueue;
-    // файл, который сейчас удаляется
+    //-------------------  DROP  ---------------------------------------------/
+    /** @brief вектор, содержащий файлы/директории, на которые дано задание на удаление */
+    QList<AnalizeDirOnAction> droppingContentFileQueue;
+    /** @brief файл, который сейчас удаляется */
     QString             droppingContentFile;
-    // вектор, содержащий файлы, которые не удалось удалить(ключ - имя файла, значение - причина ошибки)
+    /** @brief вектор, содержащий файлы, которые не удалось удалить
+     *  (ключ - имя файла, значение - причина ошибки)
+     */
     QMap<QString, QString> errorDroppingContentFile;
 
-    /** @brief Содержит ли директория файл в поддиректориях */
+    /** @brief Содержит ли директория файл(в том числе и в поддиректориях) */
     bool                DirContainsFile(const QString& dir, const QString& file) const;
 
     /** @brief Текущий путь в репозитории */
     QDir                currentPathRepository;
 
+    // в качестве служебных целей
+    mutable QFileInfo   fileInfo;
+
     // атомарный флаг для потоков, выполняющий команды во threadPool
     std::atomic_flag*   atomicFlagExecuteCommand;
-
 
 };
 
