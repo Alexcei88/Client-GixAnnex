@@ -2,28 +2,112 @@
 
 using namespace AnalyzeCommand;
 
-QDir AnalizeDirOnAction::dirService;
-QFileInfo AnalizeDirOnAction::fileInfo;
+QDir AnalizeDirOnActionPrivate::dirService;
+QFileInfo AnalizeDirOnActionPrivate::fileInfo;
 
 //----------------------------------------------------------------------------------------/
-AnalizeDirOnAction::AnalizeDirOnAction(const QString &dir):
-    dir(new QDir(dir))
+AnalizeDirOnActionPrivate::AnalizeDirOnActionPrivate()
 {
     dirService.setFilter(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot);
-    assert(this->dir->exists());
 }
 //----------------------------------------------------------------------------------------/
-void AnalizeDirOnAction::WasActionForFile(const QString& file)
+AnalizeDirOnActionPrivate::AnalizeDirOnActionPrivate(const QString &dir)
 {
-
+    dirService.setFilter(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot);
+    filesMustToBeAction << dir;
 }
 //----------------------------------------------------------------------------------------/
-bool AnalizeDirOnAction::IsWasActionForFile(const QString& file) const
+bool AnalizeDirOnActionPrivate::IsFindFileOnDirAction(const QString& file) const
 {
+    for(const QString& str : filesMustToBeAction)
+    {
+        fileInfo.setFile(file);
+        assert(fileInfo.exists());
+        if(fileInfo.isFile() || fileInfo.isSymLink())
+        {
+            fileInfo.setFile(str);
+            assert(fileInfo.exists());
+            // ищем файл в файле или в директории
+            if(fileInfo.isFile() || fileInfo.isSymLink())
+            {
+               // ищем файл в файле(то есть должны названия совпдать
+               if(file == str)
+                   return true;
+            }
+            else
+            {
+                // ищем файл в директории
+                if(file.startsWith(str))
+                    return true;
+            }
+        }
+        else
+        {
+            fileInfo.setFile(str);
+            assert(fileInfo.exists());
+            // ищем директорию в файле или в директории
+            if(fileInfo.isFile() || fileInfo.isSymLink())
+            {
+               // ищем директорию в файле(что бессмыслено)
+               continue;
+            }
+            else
+            {
+                // ищем директорию в директории
+                if(file.startsWith(str))
+                    return true;
+            }
+        }
+    }
     return false;
 }
 //----------------------------------------------------------------------------------------/
-bool AnalizeDirOnAction::WasActionForAllFileDirOnDir(QStringList& files, const QString& dir)
+bool AnalizeDirOnActionPrivate::IsWasActionForFile(const QString& file) const
+{
+    for(const QString& str : filesWasAction)
+    {
+        fileInfo.setFile(file);
+        assert(fileInfo.exists());
+        if(fileInfo.isFile() || fileInfo.isSymLink())
+        {
+            fileInfo.setFile(str);
+            assert(fileInfo.exists());
+            // ищем файл в файле или в директории
+            if(fileInfo.isFile() || fileInfo.isSymLink())
+            {
+               // ищем файл в файле(то есть должны названия совпдать
+               if(file == str)
+                   return true;
+            }
+            else
+            {
+                // ищем файл в директории
+                if(file.startsWith(str))
+                    return true;
+            }
+        }
+        else
+        {
+            fileInfo.setFile(str);
+            assert(fileInfo.exists());
+            // ищем директорию в файле или в директории
+            if(fileInfo.isFile() || fileInfo.isSymLink())
+            {
+               // ищем директорию в файле(что бессмыслено)
+               continue;
+            }
+            else
+            {
+                // ищем директорию в директории
+                if(file.startsWith(str))
+                    return true;
+            }
+        }
+    }
+    return false;
+}
+//----------------------------------------------------------------------------------------/
+bool AnalizeDirOnActionPrivate::WasActionForAllFileDirOnDir(QStringList& files, const QString& dir)
 {
     dirService.setPath(dir);
     if(!dirService.exists())
@@ -53,7 +137,7 @@ bool AnalizeDirOnAction::WasActionForAllFileDirOnDir(QStringList& files, const Q
     return true;
 }
 //----------------------------------------------------------------------------------------/
-QStringList AnalizeDirOnAction::ListAllDirOfFile(const QStringList& files)
+QStringList AnalizeDirOnActionPrivate::ListAllDirOfFile(const QStringList& files)
 {
     QStringList listRet;
     QString addDir;
@@ -66,16 +150,22 @@ QStringList AnalizeDirOnAction::ListAllDirOfFile(const QStringList& files)
 #endif
         if(fileInfo.isFile() || fileInfo.isSymLink())
         {
-            addDir = fileInfo.absoluteDir();
+            // это файл
+            addDir = fileInfo.absoluteDir().path();
             listRet << addDir;
         }
         else
         {
             // это директория
-            addDir = fileInfo.absoluteDir();
+            addDir = fileInfo.absoluteDir().path();
             listRet << addDir;
         }
     }
     return listRet;
+}
+//----------------------------------------------------------------------------------------/
+void AnalizeDirOnActionPrivate::ClearListAction(QStringList& filesWasAction, QStringList& filesMustToBeAction)
+{
+
 }
 //----------------------------------------------------------------------------------------/

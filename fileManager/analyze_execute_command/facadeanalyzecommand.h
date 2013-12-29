@@ -10,6 +10,8 @@
 // std stuff
 #include <atomic>
 
+
+#include "define.h"
 /*
  * КЛАСС ФАСАД, В КОТОРОМ СОБИРАЕТСЯ ВСЯ ИНФА ПО АНАЛИЗУ ВЫПОЛНЕНИЯ КОМАНДЫ
 */
@@ -17,7 +19,7 @@
 namespace AnalyzeCommand
 {
 
-class AnalizeDirOnAction;
+class AnalizeDirOnActionPrivate;
 
 class FacadeAnalyzeCommand
 {
@@ -50,17 +52,17 @@ public:
     /** @brief есть ли ошибка получения контента в текущей директории(или сам текущий файл) в текущий момент времени */
     bool                IsErrorDroppingContentFileDir(const QString& file) const;
 
-    /** @brief функция модификация списка файлов
-    // данную функцию дергать только из потока синхронизации иконок
-        \details например, объединение списка файлов в одну директорию(и наоборот)
+    /** @brief функция модификации списка файлов в вспомогательных классах AnalizeDirAction
+     * данную функцию дергать только из потока синхронизации иконок, тк она может быть математически затратной
+     * \details например, объединение списка файлов в одну директорию(и наоборот)
     */
     void                ModificationAllListFiles();
 
 private:
 
      //-------------------  GET  ----------------------------------------------/
-    /** @brief вектор, содержащий файлы/директории, на которые дано задание на скачивание */
-    QList<AnalizeDirOnAction> gettingContentFileQueue;
+    /** @brief файлы/директории, на которые дано задание на скачивание */
+    boost::shared_ptr<AnalizeDirOnActionPrivate> gettingContentFileQueue;
     /** @brief файл, который сейчас скачивается */
     QString             gettingContentFile;
 
@@ -71,8 +73,8 @@ private:
     QMap<QString, QString> errorGettingContentFile;
 
     //-------------------  DROP  ---------------------------------------------/
-    /** @brief вектор, содержащий файлы/директории, на которые дано задание на удаление */
-    QList<AnalizeDirOnAction> droppingContentFileQueue;
+    /** @brief файлы/директории, на которые дано задание на удаление */
+    boost::shared_ptr<AnalizeDirOnActionPrivate> droppingContentFileQueue;
     /** @brief файл, который сейчас удаляется */
     QString             droppingContentFile;
     /** @brief вектор, содержащий файлы, которые не удалось удалить

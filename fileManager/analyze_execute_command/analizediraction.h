@@ -10,42 +10,49 @@
 #include "define.h"
 
 // Qt Stuff
-#include <QString>
+#include <QStringList>
 #include <QList>
 #include <QDir>
 
 namespace AnalyzeCommand
 {
 
-class AnalizeDirOnAction
+class AnalizeDirOnActionPrivate
 {
 public:
-    AnalizeDirOnAction(const QString& dir);
+    AnalizeDirOnActionPrivate();
+    AnalizeDirOnActionPrivate(const QString& dir);
 
-    /** @brief Говорим, что была выполнена работа над  файлом */
-    void            WasActionForFile(const QString& file);
+    /** @brief Найден ли данный файл(директория) в списках файлов, над которыми нужно выполнить действия */
+    bool                IsFindFileOnDirAction(const QString& file) const;
 
     /** @brief Была ли выполнена работа над файлом/директорией */
-    bool            IsWasActionForFile(const QString& file) const;
+    bool                IsWasActionForFile(const QString& file) const;
 
-    /** @brief проверяет, над всеми ли файлами/директориями была выполнена работа в текущей директории
-     * если над всеми, то модифицирует список файлов, добавляя директорию
+    /** @brief Проверяет, над всеми ли файлами/директориями была выполнена работа в текущей директории
+     * если над всеми, то модифицирует список файлов, объединяя просто в директорию
      * @param pathListFileDir - список файлов и директорий, над которыми выполнены действия
      * @param pathDir - путь к директории, в которое проверяем эти файлы
      * @return true - над всеми, поэтому можем список заменить одной директорией
      *         false - не над всеми */
-    static bool     WasActionForAllFileDirOnDir(QStringList &files, const QString& dir);
+    static bool         WasActionForAllFileDirOnDir(QStringList &files, const QString& dir);
 
-    /** @brief по имеющемуся списку файлов возвращает список возможных директорий */
-    static QStringList ListAllDirOfFile(const QStringList &files);
+    /** @brief По имеющемуся списку файлов возвращает список корневых директорий */
+    static QStringList  ListAllDirOfFile(const QStringList &files);
+
+    /** @brief Чистка списков файлов/директорий*/
+    static void         ClearListAction(QStringList& filesWasAction, QStringList& filesMustToBeAction);
+
+    // спиcок файлов/директорий, над которыми было выполнено действие
+    QStringList         filesWasAction;
+    // список файлов/директорий, над которыми нужно выполнить действия
+    QStringList         filesMustToBeAction;
 
 private:
     // служебные классы
-    static QDir      dirService;
-    static QFileInfo fileInfo;
+    static QDir         dirService;
+    static QFileInfo    fileInfo;
 
-    // начальная директория
-    const boost::shared_ptr<const QDir> dir;
 };
 
 }

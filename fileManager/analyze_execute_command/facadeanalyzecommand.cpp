@@ -28,7 +28,7 @@ void FacadeAnalyzeCommand::AddGetContentFileQueue(const QString& file)
 {
     AtomicLock flag(atomicFlagExecuteCommand);
     Q_UNUSED(flag)
-//    gettingContentFilQueue.push_back(file);
+    gettingContentFileQueue->filesMustToBeAction << file;
 }
 //----------------------------------------------------------------------------------------/
 void FacadeAnalyzeCommand::StartGetContentFile(const QString& file)
@@ -161,7 +161,12 @@ bool FacadeAnalyzeCommand::IsErrorDroppingContentFileDir(const QString& file) co
 //----------------------------------------------------------------------------------------/
 void FacadeAnalyzeCommand::ModificationAllListFiles()
 {
+    //1. Определяем, есть ли в списках данные, который можно объединить
+    {
+        // a)errorDroppingContentFile
 
+        // b)errorGettingContentFile
+    }
 }
 //----------------------------------------------------------------------------------------/
 bool FacadeAnalyzeCommand::DirContainsFile(const QString& dir, const QString& file) const
