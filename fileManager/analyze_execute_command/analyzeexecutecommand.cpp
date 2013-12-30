@@ -32,10 +32,5 @@ void AnalyzeExecuteCommand::EndExecuteCommand(const bool wasExecute)
     //wasExecute
 }
 //----------------------------------------------------------------------------------------/
-void AnalyzeExecuteCommand::SetPathExecuteCommand(const QString& path)
-{
-    pathExecuteCommand = path;
-}
-//----------------------------------------------------------------------------------------/
 
 

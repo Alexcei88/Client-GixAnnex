@@ -12,13 +12,11 @@ AnalyzeExecuteCommandGet::AnalyzeExecuteCommandGet(FacadeAnalyzeCommand &facadeA
 //----------------------------------------------------------------------------------------/
 void AnalyzeExecuteCommandGet::StartGetContentFile(const QString& file)
 {
-    std::cout<<"StartGet: "<<file.toStdString()<<std::endl;
     facadeAnalyzeCommand.StartGetContentFile(CatDirFile(pathExecuteCommand, file));
 }
 //----------------------------------------------------------------------------------------/
 void AnalyzeExecuteCommandGet::EndGetContentFile(const QString&file)
 {
-    std::cout<<"StopGet: "<<file.toStdString()<<std::endl;
     facadeAnalyzeCommand.EndGetContentFile(CatDirFile(pathExecuteCommand, file));
 }
 //----------------------------------------------------------------------------------------/
@@ -27,4 +25,12 @@ void AnalyzeExecuteCommandGet::ErrorGetContentFile(const QString& file, const QS
     facadeAnalyzeCommand.ErrorGetContentFile(CatDirFile(pathExecuteCommand, file), error);
 }
 //----------------------------------------------------------------------------------------/
+void AnalyzeExecuteCommandGet::EndExecuteCommand(const bool wasExecute)
+{
+    AnalyzeExecuteCommand::EndExecuteCommand(wasExecute);
+    // чистим список
+    facadeAnalyzeCommand.ClearListGettingContentFile(fileGetContent);
+}
+//----------------------------------------------------------------------------------------/
+
 

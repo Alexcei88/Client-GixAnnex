@@ -1,9 +1,9 @@
-#ifndef IANALYZEEXECUTECOMMAND_H
-#define IANALYZEEXECUTECOMMAND_H
+#ifndef ANALYZEEXECUTECOMMAND_H
+#define ANALYZEEXECUTECOMMAND_H
 
 #include "facadeanalyzecommand.h"
 
-/* КЛАСС ДЛЯ АНАЛИЗА ХОДА ВЫПОЛНЕНИЯ КОМАНДЫ */
+/* РОДИТЕЛЬСКИЙ КЛАСС АНАЛИЗА ХОДА ВЫПОЛНЕНИЯ КОМАНДЫ */
 
 namespace AnalyzeCommand
 {
@@ -14,14 +14,15 @@ public:
     AnalyzeExecuteCommand(FacadeAnalyzeCommand& facadeAnalyzeCommand, const QString& pathExecuteCommand);
 
     /** @brief Начало выполнения команды */
-    void                StartExecuteCommand();
+    virtual void        StartExecuteCommand();
 
     /** @brief Остановка выполнения команды
      *  @param Была ли запущена команда(может процесс с командой не смогли создать и она не была выполнена)
     */
-    void                EndExecuteCommand(const bool wasExecute = true);
+    virtual void        EndExecuteCommand(const bool wasExecute = true);
+
     /** @brief Установка пути, откуда запущена команда */
-    void                SetPathExecuteCommand(const QString& path);
+    inline void         SetPathExecuteCommand(const QString& path) { pathExecuteCommand = path; }
 
 protected:
     /** @brief фасад, управляющий анализом выполнения команд */
@@ -36,4 +37,4 @@ private:
 };
 }
 
-#endif // IANALYZEEXECUTECOMMAND_H
+#endif // ANALYZEEXECUTECOMMAND_H

@@ -58,11 +58,16 @@ public:
     /** @brief есть ли ошибка получения контента в текущей директории(или сам текущий файл) в текущий момент времени */
     bool                IsErrorDroppingContentFileDir(const QString& file) const;
 
-    /** @brief функция модификации списка файлов в вспомогательных классах AnalizeDirAction
-     * данную функцию дергать только из потока синхронизации иконок, тк она может быть математически затратной
+    /** @brief функция модификации списка файлов в класса AnalizeDirOnActionPrivate
+     * данную функцию дергать только из потока синхронизации иконок либо по окончании команды, тк она может быть математически затратной
      * \details например, объединение списка файлов в одну директорию(и наоборот)
     */
     void                ModificationAllListFiles();
+
+    /** @brief функция чистки списка получения контента
+     * данную функцию дергать по окончании выполнения команды
+    */
+    void                ClearListGettingContentFile(const QString& fileEndAction = "");
 
 private:
 
@@ -94,7 +99,10 @@ private:
     bool                DirContainsFile(const QString& dir, const QString& file) const;
 
     /** @brief Модификация списка файлов в вспом классах AnalizeDirOnActionPrivate */
-    void                ModificationListFiles(AnalizeDirOnActionPrivate *listFiles);
+    bool                ModificationListFiles(AnalizeDirOnActionPrivate *listFiles) const;
+
+    /** @brief Чистка списка файлов в вспом классах AnalizeDirOnActionPrivate */
+    void                ClearListFiles(AnalizeDirOnActionPrivate* listFiles, const QString& fileEndAction = "") const;
 
     /** @brief Текущий путь в репозитории */
     QDir                currentPathRepository;

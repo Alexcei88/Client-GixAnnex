@@ -183,6 +183,12 @@ void FacadeAnalyzeCommand::ModificationAllListFiles()
     ModificationListFiles(gettingContentFileQueue.get());
 }
 //----------------------------------------------------------------------------------------/
+void FacadeAnalyzeCommand::ClearListGettingContentFile(const QString& fileEndAction)
+{
+    while(ModificationListFiles(gettingContentFileQueue.get())) {}
+    ClearListFiles(gettingContentFileQueue.get(), fileEndAction);
+}
+//----------------------------------------------------------------------------------------/
 bool FacadeAnalyzeCommand::DirContainsFile(const QString& dir, const QString& file) const
 {
     fileInfo.setFile(dir);
@@ -195,8 +201,9 @@ bool FacadeAnalyzeCommand::DirContainsFile(const QString& dir, const QString& fi
     }
 }
 //----------------------------------------------------------------------------------------/
-void FacadeAnalyzeCommand::ModificationListFiles(AnalizeDirOnActionPrivate* listFiles)
+bool FacadeAnalyzeCommand::ModificationListFiles(AnalizeDirOnActionPrivate* listFiles) const
 {
+    bool wasModification = false;
     // захватываем атомарный флаг
     atomicFlagExecuteCommand->test_and_set(std::memory_order_acquire);
 
@@ -204,7 +211,7 @@ void FacadeAnalyzeCommand::ModificationListFiles(AnalizeDirOnActionPrivate* list
     {
         // освобождаем флаг
         atomicFlagExecuteCommand->clear(std::memory_order_release);
-        return;
+        return wasModification;
     }
 
     // делаем копию списков, будем работать с ними, после модификации обновим списки
@@ -223,6 +230,7 @@ void FacadeAnalyzeCommand::ModificationListFiles(AnalizeDirOnActionPrivate* list
         #ifdef DEBUG
             printf("Was union directory: %s\n", dir.toStdString().c_str());
         #endif
+            wasModification = true;
         }
     }
 
@@ -235,6 +243,7 @@ void FacadeAnalyzeCommand::ModificationListFiles(AnalizeDirOnActionPrivate* list
         #ifdef DEBUG
             printf("Was union directory: %s\n", dir.toStdString().c_str());
         #endif
+            wasModification = true;
         }
     }
 
@@ -243,6 +252,35 @@ void FacadeAnalyzeCommand::ModificationListFiles(AnalizeDirOnActionPrivate* list
 
     listFiles->filesMustToBeAction = filesMustToBeAction;
     listFiles->filesWasAction = filesWasAction;
+
+    return wasModification;
+}
+//----------------------------------------------------------------------------------------/
+void FacadeAnalyzeCommand::ClearListFiles(AnalizeDirOnActionPrivate* listFiles, const QString& fileEndAction) const
+{
+    // захватываем атомарный флаг
+    atomicFlagExecuteCommand->test_and_set(std::memory_order_acquire);
+
+    if(listFiles->filesMustToBeAction.empty() && listFiles->filesWasAction.isEmpty())
+    {
+        // освобождаем флаг
+        atomicFlagExecuteCommand->clear(std::memory_order_release);
+        return;
+    }
+
+    // делаем копию списков, будем работать с ними, после модификации обновим списки
+    QStringList filesMustToBeAction = listFiles->filesMustToBeAction;
+    QStringList filesWasAction = listFiles->filesWasAction;
+
+    // освобождаем флаг
+    atomicFlagExecuteCommand->clear(std::memory_order_release);
+
+    AnalizeDirOnActionPrivate::ClearListAction(filesWasAction, filesMustToBeAction, fileEndAction);
+    AtomicLock flag(atomicFlagExecuteCommand);
+    flag;
+    listFiles->filesMustToBeAction = filesMustToBeAction;
+    listFiles->filesWasAction = filesWasAction;
+
 }
 //----------------------------------------------------------------------------------------/
 

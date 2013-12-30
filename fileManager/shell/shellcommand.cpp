@@ -12,7 +12,6 @@
 #include "../parsing_command_out/parsingcommanddirectmode.h"
 
 // analize stuff
-#include "../analyze_execute_command/analyzeexecutecommand.h"
 #include "../analyze_execute_command/analyzeexecutecommandget.h"
 #include "../analyze_execute_command/analyzeexecutecommanddrop.h"
 
@@ -98,10 +97,12 @@ RESULT_EXEC_PROCESS ShellCommand::GetContentFile(const QString& path, FacadeAnal
 {
     const QString strCommand = baseCommand + "get " + path;
     boost::shared_ptr<AnalyzeExecuteCommandGet> analizeCommand(new AnalyzeExecuteCommandGet(*facade));
+    const QString fullPathFile = Utils::CatDirFile(localURL, path);
     if(!mode)
     {
-        facade->AddGetContentFileQueue(Utils::CatDirFile(localURL, path));
+        facade->AddGetContentFileQueue(fullPathFile);
     }
+    analizeCommand->SetPathGetContent(fullPathFile);
     analizeCommand->SetPathExecuteCommand(localURL);
     boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandGet(analizeCommand));
     ShellTask* shellTask = new ShellTask(strCommand, localURL, receiverParsing);
