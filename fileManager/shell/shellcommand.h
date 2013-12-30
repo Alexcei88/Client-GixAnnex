@@ -39,13 +39,17 @@ public:
 
     // 2. Добавление каталога/файла в репозиторий
     GANN_DEFINE::RESULT_EXEC_PROCESS AddFile(const QString& path) const;
+
     /** @brief закачать контент у файлов((директории)
-     *...
-      @param mode - режим вызова функции получения контента(true - автоматический, false - пользовательский)
+        @param mode - режим вызова функции получения контента(true - автоматический, false - пользовательский)
     */
     GANN_DEFINE::RESULT_EXEC_PROCESS GetContentFile(const QString& path, AnalyzeCommand::FacadeAnalyzeCommand *facade, const bool mode) const;
-    // 4. удалить контент у файлов((директории)
-    GANN_DEFINE::RESULT_EXEC_PROCESS DropContentFile(const QString& path, AnalyzeCommand::FacadeAnalyzeCommand *facade) const;
+
+    /** @brief удалить контент у файлов((директории)
+        @param mode - режим вызова функции получения контента(true - автоматический, false - пользовательский)
+    */
+    GANN_DEFINE::RESULT_EXEC_PROCESS DropContentFile(const QString& path, AnalyzeCommand::FacadeAnalyzeCommand *facade, const bool mode) const;
+
     // 5. Удалить файл(директорию) из репозитория вместе с контентом
     GANN_DEFINE::RESULT_EXEC_PROCESS RemoveFile(const QString& path, const bool recursive = false) const;
     // 6. Синхронизация с главным репозиторием

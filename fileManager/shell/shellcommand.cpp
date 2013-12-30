@@ -111,7 +111,7 @@ RESULT_EXEC_PROCESS ShellCommand::GetContentFile(const QString& path, FacadeAnal
     return NO_ERROR;
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS ShellCommand::DropContentFile(const QString& path, FacadeAnalyzeCommand *facade) const
+RESULT_EXEC_PROCESS ShellCommand::DropContentFile(const QString& path, FacadeAnalyzeCommand *facade, const bool mode) const
 {
     const QString strCommand = baseCommand + "drop " + path;
     boost::shared_ptr<AnalyzeExecuteCommandDrop> analizeCommand(new AnalyzeExecuteCommandDrop(*facade));

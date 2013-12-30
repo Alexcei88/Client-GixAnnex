@@ -6,27 +6,28 @@ using namespace Utils;
 
 //----------------------------------------------------------------------------------------/
 
-AnalyzeExecuteCommandDrop::AnalyzeExecuteCommandDrop(FacadeAnalyzeCommand &facadeAnalyzeCommand, bool autocall):
+AnalyzeExecuteCommandDrop::AnalyzeExecuteCommandDrop(FacadeAnalyzeCommand &facadeAnalyzeCommand):
     AnalyzeExecuteCommand(facadeAnalyzeCommand)
-  , autocall(autocall)
 {}
 //----------------------------------------------------------------------------------------/
 void AnalyzeExecuteCommandDrop::StartDropContentFile(const QString& file)
 {
-    if(!autocall)
-        facadeAnalyzeCommand.StartDropContentFile(CatDirFile(pathExecuteCommand, file));
+    facadeAnalyzeCommand.StartDropContentFile(CatDirFile(pathExecuteCommand, file));
 }
 //----------------------------------------------------------------------------------------/
 void AnalyzeExecuteCommandDrop::EndDropContentFile(const QString& file)
 {
-    if(!autocall)
-        facadeAnalyzeCommand.EndDropContentFile(CatDirFile(pathExecuteCommand, file));
+    facadeAnalyzeCommand.EndDropContentFile(CatDirFile(pathExecuteCommand, file));
 }
 //----------------------------------------------------------------------------------------/
 void AnalyzeExecuteCommandDrop::ErrorDropContentFile(const QString& file, const QString& error)
 {
-    if(!autocall)
-        facadeAnalyzeCommand.ErrorDropContentFile(CatDirFile(pathExecuteCommand, file), error);
+    facadeAnalyzeCommand.ErrorDropContentFile(CatDirFile(pathExecuteCommand, file), error);
+}
+//----------------------------------------------------------------------------------------/
+void AnalyzeExecuteCommandDrop::EndExecuteCommand(const bool wasExecute)
+{
+    AnalyzeExecuteCommand::EndExecuteCommand(wasExecute);
 }
 //----------------------------------------------------------------------------------------/
 

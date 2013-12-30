@@ -20,10 +20,8 @@ public:
     void                StartGetContentFile(const QString&file);
     void                EndGetContentFile(const QString& file);
     void                ErrorGetContentFile(const QString&file, const QString&error);
-
-    void                EndExecuteCommand(const bool wasExecute = true);
-
     inline void         SetPathGetContent(const QString& file) { fileGetContent = file; }
+    void                EndExecuteCommand(const bool wasExecute = true);
 
 private:
     // файл/директория, которую скачиваем командой

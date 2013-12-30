@@ -181,6 +181,9 @@ void FacadeAnalyzeCommand::ModificationAllListFiles()
 {
     // gettingContentFileQueue
     ModificationListFiles(gettingContentFileQueue.get());
+
+    // droppingContentFileQueue
+    ModificationListFiles(droppingContentFileQueue.get());
 }
 //----------------------------------------------------------------------------------------/
 void FacadeAnalyzeCommand::ClearListGettingContentFile(const QString& fileEndAction)
@@ -280,7 +283,6 @@ void FacadeAnalyzeCommand::ClearListFiles(AnalizeDirOnActionPrivate* listFiles, 
     flag;
     listFiles->filesMustToBeAction = filesMustToBeAction;
     listFiles->filesWasAction = filesWasAction;
-
 }
 //----------------------------------------------------------------------------------------/
 

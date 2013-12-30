@@ -117,7 +117,7 @@ public:
     @param file - имя файла(папки) назначения
     @return 0 - нет ошибок
     */
-    virtual GANN_DEFINE::RESULT_EXEC_PROCESS DropContentFile(const QString& file = " ") = 0;
+    virtual GANN_DEFINE::RESULT_EXEC_PROCESS DropContentFile(const QString& file = " ", const bool mode = true) = 0;
 
     /**
     @brief удалить файл из репозитория

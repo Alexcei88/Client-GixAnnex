@@ -14,16 +14,18 @@ class FacadeAnalyzeCommand;
 class AnalyzeExecuteCommandDrop: public AnalyzeExecuteCommand
 {
 public:
-    AnalyzeExecuteCommandDrop(FacadeAnalyzeCommand& facadeAnalyzeCommand, bool autocall = false);
+    AnalyzeExecuteCommandDrop(FacadeAnalyzeCommand& facadeAnalyzeCommand);
 
     void                StartDropContentFile(const QString& file);
     void                EndDropContentFile(const QString& file);
     void                ErrorDropContentFile(const QString& file, const QString& error);
+    inline void         SetPathDropContent(const QString& file) { fileDropContent = file; }
+    void                EndExecuteCommand(const bool wasExecute = true);
 
 private:
-    // флаг, означающий, запущена команда пользователем или вызвана автоматически
-    // несколько разное поведение будет
-    bool                autocall;
+    // файл/директория, которую удаляем командой
+    QString             fileDropContent;
+
 };
 
 }

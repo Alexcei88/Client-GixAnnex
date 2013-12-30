@@ -72,13 +72,13 @@ RESULT_EXEC_PROCESS TRepository::GetContentFile(const QString& file, const bool 
     return result;
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS TRepository::DropContentFile(const QString& file)
+RESULT_EXEC_PROCESS TRepository::DropContentFile(const QString& file, const bool mode)
 {
     if(paramRepo.currentState == metaEnumState.valueToKey(Disable_sincing))
         return IGNORE_COMMAND;
 
     shellCommand->SetWorkingDirectory(dir.path());
-    RESULT_EXEC_PROCESS result = shellCommand->DropContentFile(file, facadeAnalyzeCommand.get());
+    RESULT_EXEC_PROCESS result = shellCommand->DropContentFile(file, facadeAnalyzeCommand.get(), mode);
     if(result != NO_ERROR)
     {
         printf("Error git-annex drop content of file: %s \n", file.toStdString().c_str());
