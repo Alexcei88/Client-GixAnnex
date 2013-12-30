@@ -15,9 +15,12 @@ public:
 
     /** @brief Начало выполнения команды */
     void                StartExecuteCommand();
-    /** @brief Остановка выполнения команды */
-    void                EndExecuteCommand();
-    /** @brief Установка пути, откуда запущен бонус */
+
+    /** @brief Остановка выполнения команды
+     *  @param Была ли запущена команда(может процесс с командой не смогли создать и она не была выполнена)
+    */
+    void                EndExecuteCommand(const bool wasExecute = true);
+    /** @brief Установка пути, откуда запущена команда */
     void                SetPathExecuteCommand(const QString& path);
 
 protected:
@@ -27,8 +30,8 @@ protected:
     QString             pathExecuteCommand;
 
 private:
-    bool startCommand;
-    bool endCommand;
+    bool                startCommand;
+    bool                endCommand;
 
 };
 }

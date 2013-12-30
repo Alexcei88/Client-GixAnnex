@@ -12,11 +12,13 @@ AnalyzeExecuteCommandGet::AnalyzeExecuteCommandGet(FacadeAnalyzeCommand &facadeA
 //----------------------------------------------------------------------------------------/
 void AnalyzeExecuteCommandGet::StartGetContentFile(const QString& file)
 {
+    std::cout<<"StartGet: "<<file.toStdString()<<std::endl;
     facadeAnalyzeCommand.StartGetContentFile(CatDirFile(pathExecuteCommand, file));
 }
 //----------------------------------------------------------------------------------------/
 void AnalyzeExecuteCommandGet::EndGetContentFile(const QString&file)
 {
+    std::cout<<"StopGet: "<<file.toStdString()<<std::endl;
     facadeAnalyzeCommand.EndGetContentFile(CatDirFile(pathExecuteCommand, file));
 }
 //----------------------------------------------------------------------------------------/

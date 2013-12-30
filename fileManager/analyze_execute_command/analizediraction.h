@@ -40,8 +40,12 @@ public:
     /** @brief По имеющемуся списку файлов возвращает список корневых директорий */
     static QStringList  ListAllDirOfFile(const QStringList &files);
 
-    /** @brief Чистка списков файлов/директорий*/
-    static void         ClearListAction(QStringList& filesWasAction, QStringList& filesMustToBeAction);
+    /** @brief Чистка списков файлов/директорий
+        @param filesWasAction - список файлов, над которыми были выполнены действия
+        @param filesMustToBeAction - список файлов, над которым нужно выполнить действия
+        @param fileEndAction - файл, над которым закончилось выполняться действие
+    */
+    static void         ClearListAction(QStringList& filesWasAction, QStringList& filesMustToBeAction, const QString fileEndAction = "");
 
     // спиcок файлов/директорий, над которыми было выполнено действие
     QStringList         filesWasAction;

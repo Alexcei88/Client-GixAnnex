@@ -9,12 +9,12 @@ QFileInfo AnalizeDirOnActionPrivate::fileInfo;
 //----------------------------------------------------------------------------------------/
 AnalizeDirOnActionPrivate::AnalizeDirOnActionPrivate()
 {
-    dirService.setFilter(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot);
+    dirService.setFilter(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot | QDir::System);
 }
 //----------------------------------------------------------------------------------------/
 AnalizeDirOnActionPrivate::AnalizeDirOnActionPrivate(const QString &dir)
 {
-    dirService.setFilter(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot);
+    dirService.setFilter(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot | QDir::System);
     filesMustToBeAction << dir;
 }
 //----------------------------------------------------------------------------------------/
@@ -60,8 +60,11 @@ bool AnalizeDirOnActionPrivate::IsFindFileOnDirAction(const QString& file) const
             // ищем директорию в файле или в директории
             if(fileInfo.isFile() || fileInfo.isSymLink())
             {
-               // ищем директорию в файле(что бессмыслено)
-               continue;
+                // ищем файл в директории
+                const QString dir_ = file + "/";
+                // ищем файл в директории
+                if(file.startsWith(dir_))
+                    return true;
             }
             else
             {
@@ -118,8 +121,11 @@ bool AnalizeDirOnActionPrivate::IsWasActionForFile(const QString& file) const
             // ищем директорию в файле или в директории
             if(fileInfo.isFile() || fileInfo.isSymLink())
             {
-               // ищем директорию в файле(что бессмыслено)
-               continue;
+                // ищем файл в директории
+                const QString dir_ = file + "/";
+                // ищем файл в директории
+                if(file.startsWith(dir_))
+                    return true;
             }
             else
             {
@@ -149,7 +155,6 @@ bool AnalizeDirOnActionPrivate::WasActionForAllFileDirOnDir(QStringList& files, 
     if(listFile.isEmpty())
         return false;
 
-    // если размеры векторов не совпадают, то сразу же возвращаем false
     for(QString &str : listFile)
     {
         if(!files.contains(Utils::CatDirFile(dir, str)))
@@ -159,9 +164,14 @@ bool AnalizeDirOnActionPrivate::WasActionForAllFileDirOnDir(QStringList& files, 
     // Да, можно заменить список файлов на просто одну директорию
     for(QString &str : listFile)
     {
-        files.removeOne(str);
+        if(!files.removeOne(Utils::CatDirFile(dir, str)))
+        {
+            std::printf("%s: Remove from list files return false", __FUNCTION__);
+            assert(0);
+        }
     }
-    files << dir;
+    if(!files.contains(dir))
+        files << dir;
     return true;
 }
 //----------------------------------------------------------------------------------------/
@@ -174,9 +184,9 @@ QStringList AnalizeDirOnActionPrivate::ListAllDirOfFile(const QStringList& files
     {
         fileInfo.setFile(str);
 #ifdef DEBUG
-        assert(fileInfo.exists());
+        if(!fileInfo.isSymLink())
+            assert(fileInfo.exists());
 #endif
-        // это файл
         addDir = fileInfo.absoluteDir().path();
         if(!listRet.contains(addDir))
             listRet << addDir;
@@ -184,8 +194,25 @@ QStringList AnalizeDirOnActionPrivate::ListAllDirOfFile(const QStringList& files
     return listRet;
 }
 //----------------------------------------------------------------------------------------/
-void AnalizeDirOnActionPrivate::ClearListAction(QStringList& filesWasAction, QStringList& filesMustToBeAction)
+void AnalizeDirOnActionPrivate::ClearListAction(QStringList& filesWasAction, QStringList& filesMustToBeAction, const QString fileEndAction)
 {
-
+    if(!fileEndAction.isEmpty())
+    {
+        // удаляем данную директорию из списков, если есть
+        if(filesWasAction.contains(fileEndAction))
+            filesWasAction.removeOne(fileEndAction);
+        if(filesMustToBeAction.contains(fileEndAction))
+            filesMustToBeAction.removeOne(fileEndAction);
+    }
+    // начинаем просматривать списки
+    for(QString& fileWasAction : filesWasAction)
+    {
+        if(filesMustToBeAction.contains(fileWasAction))
+        {
+            // удаляем из обоих списков данные файлы
+            filesMustToBeAction.removeOne(fileWasAction);
+            filesWasAction.removeOne(fileWasAction);
+        }
+    }
 }
 //----------------------------------------------------------------------------------------/

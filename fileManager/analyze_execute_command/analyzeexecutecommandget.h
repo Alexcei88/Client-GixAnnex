@@ -3,6 +3,7 @@
 
 // Qt stuff
 #include <QList>
+#include <QString>
 
 #include "analyzeexecutecommand.h"
 
@@ -19,6 +20,11 @@ public:
     void                StartGetContentFile(const QString&file);
     void                EndGetContentFile(const QString& file);
     void                ErrorGetContentFile(const QString&file, const QString&error);
+    inline void         SetPathGetContent(const QString& file) { fileGetContent = file; }
+
+private:
+    // файл/директория, которую скачиваем командой
+    QString             fileGetContent;
 };
 }
 

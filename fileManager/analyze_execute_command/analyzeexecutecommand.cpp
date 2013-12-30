@@ -25,10 +25,11 @@ void AnalyzeExecuteCommand::StartExecuteCommand()
     startCommand = true;
 }
 //----------------------------------------------------------------------------------------/
-void AnalyzeExecuteCommand::EndExecuteCommand()
+void AnalyzeExecuteCommand::EndExecuteCommand(const bool wasExecute)
 {
     assert(startCommand && !endCommand);
     endCommand = true;
+    //wasExecute
 }
 //----------------------------------------------------------------------------------------/
 void AnalyzeExecuteCommand::SetPathExecuteCommand(const QString& path)

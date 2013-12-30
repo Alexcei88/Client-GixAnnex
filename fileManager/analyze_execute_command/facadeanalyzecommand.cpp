@@ -11,8 +11,8 @@ using namespace Utils;
 
 //----------------------------------------------------------------------------------------/
 FacadeAnalyzeCommand::FacadeAnalyzeCommand():
-    atomicFlagExecuteCommand(new std::atomic_flag(ATOMIC_FLAG_INIT))
-  , gettingContentFileQueue(new AnalizeDirOnActionPrivate())
+    gettingContentFileQueue(new AnalizeDirOnActionPrivate())
+  , atomicFlagExecuteCommand(new std::atomic_flag(ATOMIC_FLAG_INIT))
 
 {}
 //----------------------------------------------------------------------------------------/
@@ -29,14 +29,15 @@ void FacadeAnalyzeCommand::SetCurrentPathRepository(const QString& currentPath)
 void FacadeAnalyzeCommand::AddGetContentFileQueue(const QString& file)
 {
     AtomicLock flag(atomicFlagExecuteCommand);
-    Q_UNUSED(flag)
+    flag;
+
     gettingContentFileQueue->filesMustToBeAction << file;
 }
 //----------------------------------------------------------------------------------------/
 void FacadeAnalyzeCommand::StartGetContentFile(const QString& file)
 {
     AtomicLock flag(atomicFlagExecuteCommand);
-    Q_UNUSED(flag)
+    flag;
 
     gettingContentFile = file;
 }
@@ -44,7 +45,7 @@ void FacadeAnalyzeCommand::StartGetContentFile(const QString& file)
 void FacadeAnalyzeCommand::EndGetContentFile(const QString& file)
 {
     AtomicLock flag(atomicFlagExecuteCommand);
-    Q_UNUSED(flag)
+    flag;
 
     // если список заданий не пустой, то фиксиурем, что было выполнено действие
     if(!gettingContentFileQueue->filesMustToBeAction.isEmpty())
@@ -57,7 +58,7 @@ void FacadeAnalyzeCommand::EndGetContentFile(const QString& file)
 void FacadeAnalyzeCommand::ErrorGetContentFile(const QString& file, const QString& error)
 {
     AtomicLock flag(atomicFlagExecuteCommand);
-    Q_UNUSED(flag)
+    flag;
 
     // если список заданий не пустой, то фиксиурем, что было выполнено действие
     if(!gettingContentFileQueue->filesMustToBeAction.isEmpty())
@@ -76,7 +77,7 @@ void FacadeAnalyzeCommand::ErrorGetContentFile(const QString& file, const QStrin
 bool FacadeAnalyzeCommand::IsGettingContentFileDir(const QString& file) const
 {
     AtomicLock flag(atomicFlagExecuteCommand);
-    Q_UNUSED(flag)
+    flag;
 
     const QString fullPathFile = CatDirFile(currentPathRepository.path(), file);
     if(DirContainsFile(fullPathFile, gettingContentFile))
@@ -96,7 +97,7 @@ bool FacadeAnalyzeCommand::IsGettingContentFileDir(const QString& file) const
 bool FacadeAnalyzeCommand::IsErrorGettingContentFileDir(const QString& file) const
 {
     AtomicLock flag(atomicFlagExecuteCommand);
-    Q_UNUSED(flag)
+    flag;
 
     for(auto iterator = errorGettingContentFile.constBegin(); iterator != errorGettingContentFile.constEnd(); ++iterator)
     {
@@ -111,7 +112,7 @@ bool FacadeAnalyzeCommand::IsErrorGettingContentFileDir(const QString& file) con
 void FacadeAnalyzeCommand::StartDropContentFile(const QString& file)
 {
     AtomicLock flag(atomicFlagExecuteCommand);
-    Q_UNUSED(flag)
+    flag;
 
     droppingContentFile = file;
 }
@@ -119,7 +120,7 @@ void FacadeAnalyzeCommand::StartDropContentFile(const QString& file)
 void FacadeAnalyzeCommand::AddDropContentFileQueue(const QString& file)
 {
     AtomicLock flag(atomicFlagExecuteCommand);
-    Q_UNUSED(flag)
+    flag;
 
 //    droppingContentFileQueue.push_back(file);
 }
@@ -127,7 +128,7 @@ void FacadeAnalyzeCommand::AddDropContentFileQueue(const QString& file)
 void FacadeAnalyzeCommand::EndDropContentFile(const QString& file)
 {
     AtomicLock flag(atomicFlagExecuteCommand);
-    Q_UNUSED(flag)
+    flag;
 
     Q_UNUSED(file);
     assert(!droppingContentFile.isEmpty());
@@ -137,7 +138,7 @@ void FacadeAnalyzeCommand::EndDropContentFile(const QString& file)
 void FacadeAnalyzeCommand::ErrorDropContentFile(const QString& file, const QString& error)
 {
     AtomicLock flag(atomicFlagExecuteCommand);
-    Q_UNUSED(flag)
+    flag;
 
     assert(!droppingContentFile.isEmpty());
     droppingContentFile = "";
@@ -152,7 +153,7 @@ void FacadeAnalyzeCommand::ErrorDropContentFile(const QString& file, const QStri
 bool FacadeAnalyzeCommand::IsDroppingContentFileDir(const QString& file) const
 {
     AtomicLock flag(atomicFlagExecuteCommand);
-    Q_UNUSED(flag)
+    flag;
 
     if(DirContainsFile(CatDirFile(currentPathRepository.path(), file), droppingContentFile))
     {
@@ -164,7 +165,7 @@ bool FacadeAnalyzeCommand::IsDroppingContentFileDir(const QString& file) const
 bool FacadeAnalyzeCommand::IsErrorDroppingContentFileDir(const QString& file) const
 {
     AtomicLock flag(atomicFlagExecuteCommand);
-    Q_UNUSED(flag)
+    flag;
 
     for(auto iterator = errorDroppingContentFile.constBegin(); iterator != errorDroppingContentFile.constEnd(); ++iterator)
     {
@@ -199,6 +200,13 @@ void FacadeAnalyzeCommand::ModificationListFiles(AnalizeDirOnActionPrivate* list
     // захватываем атомарный флаг
     atomicFlagExecuteCommand->test_and_set(std::memory_order_acquire);
 
+    if(listFiles->filesMustToBeAction.empty() && listFiles->filesWasAction.isEmpty())
+    {
+        // освобождаем флаг
+        atomicFlagExecuteCommand->clear(std::memory_order_release);
+        return;
+    }
+
     // делаем копию списков, будем работать с ними, после модификации обновим списки
     QStringList filesMustToBeAction = listFiles->filesMustToBeAction;
     QStringList filesWasAction = listFiles->filesWasAction;
@@ -213,7 +221,7 @@ void FacadeAnalyzeCommand::ModificationListFiles(AnalizeDirOnActionPrivate* list
         if(AnalizeDirOnActionPrivate::WasActionForAllFileDirOnDir(filesMustToBeAction, dir))
         {
         #ifdef DEBUG
-            printf("Was union directory: %s", dir.toStdString().c_str());
+            printf("Was union directory: %s\n", dir.toStdString().c_str());
         #endif
         }
     }
@@ -225,13 +233,13 @@ void FacadeAnalyzeCommand::ModificationListFiles(AnalizeDirOnActionPrivate* list
         if(AnalizeDirOnActionPrivate::WasActionForAllFileDirOnDir(filesWasAction, dir))
         {
         #ifdef DEBUG
-            printf("Was union directory: %s", dir.toStdString().c_str());
+            printf("Was union directory: %s\n", dir.toStdString().c_str());
         #endif
         }
     }
 
     AtomicLock flag(atomicFlagExecuteCommand);
-    Q_UNUSED(flag)
+    flag;
 
     listFiles->filesMustToBeAction = filesMustToBeAction;
     listFiles->filesWasAction = filesWasAction;
