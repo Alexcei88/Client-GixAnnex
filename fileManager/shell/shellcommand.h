@@ -3,10 +3,6 @@
 
 #include "tshell.h"
 
-// Qt stuff
-#include <QRunnable>
-#include <QThreadPool>
-
 class IRepository;
 
 namespace AnalyzeCommand
@@ -43,8 +39,11 @@ public:
 
     // 2. Добавление каталога/файла в репозиторий
     GANN_DEFINE::RESULT_EXEC_PROCESS AddFile(const QString& path) const;
-    // 3. закачать контент у файлов((директории)
-    GANN_DEFINE::RESULT_EXEC_PROCESS GetContentFile(const QString& path, AnalyzeCommand::FacadeAnalyzeCommand *facade) const;
+    /** @brief закачать контент у файлов((директории)
+     *...
+      @param mode - режим вызова функции получения контента(true - автоматический, false - пользовательский)
+    */
+    GANN_DEFINE::RESULT_EXEC_PROCESS GetContentFile(const QString& path, AnalyzeCommand::FacadeAnalyzeCommand *facade, const bool mode) const;
     // 4. удалить контент у файлов((директории)
     GANN_DEFINE::RESULT_EXEC_PROCESS DropContentFile(const QString& path, AnalyzeCommand::FacadeAnalyzeCommand *facade) const;
     // 5. Удалить файл(директорию) из репозитория вместе с контентом

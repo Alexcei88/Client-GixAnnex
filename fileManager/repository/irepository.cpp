@@ -155,6 +155,9 @@ void IRepository::ChangeCurrentDirectory(const QString& curDir)
 //----------------------------------------------------------------------------------------/
 void IRepository::UpdateParamSyncFileDir()
 {
+    // эта функция дергается только из потока синхронизации иконок
+    facadeAnalyzeCommand->ModificationAllListFiles();
+
     paramSyncFileDir.clear();
     QStringList nameAllFilesAndDir = dir.entryList();
     for(auto iterator = nameAllFilesAndDir.begin(); iterator !=  nameAllFilesAndDir.end(); ++iterator)
@@ -169,7 +172,7 @@ void IRepository::UpdateParamSyncFileDir()
 //----------------------------------------------------------------------------------------/
 bool IRepository::DirIsSubRootDirRepository(const QString& dir) const
 {
-    return (dir.length() >= localURL.length() && dir.contains(localURL, Qt::CaseSensitive) );
+    return (dir.length() >= localURL.length() && dir.contains(localURL, Qt::CaseSensitive));
 }
 //----------------------------------------------------------------------------------------/
 QString IRepository::CalculateStateFileDir(const QString& file) const

@@ -56,17 +56,14 @@ RESULT_EXEC_PROCESS TRepository::DeleteRepository()
     return NO_ERROR;
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS TRepository::GetContentFile(const QString& file)
+RESULT_EXEC_PROCESS TRepository::GetContentFile(const QString& file, const bool mode)
 {
     // если репозитория выключен, то ничего не делаем
     if(paramRepo.currentState == "Disable_sincing")
         return IGNORE_COMMAND;
 
-    // сразу же заносим данную директорию в список файлов, получающих контент в данный момент времени
-//    emit this->startGetContentFile(file);
-
     shellCommand->SetWorkingDirectory(dir.path());
-    RESULT_EXEC_PROCESS result = shellCommand->GetContentFile(file, facadeAnalyzeCommand.get());
+    RESULT_EXEC_PROCESS result = shellCommand->GetContentFile(file, facadeAnalyzeCommand.get(), mode);
     if(result != NO_ERROR)
     {
         printf("Error git-annex get content of file: %s \n", file.toStdString().c_str());

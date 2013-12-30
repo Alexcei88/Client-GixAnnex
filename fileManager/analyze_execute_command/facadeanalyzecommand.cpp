@@ -12,6 +12,8 @@ using namespace Utils;
 //----------------------------------------------------------------------------------------/
 FacadeAnalyzeCommand::FacadeAnalyzeCommand():
     atomicFlagExecuteCommand(new std::atomic_flag(ATOMIC_FLAG_INIT))
+  , gettingContentFileQueue(new AnalizeDirOnActionPrivate())
+
 {}
 //----------------------------------------------------------------------------------------/
 FacadeAnalyzeCommand::~FacadeAnalyzeCommand()
@@ -44,7 +46,10 @@ void FacadeAnalyzeCommand::EndGetContentFile(const QString& file)
     AtomicLock flag(atomicFlagExecuteCommand);
     Q_UNUSED(flag)
 
-    Q_UNUSED(file)
+    // если список заданий не пустой, то фиксиурем, что было выполнено действие
+    if(!gettingContentFileQueue->filesMustToBeAction.isEmpty())
+        gettingContentFileQueue->filesWasAction << file;
+
     assert(!gettingContentFile.isEmpty());
     gettingContentFile = "";
 }
@@ -54,8 +59,12 @@ void FacadeAnalyzeCommand::ErrorGetContentFile(const QString& file, const QStrin
     AtomicLock flag(atomicFlagExecuteCommand);
     Q_UNUSED(flag)
 
+    // если список заданий не пустой, то фиксиурем, что было выполнено действие
+    if(!gettingContentFileQueue->filesMustToBeAction.isEmpty())
+        gettingContentFileQueue->filesWasAction << file;
+
     assert(!gettingContentFile.isEmpty());
-    gettingContentFile = "";
+    gettingContentFile = "";   
 
     // помещаем файл в вектор ошибок
     if(errorGettingContentFile.contains(file))
@@ -69,9 +78,17 @@ bool FacadeAnalyzeCommand::IsGettingContentFileDir(const QString& file) const
     AtomicLock flag(atomicFlagExecuteCommand);
     Q_UNUSED(flag)
 
-    if(DirContainsFile(CatDirFile(currentPathRepository.path(), file), gettingContentFile))
+    const QString fullPathFile = CatDirFile(currentPathRepository.path(), file);
+    if(DirContainsFile(fullPathFile, gettingContentFile))
     {
         return true;
+    }
+    if(gettingContentFileQueue->IsFindFileOnDirAction(fullPathFile))
+    {
+        if(!gettingContentFileQueue->IsWasActionForFile(fullPathFile))
+        {
+            return true;
+        }
     }
     return false;
 }
@@ -161,12 +178,8 @@ bool FacadeAnalyzeCommand::IsErrorDroppingContentFileDir(const QString& file) co
 //----------------------------------------------------------------------------------------/
 void FacadeAnalyzeCommand::ModificationAllListFiles()
 {
-    //1. Определяем, есть ли в списках данные, который можно объединить
-    {
-        // a)errorDroppingContentFile
-
-        // b)errorGettingContentFile
-    }
+    // gettingContentFileQueue
+    ModificationListFiles(gettingContentFileQueue.get());
 }
 //----------------------------------------------------------------------------------------/
 bool FacadeAnalyzeCommand::DirContainsFile(const QString& dir, const QString& file) const
@@ -176,10 +189,52 @@ bool FacadeAnalyzeCommand::DirContainsFile(const QString& dir, const QString& fi
         return dir == file;
     else
     {
-        const QString file_ = file + "/";
         const QString dir_ = dir + "/";
-        return file_.startsWith(dir_);
+        return file.startsWith(dir_);
     }
+}
+//----------------------------------------------------------------------------------------/
+void FacadeAnalyzeCommand::ModificationListFiles(AnalizeDirOnActionPrivate* listFiles)
+{
+    // захватываем атомарный флаг
+    atomicFlagExecuteCommand->test_and_set(std::memory_order_acquire);
+
+    // делаем копию списков, будем работать с ними, после модификации обновим списки
+    QStringList filesMustToBeAction = listFiles->filesMustToBeAction;
+    QStringList filesWasAction = listFiles->filesWasAction;
+
+    // освобождаем флаг
+    atomicFlagExecuteCommand->clear(std::memory_order_release);
+
+    // 1
+    QStringList listDirs = AnalizeDirOnActionPrivate::ListAllDirOfFile(filesMustToBeAction);
+    for(QString& dir : listDirs)
+    {
+        if(AnalizeDirOnActionPrivate::WasActionForAllFileDirOnDir(filesMustToBeAction, dir))
+        {
+        #ifdef DEBUG
+            printf("Was union directory: %s", dir.toStdString().c_str());
+        #endif
+        }
+    }
+
+    // 2
+    listDirs = AnalizeDirOnActionPrivate::ListAllDirOfFile(filesWasAction);
+    for(QString& dir : listDirs)
+    {
+        if(AnalizeDirOnActionPrivate::WasActionForAllFileDirOnDir(filesWasAction, dir))
+        {
+        #ifdef DEBUG
+            printf("Was union directory: %s", dir.toStdString().c_str());
+        #endif
+        }
+    }
+
+    AtomicLock flag(atomicFlagExecuteCommand);
+    Q_UNUSED(flag)
+
+    listFiles->filesMustToBeAction = filesMustToBeAction;
+    listFiles->filesWasAction = filesWasAction;
 }
 //----------------------------------------------------------------------------------------/
 

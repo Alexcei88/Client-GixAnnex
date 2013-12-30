@@ -33,8 +33,11 @@ public:
     //-------------------  GET  ----------------------------------------------/
     /** @brief Добавить файл в очередь файлов, на которых дано задание за скачивание */
     void                AddGetContentFileQueue(const QString& file);
+    /** @brief Началось скачивание файла */
     void                StartGetContentFile(const QString& file);
+    /** @brief Закончилось скачивание файла */
     void                EndGetContentFile(const QString& file);
+    /** @brief Закончилось скачивание файла с ошибкой  */
     void                ErrorGetContentFile(const QString& file, const QString& error);
     /** @brief идет ли в текущей директории(или сам текущий файл) получение контента в текущий момент времени */
     bool                IsGettingContentFileDir(const QString& file) const;
@@ -44,8 +47,11 @@ public:
     //-------------------  DROP  ---------------------------------------------/
     /** @brief Добавить файл в очередь файлов, на которых дано задание на удаление */
     void                AddDropContentFileQueue(const QString& file);
+    /** @brief Началось удаление файла */
     void                StartDropContentFile(const QString& file);
+    /** @brief Закончилось удаление файла */
     void                EndDropContentFile(const QString& file);
+    /** @brief Закончилось удаление файла с ошибкой  */
     void                ErrorDropContentFile(const QString& file, const QString& error);
     /** @brief идет ли в текущей директории(или сам текущий файл) удаление контента в текущий момент времени */
     bool                IsDroppingContentFileDir(const QString& file) const;
@@ -60,7 +66,9 @@ public:
 
 private:
 
-     //-------------------  GET  ----------------------------------------------/
+    Q_DISABLE_COPY(FacadeAnalyzeCommand)
+
+    //-------------------  GET  ----------------------------------------------/
     /** @brief файлы/директории, на которые дано задание на скачивание */
     boost::shared_ptr<AnalizeDirOnActionPrivate> gettingContentFileQueue;
     /** @brief файл, который сейчас скачивается */
@@ -84,6 +92,9 @@ private:
 
     /** @brief Содержит ли директория файл(в том числе и в поддиректориях) */
     bool                DirContainsFile(const QString& dir, const QString& file) const;
+
+    /** @brief Модификация списка файлов в вспом классах AnalizeDirOnActionPrivate */
+    void                ModificationListFiles(AnalizeDirOnActionPrivate *listFiles);
 
     /** @brief Текущий путь в репозитории */
     QDir                currentPathRepository;

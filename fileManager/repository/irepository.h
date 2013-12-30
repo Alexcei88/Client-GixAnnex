@@ -107,9 +107,10 @@ public:
     /**
     @brief получение контента у файла из репозитория
     @param file - имя файла(папки) назначения
+    @param mode - режим вызова функции получения контента(true - автоматический, false - пользовательский)
     @return 0 - нет ошибок
     */
-    virtual GANN_DEFINE::RESULT_EXEC_PROCESS GetContentFile(const QString& file = " ") = 0;
+    virtual GANN_DEFINE::RESULT_EXEC_PROCESS GetContentFile(const QString& file = " ", const bool mode = true) = 0;
 
     /**
     @brief удаление контента у файла из репозитория
@@ -173,7 +174,9 @@ public:
     /** @brief Изменение  рабочей директории */
     void                ChangeCurrentDirectory(const QString& curDir);
 
-    /** @brief Обновить параметры синхронизации у текущей директории(список файлов постоянный) */
+    /** @brief Обновить параметры синхронизации у текущей директории(список файлов постоянный)
+        эта функция дергается только из потока синхронизации иконок(тк она математически затратная)
+    */
     void                UpdateParamSyncFileDir();
 
     /** @brief Является ли выбранный путь поддиректорией корневого пути репозитория */

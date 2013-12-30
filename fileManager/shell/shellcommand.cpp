@@ -1,6 +1,7 @@
 #include "shellcommand.h"
 #include "shelltask.h"
 #include "../repository/irepository.h"
+#include "utils/utils.h"
 
 // parsing stuff
 #include "../parsing_command_out/parsingcommandclone.h"
@@ -15,7 +16,9 @@
 #include "../analyze_execute_command/analyzeexecutecommandget.h"
 #include "../analyze_execute_command/analyzeexecutecommanddrop.h"
 
+// Qt stuff
 #include <QThreadPool>
+#include <QRunnable>
 
 using namespace GANN_DEFINE;
 using namespace AnalyzeCommand;
@@ -91,10 +94,14 @@ RESULT_EXEC_PROCESS ShellCommand::AddFile(const QString& path) const
 //    return shell->ExecuteProcess(strCommand, receiverParsing[ADD_FILE]);
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS ShellCommand::GetContentFile(const QString& path, FacadeAnalyzeCommand *facade) const
+RESULT_EXEC_PROCESS ShellCommand::GetContentFile(const QString& path, FacadeAnalyzeCommand *facade, const bool mode) const
 {
     const QString strCommand = baseCommand + "get " + path;
     boost::shared_ptr<AnalyzeExecuteCommandGet> analizeCommand(new AnalyzeExecuteCommandGet(*facade));
+    if(!mode)
+    {
+        facade->AddGetContentFileQueue(Utils::CatDirFile(localURL, path));
+    }
     analizeCommand->SetPathExecuteCommand(localURL);
     boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandGet(analizeCommand));
     ShellTask* shellTask = new ShellTask(strCommand, localURL, receiverParsing);

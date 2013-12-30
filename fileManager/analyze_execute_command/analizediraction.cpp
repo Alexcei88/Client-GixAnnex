@@ -1,4 +1,5 @@
 #include "analizediraction.h"
+#include "utils/utils.h"
 
 using namespace AnalyzeCommand;
 
@@ -22,11 +23,18 @@ bool AnalizeDirOnActionPrivate::IsFindFileOnDirAction(const QString& file) const
     for(const QString& str : filesMustToBeAction)
     {
         fileInfo.setFile(file);
-        assert(fileInfo.exists());
+
+#ifdef DEBUG
+        if(!fileInfo.isSymLink())
+            assert(fileInfo.exists());
+#endif
         if(fileInfo.isFile() || fileInfo.isSymLink())
         {
             fileInfo.setFile(str);
-            assert(fileInfo.exists());
+#ifdef DEBUG
+            if(!fileInfo.isSymLink())
+                assert(fileInfo.exists());
+#endif
             // ищем файл в файле или в директории
             if(fileInfo.isFile() || fileInfo.isSymLink())
             {
@@ -36,15 +44,19 @@ bool AnalizeDirOnActionPrivate::IsFindFileOnDirAction(const QString& file) const
             }
             else
             {
+                const QString dir_ = str + "/";
                 // ищем файл в директории
-                if(file.startsWith(str))
+                if(file.startsWith(dir_))
                     return true;
             }
         }
         else
         {
             fileInfo.setFile(str);
-            assert(fileInfo.exists());
+#ifdef DEBUG
+            if(!fileInfo.isSymLink())
+                assert(fileInfo.exists());
+#endif
             // ищем директорию в файле или в директории
             if(fileInfo.isFile() || fileInfo.isSymLink())
             {
@@ -53,8 +65,10 @@ bool AnalizeDirOnActionPrivate::IsFindFileOnDirAction(const QString& file) const
             }
             else
             {
+                const QString file_ = file + "/";
+                const QString dir_ = str + "/";
                 // ищем директорию в директории
-                if(file.startsWith(str))
+                if(file_.startsWith(dir_))
                     return true;
             }
         }
@@ -67,11 +81,18 @@ bool AnalizeDirOnActionPrivate::IsWasActionForFile(const QString& file) const
     for(const QString& str : filesWasAction)
     {
         fileInfo.setFile(file);
-        assert(fileInfo.exists());
+#ifdef DEBUG
+            if(!fileInfo.isSymLink())
+                assert(fileInfo.exists());
+#endif
+
         if(fileInfo.isFile() || fileInfo.isSymLink())
         {
             fileInfo.setFile(str);
-            assert(fileInfo.exists());
+#ifdef DEBUG
+            if(!fileInfo.isSymLink())
+                assert(fileInfo.exists());
+#endif
             // ищем файл в файле или в директории
             if(fileInfo.isFile() || fileInfo.isSymLink())
             {
@@ -81,15 +102,19 @@ bool AnalizeDirOnActionPrivate::IsWasActionForFile(const QString& file) const
             }
             else
             {
+                const QString dir_ = str + "/";
                 // ищем файл в директории
-                if(file.startsWith(str))
+                if(file.startsWith(dir_))
                     return true;
             }
         }
         else
         {
             fileInfo.setFile(str);
-            assert(fileInfo.exists());
+#ifdef DEBUG
+            if(!fileInfo.isSymLink())
+                assert(fileInfo.exists());
+#endif
             // ищем директорию в файле или в директории
             if(fileInfo.isFile() || fileInfo.isSymLink())
             {
@@ -98,8 +123,11 @@ bool AnalizeDirOnActionPrivate::IsWasActionForFile(const QString& file) const
             }
             else
             {
+                const QString file_ = file + "/";
+                const QString dir_ = str + "/";
+
                 // ищем директорию в директории
-                if(file.startsWith(str))
+                if(file_.startsWith(dir_))
                     return true;
             }
         }
@@ -124,7 +152,7 @@ bool AnalizeDirOnActionPrivate::WasActionForAllFileDirOnDir(QStringList& files, 
     // если размеры векторов не совпадают, то сразу же возвращаем false
     for(QString &str : listFile)
     {
-        if(!files.contains(str))
+        if(!files.contains(Utils::CatDirFile(dir, str)))
             return false;
     }
 
@@ -148,18 +176,10 @@ QStringList AnalizeDirOnActionPrivate::ListAllDirOfFile(const QStringList& files
 #ifdef DEBUG
         assert(fileInfo.exists());
 #endif
-        if(fileInfo.isFile() || fileInfo.isSymLink())
-        {
-            // это файл
-            addDir = fileInfo.absoluteDir().path();
+        // это файл
+        addDir = fileInfo.absoluteDir().path();
+        if(!listRet.contains(addDir))
             listRet << addDir;
-        }
-        else
-        {
-            // это директория
-            addDir = fileInfo.absoluteDir().path();
-            listRet << addDir;
-        }
     }
     return listRet;
 }
