@@ -1,6 +1,5 @@
 #include "parsingcommanddirectmode.h"
 #include <assert.h>
-#include "../repository/irepository.h"
 
 
 //  Qt stuff

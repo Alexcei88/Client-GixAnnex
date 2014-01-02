@@ -35,17 +35,17 @@ public:
      * @param pathDir - путь к директории, в которое проверяем эти файлы
      * @return true - над всеми, поэтому можем список заменить одной директорией
      *         false - не над всеми */
-    static bool         WasActionForAllFileDirOnDir(QStringList &files, const QString& dir);
+    bool                WasActionForAllFileDirOnDir(QStringList &files, const QString& dir);
 
     /** @brief По имеющемуся списку файлов возвращает список корневых директорий */
-    static QStringList  ListAllDirOfFile(const QStringList &files);
+    QStringList         ListAllDirOfFile(const QStringList &files);
 
     /** @brief Чистка списков файлов/директорий
         @param filesWasAction - список файлов, над которыми были выполнены действия
         @param filesMustToBeAction - список файлов, над которым нужно выполнить действия
         @param fileEndAction - файл, над которым закончилось выполняться действие
     */
-    static void         ClearListAction(QStringList& filesWasAction, QStringList& filesMustToBeAction, const QString fileEndAction = "");
+    void                ClearListAction(QStringList& filesWasAction, QStringList& filesMustToBeAction, const QString fileEndAction = "");
 
     // спиcок файлов/директорий, над которыми было выполнено действие
     QStringList         filesWasAction;
@@ -54,8 +54,8 @@ public:
 
 private:
     // служебные классы
-    static QDir         dirService;
-    static QFileInfo    fileInfo;
+    mutable QDir        dirService;
+    mutable QFileInfo   fileInfo;
 
 };
 

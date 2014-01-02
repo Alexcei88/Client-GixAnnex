@@ -3,9 +3,6 @@
 
 using namespace AnalyzeCommand;
 
-QDir AnalizeDirOnActionPrivate::dirService;
-QFileInfo AnalizeDirOnActionPrivate::fileInfo;
-
 //----------------------------------------------------------------------------------------/
 AnalizeDirOnActionPrivate::AnalizeDirOnActionPrivate()
 {

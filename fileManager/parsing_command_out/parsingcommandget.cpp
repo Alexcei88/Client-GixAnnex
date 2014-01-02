@@ -1,5 +1,4 @@
 #include "parsingcommandget.h"
-#include "../repository/irepository.h"
 #include "../analyze_execute_command/analyzeexecutecommandget.h"
 
 #include <assert.h>

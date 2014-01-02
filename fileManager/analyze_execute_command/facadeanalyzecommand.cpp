@@ -12,8 +12,8 @@ using namespace Utils;
 //----------------------------------------------------------------------------------------/
 FacadeAnalyzeCommand::FacadeAnalyzeCommand():
     gettingContentFileQueue(new AnalizeDirOnActionPrivate())
+  , droppingContentFileQueue(new AnalizeDirOnActionPrivate())
   , atomicFlagExecuteCommand(new std::atomic_flag(ATOMIC_FLAG_INIT))
-
 {}
 //----------------------------------------------------------------------------------------/
 FacadeAnalyzeCommand::~FacadeAnalyzeCommand()
@@ -225,10 +225,10 @@ bool FacadeAnalyzeCommand::ModificationListFiles(AnalizeDirOnActionPrivate* list
     atomicFlagExecuteCommand->clear(std::memory_order_release);
 
     // 1
-    QStringList listDirs = AnalizeDirOnActionPrivate::ListAllDirOfFile(filesMustToBeAction);
+    QStringList listDirs = listFiles->ListAllDirOfFile(filesMustToBeAction);
     for(QString& dir : listDirs)
     {
-        if(AnalizeDirOnActionPrivate::WasActionForAllFileDirOnDir(filesMustToBeAction, dir))
+        if(listFiles->WasActionForAllFileDirOnDir(filesMustToBeAction, dir))
         {
         #ifdef DEBUG
             printf("Was union directory: %s\n", dir.toStdString().c_str());
@@ -238,10 +238,10 @@ bool FacadeAnalyzeCommand::ModificationListFiles(AnalizeDirOnActionPrivate* list
     }
 
     // 2
-    listDirs = AnalizeDirOnActionPrivate::ListAllDirOfFile(filesWasAction);
+    listDirs = listFiles->ListAllDirOfFile(filesWasAction);
     for(QString& dir : listDirs)
     {
-        if(AnalizeDirOnActionPrivate::WasActionForAllFileDirOnDir(filesWasAction, dir))
+        if(listFiles->WasActionForAllFileDirOnDir(filesWasAction, dir))
         {
         #ifdef DEBUG
             printf("Was union directory: %s\n", dir.toStdString().c_str());
@@ -278,9 +278,11 @@ void FacadeAnalyzeCommand::ClearListFiles(AnalizeDirOnActionPrivate* listFiles, 
     // освобождаем флаг
     atomicFlagExecuteCommand->clear(std::memory_order_release);
 
-    AnalizeDirOnActionPrivate::ClearListAction(filesWasAction, filesMustToBeAction, fileEndAction);
+    listFiles->ClearListAction(filesWasAction, filesMustToBeAction, fileEndAction);
+
     AtomicLock flag(atomicFlagExecuteCommand);
     flag;
+
     listFiles->filesMustToBeAction = filesMustToBeAction;
     listFiles->filesWasAction = filesWasAction;
 }

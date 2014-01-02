@@ -93,7 +93,7 @@ RESULT_EXEC_PROCESS ShellCommand::AddFile(const QString& path) const
 //    return shell->ExecuteProcess(strCommand, receiverParsing[ADD_FILE]);
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS ShellCommand::GetContentFile(const QString& path, FacadeAnalyzeCommand *facade, const bool mode) const
+RESULT_EXEC_PROCESS ShellCommand::GetContentFile(const QString& path, FacadeAnalyzeCommand* facade, const bool mode) const
 {
     const QString strCommand = baseCommand + "get " + path;
     boost::shared_ptr<AnalyzeExecuteCommandGet> analizeCommand(new AnalyzeExecuteCommandGet(*facade));
@@ -111,7 +111,7 @@ RESULT_EXEC_PROCESS ShellCommand::GetContentFile(const QString& path, FacadeAnal
     return NO_ERROR;
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS ShellCommand::DropContentFile(const QString& path, FacadeAnalyzeCommand *facade, const bool mode) const
+RESULT_EXEC_PROCESS ShellCommand::DropContentFile(const QString& path, FacadeAnalyzeCommand* facade, const bool mode) const
 {
     const QString strCommand = baseCommand + "drop " + path;
     boost::shared_ptr<AnalyzeExecuteCommandDrop> analizeCommand(new AnalyzeExecuteCommandDrop(*facade));
@@ -146,7 +146,7 @@ RESULT_EXEC_PROCESS ShellCommand::Sync() const
     return NO_ERROR;
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS ShellCommand::WhereisFiles(const QString& path, FacadeAnalyzeCommand *facade) const
+RESULT_EXEC_PROCESS ShellCommand::WhereisFiles(const QString& path, FacadeAnalyzeCommand* facade) const
 {
     const QString strCommand = baseCommand + "whereis " + path;
     boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandEmpty());
@@ -156,7 +156,7 @@ RESULT_EXEC_PROCESS ShellCommand::WhereisFiles(const QString& path, FacadeAnalyz
     return NO_ERROR;
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS ShellCommand::SetDirectMode(const bool& direct, FacadeAnalyzeCommand *facade) const
+RESULT_EXEC_PROCESS ShellCommand::SetDirectMode(const bool& direct, FacadeAnalyzeCommand* facade) const
 {
     const QString strCommand = baseCommand + (direct ? " direct" : " indirect");
     boost::shared_ptr<AnalyzeExecuteCommand> analizeCommand(new AnalyzeExecuteCommand(*facade));
@@ -166,5 +166,10 @@ RESULT_EXEC_PROCESS ShellCommand::SetDirectMode(const bool& direct, FacadeAnalyz
 
     QThreadPool::globalInstance()->start(shellTask);
     return NO_ERROR;
+}
+//----------------------------------------------------------------------------------------/
+RESULT_EXEC_PROCESS ShellCommand::FindFileInPath(const QString &path, FacadeAnalyzeCommand* facade) const
+{
+
 }
 //----------------------------------------------------------------------------------------/

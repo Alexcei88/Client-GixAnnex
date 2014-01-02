@@ -25,9 +25,9 @@ public:
     inline void         SetPathExecuteCommand(const QString& path) { pathExecuteCommand = path; }
 
 protected:
-    /** @brief фасад, управляющий анализом выполнения команд */
+    /** @brief Фасад, управляющий анализом выполнения команд */
     FacadeAnalyzeCommand& facadeAnalyzeCommand;
-    // путь относительно корня репозитория, откуда была запущена команда
+    /** @brief Путь откуда была запущена команда */
     QString             pathExecuteCommand;
 
 private:

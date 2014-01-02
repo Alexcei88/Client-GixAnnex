@@ -4,11 +4,23 @@
 using namespace AnalyzeCommand;
 using namespace Utils;
 
-
 //----------------------------------------------------------------------------------------/
 AnalyzeExecuteCommandGet::AnalyzeExecuteCommandGet(FacadeAnalyzeCommand &facadeAnalyzeCommand):
     AnalyzeExecuteCommand(facadeAnalyzeCommand)
 {}
+//----------------------------------------------------------------------------------------/
+void AnalyzeExecuteCommandGet::StartExecuteCommand()
+{
+    AnalyzeExecuteCommand::StartExecuteCommand();
+    ForeachFilesHaveContentAlready(Utils::CatDirFile(pathExecuteCommand, fileGetContent));
+}
+//----------------------------------------------------------------------------------------/
+void AnalyzeExecuteCommandGet::EndExecuteCommand(const bool wasExecute)
+{
+    AnalyzeExecuteCommand::EndExecuteCommand(wasExecute);
+    // чистим список
+    facadeAnalyzeCommand.ClearListGettingContentFile(fileGetContent);
+}
 //----------------------------------------------------------------------------------------/
 void AnalyzeExecuteCommandGet::StartGetContentFile(const QString& file)
 {
@@ -25,11 +37,34 @@ void AnalyzeExecuteCommandGet::ErrorGetContentFile(const QString& file, const QS
     facadeAnalyzeCommand.ErrorGetContentFile(CatDirFile(pathExecuteCommand, file), error);
 }
 //----------------------------------------------------------------------------------------/
-void AnalyzeExecuteCommandGet::EndExecuteCommand(const bool wasExecute)
+void AnalyzeExecuteCommandGet::ForeachFilesHaveContentAlready(const QString& path) const
 {
-    AnalyzeExecuteCommand::EndExecuteCommand(wasExecute);
-    // чистим список
-    facadeAnalyzeCommand.ClearListGettingContentFile(fileGetContent);
+    QDir dir(path);
+    dir.setFilter(QDir::NoDotAndDotDot | QDir::AllDirs | QDir::Files | QDir::System);
+
+    QFileInfo fileInfo(path);
+
+    if(fileInfo.isDir())
+    {
+        QStringList list = dir.entryList();
+        for(QString& str : list)
+        {
+            ForeachFilesHaveContentAlready(Utils::CatDirFile(path, str));
+        }
+    }
+    else
+    {
+        // файл, или пустая символическая ссылка
+        if(fileInfo.isFile())
+        {
+            // посылаем сигнал, что файл уже получен
+            facadeAnalyzeCommand.EndGetContentFile(path);
+        }
+        else
+        {
+            // эта пустая символическая ссылка, ничего не делаем
+        }
+    }
 }
 //----------------------------------------------------------------------------------------/
 
