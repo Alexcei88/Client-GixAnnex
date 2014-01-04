@@ -46,7 +46,8 @@ SOURCES += main.cpp \
     analyze_execute_command/analizediraction.cpp \
     utils/utils.cpp \
     parsing_command_out/parsingcommandfind.cpp \
-    analyze_execute_command/analyzeexecutecommandfind.cpp
+    analyze_execute_command/analyzeexecutecommandfind.cpp \
+    threadsyncicons.cpp
 
 # Installation path
 # target.path =
@@ -101,7 +102,8 @@ HEADERS += \
     analyze_execute_command/analyzeexecutecommanddrop.h \
     analyze_execute_command/analizediraction.h \
     parsing_command_out/parsingcommandfind.h \
-    analyze_execute_command/analyzeexecutecommandfind.h
+    analyze_execute_command/analyzeexecutecommandfind.h \
+    threadsyncicons.h
 
 # Включаем поддержку С++11
 QMAKE_CXXFLAGS += -std=c++0x

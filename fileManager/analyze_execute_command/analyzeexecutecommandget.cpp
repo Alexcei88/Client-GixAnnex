@@ -12,6 +12,7 @@ AnalyzeExecuteCommandGet::AnalyzeExecuteCommandGet(FacadeAnalyzeCommand &facadeA
 void AnalyzeExecuteCommandGet::StartExecuteCommand()
 {
     AnalyzeExecuteCommand::StartExecuteCommand();
+    // перебираем файлы, может уже есть у кого-то контент
     ForeachFilesHaveContentAlready(Utils::CatDirFile(pathExecuteCommand, fileGetContent));
 }
 //----------------------------------------------------------------------------------------/

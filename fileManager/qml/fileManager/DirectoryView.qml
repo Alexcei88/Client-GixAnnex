@@ -406,6 +406,7 @@ FocusScope{
             if(dirModel.status === NewFolderListModel.Null)
                 return;
 
+            return;
 //            // Обновление состояния иконок синхронизации у делегатов компонента GridView
             var item = view.children[0];
             // этот итем является родителем для делегатов, дальше пойдут итемы делегатов

@@ -155,7 +155,6 @@ void IRepository::ChangeCurrentDirectory(const QString& curDir)
 //----------------------------------------------------------------------------------------/
 void IRepository::UpdateParamSyncFileDir()
 {
-    // эта функция дергается только из потока синхронизации иконок
     facadeAnalyzeCommand->ModificationAllListFiles();
 
     paramSyncFileDir.clear();

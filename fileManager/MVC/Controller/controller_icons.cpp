@@ -14,13 +14,12 @@
 
 using namespace GANN_MVC;
 
-QThread* ControllerIcons::thread = 0l;
 //----------------------------------------------------------------------------------------/
 ControllerIcons::ControllerIcons() :
     mainModel(QSharedPointer<ModelQmlAndCRepository>(new ModelQmlAndCRepository()))
   , modelIcons(new ModelQmlAndCIcons(this))
 {
-    QObject::connect(this, &ControllerIcons::changedParentDirectory, this, &ControllerIcons::OnChangeParentDirectory);
+    QObject::connect(this, &ControllerIcons::changedParentDirectory, this, &ControllerIcons::OnChangeParentDirectory, Qt::DirectConnection);
     dir.setFilter(QDir::NoDotAndDotDot | QDir::Files | QDir::AllDirs | QDir::System);
 }
 ControllerIcons::~ControllerIcons()
@@ -59,31 +58,7 @@ QVariant ControllerIcons::getSizeFile(QUrl file) const
 //----------------------------------------------------------------------------------------/
 void ControllerIcons::startThreadIconsSync()
 {
-    if(thread != 0 && thread->isRunning())
-        return;
-
-    // запускаем поток обновления иконок синхронизации
-    thread = new QThread();
-    modelIcons->moveToThread(thread);
-    QObject::connect(thread, &QThread::started, [=] {modelIcons->UpdateFileSyncIcons(); });
-
-    FacadeApplication* facade = FacadeApplication::getInstance();
-    QObject::connect(facade, &FacadeApplication::stopThreadIconsSync, [=] { ControllerIcons::StopThreadIconsSync(); });
-    thread->start();
-}
-//----------------------------------------------------------------------------------------/
-void ControllerIcons::StopThreadIconsSync()
-{
-    if(thread)
-    {
-        if(thread->isRunning())
-        {
-            thread->quit();
-            thread->wait();
-        }
-        delete thread;
-        thread = 0;
-    }
+    modelIcons->StartThreadIconsSync();
 }
 //----------------------------------------------------------------------------------------/
 void ControllerIcons::OnChangeParentDirectory(QUrl curDir)

@@ -56,10 +56,7 @@ public:
     /** @brief  Запуск потока обновления иконок синхронизации */
     Q_INVOKABLE void    startThreadIconsSync();
 
-    /** @brief Остановка потока обновления иконок синхронизации */
-    static void         StopThreadIconsSync();
-
-    /** @brief полностью обновить список состояния иконок */
+    /** @brief полностью обновить список состояния иконок(вектор состояний иконок) */
     void                UpdateStateIconsFileSync();
 
     /** @brief Возвращает новый список */
@@ -82,13 +79,9 @@ private:
     // вспомог класс
     QDir                dir;
 
-    // поток, в котором будем обновление иконок синхронизации в представлении(один на все объекты)
-    static QThread*     thread;
-
 signals:
     void                changedStateIconsFileSync(QVariantList);
     void                changedParentDirectory(QUrl);
-    void                stopThread();
 };
 
 }
