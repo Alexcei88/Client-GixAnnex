@@ -63,15 +63,29 @@ FocusScope{
         contrIcons.currentPath = path
     }
     //------------------------------------------------------------------------/
-    // функция обновления состояния иконок у текущего списка
+    // функция обновления состояния иконок синхронизации
     function updateIconsStateFileSync()
     {
-        dirModel.updateModel();
-//        if(dirModel.lastIndex < dirModel.count)
-//        {
-//        console.log(dirModel.lastIndex)
-//            view.currentIndex = -1;
-//        }
+        if(dirModel.status === NewFolderListModel.Null)
+            return;
+
+        console.log("updateIconsStateFileSync");
+        // Обновление состояния иконок синхронизации у делегатов компонента GridView
+        var item = view.children[0];
+        // этот итем является родителем для делегатов, дальше пойдут итемы делегатов
+        // их количество зависит от количества объектов модели
+        for(var i = 0; i < dirModel.count; ++i)
+        {
+            var itemDelegate = item.children[i];
+            if(contrIcons.stateIconsFileSyncQML[itemDelegate.curFileName] === "Disable_sincingF")
+                itemDelegate.state = "DISABLE_SYNC";
+            else if(contrIcons.stateIconsFileSyncQML[itemDelegate.curFileName] === "SyncedFError")
+                itemDelegate.state = "SYNCED_ERROR";
+            else if(contrIcons.stateIconsFileSyncQML[itemDelegate.curFileName] === "SyncedF")
+                itemDelegate.state = "SYNCED";
+            else if(contrIcons.stateIconsFileSyncQML[itemDelegate.curFileName] === "SyncingF")
+                itemDelegate.state = "SYNCING";
+        }
     }
     //------------------------------------------------------------------------/
     // функция проверки нахождения свойства folder впределах корневого пути репозитория
@@ -204,7 +218,7 @@ FocusScope{
             {
                 // запускаем поток и таймер обновления состояния иконок
                 contrIcons.startThreadIconsSync();
-                timeSyncIcons.start();
+//                timeSyncIcons.start();
             }
             MouseArea {
                 anchors.fill: parent

@@ -26,13 +26,17 @@ public:
 
     /** @brief перезагрузить модель со списком репозиториев */
     bool                ReLoadListRepository() const;
-    /** @brief перезагрузить модель с отображением текущей директорией */
-    bool                ReLoadDirectoryView() const;
 
 public slots:
-    // слот, отвечающий за обработку нажатия по иконке мышью
+    /** @brief слот, отвечающий за обработку нажатия по иконке мышью */
     void                ActivateTray(QSystemTrayIcon::ActivationReason reason);
+
     void                CloneRepository();
+    /** @brief обновить состояние иконок синхронизации */
+    bool                OnUpdateIconsSyncronization() const;
+
+signals:
+    bool                updateIconsSyncronization() const;
 
 private:
 

@@ -1,19 +1,20 @@
 #ifndef THREADSYNCICONS_H
 #define THREADSYNCICONS_H
+#include <QObject>
 
 namespace GANN_MVC {
-    class ModelQmlAndCIcons;
+    class ControllerIcons;
 }
 
-class ThreadSyncIcons
+class ThreadSyncIcons: public QObject
 {
 public:
-    ThreadSyncIcons(GANN_MVC::ModelQmlAndCIcons *modelIcons);
+    ThreadSyncIcons(GANN_MVC::ControllerIcons *controllerIcons);
     ~ThreadSyncIcons();
 
     void            UpdateFileSyncIcons();
 private:
-    GANN_MVC::ModelQmlAndCIcons* modelIcons;
+    GANN_MVC::ControllerIcons* controllerIcons;
     bool            exitThread;
 
 };

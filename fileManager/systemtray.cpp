@@ -18,7 +18,6 @@ SystemTray::SystemTray():
     connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
 
     //=================================================================================== /
-
     trayIconMenu    = new QMenu(this);
     trayIconMenu->addAction(addRepoAction);
     trayIconMenu->addAction(cloneRepoAction);
@@ -30,6 +29,7 @@ SystemTray::SystemTray():
     trayIcon->show();
 
     connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(ActivateTray(QSystemTrayIcon::ActivationReason)));
+//    connect(trayIcon, SIGNAL(updateIconsSyncronization), this, SLOT(OnUpdateIconsSyncronization), Qt::DirectConnection);
 }
 //----------------------------------------------------------------------------------------/
 void SystemTray::ActivateTray(QSystemTrayIcon::ActivationReason reason)
@@ -74,7 +74,7 @@ bool SystemTray::ReLoadListRepository() const
     return false;
 }
 //----------------------------------------------------------------------------------------/
-bool SystemTray::ReLoadDirectoryView() const
+bool SystemTray::OnUpdateIconsSyncronization() const
 {
     if(mainView)
     {

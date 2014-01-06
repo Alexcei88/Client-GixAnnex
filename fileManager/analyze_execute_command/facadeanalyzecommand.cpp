@@ -206,29 +206,23 @@ bool FacadeAnalyzeCommand::DirContainsFile(const QString& dir, const QString& fi
 //----------------------------------------------------------------------------------------/
 bool FacadeAnalyzeCommand::ModificationListFiles(AnalizeDirOnActionPrivate* listFiles) const
 {
+    AtomicLock flag(atomicFlagExecuteCommand);
+    flag;
+
     bool wasModification = false;
     // захватываем атомарный флаг
     atomicFlagExecuteCommand->test_and_set(std::memory_order_acquire);
 
     if(listFiles->filesMustToBeAction.empty() && listFiles->filesWasAction.isEmpty())
     {
-        // освобождаем флаг
-        atomicFlagExecuteCommand->clear(std::memory_order_release);
         return wasModification;
     }
 
-    // делаем копию списков, будем работать с ними, после модификации обновим списки
-    QStringList filesMustToBeAction = listFiles->filesMustToBeAction;
-    QStringList filesWasAction = listFiles->filesWasAction;
-
-    // освобождаем флаг
-    atomicFlagExecuteCommand->clear(std::memory_order_release);
-
     // 1
-    QStringList listDirs = listFiles->ListAllDirOfFile(filesMustToBeAction);
+    QStringList listDirs = listFiles->ListAllDirOfFile(listFiles->filesMustToBeAction);
     for(QString& dir : listDirs)
     {
-        if(listFiles->WasActionForAllFileDirOnDir(filesMustToBeAction, dir))
+        if(listFiles->WasActionForAllFileDirOnDir(listFiles->filesMustToBeAction, dir))
         {
         #ifdef DEBUG
             printf("Was union directory: %s\n", dir.toStdString().c_str());
@@ -238,10 +232,10 @@ bool FacadeAnalyzeCommand::ModificationListFiles(AnalizeDirOnActionPrivate* list
     }
 
     // 2
-    listDirs = listFiles->ListAllDirOfFile(filesWasAction);
+    listDirs = listFiles->ListAllDirOfFile(listFiles->filesWasAction);
     for(QString& dir : listDirs)
     {
-        if(listFiles->WasActionForAllFileDirOnDir(filesWasAction, dir))
+        if(listFiles->WasActionForAllFileDirOnDir(listFiles->filesWasAction, dir))
         {
         #ifdef DEBUG
             printf("Was union directory: %s\n", dir.toStdString().c_str());
@@ -250,41 +244,20 @@ bool FacadeAnalyzeCommand::ModificationListFiles(AnalizeDirOnActionPrivate* list
         }
     }
 
-    AtomicLock flag(atomicFlagExecuteCommand);
-    flag;
-
-    listFiles->filesMustToBeAction = filesMustToBeAction;
-    listFiles->filesWasAction = filesWasAction;
-
     return wasModification;
 }
 //----------------------------------------------------------------------------------------/
 void FacadeAnalyzeCommand::ClearListFiles(AnalizeDirOnActionPrivate* listFiles, const QString& fileEndAction) const
 {
-    // захватываем атомарный флаг
-    atomicFlagExecuteCommand->test_and_set(std::memory_order_acquire);
-
-    if(listFiles->filesMustToBeAction.empty() && listFiles->filesWasAction.isEmpty())
-    {
-        // освобождаем флаг
-        atomicFlagExecuteCommand->clear(std::memory_order_release);
-        return;
-    }
-
-    // делаем копию списков, будем работать с ними, после модификации обновим списки
-    QStringList filesMustToBeAction = listFiles->filesMustToBeAction;
-    QStringList filesWasAction = listFiles->filesWasAction;
-
-    // освобождаем флаг
-    atomicFlagExecuteCommand->clear(std::memory_order_release);
-
-    listFiles->ClearListAction(filesWasAction, filesMustToBeAction, fileEndAction);
-
     AtomicLock flag(atomicFlagExecuteCommand);
     flag;
 
-    listFiles->filesMustToBeAction = filesMustToBeAction;
-    listFiles->filesWasAction = filesWasAction;
+    if(listFiles->filesMustToBeAction.empty() && listFiles->filesWasAction.isEmpty())
+    {
+        return;
+    }
+
+    listFiles->ClearListAction(listFiles->filesWasAction, listFiles->filesMustToBeAction, fileEndAction);
 }
 //----------------------------------------------------------------------------------------/
 

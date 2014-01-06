@@ -26,7 +26,7 @@ public:
 
 private:
     ControllerIcons* contrIcons;
-    boost::shared_ptr<ControllerIcons> threadSyncIcons;
+    boost::shared_ptr<ThreadSyncIcons> threadSyncIcons;
 
     // поток, в котором будет обновление иконок синхронизации в представлении(один на все объекты)
     static QThread*   thread;

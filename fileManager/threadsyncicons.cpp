@@ -1,11 +1,11 @@
 #include "threadsyncicons.h"
-#include "MVC/Model/model_icons.h"
+#include "MVC/Controller/controller_icons.h"
 #include "facadeapplication.h"
 
 //----------------------------------------------------------------------------------------/
-ThreadSyncIcons::ThreadSyncIcons(GANN_MVC::ModelQmlAndCIcons* modelIcons):
-    modelIcons(modelIcons)
-    , exitThread(false)
+ThreadSyncIcons::ThreadSyncIcons(GANN_MVC::ControllerIcons* controllerIcons):
+    controllerIcons(controllerIcons)
+  , exitThread(false)
 {}
 //----------------------------------------------------------------------------------------/
 ThreadSyncIcons::~ThreadSyncIcons()
@@ -13,30 +13,32 @@ ThreadSyncIcons::~ThreadSyncIcons()
     exitThread = true;
 }
 //----------------------------------------------------------------------------------------/
-//----------------------------------------------------------------------------------------/
 void ThreadSyncIcons::UpdateFileSyncIcons()
 {
     FacadeApplication* facade = FacadeApplication::getInstance();
     QMutex& mutex = FacadeApplication::threadModel.mutexSyncIcons;
 
-//    while(!exitThread)
-//    {
-//        if(facade->systemTray)
-//        {
-//            // здесь захватить мьютексом потока синхронизации иконок
-//            mutex.lock();
-
-//            auto iterRepo = facade->currentRepository;
-//            if(iterRepo != facade->repository.end())
-//            {
-//                IRepository* curRepo = iterRepo->second.get();
-//                curRepo->UpdateParamSyncFileDir();
-////                contrIcons->UpdateStateIconsFileSync();
-//            }
-//            mutex.unlock();
-////            sleep(1);
-//        }
-//    }
+    while(!exitThread)
+    {
+        if(facade->GetSystemTray())
+        {
+            // здесь захватить мьютексом потока синхронизации иконок
+            mutex.lock();
+            IRepository* curRepo = facade->GetCurrentRepository();
+            if(curRepo)
+            {
+                curRepo->UpdateParamSyncFileDir();
+                if(controllerIcons)
+                {
+                    controllerIcons->UpdateStateIconsFileSync();
+                }
+            }
+            mutex.unlock();
+            // посылаем сигнал, что нужно обновить представление
+//            emit facade->GetSystemTray()->updateIconsSyncronization();
+//            sleep(1);
+        }
+    }
 }
 //----------------------------------------------------------------------------------------/
 

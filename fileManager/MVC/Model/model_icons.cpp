@@ -1,9 +1,13 @@
 #include "model_icons.h"
 #include "facadeapplication.h"
+#include "threadsyncicons.h"
 #include "../Controller/controller_icons.h"
 
 // Qt stuff
 #include <QThread>
+
+// boost stuff
+#include <boost/make_shared.hpp>
 
 using namespace GANN_MVC;
 
@@ -24,8 +28,9 @@ void ModelQmlAndCIcons::StartThreadIconsSync()
 
 //    // запускаем поток обновления иконок синхронизации
     thread = new QThread();
+    threadSyncIcons = boost::make_shared<ThreadSyncIcons>(contrIcons);
     threadSyncIcons->moveToThread(thread);
-    QObject::connect(thread, &QThread::started, [=] {threadSyncIcons->UpdateStateIconsFileSync(); });
+    QObject::connect(thread, &QThread::started, [=] {threadSyncIcons->UpdateFileSyncIcons(); });
 
     FacadeApplication* facade = FacadeApplication::getInstance();
     QObject::connect(facade, &FacadeApplication::stopThreadIconsSync, [=] { ModelQmlAndCIcons::StopThreadIconsSync(); });
