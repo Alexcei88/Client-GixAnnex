@@ -93,7 +93,7 @@ RESULT_EXEC_PROCESS TRepository::RemoveFile(const QString& file)
         return IGNORE_COMMAND;
 
     // сначала удалим контент
-    DropContentFile(file);
+    DropContentFile(file, false);
     // а теперь удаляем и сам файл
     shellCommand->SetWorkingDirectory(dir.path());
     RESULT_EXEC_PROCESS result = shellCommand->RemoveFile(file, QFileInfo(dir.path() + "/" + file).isDir());

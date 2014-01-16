@@ -47,11 +47,10 @@ void FacadeAnalyzeCommand::EndGetContentFile(const QString& file)
     AtomicLock flag(atomicFlagExecuteCommand);
     flag;
 
-    // если список заданий не пустой, то фиксиурем, что было выполнено действие
+    // если список заданий не пустой, то фиксируем, что было выполнено действие
     if(!gettingContentFileQueue->filesMustToBeAction.isEmpty())
         gettingContentFileQueue->filesWasAction << file;
 
-    assert(!gettingContentFile.isEmpty());
     gettingContentFile = "";
 }
 //----------------------------------------------------------------------------------------/
@@ -122,7 +121,7 @@ void FacadeAnalyzeCommand::AddDropContentFileQueue(const QString& file)
     AtomicLock flag(atomicFlagExecuteCommand);
     flag;
 
-//    droppingContentFileQueue.push_back(file);
+    droppingContentFileQueue->filesMustToBeAction << file;
 }
 //----------------------------------------------------------------------------------------/
 void FacadeAnalyzeCommand::EndDropContentFile(const QString& file)
@@ -130,8 +129,10 @@ void FacadeAnalyzeCommand::EndDropContentFile(const QString& file)
     AtomicLock flag(atomicFlagExecuteCommand);
     flag;
 
-    Q_UNUSED(file);
-    assert(!droppingContentFile.isEmpty());
+    // если список заданий не пустой, то фиксируем, что было выполнено действие
+    if(!droppingContentFileQueue->filesMustToBeAction.isEmpty())
+        droppingContentFileQueue->filesWasAction << file;
+
     droppingContentFile = "";
 }
 //----------------------------------------------------------------------------------------/
@@ -139,6 +140,10 @@ void FacadeAnalyzeCommand::ErrorDropContentFile(const QString& file, const QStri
 {
     AtomicLock flag(atomicFlagExecuteCommand);
     flag;
+
+    // если список заданий не пустой, то фиксируем, что было выполнено действие
+    if(!droppingContentFileQueue->filesMustToBeAction.isEmpty())
+        droppingContentFileQueue->filesWasAction << file;
 
     assert(!droppingContentFile.isEmpty());
     droppingContentFile = "";
@@ -155,9 +160,17 @@ bool FacadeAnalyzeCommand::IsDroppingContentFileDir(const QString& file) const
     AtomicLock flag(atomicFlagExecuteCommand);
     flag;
 
-    if(DirContainsFile(CatDirFile(currentPathRepository.path(), file), droppingContentFile))
+    const QString fullPathFile = CatDirFile(currentPathRepository.path(), file);
+    if(DirContainsFile(fullPathFile, droppingContentFile))
     {
         return true;
+    }
+    if(droppingContentFileQueue->IsFindFileOnDirAction(fullPathFile))
+    {
+        if(!droppingContentFileQueue->IsWasActionForFile(fullPathFile))
+        {
+            return true;
+        }
     }
     return false;
 }
@@ -182,7 +195,7 @@ void FacadeAnalyzeCommand::ModificationAllListFiles()
     // gettingContentFileQueue
     ModificationListFiles(gettingContentFileQueue.get());
 
-    // droppingContentFileQueue
+    // droppingContentFileQueu e
     ModificationListFiles(droppingContentFileQueue.get());
 }
 //----------------------------------------------------------------------------------------/
@@ -190,6 +203,12 @@ void FacadeAnalyzeCommand::ClearListGettingContentFile(const QString& fileEndAct
 {
     while(ModificationListFiles(gettingContentFileQueue.get())) {}
     ClearListFiles(gettingContentFileQueue.get(), fileEndAction);
+}
+//----------------------------------------------------------------------------------------/
+void FacadeAnalyzeCommand::ClearListDroppingContentFile(const QString& fileEndAction)
+{
+    while(ModificationListFiles(droppingContentFileQueue.get())) {}
+    ClearListFiles(droppingContentFileQueue.get(), fileEndAction);
 }
 //----------------------------------------------------------------------------------------/
 bool FacadeAnalyzeCommand::DirContainsFile(const QString& dir, const QString& file) const
@@ -204,15 +223,12 @@ bool FacadeAnalyzeCommand::DirContainsFile(const QString& dir, const QString& fi
     }
 }
 //----------------------------------------------------------------------------------------/
-bool FacadeAnalyzeCommand::ModificationListFiles(AnalizeDirOnActionPrivate* listFiles) const
+bool FacadeAnalyzeCommand::ModificationListFiles(AnalizeDirOnActionPrivate* listFiles, boost::function<const QStringList&>* addFunc) const
 {
     AtomicLock flag(atomicFlagExecuteCommand);
     flag;
 
     bool wasModification = false;
-    // захватываем атомарный флаг
-    atomicFlagExecuteCommand->test_and_set(std::memory_order_acquire);
-
     if(listFiles->filesMustToBeAction.empty() && listFiles->filesWasAction.isEmpty())
     {
         return wasModification;
@@ -220,27 +236,47 @@ bool FacadeAnalyzeCommand::ModificationListFiles(AnalizeDirOnActionPrivate* list
 
     // 1
     QStringList listDirs = listFiles->ListAllDirOfFile(listFiles->filesMustToBeAction);
+    QStringList listFilesNotWasAction;
     for(QString& dir : listDirs)
     {
-        if(listFiles->WasActionForAllFileDirOnDir(listFiles->filesMustToBeAction, dir))
+        if(listFiles->WasActionForAllFileDirOnDir(listFiles->filesMustToBeAction, listFilesNotWasAction, dir))
         {
         #ifdef DEBUG
             printf("Was union directory: %s\n", dir.toStdString().c_str());
         #endif
             wasModification = true;
         }
+        else
+        {
+            if(addFunc)
+            {
+                // выполняем дополнительнные действия по списку, по которому не было выполнено действие
+//                (*addFunc)(listFilesNotWasAction);
+            }
+        }
     }
 
     // 2
     listDirs = listFiles->ListAllDirOfFile(listFiles->filesWasAction);
+    listFilesNotWasAction.clear();
     for(QString& dir : listDirs)
     {
-        if(listFiles->WasActionForAllFileDirOnDir(listFiles->filesWasAction, dir))
+        if(listFiles->WasActionForAllFileDirOnDir(listFiles->filesWasAction, listFilesNotWasAction, dir))
         {
         #ifdef DEBUG
             printf("Was union directory: %s\n", dir.toStdString().c_str());
         #endif
             wasModification = true;
+        }
+        else
+        {
+            // выполним действия
+            if(addFunc)
+            {
+                // выполняем дополнительные действия со списком, по которому не было выполнено действие
+//                (*addFunc)(listFilesNotWasAction);
+            }
+
         }
     }
 
@@ -258,6 +294,46 @@ void FacadeAnalyzeCommand::ClearListFiles(AnalizeDirOnActionPrivate* listFiles, 
     }
 
     listFiles->ClearListAction(listFiles->filesWasAction, listFiles->filesMustToBeAction, fileEndAction);
+}
+//----------------------------------------------------------------------------------------/
+void FacadeAnalyzeCommand::IsHavingContentFileWhileGettingContent(const QStringList& listFile)
+{
+    QFileInfo fileInfo;
+    for(const QString& file: listFile)
+    {
+        fileInfo.setFile(file);
+#ifdef DEBUG
+        assert("В списке файлов не должно быть директории!!! Это ошибка" && fileInfo.isDir());
+#endif
+        if(fileInfo.isFile())
+        {
+            // посылаем сигнал, что файл уже получен
+            EndGetContentFile(file);
+        }
+        else
+        {
+            // эта пустая символическая ссылка, ничего не делаем
+        }
+    }
+}
+//----------------------------------------------------------------------------------------/
+void FacadeAnalyzeCommand::IsNotHavingContentFileWhileDroppingContent(const QStringList& listFile)
+{
+    QFileInfo fileInfo;
+    for(const QString& file: listFile)
+    {
+        fileInfo.setFile(file);
+#ifdef DEBUG
+        assert("В списке файлов не должно быть директории!!! Это ошибка" && fileInfo.isDir());
+#endif
+        if(fileInfo.isFile())
+        {}
+        else
+        {
+            // посылаем сигнал о том, что контент у файла уже удален
+            EndDropContentFile(file);
+        }
+    }
 }
 //----------------------------------------------------------------------------------------/
 

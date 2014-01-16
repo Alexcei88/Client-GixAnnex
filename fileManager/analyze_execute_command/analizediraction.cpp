@@ -138,7 +138,9 @@ bool AnalizeDirOnActionPrivate::IsWasActionForFile(const QString& file) const
     return false;
 }
 //----------------------------------------------------------------------------------------/
-bool AnalizeDirOnActionPrivate::WasActionForAllFileDirOnDir(QStringList& files, const QString& dir)
+bool AnalizeDirOnActionPrivate::WasActionForAllFileDirOnDir(  QStringList &filesWasAction
+                                                , QStringList& filesNotWasAction
+                                                , const QString& dir)
 {
     dirService.setPath(dir);
     if(!dirService.exists())
@@ -152,24 +154,31 @@ bool AnalizeDirOnActionPrivate::WasActionForAllFileDirOnDir(QStringList& files, 
     if(listFile.isEmpty())
         return false;
 
+    bool replace = true;
     for(QString &str : listFile)
     {
-        if(!files.contains(Utils::CatDirFile(dir, str)))
-            return false;
-    }
-
-    // Да, можно заменить список файлов на просто одну директорию
-    for(QString &str : listFile)
-    {
-        if(!files.removeOne(Utils::CatDirFile(dir, str)))
+        if(!filesWasAction.contains(Utils::CatDirFile(dir, str)))
         {
-            std::printf("%s: Remove from list files return false", __FUNCTION__);
-            assert(0);
+            filesNotWasAction << Utils::CatDirFile(dir, str);
+            replace = false;
         }
     }
-    if(!files.contains(dir))
-        files << dir;
-    return true;
+
+    if(replace)
+    {
+        // Да, можно заменить список файлов на просто одну директорию
+        for(QString &str : listFile)
+        {
+            if(!filesWasAction.removeOne(Utils::CatDirFile(dir, str)))
+            {
+                std::printf("%s: Remove from list files return false", __FUNCTION__);
+                assert(0);
+            }
+        }
+        if(!filesWasAction.contains(dir))
+            filesWasAction << dir;
+    }
+    return replace;
 }
 //----------------------------------------------------------------------------------------/
 QStringList AnalizeDirOnActionPrivate::ListAllDirOfFile(const QStringList& files)

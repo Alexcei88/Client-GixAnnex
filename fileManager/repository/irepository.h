@@ -110,14 +110,14 @@ public:
     @param mode - режим вызова функции получения контента(true - автоматический, false - пользовательский)
     @return 0 - нет ошибок
     */
-    virtual GANN_DEFINE::RESULT_EXEC_PROCESS GetContentFile(const QString& file = " ", const bool mode = true) = 0;
+    virtual GANN_DEFINE::RESULT_EXEC_PROCESS GetContentFile(const QString& file = " ", const bool mode = false) = 0;
 
     /**
     @brief удаление контента у файла из репозитория
     @param file - имя файла(папки) назначения
     @return 0 - нет ошибок
     */
-    virtual GANN_DEFINE::RESULT_EXEC_PROCESS DropContentFile(const QString& file = " ", const bool mode = true) = 0;
+    virtual GANN_DEFINE::RESULT_EXEC_PROCESS DropContentFile(const QString& file = " ", const bool mode = false) = 0;
 
     /**
     @brief удалить файл из репозитория

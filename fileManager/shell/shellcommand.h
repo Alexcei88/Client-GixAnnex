@@ -46,7 +46,7 @@ public:
     GANN_DEFINE::RESULT_EXEC_PROCESS GetContentFile(const QString& path, AnalyzeCommand::FacadeAnalyzeCommand* facade, const bool mode) const;
 
     /** @brief Удалить контент у файлов((директории)
-        @param mode - режим вызова функции получения контента(true - автоматический, false - пользовательский)
+        @param mode - режим вызова функции удаления контента(true - автоматический, false - пользовательский)
     */
     GANN_DEFINE::RESULT_EXEC_PROCESS DropContentFile(const QString& path, AnalyzeCommand::FacadeAnalyzeCommand* facade, const bool mode) const;
 

@@ -10,8 +10,12 @@
 // std stuff
 #include <atomic>
 
-
 #include "define.h"
+
+// boost stuff
+#include <boost/function.hpp>
+#include <boost/bind.hpp>
+
 /*
  * КЛАСС ФАСАД, В КОТОРОМ СОБИРАЕТСЯ ВСЯ ИНФА ПО АНАЛИЗУ ВЫПОЛНЕНИЯ КОМАНДЫ
 */
@@ -69,6 +73,11 @@ public:
     */
     void                ClearListGettingContentFile(const QString& fileEndAction = "");
 
+    /** @brief функция чистки списка удаления контента
+     * данную функцию дергать по окончании выполнения команды
+    */
+    void                ClearListDroppingContentFile(const QString& fileEndAction = "");
+
 private:
 
     Q_DISABLE_COPY(FacadeAnalyzeCommand)
@@ -99,10 +108,16 @@ private:
     bool                DirContainsFile(const QString& dir, const QString& file) const;
 
     /** @brief Модификация списка файлов в вспом классах AnalizeDirOnActionPrivate */
-    bool                ModificationListFiles(AnalizeDirOnActionPrivate *listFiles) const;
+    bool                ModificationListFiles(AnalizeDirOnActionPrivate *listFiles, boost::function<const QStringList&>* addFunc = 0) const;
 
     /** @brief Чистка списка файлов в вспом классах AnalizeDirOnActionPrivate */
     void                ClearListFiles(AnalizeDirOnActionPrivate* listFiles, const QString& fileEndAction = "") const;
+
+    /** @brief Проверка файлов у списка файлов на имение контента, когда выполняется команда получения контента */
+    void                IsHavingContentFileWhileGettingContent(const QStringList& listFile);
+
+    /** @brief Проверка файлов у списка файлов на отсутствие контента, когда выполняется команда удаления контента */
+    void                IsNotHavingContentFileWhileDroppingContent(const QStringList& listFile);
 
     /** @brief Текущий путь в репозитории */
     QDir                currentPathRepository;

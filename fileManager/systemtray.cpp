@@ -24,12 +24,12 @@ SystemTray::SystemTray():
     trayIconMenu->addSeparator();
     trayIconMenu->addAction(quitAction);
 
-    trayIcon    = new QSystemTrayIcon(QIcon(":/heart.ico"), this);
+    trayIcon        = new QSystemTrayIcon(QIcon(":/heart.ico"), this);
     trayIcon->setContextMenu(trayIconMenu);
     trayIcon->show();
 
     connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(ActivateTray(QSystemTrayIcon::ActivationReason)));
-//    connect(trayIcon, SIGNAL(updateIconsSyncronization), this, SLOT(OnUpdateIconsSyncronization), Qt::DirectConnection);
+//    connect(this, SIGNAL(updateIconsSyncronization), this, SLOT(OnUpdateIconsSyncronization), Qt::AutoConnection);
 }
 //----------------------------------------------------------------------------------------/
 void SystemTray::ActivateTray(QSystemTrayIcon::ActivationReason reason)

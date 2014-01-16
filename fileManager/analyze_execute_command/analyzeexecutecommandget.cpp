@@ -19,8 +19,8 @@ void AnalyzeExecuteCommandGet::StartExecuteCommand()
 void AnalyzeExecuteCommandGet::EndExecuteCommand(const bool wasExecute)
 {
     AnalyzeExecuteCommand::EndExecuteCommand(wasExecute);
-    // чистим список
-    facadeAnalyzeCommand.ClearListGettingContentFile(fileGetContent);
+    // чистим списки
+//    facadeAnalyzeCommand.ClearListGettingContentFile(fileGetContent);
 }
 //----------------------------------------------------------------------------------------/
 void AnalyzeExecuteCommandGet::StartGetContentFile(const QString& file)
@@ -55,7 +55,7 @@ void AnalyzeExecuteCommandGet::ForeachFilesHaveContentAlready(const QString& pat
     }
     else
     {
-        // файл, или пустая символическая ссылка
+        // файл
         if(fileInfo.isFile())
         {
             // посылаем сигнал, что файл уже получен

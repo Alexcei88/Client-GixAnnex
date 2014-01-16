@@ -96,17 +96,17 @@ RESULT_EXEC_PROCESS ShellCommand::AddFile(const QString& path) const
 RESULT_EXEC_PROCESS ShellCommand::GetContentFile(const QString& path, FacadeAnalyzeCommand* facade, const bool mode) const
 {
     const QString strCommand = baseCommand + "get " + path;
-    boost::shared_ptr<AnalyzeExecuteCommandGet> analizeCommand(new AnalyzeExecuteCommandGet(*facade));
     const QString fullPathFile = Utils::CatDirFile(localURL, path);
+    boost::shared_ptr<AnalyzeExecuteCommandGet> analizeCommand(new AnalyzeExecuteCommandGet(*facade));
+    analizeCommand->SetPathGetContent(fullPathFile);
+    analizeCommand->SetPathExecuteCommand(localURL);
+
     if(!mode)
     {
         facade->AddGetContentFileQueue(fullPathFile);
     }
-    analizeCommand->SetPathGetContent(fullPathFile);
-    analizeCommand->SetPathExecuteCommand(localURL);
     boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandGet(analizeCommand));
     ShellTask* shellTask = new ShellTask(strCommand, localURL, receiverParsing);
-
     QThreadPool::globalInstance()->start(shellTask);
     return NO_ERROR;
 }
@@ -114,11 +114,17 @@ RESULT_EXEC_PROCESS ShellCommand::GetContentFile(const QString& path, FacadeAnal
 RESULT_EXEC_PROCESS ShellCommand::DropContentFile(const QString& path, FacadeAnalyzeCommand* facade, const bool mode) const
 {
     const QString strCommand = baseCommand + "drop " + path;
+    const QString fullPathFile = Utils::CatDirFile(localURL, path);
     boost::shared_ptr<AnalyzeExecuteCommandDrop> analizeCommand(new AnalyzeExecuteCommandDrop(*facade));
+    analizeCommand->SetPathDropContent(fullPathFile);
     analizeCommand->SetPathExecuteCommand(localURL);
+
+    if(!mode)
+    {
+        facade->AddDropContentFileQueue(fullPathFile);
+    }
     boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandDrop(analizeCommand));
     ShellTask* shellTask = new ShellTask(strCommand, localURL, receiverParsing);
-
     QThreadPool::globalInstance()->start(shellTask);
     return NO_ERROR;
 }
@@ -126,9 +132,10 @@ RESULT_EXEC_PROCESS ShellCommand::DropContentFile(const QString& path, FacadeAna
 RESULT_EXEC_PROCESS ShellCommand::RemoveFile(const QString& path, const bool recursive) const
 {
     QString strCommand = "git rm " + path;
+    // рекурсивное удаление
     if(recursive)
-        // рекурсивное удаление
         strCommand += " -r";
+
     boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandEmpty());
     ShellTask* shellTask = new ShellTask(strCommand, localURL, receiverParsing);
 

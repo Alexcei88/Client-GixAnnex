@@ -31,11 +31,14 @@ public:
 
     /** @brief Проверяет, над всеми ли файлами/директориями была выполнена работа в текущей директории
      * если над всеми, то модифицирует список файлов, объединяя просто в директорию
-     * @param pathListFileDir - список файлов и директорий, над которыми выполнены действия
-     * @param pathDir - путь к директории, в которое проверяем эти файлы
+     * @param filesWasAction - список файлов и директорий, над которыми выполнены действия
+     * @param filesNotWasAction - список файлов и директорий, над которыми не выполнены действия
+     * @param dir - путь к директории, в которое проверяем эти файлы
      * @return true - над всеми, поэтому можем список заменить одной директорией
      *         false - не над всеми */
-    bool                WasActionForAllFileDirOnDir(QStringList &files, const QString& dir);
+    bool                WasActionForAllFileDirOnDir(  QStringList &filesWasAction
+                                                    , QStringList& filesNotWasAction
+                                                    , const QString& dir);
 
     /** @brief По имеющемуся списку файлов возвращает список корневых директорий */
     QStringList         ListAllDirOfFile(const QStringList &files);
@@ -47,16 +50,15 @@ public:
     */
     void                ClearListAction(QStringList& filesWasAction, QStringList& filesMustToBeAction, const QString fileEndAction = "");
 
-    // спиcок файлов/директорий, над которыми было выполнено действие
+    /** @brief спиcок файлов/директорий, над которыми было выполнено действие */
     QStringList         filesWasAction;
-    // список файлов/директорий, над которыми нужно выполнить действия
+    /** @brief список файлов/директорий, над которыми нужно выполнить действия */
     QStringList         filesMustToBeAction;
 
 private:
     // служебные классы
     mutable QDir        dirService;
     mutable QFileInfo   fileInfo;
-
 };
 
 }
