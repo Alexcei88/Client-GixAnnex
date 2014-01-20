@@ -2,6 +2,7 @@
 #include "shelltask.h"
 #include "../repository/irepository.h"
 #include "utils/utils.h"
+#include "../analyze_execute_command/facadeanalyzecommand.h"
 
 // parsing stuff
 #include "../parsing_command_out/parsingcommandclone.h"
@@ -96,15 +97,11 @@ RESULT_EXEC_PROCESS ShellCommand::AddFile(const QString& path) const
 RESULT_EXEC_PROCESS ShellCommand::GetContentFile(const QString& path, FacadeAnalyzeCommand* facade, const bool mode) const
 {
     const QString strCommand = baseCommand + "get " + path;
-    const QString fullPathFile = Utils::CatDirFile(localURL, path);
-    boost::shared_ptr<AnalyzeExecuteCommandGet> analizeCommand(new AnalyzeExecuteCommandGet(*facade));
-    analizeCommand->SetPathGetContent(fullPathFile);
+    boost::shared_ptr<AnalyzeExecuteCommandGet> analizeCommand(new AnalyzeExecuteCommandGet(*facade, mode));
     analizeCommand->SetPathExecuteCommand(localURL);
+    analizeCommand->SetPathGetContent(Utils::CatDirFile(localURL, path));
+    facade->AddGetContentFileQueue(analizeCommand.get());
 
-    if(!mode)
-    {
-        facade->AddGetContentFileQueue(fullPathFile);
-    }
     boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandGet(analizeCommand));
     ShellTask* shellTask = new ShellTask(strCommand, localURL, receiverParsing);
     QThreadPool::globalInstance()->start(shellTask);

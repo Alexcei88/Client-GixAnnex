@@ -24,6 +24,9 @@ namespace AnalyzeCommand
 {
 
 class AnalizeDirOnActionPrivate;
+class AnalyzeExecuteCommand;
+class AnalyzeExecuteCommandGet;
+class AnalyzeExecuteCommandDrop;
 
 class FacadeAnalyzeCommand
 {
@@ -34,21 +37,20 @@ public:
     /** @brief Установка текущего пути репозитория */
     void                SetCurrentPathRepository(const QString& currentPath);
 
+    /** @brief Установка текущей команды, которая выполняется */
+    void                SetCurrentExecuteCommand(AnalyzeExecuteCommand* command);
+    /** @brief Сброс текущей команд */
+    void                ResetCurrentExecuteCommand();
+
     //-------------------  GET  ----------------------------------------------/
-    /** @brief Добавить файл в очередь файлов, на которых дано задание за скачивание */
-    void                AddGetContentFileQueue(const QString& file);
-    /** @brief Началось скачивание файла */
-    void                StartGetContentFile(const QString& file);
-    /** @brief Закончилось скачивание файла */
-    void                EndGetContentFile(const QString& file, const bool lock = true);
-    /** @brief Закончилось скачивание файла с ошибкой  */
-    void                ErrorGetContentFile(const QString& file, const QString& error);
-    /** @brief идет ли в текущей директории(или сам текущий файл) получение контента в текущий момент времени */
+    /** @brief Добавить команду в список команд , на которых дано задание за скачивание */
+    void                AddGetContentFileQueue(AnalyzeExecuteCommandGet *commandGet);
+    /** @brief Удалить команду из списка команд, на которых дано задание за скачивание */
+    void                RemoveGetContentFileQueue(AnalyzeExecuteCommandGet *commandGet);
+    /** @brief Идет ли в текущей директории(или сам текущий файл) получение контента в текущий момент времени */
     bool                IsGettingContentFileDir(const QString& file) const;
-    /** @brief есть ли ошибка получения контента в текущей директории(или сам текущий файл) в текущий момент времени */
+    /** @brief Есть ли ошибка получения контента в текущей директории(или сам текущий файл) в текущий момент времени */
     bool                IsErrorGettingContentFileDir(const QString& file) const;
-    /** @brief установка файла/директории, которое сейчас начинает выполняться */
-    void                SetCurrentGettingContentFileQueue(const QString& file) { currentGettingContentFileQueue = file; }
 
     //-------------------  DROP  ---------------------------------------------/
     /** @brief Добавить файл в очередь файлов, на которых дано задание на удаление */
@@ -64,36 +66,27 @@ public:
     /** @brief есть ли ошибка получения контента в текущей директории(или сам текущий файл) в текущий момент времени */
     bool                IsErrorDroppingContentFileDir(const QString& file) const;
 
-    /** @brief функция модификации списка файлов в класса AnalizeDirOnActionPrivate
+    /** @brief функция выполнения дополнительных действий в классах анализа хода выполнения команд у текущей команды
      * данную функцию дергать только из потока синхронизации иконок либо по окончании команды, тк она может быть математически затратной
      * \details например, объединение списка файлов в одну директорию(и наоборот)
     */
-    void                ModificationAllListFiles();
-
-    /** @brief функция чистки списка комманд на получение контента
-     * данную функцию дергать по окончании выполнения команды
-    */
-    void                ClearListGettingContentFile(const QString& fileEndAction = "");
+    void                ExecuteAddActionForAnalizeCommand();
 
     /** @brief функция чистки списка команд на удаление контента
      * данную функцию дергать по окончании выполнения команды
     */
     void                ClearListDroppingContentFile(const QString& fileEndAction = "");
 
+    // атомарный флаг для потоков, выполняющий команды во threadPool
+    std::atomic_flag*   atomicFlagExecuteCommand;
+
 private:
 
     Q_DISABLE_COPY(FacadeAnalyzeCommand)
 
     //-------------------  GET  ----------------------------------------------/
-    /** @brief файлы/директории, на которые дано задание на скачивание */
-    boost::shared_ptr<AnalizeDirOnActionPrivate> gettingContentFileQueue;
-    /** @brief файл, который сейчас скачивается */
-    QString             gettingContentFile;
-    /** @brief директория/файл, на которое дано задание на скачивание и сейчас выполняется */
-    QString             currentGettingContentFileQueue;
-    /** @brief Последний файл, который скачивался */
-    QString             lastGettingContent;
-
+    /** @brief список на классы анализа хода выполнения команды get */
+    QList<AnalyzeExecuteCommandGet*> listCommandGet;
 
 #warning MUST_TO_BE_REFACTORING
     // вектор, содержащий файлы, которые не удалось скачать(ключ - имя файла, значение - причина ошибки)
@@ -122,20 +115,14 @@ private:
     /** @brief Чистка списка файлов в вспом классах AnalizeDirOnActionPrivate */
     void                ClearListFiles(AnalizeDirOnActionPrivate* listFiles, const QString& fileEndAction = "") const;
 
-    /** @brief Проверка файлов у списка файлов на имение контента, когда выполняется команда получения контента */
-    void                IsHavingContentFileWhileGettingContent(const QStringList& listFile);
-
-    /** @brief Проверка файлов у списка файлов на отсутствие контента, когда выполняется команда удаления контента */
-    void                IsNotHavingContentFileWhileDroppingContent(const QStringList& listFile);
-
     /** @brief Текущий путь в репозитории */
     QDir                currentPathRepository;
 
     // в качестве служебных целей
     mutable QFileInfo   fileInfo;
 
-    // атомарный флаг для потоков, выполняющий команды во threadPool
-    std::atomic_flag*   atomicFlagExecuteCommand;
+    /** @brief Указатель на команду, которая сейчас выполняется */
+    AnalyzeExecuteCommand* currentAnalyzeExecuteCommand;
 
 };
 

@@ -1,4 +1,6 @@
 #include "analyzeexecutecommanddrop.h"
+#include "facadeanalyzecommand.h"
+
 
 #include "utils/utils.h"
 using namespace AnalyzeCommand;

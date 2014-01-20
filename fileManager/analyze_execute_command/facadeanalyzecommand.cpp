@@ -1,6 +1,8 @@
 #include "facadeanalyzecommand.h"
 #include "utils/utils.h"
 #include "analizediraction.h"
+#include "analyzeexecutecommandget.h"
+#include "analyzeexecutecommanddrop.h"
 
 // std stuff
 #include <iostream>
@@ -11,8 +13,7 @@ using namespace Utils;
 
 //----------------------------------------------------------------------------------------/
 FacadeAnalyzeCommand::FacadeAnalyzeCommand():
-    gettingContentFileQueue(new AnalizeDirOnActionPrivate())
-  , droppingContentFileQueue(new AnalizeDirOnActionPrivate())
+    droppingContentFileQueue(new AnalizeDirOnActionPrivate())
   , atomicFlagExecuteCommand(new std::atomic_flag(ATOMIC_FLAG_INIT))
 {}
 //----------------------------------------------------------------------------------------/
@@ -23,83 +24,72 @@ FacadeAnalyzeCommand::~FacadeAnalyzeCommand()
 //----------------------------------------------------------------------------------------/
 void FacadeAnalyzeCommand::SetCurrentPathRepository(const QString& currentPath)
 {
+    AtomicLock flag(atomicFlagExecuteCommand);
+    Q_UNUSED(flag);
+
     currentPathRepository.setPath(currentPath);
 }
 //----------------------------------------------------------------------------------------/
-void FacadeAnalyzeCommand::AddGetContentFileQueue(const QString& file)
+void FacadeAnalyzeCommand::SetCurrentExecuteCommand(AnalyzeExecuteCommand* command)
 {
     AtomicLock flag(atomicFlagExecuteCommand);
     Q_UNUSED(flag);
 
-    gettingContentFileQueue->filesMustToBeAction << file;
+    currentAnalyzeExecuteCommand = command;
 }
 //----------------------------------------------------------------------------------------/
-void FacadeAnalyzeCommand::StartGetContentFile(const QString& file)
+void FacadeAnalyzeCommand::ResetCurrentExecuteCommand()
 {
     AtomicLock flag(atomicFlagExecuteCommand);
     Q_UNUSED(flag);
 
-    gettingContentFile = file;
+    currentAnalyzeExecuteCommand = nullptr;
 }
 //----------------------------------------------------------------------------------------/
-void FacadeAnalyzeCommand::EndGetContentFile(const QString& file, const bool lock)
-{
-    if(lock)
-    {
-        AtomicLock flag(atomicFlagExecuteCommand);
-        Q_UNUSED(flag);
-    }
-
-    gettingContentFile = "";
-    // запоминаем последний файл, контент которого получаем
-    lastGettingContent = file;
-    // если список заданий не пустой, то фиксируем, что было выполнено действие
-    if(!gettingContentFileQueue->filesMustToBeAction.isEmpty())
-    {
-        if(!lock)
-        {
-            if(gettingContentFileQueue->filesWasAction.contains(file))
-                return;
-        }
-        gettingContentFileQueue->filesWasAction << file;
-    }
-}
-//----------------------------------------------------------------------------------------/
-void FacadeAnalyzeCommand::ErrorGetContentFile(const QString& file, const QString& error)
+void FacadeAnalyzeCommand::AddGetContentFileQueue(AnalyzeExecuteCommandGet* commandGet)
 {
     AtomicLock flag(atomicFlagExecuteCommand);
     Q_UNUSED(flag);
+
+    listCommandGet.push_back(commandGet);
+//    gettingContentFileQueue->filesMustToBeAction << file;
+}
+//----------------------------------------------------------------------------------------/
+void FacadeAnalyzeCommand::RemoveGetContentFileQueue(AnalyzeExecuteCommandGet *commandGet)
+{
+    auto it = std::find(listCommandGet.begin(), listCommandGet.end(), commandGet);
+    assert(it != listCommandGet.end());
+    listCommandGet.erase(it);
+}
+//----------------------------------------------------------------------------------------/
+//void FacadeAnalyzeCommand::ErrorGetContentFile(const QString& file, const QString& error)
+//{
+//    AtomicLock flag(atomicFlagExecuteCommand);
+//    Q_UNUSED(flag);
 
     // если список заданий не пустой, то фиксиурем, что было выполнено действие
-    if(!gettingContentFileQueue->filesMustToBeAction.isEmpty())
-        gettingContentFileQueue->filesWasAction << file;
+//    if(!gettingContentFileQueue->filesMustToBeAction.isEmpty())
+//        gettingContentFileQueue->filesWasAction << file;
 
-    assert(!gettingContentFile.isEmpty());
-    gettingContentFile = "";   
+//    assert(!gettingContentFile.isEmpty());
+//    gettingContentFile = "";
 
-    // помещаем файл в вектор ошибок
-    if(errorGettingContentFile.contains(file))
-        errorGettingContentFile.remove(file);
+//    // помещаем файл в вектор ошибок
+//    if(errorGettingContentFile.contains(file))
+//        errorGettingContentFile.remove(file);
 
-    errorGettingContentFile[file] = error;
-}
+//    errorGettingContentFile[file] = error;
+//}
 //----------------------------------------------------------------------------------------/
 bool FacadeAnalyzeCommand::IsGettingContentFileDir(const QString& file) const
 {
     AtomicLock flag(atomicFlagExecuteCommand);
     Q_UNUSED(flag);
 
-    const QString fullPathFile = CatDirFile(currentPathRepository.path(), file);
-    if(DirContainsFile(fullPathFile, gettingContentFile))
+    for(AnalyzeExecuteCommandGet* command : listCommandGet)
     {
-        return true;
-    }
-    if(gettingContentFileQueue->IsFindFileOnDirAction(fullPathFile))
-    {
-        if(!gettingContentFileQueue->IsWasActionForFile(fullPathFile))
-        {
+        if(command->IsGettingContentFileDir(currentPathRepository.path(), file))
             return true;
-        }
     }
     return false;
 }
@@ -211,29 +201,15 @@ bool FacadeAnalyzeCommand::IsErrorDroppingContentFileDir(const QString& file) co
     return false;
 }
 //----------------------------------------------------------------------------------------/
-void FacadeAnalyzeCommand::ModificationAllListFiles()
+void FacadeAnalyzeCommand::ExecuteAddActionForAnalizeCommand()
 {
-    // gettingContentFileQueue
-    boost::function<void (const QStringList&)> haveContentWhileGettingContent;
-    haveContentWhileGettingContent = boost::bind(&FacadeAnalyzeCommand::IsHavingContentFileWhileGettingContent, this, _1);
-
-    ModificationListFiles(gettingContentFileQueue.get(), haveContentWhileGettingContent, lastGettingContent, currentGettingContentFileQueue);
-
-    // droppingContentFileQueue
-    boost::function<void (const QStringList&)> haveContentWhileDroppingContent;
-    haveContentWhileDroppingContent = boost::bind(&FacadeAnalyzeCommand::IsNotHavingContentFileWhileDroppingContent, this, _1);
-
-    ModificationListFiles(droppingContentFileQueue.get());
-}
-//----------------------------------------------------------------------------------------/
-void FacadeAnalyzeCommand::ClearListGettingContentFile(const QString& fileEndAction)
-{
-    // просматриваем весь список файлов, над которыми не было выполнено действие в заданной директории
-    while(ModificationListFiles(gettingContentFileQueue.get(), 0, "", currentGettingContentFileQueue, true))
+    if(currentAnalyzeExecuteCommand)
     {
-
+        currentAnalyzeExecuteCommand->ExecuteAddActionForAnalizeExecuteCommand();
     }
-    ClearListFiles(gettingContentFileQueue.get(), fileEndAction);
+//    ModificationListFiles(gettingContentFileQueue.get(), haveContentWhileGettingContent, lastGettingContent, currentGettingContentFileQueue);
+
+//    ModificationListFiles(droppingContentFileQueue.get());
 }
 //----------------------------------------------------------------------------------------/
 void FacadeAnalyzeCommand::ClearListDroppingContentFile(const QString& fileEndAction)
@@ -287,7 +263,7 @@ bool FacadeAnalyzeCommand::ModificationListFiles(  AnalizeDirOnActionPrivate *li
     {
         std::cout<<"dir = "<<dir.toStdString()<<std::endl;
         //if(listFiles->WasActionForAllFileDirOnDir(listFiles->filesWasAction, listFilesNotWasAction, dir))
-        if(listFiles->EndActionForDir(dir, listDirs, lastFile))
+        if(listFiles->EndActionForDir(dir, lastFile))
         {
             listFiles->UnionAllFileDirOnDir(listFiles->filesWasAction, dir);
         #ifdef DEBUG
@@ -320,47 +296,6 @@ void FacadeAnalyzeCommand::ClearListFiles(AnalizeDirOnActionPrivate* listFiles, 
     }
 
     listFiles->ClearListAction(listFiles->filesWasAction, listFiles->filesMustToBeAction, fileEndAction);
-}
-//----------------------------------------------------------------------------------------/
-void FacadeAnalyzeCommand::IsHavingContentFileWhileGettingContent(const QStringList& listFile)
-{
-    QFileInfo fileInfo;
-    for(const QString& file: listFile)
-    {
-        fileInfo.setFile(file);
-        // если это директория, то пропускаем
-        if(fileInfo.isDir())
-            continue;
-
-        if(fileInfo.isFile())
-        {
-            // посылаем сигнал, что файл уже получен
-            EndGetContentFile(file, false);
-        }
-        else
-        { // эта пустая символическая ссылка, ничего не делаем
-        }
-    }
-}
-//----------------------------------------------------------------------------------------/
-void FacadeAnalyzeCommand::IsNotHavingContentFileWhileDroppingContent(const QStringList& listFile)
-{
-    QFileInfo fileInfo;
-    for(const QString& file: listFile)
-    {
-        fileInfo.setFile(file);
-        // если это директория, то пропускаем
-        if(fileInfo.isDir())
-            continue;
-
-        if(fileInfo.isFile())
-        {}
-        else
-        {
-            // посылаем сигнал о том, что контент у файла уже удален
-            EndDropContentFile(file, false);
-        }
-    }
 }
 //----------------------------------------------------------------------------------------/
 

@@ -122,7 +122,8 @@ bool AnalizeDirOnActionPrivate::IsWasActionForFile(const QString& file) const
                 const QString dir_ = file + "/";
                 // ищем файл в директории
                 if(file.startsWith(dir_))
-                    return true;
+                    return true;/** @brief файл/директория, для которой запущена команда */
+                QString             fileGetContent;
             }
             else
             {
@@ -225,7 +226,7 @@ QStringList AnalizeDirOnActionPrivate::ListAllDirOfFile(const QStringList& files
     return listRet;
 }
 //----------------------------------------------------------------------------------------/
-bool AnalizeDirOnActionPrivate::EndActionForDir(const QString& dir, const QStringList& allDirs, const QString& lastFileAction) const
+bool AnalizeDirOnActionPrivate::EndActionForDir(const QString& dir, const QString& lastFileAction) const
 {
     if(lastFileAction.isEmpty())
         return true;

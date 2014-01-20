@@ -156,7 +156,7 @@ void IRepository::ChangeCurrentDirectory(const QString& curDir)
 //----------------------------------------------------------------------------------------/
 void IRepository::UpdateParamSyncFileDir()
 {
-    facadeAnalyzeCommand->ModificationAllListFiles();
+    facadeAnalyzeCommand->ExecuteAddActionForAnalizeCommand();
 
     paramSyncFileDir.clear();
     QStringList nameAllFilesAndDir = dir.entryList();

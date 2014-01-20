@@ -218,7 +218,7 @@ FocusScope{
             {
                 // запускаем поток и таймер обновления состояния иконок
                 contrIcons.startThreadIconsSync();
-//                timeSyncIcons.start();
+                timeSyncIcons.start();
             }
             MouseArea {
                 anchors.fill: parent
@@ -419,7 +419,7 @@ FocusScope{
             if(dirModel.status === NewFolderListModel.Null)
                 return;
 
-            return;
+//            return;
 //            // Обновление состояния иконок синхронизации у делегатов компонента GridView
             var item = view.children[0];
             // этот итем является родителем для делегатов, дальше пойдут итемы делегатов

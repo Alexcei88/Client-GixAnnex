@@ -1,17 +1,24 @@
 #ifndef ANALYZEEXECUTECOMMAND_H
 #define ANALYZEEXECUTECOMMAND_H
 
-#include "facadeanalyzecommand.h"
+// std stuff
+#include <atomic>
 
-/* РОДИТЕЛЬСКИЙ КЛАСС АНАЛИЗА ХОДА ВЫПОЛНЕНИЯ КОМАНДЫ */
+// Qt stuff
+#include <QString>
+#include <QDir>
 
 namespace AnalyzeCommand
 {
+class FacadeAnalyzeCommand;
+
 class AnalyzeExecuteCommand
 {
 public:
     AnalyzeExecuteCommand(FacadeAnalyzeCommand& facadeAnalyzeCommand);
     AnalyzeExecuteCommand(FacadeAnalyzeCommand& facadeAnalyzeCommand, const QString& pathExecuteCommand);
+
+    virtual ~AnalyzeExecuteCommand();
 
     /** @brief Начало выполнения команды */
     virtual void        StartExecuteCommand();
@@ -24,15 +31,21 @@ public:
     /** @brief Установка пути, откуда запущена команда */
     inline void         SetPathExecuteCommand(const QString& path) { pathExecuteCommand = path; }
 
+    /** @brief Функция, которая выполняет доп действия индивидуальные для каждой команды */
+    virtual void        ExecuteAddActionForAnalizeExecuteCommand() { }
+
 protected:
     /** @brief Фасад, управляющий анализом выполнения команд */
     FacadeAnalyzeCommand& facadeAnalyzeCommand;
     /** @brief Путь откуда была запущена команда */
     QString             pathExecuteCommand;
 
-private:
+    // атомарный флаг для потоков, выполняющий команды во threadPool
+    std::atomic_flag*   atomicFlagExecuteCommand;
+
     bool                startCommand;
     bool                endCommand;
+
 
 };
 }

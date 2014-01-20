@@ -48,12 +48,11 @@ public:
 
     /** @brief Проверяет, была ли выполнена вся работа над данной директорией
     * @param dir - проверяемая директория
-    * @param allDir - список всех директорий
     * @param lastFileAction - последний файл, над которым была выполнена работа
     * @return true - да, работа над директорией была выполнена
     *         false - нет, работа в данной директории еще ведеться
     */
-    bool                EndActionForDir(const QString& dir, const QStringList& allDirs, const QString& lastFileAction) const;
+    bool                EndActionForDir(const QString& dir, const QString& lastFileAction) const;
 
     /** @brief Чистка списков файлов/директорий
         @param filesWasAction - список файлов, над которыми были выполнены действия
