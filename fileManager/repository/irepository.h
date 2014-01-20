@@ -79,7 +79,7 @@ public:
     @param autosyncContent -
     @return void
     */
-    void                SetParamSyncRepository(const bool& autosync, const bool& autosyncContent);
+    void                 SetParamSyncRepository(const bool& autosync, const bool& autosyncContent);
 
     /** @brief взятие параметров автосинхронизации репозитория */
     inline bool          GetParamSyncRepository() const { return paramRepo.autosync; }
@@ -153,6 +153,12 @@ public:
     */
     virtual GANN_DEFINE::RESULT_EXEC_PROCESS SetDirectMode(const bool& direct);
 
+    /**
+    @brief Взять состояние, в котором находиться репозиторий
+    */
+    bool                GetDirectMode() const { return paramRepo.directMode; }
+
+
     /** @brief Установка состояния репозитория */
     void                SetState(const STATE_REPOSITORY& state);
 
@@ -167,7 +173,7 @@ public:
 
     /**
     @brief Взятие состояния у всех файлов в текущей директории
-    @return возвращаем константную ссылку на защищенное поле класса(для скорости, состояния файла часто анализируется)
+    @return возвращаем константную ссылку на защищенное поле класса
     */
     inline const QMap<QString, PARAMETR_FILEFOLDER_GIT_ANNEX>& GetStateFileDir() const { return paramSyncFileDir; };
 

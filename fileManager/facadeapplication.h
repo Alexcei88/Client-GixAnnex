@@ -46,8 +46,7 @@ public:
 
     /** @brief Вернуть указатель на текущий репозиторий
     |details если нет активного репозитория, то возвращаем nullptr */
-    IRepository*       GetCurrentRepository() const;
-
+    IRepository*        GetCurrentRepository() const;
 
     // классы модели MVC объявим другом для нашего фасада
     // (принято такое архитектурное решение, что все методы фасада сделать приватными, и дать доступ только к моделям MVC,
@@ -68,8 +67,8 @@ private:
 
     /** @brief Сохранения нового репозитория в конфигах */
     void                SaveRepository(const QString& localURL, const QString& remoteURL, const QString& nameRepo,
-                                       const bool autosync = true, const bool autosyncContent = true
-                                       ) const;
+                                       const bool autosync = true, const bool autosyncContent = true,
+                                       const bool directMode = true) const;
 
     /** @brief Сохранения параметров репозитория в конфигах */
     void                SaveOptionsRepository(const QString &localURL);

@@ -274,7 +274,6 @@ FocusScope{
                             enabled: false
                             visible: false
                         }
-
                     }
 
                     Text

@@ -29,7 +29,7 @@ SystemTray::SystemTray():
     trayIcon->show();
 
     connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(ActivateTray(QSystemTrayIcon::ActivationReason)));
-//    connect(this, SIGNAL(updateIconsSyncronization), this, SLOT(OnUpdateIconsSyncronization), Qt::AutoConnection);
+    connect(this, SIGNAL(updateIconsSyncronization), this, SLOT(OnUpdateIconsSyncronization));
 }
 //----------------------------------------------------------------------------------------/
 void SystemTray::ActivateTray(QSystemTrayIcon::ActivationReason reason)

@@ -7,11 +7,6 @@
 #include <QApplication>
 #include <QQuickView>
 
-/*
- * КЛАСС, УПРАВЛЯЮЩИЙ ОКНАМИ ПРИЛОЖЕНИЯ:
- * ПОКАЗ, СКРЫТИЕ ФОРМ
-
-*/
 
 class SystemTray : public QWidget
 {
@@ -48,13 +43,9 @@ private:
     QAction*            quitAction;
 
     // viewer-ы
-    /**
-    @brief viewRepo - главный вид
-    */
+    /** @brief viewRepo - главный вид */
     QQuickView*         mainView;
-    /**
-    @brief cloneRepo - вид окна клонирования репозитория
-    */
+    /** @brief cloneRepo - вид окна клонирования репозитория */
     QQuickView*         cloneRepoView;
 };
 

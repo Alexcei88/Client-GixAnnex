@@ -16,7 +16,7 @@ public:
     /** @brief Начало выполнения команды */
     virtual void        StartExecuteCommand();
 
-    /** @brief Остановка выполнения команды
+    /** @brief Завершение выполнения команды
      *  @param Была ли запущена команда(может процесс с командой не смогли создать и она не была выполнена)
     */
     virtual void        EndExecuteCommand(const bool wasExecute = true);

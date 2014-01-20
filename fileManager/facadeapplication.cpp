@@ -33,7 +33,7 @@ FacadeApplication::FacadeApplication() :
     ResourceGenerator::getInstance();
 
     // запускаем демон за просмотром директорий с репозиториями
-    WatchRepositories();
+//   WatchRepositories();
 
     // инициализируем связь C и QML
     InitClassCAndQML();
@@ -127,19 +127,32 @@ void FacadeApplication::LoadRepositories()
 
         std::unique_ptr<IRepository> tempRepo(new TRepository(localUrl, remoteUrl, nameRepo));
 
+        QDomNodeList node = listRepo.at(countRepo).childNodes();
+        assert(node.size() == 2);
         // читаем список параметров автосинхронизации
         {
-            QDomNodeList nodeSync = listRepo.at(countRepo).childNodes();
-            assert(nodeSync.size() == 1);
-            QDomNamedNodeMap nodeSyncMap = nodeSync.at(0).attributes();
+            QDomNamedNodeMap nodeSyncMap = node.at(0).attributes();
             assert(nodeSyncMap.count() == 2);
 
             QDomAttr attrSyncRepo = nodeSyncMap.namedItem("autosync").toAttr();
             const bool autosync = attrSyncRepo.value().toInt();
             QDomAttr attrSyncRepoContent = nodeSyncMap.namedItem("autosyncContent").toAttr();
+
+            // актуализируем данные репозитория
             const bool autosyncContent = attrSyncRepoContent.value().toInt();
             tempRepo->SetParamSyncRepository(autosync, autosyncContent);
             autosync ? tempRepo->SetState(IRepository::Synced) : tempRepo->SetState(IRepository::Disable_sincing);
+        }
+
+        // читаем список параметров прямого/косвенного режима
+        {
+            QDomNamedNodeMap nodeModeMap = node.at(1).attributes();
+            assert(nodeModeMap.count() == 1);
+            QDomAttr attrModeRepo = nodeModeMap.namedItem("directMode").toAttr();
+
+            // актуализируем данные репозитория
+            const bool directMode = attrModeRepo.value().toInt();
+            tempRepo->SetDirectMode(directMode);
         }
 
         repository[localUrl] = std::move(tempRepo);
@@ -151,7 +164,7 @@ void FacadeApplication::LoadRepositories()
 //----------------------------------------------------------------------------------------/
 void FacadeApplication::SaveRepository(const QString& localURL, const QString& remoteURL, const QString& nameRepo,
                                        const bool autosync, const bool autosyncContent
-                                       ) const
+                                       , const bool directMode) const
 {
     QDomDocument doc;
 
@@ -208,6 +221,18 @@ void FacadeApplication::SaveRepository(const QString& localURL, const QString& r
     // теперь устанавливаем этот элемент как дочерний к элементу newRepo
     newRepo.appendChild(paramSync);
 
+    // создаем дочерний элемент у элемента newRepo элемент paramMode
+    QDomElement paramMode = doc.createElement("paramMode");
+
+    // создаем аттрибуты элемента
+    {
+        QDomAttr attrParamDirectMode = doc.createAttribute("directMode");
+        attrParamDirectMode.setValue(QString::number(int(directMode)));
+        paramMode.setAttributeNode(attrParamDirectMode);
+    }
+    // теперь устанавливаем этот элемент как дочерний к элементу newRepo
+    newRepo.appendChild(paramMode);
+
     fileRepoConfig.reset();
     QTextStream(&fileRepoConfig) << doc.toString();
     fileRepoConfig.close();
@@ -254,12 +279,14 @@ void FacadeApplication::SaveOptionsRepository(const QString& localURL)
             const IRepository* repo = repository[localUrl].get();
             const bool autoSync = repo->GetParamSyncRepository();
             const bool autoSyncContent = repo->GetParamSyncContentRepository();
+            const bool directMode = repo->GetDirectMode();
+
+            QDomNodeList node = listRepo.at(countRepo).childNodes();
+            assert(node.size() == 2);
 
             // читаем список параметров автосинхронизации
             {
-                QDomNodeList nodeSync = listRepo.at(countRepo).childNodes();
-                assert(nodeSync.size() == 1);
-                QDomNamedNodeMap nodeSyncMap = nodeSync.at(0).attributes();
+                QDomNamedNodeMap nodeSyncMap = node.at(0).attributes();
                 assert(nodeSyncMap.count() == 2);
 
                 QDomAttr attrSyncRepo = nodeSyncMap.namedItem("autosync").toAttr();
@@ -267,6 +294,15 @@ void FacadeApplication::SaveOptionsRepository(const QString& localURL)
                 QDomAttr attrSyncRepoContent = nodeSyncMap.namedItem("autosyncContent").toAttr();
                 attrSyncRepoContent.setValue(QString::number(autoSyncContent));
             }
+            // читаем список параметров режима репозитория
+            {
+                QDomNamedNodeMap nodeModeMap = node.at(1).attributes();
+                assert(nodeModeMap.count() == 1);
+
+                QDomAttr attrModeRepo = nodeModeMap.namedItem("directMode").toAttr();
+                attrModeRepo.setValue(QString::number(directMode));
+            }
+
             find = true;
         }
     }

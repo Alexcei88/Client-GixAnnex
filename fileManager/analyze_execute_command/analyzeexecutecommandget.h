@@ -15,7 +15,7 @@ class FacadeAnalyzeCommand;
 class AnalyzeExecuteCommandGet: public AnalyzeExecuteCommand
 {
 public:
-    AnalyzeExecuteCommandGet(FacadeAnalyzeCommand& facadeAnalyzeCommand);
+    AnalyzeExecuteCommandGet(FacadeAnalyzeCommand& facadeAnalyzeCommand, const bool mode = true);
 
     virtual void        StartExecuteCommand() override;
     virtual void        EndExecuteCommand(const bool wasExecute = true) override;
@@ -26,7 +26,9 @@ public:
     inline void         SetPathGetContent(const QString& file) { fileGetContent = file; }
 
 private:
-    /** @brief файл/директория, откуда запущена команда */
+    // режим запуска команды
+    const bool          modeStart;
+    /** @brief файл/директория, для которой запущена команда */
     QString             fileGetContent;
     /** @brief перебирает рекурсивно все файлы в переданном пути,
      *  если у файла есть уже контент, то послыает сигнал, что контент уже получен */

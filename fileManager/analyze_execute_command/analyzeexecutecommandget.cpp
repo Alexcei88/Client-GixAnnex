@@ -5,8 +5,9 @@ using namespace AnalyzeCommand;
 using namespace Utils;
 
 //----------------------------------------------------------------------------------------/
-AnalyzeExecuteCommandGet::AnalyzeExecuteCommandGet(FacadeAnalyzeCommand &facadeAnalyzeCommand):
+AnalyzeExecuteCommandGet::AnalyzeExecuteCommandGet(FacadeAnalyzeCommand &facadeAnalyzeCommand, const bool mode):
     AnalyzeExecuteCommand(facadeAnalyzeCommand)
+  , modeStart(mode)
 {}
 //----------------------------------------------------------------------------------------/
 void AnalyzeExecuteCommandGet::StartExecuteCommand()
@@ -14,13 +15,17 @@ void AnalyzeExecuteCommandGet::StartExecuteCommand()
     AnalyzeExecuteCommand::StartExecuteCommand();
     // перебираем файлы, может уже есть у кого-то контент
     ForeachFilesHaveContentAlready(Utils::CatDirFile(pathExecuteCommand, fileGetContent));
+    // передаем, что начинается выполняться скачивание файла/директории
+    facadeAnalyzeCommand.SetCurrentGettingContentFileQueue(fileGetContent);
 }
 //----------------------------------------------------------------------------------------/
 void AnalyzeExecuteCommandGet::EndExecuteCommand(const bool wasExecute)
 {
     AnalyzeExecuteCommand::EndExecuteCommand(wasExecute);
     // чистим списки
-//    facadeAnalyzeCommand.ClearListGettingContentFile(fileGetContent);
+    facadeAnalyzeCommand.ClearListGettingContentFile(fileGetContent);
+    // передаем, что скачивание файла/директории закончилось
+    facadeAnalyzeCommand.SetCurrentGettingContentFileQueue("");
 }
 //----------------------------------------------------------------------------------------/
 void AnalyzeExecuteCommandGet::StartGetContentFile(const QString& file)
