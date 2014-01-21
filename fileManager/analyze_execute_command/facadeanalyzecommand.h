@@ -78,7 +78,7 @@ public:
     void                ClearListDroppingContentFile(const QString& fileEndAction = "");
 
     // атомарный флаг для потоков, выполняющий команды во threadPool
-    std::atomic_flag*   atomicFlagExecuteCommand;
+    static std::atomic_flag* atomicFlagExecuteCommand;
 
 private:
 
@@ -87,12 +87,6 @@ private:
     //-------------------  GET  ----------------------------------------------/
     /** @brief список на классы анализа хода выполнения команды get */
     QList<AnalyzeExecuteCommandGet*> listCommandGet;
-
-#warning MUST_TO_BE_REFACTORING
-    // вектор, содержащий файлы, которые не удалось скачать(ключ - имя файла, значение - причина ошибки)
-    // нужно тоже объединят в более крупные стуктуры данных(в папки)
-    // а то слишком слишком много памяти будет съедать
-    QMap<QString, QString> errorGettingContentFile;
 
     //-------------------  DROP  ---------------------------------------------/
     /** @brief файлы/директории, на которые дано задание на удаление */

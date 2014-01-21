@@ -34,6 +34,8 @@ public:
 
     /** @brief Идет ли в текущей директории(или сам файл) получение контента в текущий момент времени */
     bool                IsGettingContentFileDir(const QString& currentPath, const QString& file) const;
+    /** @brief Есть ли ошибка получения контента в текущей директории(или сам текущий файл) в текущий момент времени */
+    static bool         IsErrorGettingContentFileDir(const QString& currentPath, const QString& file);
 
 private:
     // режим запуска команды
@@ -45,25 +47,26 @@ private:
     boost::shared_ptr<AnalizeDirOnActionPrivate> gettingContentFileQueue;
     /** @brief файл/директория, скачивание которых завершилось неудачей */
     static boost::shared_ptr<AnalizeDirOnActionPrivate> errorGettingContentFile;
-
     /** @brief файл, который сейчас скачивается */
     QString             gettingContentFile;
     /** @brief Последний файл, который скачивается */
-    QString             lastGettingContent;
-
-    // в качестве служебных целей
-    mutable QFileInfo   fileInfo;
+    QString             lastGettingContentFile;
+    /** @brief Список файлов, скаченные за текущую сессию
+     * (сессия- период между вызовами функции ExecuteAddActionForAnalizeExecuteCommand */
+    static QStringList  lastGettingContentFiles;
 
     /** @brief Перебирает рекурсивно все файлы в переданном пути,
      *  если у файла есть уже контент, то послыает сигнал, что контент уже получен */
     void                ForeachFilesHaveContentAlready(const QString& path) const;
-
     /** @brief Содержит ли директория файл(в том числе и в поддиректориях) */
     bool                DirContainsFile(const QString& dir, const QString& file) const;
-
     /** @brief Модификация списка файлов GettingContentFile */
     bool                ModificationGettingContentFileQueue();
+    /** @brief Модификация списка файлов ErrorGettingContentFile */
+    static bool         ModificationErrorGettingContentFile();
 
+    // в качестве служебных целей
+    mutable QFileInfo   fileInfo;
 
 };
 }

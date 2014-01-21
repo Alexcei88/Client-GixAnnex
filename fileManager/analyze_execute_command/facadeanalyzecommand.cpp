@@ -11,15 +11,16 @@
 using namespace AnalyzeCommand;
 using namespace Utils;
 
+std::atomic_flag* FacadeAnalyzeCommand::atomicFlagExecuteCommand = new std::atomic_flag(ATOMIC_FLAG_INIT);
 //----------------------------------------------------------------------------------------/
 FacadeAnalyzeCommand::FacadeAnalyzeCommand():
     droppingContentFileQueue(new AnalizeDirOnActionPrivate())
-  , atomicFlagExecuteCommand(new std::atomic_flag(ATOMIC_FLAG_INIT))
 {}
 //----------------------------------------------------------------------------------------/
 FacadeAnalyzeCommand::~FacadeAnalyzeCommand()
 {
     delete atomicFlagExecuteCommand;
+    atomicFlagExecuteCommand = 0l;
 }
 //----------------------------------------------------------------------------------------/
 void FacadeAnalyzeCommand::SetCurrentPathRepository(const QString& currentPath)
@@ -61,25 +62,6 @@ void FacadeAnalyzeCommand::RemoveGetContentFileQueue(AnalyzeExecuteCommandGet *c
     listCommandGet.erase(it);
 }
 //----------------------------------------------------------------------------------------/
-//void FacadeAnalyzeCommand::ErrorGetContentFile(const QString& file, const QString& error)
-//{
-//    AtomicLock flag(atomicFlagExecuteCommand);
-//    Q_UNUSED(flag);
-
-    // если список заданий не пустой, то фиксиурем, что было выполнено действие
-//    if(!gettingContentFileQueue->filesMustToBeAction.isEmpty())
-//        gettingContentFileQueue->filesWasAction << file;
-
-//    assert(!gettingContentFile.isEmpty());
-//    gettingContentFile = "";
-
-//    // помещаем файл в вектор ошибок
-//    if(errorGettingContentFile.contains(file))
-//        errorGettingContentFile.remove(file);
-
-//    errorGettingContentFile[file] = error;
-//}
-//----------------------------------------------------------------------------------------/
 bool FacadeAnalyzeCommand::IsGettingContentFileDir(const QString& file) const
 {
     AtomicLock flag(atomicFlagExecuteCommand);
@@ -98,14 +80,7 @@ bool FacadeAnalyzeCommand::IsErrorGettingContentFileDir(const QString& file) con
     AtomicLock flag(atomicFlagExecuteCommand);
     Q_UNUSED(flag);
 
-    for(auto iterator = errorGettingContentFile.constBegin(); iterator != errorGettingContentFile.constEnd(); ++iterator)
-    {
-        if(DirContainsFile(CatDirFile(currentPathRepository.path(), file), iterator.key()))
-        {
-            return true;
-        }
-    }
-    return false;
+    return AnalyzeExecuteCommandGet::IsErrorGettingContentFileDir(currentPathRepository.path(), file);
 }
 //----------------------------------------------------------------------------------------/
 void FacadeAnalyzeCommand::AddDropContentFileQueue(const QString& file)
