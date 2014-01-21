@@ -32,7 +32,7 @@ public:
 
     void                SetPathGetContent(const QString& file);
 
-    /** @brief идет ли в текущей директории(или сам файл) получение контента в текущий момент времени */
+    /** @brief Идет ли в текущей директории(или сам файл) получение контента в текущий момент времени */
     bool                IsGettingContentFileDir(const QString& currentPath, const QString& file) const;
 
 private:
@@ -41,30 +41,28 @@ private:
 
     /** @brief файл/директория, для которой запущена команда */
     QString             fileGetContent;
-
     /** @brief файл/директория, на которые дано задание на скачивание */
     boost::shared_ptr<AnalizeDirOnActionPrivate> gettingContentFileQueue;
+    /** @brief файл/директория, скачивание которых завершилось неудачей */
+    static boost::shared_ptr<AnalizeDirOnActionPrivate> errorGettingContentFile;
 
     /** @brief файл, который сейчас скачивается */
     QString             gettingContentFile;
-
     /** @brief Последний файл, который скачивается */
     QString             lastGettingContent;
 
     // в качестве служебных целей
     mutable QFileInfo   fileInfo;
 
-    /** @brief перебирает рекурсивно все файлы в переданном пути,
+    /** @brief Перебирает рекурсивно все файлы в переданном пути,
      *  если у файла есть уже контент, то послыает сигнал, что контент уже получен */
     void                ForeachFilesHaveContentAlready(const QString& path) const;
 
     /** @brief Содержит ли директория файл(в том числе и в поддиректориях) */
     bool                DirContainsFile(const QString& dir, const QString& file) const;
 
-    /** @brief Модификация списка файла*/
+    /** @brief Модификация списка файлов GettingContentFile */
     bool                ModificationGettingContentFileQueue();
-
-
 
 
 };

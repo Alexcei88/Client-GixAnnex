@@ -52,7 +52,6 @@ void FacadeAnalyzeCommand::AddGetContentFileQueue(AnalyzeExecuteCommandGet* comm
     Q_UNUSED(flag);
 
     listCommandGet.push_back(commandGet);
-//    gettingContentFileQueue->filesMustToBeAction << file;
 }
 //----------------------------------------------------------------------------------------/
 void FacadeAnalyzeCommand::RemoveGetContentFileQueue(AnalyzeExecuteCommandGet *commandGet)
@@ -114,7 +113,7 @@ void FacadeAnalyzeCommand::AddDropContentFileQueue(const QString& file)
     AtomicLock flag(atomicFlagExecuteCommand);
     Q_UNUSED(flag);
 
-    droppingContentFileQueue->filesMustToBeAction << file;
+    droppingContentFileQueue->filesMustToBeAction[file] = "";
 }
 //----------------------------------------------------------------------------------------/
 void FacadeAnalyzeCommand::StartDropContentFile(const QString& file)
@@ -143,7 +142,7 @@ void FacadeAnalyzeCommand::EndDropContentFile(const QString& file, const bool lo
             if(droppingContentFileQueue->filesWasAction.contains(file))
                 return;
         }
-        droppingContentFileQueue->filesWasAction << file;
+//        droppingContentFileQueue->filesWasAction << file;
     }
 }
 //----------------------------------------------------------------------------------------/
@@ -153,8 +152,8 @@ void FacadeAnalyzeCommand::ErrorDropContentFile(const QString& file, const QStri
     Q_UNUSED(flag);
 
     // если список заданий не пустой, то фиксируем, что было выполнено действие
-    if(!droppingContentFileQueue->filesMustToBeAction.isEmpty())
-        droppingContentFileQueue->filesWasAction << file;
+//    if(!droppingContentFileQueue->filesMustToBeAction.isEmpty())
+//        droppingContentFileQueue->filesWasAction << file;
 
     assert(!droppingContentFile.isEmpty());
     droppingContentFile = "";

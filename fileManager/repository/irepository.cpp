@@ -144,7 +144,7 @@ void IRepository::ChangeCurrentDirectory(const QString& curDir)
 
     paramSyncFileDir.clear();
     QStringList nameAllFilesAndDir = dir.entryList();
-    for(auto iterator = nameAllFilesAndDir.begin(); iterator !=  nameAllFilesAndDir.end(); ++iterator)
+    for(auto iterator = nameAllFilesAndDir.begin(); iterator != nameAllFilesAndDir.end(); ++iterator)
     {
         PARAMETR_FILEFOLDER_GIT_ANNEX paramTemp;
         paramTemp.autosync = true;
@@ -160,7 +160,7 @@ void IRepository::UpdateParamSyncFileDir()
 
     paramSyncFileDir.clear();
     QStringList nameAllFilesAndDir = dir.entryList();
-    for(auto iterator = nameAllFilesAndDir.begin(); iterator !=  nameAllFilesAndDir.end(); ++iterator)
+    for(auto iterator = nameAllFilesAndDir.begin(); iterator != nameAllFilesAndDir.end(); ++iterator)
     {
         PARAMETR_FILEFOLDER_GIT_ANNEX paramTemp;
         paramTemp.autosync = true;

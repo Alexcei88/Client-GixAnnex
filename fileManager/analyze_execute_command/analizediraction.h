@@ -13,6 +13,7 @@
 #include <QStringList>
 #include <QList>
 #include <QDir>
+#include <QMap>
 
 namespace AnalyzeCommand
 {
@@ -36,15 +37,15 @@ public:
      * @param dir - путь к директории, в которое проверяем эти файлы
      * @return true - над всеми, поэтому можем список заменить одной директорией
      *         false - не над всеми */
-    bool                WasActionForAllFileDirOnDir(  QStringList &filesWasAction
-                                                    , QStringList& filesNotWasAction
+    bool                WasActionForAllFileDirOnDir(  QMap<QString, QString>& filesWasAction
+                                                    , QMap<QString, QString>& filesNotWasAction
                                                     , const QString& dir) const;
 
     /** @brief Объединение списка файлов/директорий  в одну директорию */
-    void                UnionAllFileDirOnDir(QStringList& files, const QString& dir) const;
+    void                UnionAllFileDirOnDir(QMap<QString, QString>& files, const QString& dir) const;
 
     /** @brief По имеющемуся списку файлов возвращает список корневых директорий */
-    QStringList         ListAllDirOfFile(const QStringList &files) const;
+    QStringList         ListAllDirOfFile(const QMap<QString, QString> &files) const;
 
     /** @brief Проверяет, была ли выполнена вся работа над данной директорией
     * @param dir - проверяемая директория
@@ -59,12 +60,12 @@ public:
         @param filesMustToBeAction - список файлов, над которым нужно выполнить действия
         @param fileEndAction - файл, над которым закончилось выполняться действие
     */
-    void                ClearListAction(QStringList& filesWasAction, QStringList& filesMustToBeAction, const QString fileEndAction = "");
+    void                ClearListAction(QMap<QString, QString>& filesWasAction, QMap<QString, QString>& filesMustToBeAction, const QString fileEndAction = "");
 
     /** @brief спиcок файлов/директорий, над которыми было выполнено действие */
-    QStringList         filesWasAction;
+    QMap<QString, QString> filesWasAction;
     /** @brief список файлов/директорий, над которыми нужно выполнить действия */
-    QStringList         filesMustToBeAction;
+    QMap<QString, QString> filesMustToBeAction;
 
 private:
     // служебные классы

@@ -9,6 +9,8 @@
 using namespace AnalyzeCommand;
 using namespace Utils;
 
+boost::shared_ptr<AnalizeDirOnActionPrivate> AnalyzeExecuteCommandGet::errorGettingContentFile = boost::make_shared<AnalizeDirOnActionPrivate>();
+
 //----------------------------------------------------------------------------------------/
 AnalyzeExecuteCommandGet::AnalyzeExecuteCommandGet(FacadeAnalyzeCommand &facadeAnalyzeCommand, const bool mode):
     AnalyzeExecuteCommand(facadeAnalyzeCommand)
@@ -20,9 +22,6 @@ AnalyzeExecuteCommandGet::AnalyzeExecuteCommandGet(FacadeAnalyzeCommand &facadeA
 void AnalyzeExecuteCommandGet::StartExecuteCommand()
 {
     AnalyzeExecuteCommand::StartExecuteCommand();
-
-    // перебираем файлы, может уже есть у кого-то контент
-//    ForeachFilesHaveContentAlready(Utils::CatDirFile(pathExecuteCommand, fileGetContent));
 }
 //----------------------------------------------------------------------------------------/
 void AnalyzeExecuteCommandGet::EndExecuteCommand(const bool wasExecute)
@@ -58,19 +57,31 @@ void AnalyzeExecuteCommandGet::EndGetContentFile(const QString&file)
     lastGettingContent = fullPathFile;
     if(!gettingContentFileQueue->filesMustToBeAction.isEmpty())
     {
-        gettingContentFileQueue->filesWasAction << fullPathFile;
+        gettingContentFileQueue->filesWasAction[fullPathFile] = "";
     }
 }
 //----------------------------------------------------------------------------------------/
 void AnalyzeExecuteCommandGet::ErrorGetContentFile(const QString& file, const QString& error)
 {
-//    facadeAnalyzeCommand.ErrorGetContentFile(CatDirFile(pathExecuteCommand, file), error);
+    AtomicLock flag(atomicFlagExecuteCommand);
+    Q_UNUSED(flag);
+
+    const QString fullPathFile = CatDirFile(pathExecuteCommand, file);
+    // если список заданий не пустой, то фиксиурем, что было выполнено действие
+    if(!gettingContentFileQueue->filesMustToBeAction.isEmpty())
+        gettingContentFileQueue->filesWasAction[fullPathFile] = "";
+
+    gettingContentFile = "";
+
+    // помещаем файл в класс ошибок
+    if(!errorGettingContentFile->filesMustToBeAction.contains(fullPathFile))
+        errorGettingContentFile->filesMustToBeAction[fullPathFile] = error;
 }
 //----------------------------------------------------------------------------------------/
 void AnalyzeExecuteCommandGet::SetPathGetContent(const QString& file)
 {
     fileGetContent = file;
-    gettingContentFileQueue->filesMustToBeAction << file;
+    gettingContentFileQueue->filesMustToBeAction[file] = "";
 }
 //----------------------------------------------------------------------------------------/
 bool AnalyzeExecuteCommandGet::IsGettingContentFileDir(const QString& currentPath, const QString& file) const
@@ -112,7 +123,7 @@ void AnalyzeExecuteCommandGet::ForeachFilesHaveContentAlready(const QString& pat
         if(fileInfo.isFile())
         {
             // посылаем сигнал, что файл уже получен
-//            facadeAnalyzeCommand.EndGetContentFile(path);
+//            EndGetContentFile(path);
         }
         else
         {
