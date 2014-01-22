@@ -24,13 +24,18 @@ AnalyzeExecuteCommandGet::AnalyzeExecuteCommandGet(FacadeAnalyzeCommand &facadeA
 void AnalyzeExecuteCommandGet::StartExecuteCommand()
 {
     AnalyzeExecuteCommand::StartExecuteCommand();
+    // определеяем файлы, у которого контент уже получен
 }
 //----------------------------------------------------------------------------------------/
 void AnalyzeExecuteCommandGet::EndExecuteCommand(const bool wasExecute)
 {
-    AnalyzeExecuteCommand::EndExecuteCommand(wasExecute);
+    AnalyzeExecuteCommand::EndExecuteCommand(wasExecute);   
     // сообщаем фасаду, что команда выполнена
     facadeAnalyzeCommand.RemoveGetContentFileQueue(this);
+
+    AtomicLock flag(atomicFlagExecuteCommand);
+    Q_UNUSED(flag);
+
     // очищаем список errorGettingContent
     errorGettingContentFile->ClearListAction(errorGettingContentFile->filesWasAction, errorGettingContentFile->filesMustToBeAction);
 }
@@ -66,10 +71,8 @@ void AnalyzeExecuteCommandGet::EndGetContentFile(const QString&file)
     lastGettingContentFile = fullPathFile;
     lastGettingContentFiles << fullPathFile;
 
-    if(!gettingContentFileQueue->filesMustToBeAction.isEmpty())
-    {
+    if(!modeStart)
         gettingContentFileQueue->filesWasAction[fullPathFile] = "";
-    }   
 }
 //----------------------------------------------------------------------------------------/
 void AnalyzeExecuteCommandGet::ErrorGetContentFile(const QString& file, const QString& error)
@@ -77,12 +80,10 @@ void AnalyzeExecuteCommandGet::ErrorGetContentFile(const QString& file, const QS
     AtomicLock flag(atomicFlagExecuteCommand);
     Q_UNUSED(flag);
 
-    const QString fullPathFile = CatDirFile(pathExecuteCommand, file);
-    // если список заданий не пустой, то фиксиурем, что было выполнено действие
-    if(!gettingContentFileQueue->filesMustToBeAction.isEmpty())
-        gettingContentFileQueue->filesWasAction[fullPathFile] = "";
-
     gettingContentFile = "";
+    const QString fullPathFile = CatDirFile(pathExecuteCommand, file);
+    if(!modeStart)
+        gettingContentFileQueue->filesWasAction[fullPathFile] = "";
 
     // помещаем файл в класс ошибок
     if(!errorGettingContentFile->filesMustToBeAction.contains(fullPathFile))
@@ -92,16 +93,20 @@ void AnalyzeExecuteCommandGet::ErrorGetContentFile(const QString& file, const QS
 void AnalyzeExecuteCommandGet::SetPathGetContent(const QString& file)
 {
     fileGetContent = file;
-    gettingContentFileQueue->filesMustToBeAction[file] = "";
+    if(!modeStart)
+        gettingContentFileQueue->filesMustToBeAction[file] = "";
 }
 //----------------------------------------------------------------------------------------/
 bool AnalyzeExecuteCommandGet::IsGettingContentFileDir(const QString& currentPath, const QString& file) const
 {
     const QString fullPathFile = CatDirFile(currentPath, file);
-    if(DirContainsFile(fullPathFile, gettingContentFile))
+    if(FacadeAnalyzeCommand::DirContainsFile(fullPathFile, gettingContentFile))
     {
         return true;
     }
+    if(modeStart)
+        return false;
+
     if(gettingContentFileQueue->IsFindFileOnDirAction(fullPathFile))
     {
         return !gettingContentFileQueue->IsWasActionForFile(fullPathFile);
@@ -150,24 +155,12 @@ void AnalyzeExecuteCommandGet::ForeachFilesHaveContentAlready(const QString& pat
     }
 }
 //----------------------------------------------------------------------------------------/
-bool AnalyzeExecuteCommandGet::DirContainsFile(const QString& dir, const QString& file) const
-{
-    fileInfo.setFile(dir);
-    if(fileInfo.isFile() || fileInfo.isSymLink())
-        return dir == file;
-    else
-    {
-        const QString dir_ = dir + "/";
-        return file.startsWith(dir_);
-    }
-}
-//----------------------------------------------------------------------------------------/
 bool AnalyzeExecuteCommandGet::ModificationGettingContentFileQueue()
 {
-    bool wasModification = false;
-    if(gettingContentFileQueue->filesMustToBeAction.empty() && gettingContentFileQueue->filesWasAction.isEmpty())
-        return wasModification;
+    if(modeStart)
+        return false;
 
+    bool wasModification = false;
     // модифицируем список, в зависимости от хода выполнения команды
     QStringList listDirs = gettingContentFileQueue->ListAllDirOfFile(gettingContentFileQueue->filesWasAction);
     if(!endCommand)
@@ -199,6 +192,7 @@ bool AnalyzeExecuteCommandGet::ModificationErrorGettingContentFile()
 {
     if(errorGettingContentFile->filesMustToBeAction.isEmpty())
         return false;
+
     // если файлы, которыйбыли получены за сессию, имеются в векторе ошибок, то фиксируем,
     // что файл был удачно получен, и в будущем должен будет очищен из вектора ошибок
     for(QString& file : lastGettingContentFiles)

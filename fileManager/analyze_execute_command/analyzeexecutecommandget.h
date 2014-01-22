@@ -9,7 +9,6 @@
 #include "analyzeexecutecommand.h"
 #include "define.h"
 
-
 namespace AnalyzeCommand
 {
 
@@ -58,8 +57,6 @@ private:
     /** @brief Перебирает рекурсивно все файлы в переданном пути,
      *  если у файла есть уже контент, то послыает сигнал, что контент уже получен */
     void                ForeachFilesHaveContentAlready(const QString& path) const;
-    /** @brief Содержит ли директория файл(в том числе и в поддиректориях) */
-    bool                DirContainsFile(const QString& dir, const QString& file) const;
     /** @brief Модификация списка файлов GettingContentFile */
     bool                ModificationGettingContentFileQueue();
     /** @brief Модификация списка файлов ErrorGettingContentFile */

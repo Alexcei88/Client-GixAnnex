@@ -112,14 +112,11 @@ RESULT_EXEC_PROCESS ShellCommand::DropContentFile(const QString& path, FacadeAna
 {
     const QString strCommand = baseCommand + "drop " + path;
     const QString fullPathFile = Utils::CatDirFile(localURL, path);
-    boost::shared_ptr<AnalyzeExecuteCommandDrop> analizeCommand(new AnalyzeExecuteCommandDrop(*facade));
+    boost::shared_ptr<AnalyzeExecuteCommandDrop> analizeCommand(new AnalyzeExecuteCommandDrop(*facade, mode));
     analizeCommand->SetPathDropContent(fullPathFile);
     analizeCommand->SetPathExecuteCommand(localURL);
+    facade->AddDropContentFileQueue(analizeCommand.get());
 
-    if(!mode)
-    {
-        facade->AddDropContentFileQueue(fullPathFile);
-    }
     boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandDrop(analizeCommand));
     ShellTask* shellTask = new ShellTask(strCommand, localURL, receiverParsing);
     QThreadPool::globalInstance()->start(shellTask);
@@ -174,6 +171,7 @@ RESULT_EXEC_PROCESS ShellCommand::SetDirectMode(const bool& direct, FacadeAnalyz
 //----------------------------------------------------------------------------------------/
 RESULT_EXEC_PROCESS ShellCommand::FindFileInPath(const QString &path, FacadeAnalyzeCommand* facade) const
 {
-
+    Q_UNUSED(path);
+    Q_UNUSED(facade);
 }
 //----------------------------------------------------------------------------------------/
