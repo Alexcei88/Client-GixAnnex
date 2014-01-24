@@ -79,9 +79,10 @@ FocusScope {
     SystemPalette { id: sysPal }
 
     id: focusScope
+
     Rectangle
     {
-        id: rect
+        id: mainRect
         color: sysPal.window
         anchors.fill: parent
         focus: true

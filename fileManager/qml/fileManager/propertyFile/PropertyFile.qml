@@ -19,6 +19,8 @@ Rectangle
     //-------------------------------------------------------------------------/
     property var folderView: null
     property string lastFileName: ""
+    property var maximumWidth: propertyRect.Layout.maximumWidth
+    property var minimumWidth: propertyRect.Layout.minimumWidth
 
     // сигнал, которые говорит, что нужно обновить данные о свойствах папки(файла)
     signal updateData(var fullPath, var currentName)
@@ -42,13 +44,19 @@ Rectangle
     height: parent.height
 
     onWidthChanged:
-    {
+    {       
         columnHead.width = width
         separatorRect.width = width - 30
-//        name.width = width
+        name.width = width - 40;
+        if(width > maximumWidth - 1 || width < minimumWidth + 1)
+            return;
+        if(iconsImage.status === Image.Ready)
+        {
+//            columnHead.height += (columnHead.height * 0.008);
+        }
     }
 
-    ColumnLayout {
+    ColumnLayout{
         width: parent.width
         id: columnHead
         anchors.horizontalCenter: parent.horizontalCenter
@@ -56,37 +64,43 @@ Rectangle
         Image {
             id: iconsImage
             anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
         }
-        Text
-        {
-            id: name
-            text: "FileName"
-            anchors.horizontalCenter: parent.horizontalCenter
-            font.bold: true
-//            wrapMode: Text.WordWrap
-            width: parent.width
-        }
-        // разделитель(взят из ToolBarStyle)
-        Rectangle {
-            id: separatorRect
-            width: parent.width - 30
-            height: 1
-            color: "#999"
-            anchors.horizontalCenter: parent.horizontalCenter
-        }
-
     }
 
-    ColumnLayout
-    {
+    Text {
+        id: name
+        text: "FileName"
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.top : columnHead.bottom
+        anchors.leftMargin: 20
+        anchors.rightMargin: 20
+        width: parent.width - 40
+        horizontalAlignment: Text.AlignHCenter
+        wrapMode: Text.Wrap
+        font.bold: true
+    }
+
+    // разделитель(взят из ToolBarStyle)
+    Rectangle {
+        id: separatorRect
+        width: parent.width - 30
+        height: 1
+        color: "#999"
+        anchors.top: name.bottom
+        anchors.topMargin: 5
+        anchors.horizontalCenter: parent.horizontalCenter
+    }
+
+    ColumnLayout {
         id:column
         spacing: 5
 
         property int maxWidthNameField: 74
 
-        anchors.top: columnHead.bottom
+        anchors.top: separatorRect.bottom
         anchors.topMargin: 5
-        anchors.horizontalCenter: columnHead.horizontalCenter
+        anchors.horizontalCenter: parent.horizontalCenter
         anchors.horizontalCenterOffset: -maxWidthNameField
 
         PropertyValue
@@ -104,21 +118,5 @@ Rectangle
             widthFieldOption: column.maxWidthNameField
             height: 10
         }
-    }
-
-    TextEdit {
-        id: text_edit1
-        x: -28
-        y: -103
-        width: 80
-        height: 20
-        text: qsTr("Text Edit")
-        font.pixelSize: 12
-    }
-
-    PropertyValue {
-        id: propertyvalue1
-        x: 265
-        y: -52
     }
 }

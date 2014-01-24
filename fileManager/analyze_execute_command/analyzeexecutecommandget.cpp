@@ -24,7 +24,15 @@ AnalyzeExecuteCommandGet::AnalyzeExecuteCommandGet(FacadeAnalyzeCommand &facadeA
 void AnalyzeExecuteCommandGet::StartExecuteCommand()
 {
     AnalyzeExecuteCommand::StartExecuteCommand();
-    // определеяем файлы, у которого контент уже получен
+
+    if(!modeStart)
+    {
+        AtomicLock flag(atomicFlagExecuteCommand);
+        Q_UNUSED(flag);
+
+        // определеяем файлы, у которого контент уже получен
+        ForeachFilesHaveContentAlready(fileGetContent);
+    }
 }
 //----------------------------------------------------------------------------------------/
 void AnalyzeExecuteCommandGet::EndExecuteCommand(const bool wasExecute)
@@ -124,9 +132,8 @@ bool AnalyzeExecuteCommandGet::IsErrorGettingContentFileDir(const QString& curre
     return false;
 }
 //----------------------------------------------------------------------------------------/
-void AnalyzeExecuteCommandGet::ForeachFilesHaveContentAlready(const QString& path) const
+void AnalyzeExecuteCommandGet::ForeachFilesHaveContentAlready(const QString& path)
 {
-    return;
     QDir dir(path);
     dir.setFilter(QDir::NoDotAndDotDot | QDir::AllDirs | QDir::Files | QDir::System);
 
@@ -146,11 +153,15 @@ void AnalyzeExecuteCommandGet::ForeachFilesHaveContentAlready(const QString& pat
         if(fileInfo.isFile())
         {
             // посылаем сигнал, что файл уже получен
-//            EndGetContentFile(path);
+            lastGettingContentFile = path;
+            lastGettingContentFiles << path;
+
+            gettingContentFileQueue->filesWasAction[path] = "";
         }
         else
         {
-            // эта пустая символическая ссылка, ничего не делаем
+            // эта пустая символическая ссылка, ничего не делаем и прекращаем просмотр директории
+            return;
         }
     }
 }

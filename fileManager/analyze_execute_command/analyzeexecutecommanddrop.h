@@ -52,8 +52,8 @@ private:
     static QStringList  lastDroppingContentFiles;
 
     /** @brief перебирает рекурсивно все файлы в переданном пути,
-     *  если у файла есть уже контент, то послыает сигнал, что контент уже получен */
-    void                ForeachFilesNoContentAlready(const QString& path) const;   
+     *  если у файла уже нет контента, то послылаем сигнал, что контент уже удален */
+    void                ForeachFilesNoContentAlready(const QString& path);
     /** @brief Модификация списка файлов DroppingContentFile */
     bool                ModificationDroppingContentFileQueue();
     /** @brief Модификация списка файлов ErrorDroppingContentFile */

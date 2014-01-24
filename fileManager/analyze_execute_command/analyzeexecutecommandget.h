@@ -56,7 +56,7 @@ private:
 
     /** @brief Перебирает рекурсивно все файлы в переданном пути,
      *  если у файла есть уже контент, то послыает сигнал, что контент уже получен */
-    void                ForeachFilesHaveContentAlready(const QString& path) const;
+    void                ForeachFilesHaveContentAlready(const QString& path);
     /** @brief Модификация списка файлов GettingContentFile */
     bool                ModificationGettingContentFileQueue();
     /** @brief Модификация списка файлов ErrorGettingContentFile */

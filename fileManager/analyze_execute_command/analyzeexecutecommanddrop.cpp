@@ -25,7 +25,13 @@ void AnalyzeExecuteCommandDrop::StartExecuteCommand()
 {
     AnalyzeExecuteCommand::StartExecuteCommand();
     // определяем файлы, у которого контента уже нет
-//    ForeachFilesNoContentAlready(fileDropContent);
+    if(!modeStart)
+    {
+        AtomicLock flag(atomicFlagExecuteCommand);
+        Q_UNUSED(flag);
+
+        ForeachFilesNoContentAlready(fileDropContent);
+    }
 }
 //----------------------------------------------------------------------------------------/
 void AnalyzeExecuteCommandDrop::EndExecuteCommand(const bool wasExecute)
@@ -125,7 +131,7 @@ bool AnalyzeExecuteCommandDrop::IsErrorDroppingContentFileDir(const QString &cur
     return false;
 }
 //----------------------------------------------------------------------------------------/
-void AnalyzeExecuteCommandDrop::ForeachFilesNoContentAlready(const QString& path) const
+void AnalyzeExecuteCommandDrop::ForeachFilesNoContentAlready(const QString& path)
 {
     QDir dir(path);
     dir.setFilter(QDir::NoDotAndDotDot | QDir::AllDirs | QDir::Files | QDir::System);
@@ -145,11 +151,15 @@ void AnalyzeExecuteCommandDrop::ForeachFilesNoContentAlready(const QString& path
         // файл, или пустая символическая ссылка
         if(fileInfo.isFile())
         {
+            return;
         }
         else
         {
             // посылаем сигнал, что контент уже удален
-//            facadeAnalyzeCommand.EndDropContentFile(path);
+            lastDroppingContentFile = path;
+            lastDroppingContentFiles << path;
+
+            droppingContentFileQueue->filesWasAction[path] = "";
         }
     }
 }
