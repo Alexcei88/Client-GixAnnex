@@ -22,15 +22,15 @@ Rectangle {
         contenItem.changeParentFolder(folder);
     }
     //-------------------------------------------------------------------------/
+    SystemPalette { id: sysPal }
 
     id: windowContent
     width: 100
     height: 62
+    color: sysPal.window
 
     property alias folderModel: contenItem.folderModel
     property alias folderView:  contenItem.folderView
-
-    SystemPalette { id: sysPal }
 
     SplitView
     {
@@ -67,7 +67,7 @@ Rectangle {
             }
         }
 
-        // Вывод информации о файле,директории
+        // Вывод информации о файле(директории)
         PropertyFile
         {
             id: propertyFile
@@ -80,7 +80,4 @@ Rectangle {
             folderView: windowContent.folderView
         }
     }
-
-
-
 }
