@@ -90,7 +90,6 @@ FocusScope {
         Text {
             id: headText
             text: qsTr("Repositories")
-            font.family: sysPal.windowText
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignLeft
             font.pointSize: 8

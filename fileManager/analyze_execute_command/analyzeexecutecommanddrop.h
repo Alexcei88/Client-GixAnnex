@@ -18,9 +18,9 @@ class AnalyzeExecuteCommandDrop: public AnalyzeExecuteCommand
 public:
     AnalyzeExecuteCommandDrop(FacadeAnalyzeCommand& facadeAnalyzeCommand, const bool mode);
 
-    virtual void        StartExecuteCommand() override;
-    virtual void        EndExecuteCommand(const bool wasExecute = true) override;
-    virtual void        ExecuteAddActionForAnalizeExecuteCommand() override;
+    virtual void        StartExecuteCommand();
+    virtual void        EndExecuteCommand(const bool wasExecute = true);
+    virtual void        ExecuteAddActionForAnalizeExecuteCommand();
 
     void                StartDropContentFile(const QString& file);
     void                EndDropContentFile(const QString& file);
