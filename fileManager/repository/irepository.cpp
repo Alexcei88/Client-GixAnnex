@@ -82,6 +82,7 @@ RESULT_EXEC_PROCESS IRepository::StopWatchRepository() const
 //----------------------------------------------------------------------------------------/
 GANN_DEFINE::RESULT_EXEC_PROCESS IRepository::SetDirectMode(const bool& direct)
 {
+    paramRepo.directMode = direct;
     shellCommand->SetWorkingDirectory(localURL);
     RESULT_EXEC_PROCESS result = shellCommand->SetDirectMode(direct, facadeAnalyzeCommand.get());
     if(result != NO_ERROR)
@@ -143,7 +144,7 @@ void IRepository::ChangeCurrentDirectory(const QString& curDir)
 
     paramSyncFileDir.clear();
     QStringList nameAllFilesAndDir = dir.entryList();
-    for(auto iterator = nameAllFilesAndDir.begin(); iterator !=  nameAllFilesAndDir.end(); ++iterator)
+    for(auto iterator = nameAllFilesAndDir.begin(); iterator != nameAllFilesAndDir.end(); ++iterator)
     {
         PARAMETR_FILEFOLDER_GIT_ANNEX paramTemp;
         paramTemp.autosync = true;
@@ -155,15 +156,23 @@ void IRepository::ChangeCurrentDirectory(const QString& curDir)
 //----------------------------------------------------------------------------------------/
 void IRepository::UpdateParamSyncFileDir()
 {
-    for(auto iterator = paramSyncFileDir.begin(); iterator !=  paramSyncFileDir.end(); ++iterator)
+    facadeAnalyzeCommand->ExecuteAddActionForAnalizeCommand();
+
+    paramSyncFileDir.clear();
+    QStringList nameAllFilesAndDir = dir.entryList();
+    for(auto iterator = nameAllFilesAndDir.begin(); iterator != nameAllFilesAndDir.end(); ++iterator)
     {
-        iterator.value().currentState = CalculateStateFileDir(iterator.key());
+        PARAMETR_FILEFOLDER_GIT_ANNEX paramTemp;
+        paramTemp.autosync = true;
+        paramTemp.currentState = CalculateStateFileDir(*iterator);
+
+        paramSyncFileDir[*iterator] = paramTemp;
     }
 }
 //----------------------------------------------------------------------------------------/
 bool IRepository::DirIsSubRootDirRepository(const QString& dir) const
 {
-    return (dir.length() >= localURL.length() && dir.contains(localURL, Qt::CaseSensitive) );
+    return (dir.length() >= localURL.length() && dir.contains(localURL, Qt::CaseSensitive));
 }
 //----------------------------------------------------------------------------------------/
 QString IRepository::CalculateStateFileDir(const QString& file) const
@@ -198,7 +207,6 @@ void IRepository::OnErrorCloneRepository(const QString &error)
 //----------------------------------------------------------------------------------------/
 void IRepository::OnChangeDirectMode(const bool mode)
 {
-    assert(paramRepo.directMode != mode);
     paramRepo.directMode = mode;
 }
 //----------------------------------------------------------------------------------------/

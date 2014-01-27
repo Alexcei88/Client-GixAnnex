@@ -18,18 +18,18 @@ SystemTray::SystemTray():
     connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
 
     //=================================================================================== /
-
     trayIconMenu    = new QMenu(this);
     trayIconMenu->addAction(addRepoAction);
     trayIconMenu->addAction(cloneRepoAction);
     trayIconMenu->addSeparator();
     trayIconMenu->addAction(quitAction);
 
-    trayIcon    = new QSystemTrayIcon(QIcon(":/heart.ico"), this);
+    trayIcon        = new QSystemTrayIcon(QIcon(":/heart.ico"), this);
     trayIcon->setContextMenu(trayIconMenu);
     trayIcon->show();
 
     connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(ActivateTray(QSystemTrayIcon::ActivationReason)));
+    connect(this, SIGNAL(updateIconsSyncronization), this, SLOT(OnUpdateIconsSyncronization));
 }
 //----------------------------------------------------------------------------------------/
 void SystemTray::ActivateTray(QSystemTrayIcon::ActivationReason reason)
@@ -74,7 +74,7 @@ bool SystemTray::ReLoadListRepository() const
     return false;
 }
 //----------------------------------------------------------------------------------------/
-bool SystemTray::ReLoadDirectoryView() const
+bool SystemTray::OnUpdateIconsSyncronization() const
 {
     if(mainView)
     {

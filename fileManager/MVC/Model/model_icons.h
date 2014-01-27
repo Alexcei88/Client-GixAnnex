@@ -3,6 +3,9 @@
 
 #include <QMap>
 #include <QObject>
+#include "define.h"
+
+class ThreadSyncIcons;
 
 namespace GANN_MVC
 {
@@ -15,11 +18,18 @@ public:
     ModelQmlAndCIcons(ControllerIcons* contrIcons);
     ~ModelQmlAndCIcons();
 
-    void            UpdateFileSyncIcons();
+    /** @brief  Запуск потока обновления иконок синхронизации */
+    void            StartThreadIconsSync();
+
+    /** @brief Остановка потока обновления иконок синхронизации */
+    static void     StopThreadIconsSync();
 
 private:
     ControllerIcons* contrIcons;
-    bool            exitThread;
+    boost::shared_ptr<ThreadSyncIcons> threadSyncIcons;
+
+    // поток, в котором будет обновление иконок синхронизации в представлении(один на все объекты)
+    static QThread*   thread;
 };
 
 }

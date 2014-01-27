@@ -1,5 +1,6 @@
 #include "analyzeexecutecommand.h"
 #include <assert.h>
+#include "facadeanalyzecommand.h"
 
 using namespace AnalyzeCommand;
 
@@ -8,6 +9,7 @@ AnalyzeExecuteCommand::AnalyzeExecuteCommand(FacadeAnalyzeCommand &facadeAnalyze
     facadeAnalyzeCommand(facadeAnalyzeCommand)
   , startCommand(false)
   , endCommand(false)
+  , atomicFlagExecuteCommand(facadeAnalyzeCommand.atomicFlagExecuteCommand)
 {
 }
 //----------------------------------------------------------------------------------------/
@@ -16,24 +18,25 @@ AnalyzeExecuteCommand::AnalyzeExecuteCommand(FacadeAnalyzeCommand &facadeAnalyze
   , pathExecuteCommand(pathExecuteCommand)
   , startCommand(false)
   , endCommand(false)
+{}
+//----------------------------------------------------------------------------------------/
+AnalyzeExecuteCommand::~AnalyzeExecuteCommand()
 {
+
 }
 //----------------------------------------------------------------------------------------/
 void AnalyzeExecuteCommand::StartExecuteCommand()
 {
     assert(!startCommand && !endCommand);
     startCommand = true;
+    facadeAnalyzeCommand.SetCurrentExecuteCommand(this);
 }
 //----------------------------------------------------------------------------------------/
-void AnalyzeExecuteCommand::EndExecuteCommand()
+void AnalyzeExecuteCommand::EndExecuteCommand(const bool wasExecute)
 {
     assert(startCommand && !endCommand);
     endCommand = true;
-}
-//----------------------------------------------------------------------------------------/
-void AnalyzeExecuteCommand::SetPathExecuteCommand(const QString& path)
-{
-    pathExecuteCommand = path;
+    facadeAnalyzeCommand.ResetCurrentExecuteCommand();
 }
 //----------------------------------------------------------------------------------------/
 

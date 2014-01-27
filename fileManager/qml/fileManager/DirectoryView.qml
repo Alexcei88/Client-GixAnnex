@@ -63,15 +63,29 @@ FocusScope{
         contrIcons.currentPath = path
     }
     //------------------------------------------------------------------------/
-    // функция обновления состояния иконок у текущего списка
+    // функция обновления состояния иконок синхронизации
     function updateIconsStateFileSync()
     {
-        dirModel.updateModel();
-//        if(dirModel.lastIndex < dirModel.count)
-//        {
-//        console.log(dirModel.lastIndex)
-//            view.currentIndex = -1;
-//        }
+        if(dirModel.status === NewFolderListModel.Null)
+            return;
+
+        console.log("updateIconsStateFileSync");
+        // Обновление состояния иконок синхронизации у делегатов компонента GridView
+        var item = view.children[0];
+        // этот итем является родителем для делегатов, дальше пойдут итемы делегатов
+        // их количество зависит от количества объектов модели
+        for(var i = 0; i < dirModel.count; ++i)
+        {
+            var itemDelegate = item.children[i];
+            if(contrIcons.stateIconsFileSyncQML[itemDelegate.curFileName] === "Disable_sincingF")
+                itemDelegate.state = "DISABLE_SYNC";
+            else if(contrIcons.stateIconsFileSyncQML[itemDelegate.curFileName] === "SyncedFError")
+                itemDelegate.state = "SYNCED_ERROR";
+            else if(contrIcons.stateIconsFileSyncQML[itemDelegate.curFileName] === "SyncedF")
+                itemDelegate.state = "SYNCED";
+            else if(contrIcons.stateIconsFileSyncQML[itemDelegate.curFileName] === "SyncingF")
+                itemDelegate.state = "SYNCING";
+        }
     }
     //------------------------------------------------------------------------/
     // функция проверки нахождения свойства folder впределах корневого пути репозитория
@@ -161,7 +175,8 @@ FocusScope{
             if(status === NewFolderListModel.Ready)
             {
 //                console.log(dirModel.lastIndex)
-//                view.currentIndex = dirModel.lastIndex;
+//                if(dirModel.lastIndex < dirModel.count)
+//                    view.currentIndex = dirModel.lastIndex;
             }
         }
     }
@@ -181,7 +196,6 @@ FocusScope{
 
             anchors.fill: parent
             anchors.margins: 15
-            currentIndex: -1
 
             cellHeight: 70
             cellWidth: 70
@@ -260,7 +274,6 @@ FocusScope{
                             enabled: false
                             visible: false
                         }
-
                     }
 
                     Text
@@ -406,7 +419,8 @@ FocusScope{
             if(dirModel.status === NewFolderListModel.Null)
                 return;
 
-            // Обновление состояния иконок синхронизации у делегатов компонента GridView
+//            return;
+//            // Обновление состояния иконок синхронизации у делегатов компонента GridView
             var item = view.children[0];
             // этот итем является родителем для делегатов, дальше пойдут итемы делегатов
             // их количество зависит от количества объектов модели
@@ -438,7 +452,7 @@ FocusScope{
 //                    item.state = "SYNCING"
 //                }
 //            }
-     //       updateIconsStateFileSync()
+//            updateIconsStateFileSync()
         } // end Triggered
     }
 }

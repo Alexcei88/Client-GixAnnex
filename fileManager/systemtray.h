@@ -7,11 +7,6 @@
 #include <QApplication>
 #include <QQuickView>
 
-/*
- * КЛАСС, УПРАВЛЯЮЩИЙ ОКНАМИ ПРИЛОЖЕНИЯ:
- * ПОКАЗ, СКРЫТИЕ ФОРМ
-
-*/
 
 class SystemTray : public QWidget
 {
@@ -26,13 +21,17 @@ public:
 
     /** @brief перезагрузить модель со списком репозиториев */
     bool                ReLoadListRepository() const;
-    /** @brief перезагрузить модель с отображением текущей директорией */
-    bool                ReLoadDirectoryView() const;
 
 public slots:
-    // слот, отвечающий за обработку нажатия по иконке мышью
+    /** @brief слот, отвечающий за обработку нажатия по иконке мышью */
     void                ActivateTray(QSystemTrayIcon::ActivationReason reason);
+
     void                CloneRepository();
+    /** @brief обновить состояние иконок синхронизации */
+    bool                OnUpdateIconsSyncronization() const;
+
+signals:
+    bool                updateIconsSyncronization() const;
 
 private:
 
@@ -44,13 +43,9 @@ private:
     QAction*            quitAction;
 
     // viewer-ы
-    /**
-    @brief viewRepo - главный вид
-    */
+    /** @brief viewRepo - главный вид */
     QQuickView*         mainView;
-    /**
-    @brief cloneRepo - вид окна клонирования репозитория
-    */
+    /** @brief cloneRepo - вид окна клонирования репозитория */
     QQuickView*         cloneRepoView;
 };
 

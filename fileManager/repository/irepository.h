@@ -79,7 +79,7 @@ public:
     @param autosyncContent -
     @return void
     */
-    void                SetParamSyncRepository(const bool& autosync, const bool& autosyncContent);
+    void                 SetParamSyncRepository(const bool& autosync, const bool& autosyncContent);
 
     /** @brief взятие параметров автосинхронизации репозитория */
     inline bool          GetParamSyncRepository() const { return paramRepo.autosync; }
@@ -107,16 +107,17 @@ public:
     /**
     @brief получение контента у файла из репозитория
     @param file - имя файла(папки) назначения
+    @param mode - режим вызова функции получения контента(true - автоматический, false - пользовательский)
     @return 0 - нет ошибок
     */
-    virtual GANN_DEFINE::RESULT_EXEC_PROCESS GetContentFile(const QString& file = " ") = 0;
+    virtual GANN_DEFINE::RESULT_EXEC_PROCESS GetContentFile(const QString& file = " ", const bool mode = false) = 0;
 
     /**
     @brief удаление контента у файла из репозитория
     @param file - имя файла(папки) назначения
     @return 0 - нет ошибок
     */
-    virtual GANN_DEFINE::RESULT_EXEC_PROCESS DropContentFile(const QString& file = " ") = 0;
+    virtual GANN_DEFINE::RESULT_EXEC_PROCESS DropContentFile(const QString& file = " ", const bool mode = false) = 0;
 
     /**
     @brief удалить файл из репозитория
@@ -152,6 +153,12 @@ public:
     */
     virtual GANN_DEFINE::RESULT_EXEC_PROCESS SetDirectMode(const bool& direct);
 
+    /**
+    @brief Взять состояние, в котором находиться репозиторий
+    */
+    bool                GetDirectMode() const { return paramRepo.directMode; }
+
+
     /** @brief Установка состояния репозитория */
     void                SetState(const STATE_REPOSITORY& state);
 
@@ -166,14 +173,16 @@ public:
 
     /**
     @brief Взятие состояния у всех файлов в текущей директории
-    @return возвращаем константную ссылку на защищенное поле класса(для скорости, состояния файла часто анализируется)
+    @return возвращаем константную ссылку на защищенное поле класса
     */
     inline const QMap<QString, PARAMETR_FILEFOLDER_GIT_ANNEX>& GetStateFileDir() const { return paramSyncFileDir; };
 
     /** @brief Изменение  рабочей директории */
     void                ChangeCurrentDirectory(const QString& curDir);
 
-    /** @brief Обновить параметры синхронизации у текущей директории(список файлов постоянный) */
+    /** @brief Обновить параметры синхронизации у текущей директории
+        Функция дергается из потока синхронизации иконок, чтобы получить последние параметры синхронизации
+    */
     void                UpdateParamSyncFileDir();
 
     /** @brief Является ли выбранный путь поддиректорией корневого пути репозитория */

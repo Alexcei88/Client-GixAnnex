@@ -12,8 +12,8 @@ public:
 
     virtual GANN_DEFINE::RESULT_EXEC_PROCESS CloneRepository(QString& localURL, const QString& nameRepo, const QString& remoteURL);
     virtual GANN_DEFINE::RESULT_EXEC_PROCESS DeleteRepository();
-    virtual GANN_DEFINE::RESULT_EXEC_PROCESS GetContentFile(const QString& file = " ");
-    virtual GANN_DEFINE::RESULT_EXEC_PROCESS DropContentFile(const QString& file = " ");
+    virtual GANN_DEFINE::RESULT_EXEC_PROCESS GetContentFile(const QString& file = " ", const bool mode = false);
+    virtual GANN_DEFINE::RESULT_EXEC_PROCESS DropContentFile(const QString& file = " ", const bool mode = false);
     virtual GANN_DEFINE::RESULT_EXEC_PROCESS RemoveFile(const QString& file = " ");
     virtual GANN_DEFINE::RESULT_EXEC_PROCESS WhereisFile(const QString& file = " ");
     virtual GANN_DEFINE::RESULT_EXEC_PROCESS SyncRepository() const;

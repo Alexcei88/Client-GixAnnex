@@ -3,10 +3,6 @@
 
 #include "tshell.h"
 
-// Qt stuff
-#include <QRunnable>
-#include <QThreadPool>
-
 class IRepository;
 
 namespace AnalyzeCommand
@@ -34,27 +30,38 @@ public:
     @return 0 - нет ошибок
     */
     GANN_DEFINE::RESULT_EXEC_PROCESS CloneRepositories(const QString& remoteURL, QString &folderClone
-                                                       ,AnalyzeCommand::FacadeAnalyzeCommand *facade);
+                                                       ,AnalyzeCommand::FacadeAnalyzeCommand* facade);
 
-    /** @brief запустить/остановить демон просмотра за рабочей директорией
+    /** @brief Запустить/остановить демон просмотра за рабочей директорией
         @param start - true - запускает службу, false - останавливаем службу
     */
     GANN_DEFINE::RESULT_EXEC_PROCESS WatchRepository(const QString& path, const bool start = true) const;
 
-    // 2. Добавление каталога/файла в репозиторий
+    /** @brief Добавление каталога/файла в репозиторий */
     GANN_DEFINE::RESULT_EXEC_PROCESS AddFile(const QString& path) const;
-    // 3. закачать контент у файлов((директории)
-    GANN_DEFINE::RESULT_EXEC_PROCESS GetContentFile(const QString& path, AnalyzeCommand::FacadeAnalyzeCommand *facade) const;
-    // 4. удалить контент у файлов((директории)
-    GANN_DEFINE::RESULT_EXEC_PROCESS DropContentFile(const QString& path, AnalyzeCommand::FacadeAnalyzeCommand *facade) const;
+
+    /** @brief Закачать контент у файлов((директории)
+        @param mode - режим вызова функции получения контента(true - автоматический, false - пользовательский)
+    */
+    GANN_DEFINE::RESULT_EXEC_PROCESS GetContentFile(const QString& path, AnalyzeCommand::FacadeAnalyzeCommand* facade, const bool mode) const;
+
+    /** @brief Удалить контент у файлов((директории)
+        @param mode - режим вызова функции удаления контента(true - автоматический, false - пользовательский)
+    */
+    GANN_DEFINE::RESULT_EXEC_PROCESS DropContentFile(const QString& path, AnalyzeCommand::FacadeAnalyzeCommand* facade, const bool mode) const;
+
     // 5. Удалить файл(директорию) из репозитория вместе с контентом
     GANN_DEFINE::RESULT_EXEC_PROCESS RemoveFile(const QString& path, const bool recursive = false) const;
     // 6. Синхронизация с главным репозиторием
     GANN_DEFINE::RESULT_EXEC_PROCESS Sync() const;
     // 7. оказывает местонахождение файла в других репозиториях
-    GANN_DEFINE::RESULT_EXEC_PROCESS WhereisFiles(const QString& path, AnalyzeCommand::FacadeAnalyzeCommand *facade) const;
-    /** @brief установка прямого/косвенного режима работы репозитория */
-    GANN_DEFINE::RESULT_EXEC_PROCESS SetDirectMode(const bool &direct, AnalyzeCommand::FacadeAnalyzeCommand *facade) const;
+    GANN_DEFINE::RESULT_EXEC_PROCESS WhereisFiles(const QString& path, AnalyzeCommand::FacadeAnalyzeCommand* facade) const;
+
+    /** @brief Установка прямого/косвенного режима работы репозитория */
+    GANN_DEFINE::RESULT_EXEC_PROCESS SetDirectMode(const bool &direct, AnalyzeCommand::FacadeAnalyzeCommand* facade) const;
+
+    /** @brief Поиск файлов в директории(узнаем файлы, у которых есть контент) */
+    GANN_DEFINE::RESULT_EXEC_PROCESS FindFileInPath(const QString& path, AnalyzeCommand::FacadeAnalyzeCommand* facade) const;
 
     inline const QString getStrCommand() const { return strCommand; }
     inline const QString getLocalURL() const { return localURL; }

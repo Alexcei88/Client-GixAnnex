@@ -90,7 +90,7 @@ GANN_DEFINE::RESULT_EXEC_PROCESS ModelQmlAndCRepository::GetContentDirectory(con
     if(iterRepo != FacadeApplication::instance->repository.end())
     {
         IRepository* curRepo = iterRepo->second.get();
-        return curRepo->GetContentFile(dir);
+        return curRepo->GetContentFile(dir, false);
     }
     else{
         assert("CurrentRepo is NULL" && false);
@@ -104,7 +104,7 @@ GANN_DEFINE::RESULT_EXEC_PROCESS ModelQmlAndCRepository::DropContentDirectory(co
     if(iterRepo != FacadeApplication::instance->repository.end())
     {
         IRepository* curRepo = iterRepo->second.get();
-        return curRepo->DropContentFile(dir);
+        return curRepo->DropContentFile(dir, false);
     }
     else{
         assert("CurrentRepo is NULL" && false);

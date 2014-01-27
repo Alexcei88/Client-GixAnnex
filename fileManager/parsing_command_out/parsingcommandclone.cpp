@@ -1,5 +1,4 @@
 #include "parsingcommandclone.h"
-#include "../repository/irepository.h"
 
 //----------------------------------------------------------------------------------------/
 ParsingCommandClone::ParsingCommandClone(boost::shared_ptr<AnalyzeCommand::AnalyzeExecuteCommand> analyzeCommand):

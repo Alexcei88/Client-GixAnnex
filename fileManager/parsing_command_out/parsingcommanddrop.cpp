@@ -1,5 +1,4 @@
 #include "parsingcommanddrop.h"
-#include "../repository/irepository.h"
 #include "../analyze_execute_command/analyzeexecutecommanddrop.h"
 
 #include <assert.h>

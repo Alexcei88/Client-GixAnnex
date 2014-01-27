@@ -1,6 +1,8 @@
 #include "facadeanalyzecommand.h"
-#include "../define.h"
 #include "utils/utils.h"
+#include "analizediraction.h"
+#include "analyzeexecutecommandget.h"
+#include "analyzeexecutecommanddrop.h"
 
 // std stuff
 #include <iostream>
@@ -9,158 +11,137 @@
 using namespace AnalyzeCommand;
 using namespace Utils;
 
+std::atomic_flag* FacadeAnalyzeCommand::atomicFlagExecuteCommand = new std::atomic_flag(ATOMIC_FLAG_INIT);
+QFileInfo FacadeAnalyzeCommand::fileInfo;
 //----------------------------------------------------------------------------------------/
 FacadeAnalyzeCommand::FacadeAnalyzeCommand()
 {}
 //----------------------------------------------------------------------------------------/
+FacadeAnalyzeCommand::~FacadeAnalyzeCommand()
+{
+    delete atomicFlagExecuteCommand;
+    atomicFlagExecuteCommand = 0l;
+}
+//----------------------------------------------------------------------------------------/
 void FacadeAnalyzeCommand::SetCurrentPathRepository(const QString& currentPath)
 {
+    AtomicLock flag(atomicFlagExecuteCommand);
+    Q_UNUSED(flag);
+
     currentPathRepository.setPath(currentPath);
 }
 //----------------------------------------------------------------------------------------/
-void FacadeAnalyzeCommand::StartGetContentFile(const QString& file)
+void FacadeAnalyzeCommand::SetCurrentExecuteCommand(AnalyzeExecuteCommand* command)
 {
-    if(std::find(gettingContentFile.begin(), gettingContentFile.end(), file) == gettingContentFile.end()){
-        gettingContentFile.push_back(file);
-    }
-}
-//----------------------------------------------------------------------------------------/
-void FacadeAnalyzeCommand::EndGetContentFile(const QString& file)
-{
-    auto itErase = std::find(gettingContentFile.begin(), gettingContentFile.end(), file);
-    if(itErase != gettingContentFile.end())
-    {
-        gettingContentFile.erase(itErase);
-        // убираем файл из вектора ошибок, если он там есть
-        if(errorGettingContentFile.contains(file))
-            errorGettingContentFile.remove(file);
-    }
-    else
-    {
-        std::cout<<"WARNING!!!! В списке получаемых в текущий момент файлов нет файла, получение контента которого закончилось!!!"<<std::endl;
-        #ifdef DEBUG
-                assert(0);
-        #endif
-    }
-}
-//----------------------------------------------------------------------------------------/
-void FacadeAnalyzeCommand::ErrorGetContentFile(const QString& file, const QString& error)
-{
-    auto itErase = std::find(gettingContentFile.begin(), gettingContentFile.end(), file);
-    if(itErase != gettingContentFile.end()) {
-        gettingContentFile.erase(itErase);
-    }
-    else
-    {
-        std::cout<<"WARNING!!!! В списке получаемых в текущий момент файлов нет файла, получение контента которого закончилось!!!"<<std::endl;
-#ifdef DEBUG
-        assert(0);
-#endif
-    }
-    // помещаем файл в вектор ошибок
-    if(errorGettingContentFile.contains(file))
-        errorGettingContentFile.remove(file);
+    AtomicLock flag(atomicFlagExecuteCommand);
+    Q_UNUSED(flag);
 
-    errorGettingContentFile[file] = error;
+    currentAnalyzeExecuteCommand = command;
+}
+//----------------------------------------------------------------------------------------/
+void FacadeAnalyzeCommand::ResetCurrentExecuteCommand()
+{
+    AtomicLock flag(atomicFlagExecuteCommand);
+    Q_UNUSED(flag);
+
+    currentAnalyzeExecuteCommand = nullptr;
+}
+//----------------------------------------------------------------------------------------/
+void FacadeAnalyzeCommand::AddGetContentFileQueue(AnalyzeExecuteCommandGet* commandGet)
+{
+    AtomicLock flag(atomicFlagExecuteCommand);
+    Q_UNUSED(flag);
+
+    listCommandGet.push_back(commandGet);
+}
+//----------------------------------------------------------------------------------------/
+void FacadeAnalyzeCommand::RemoveGetContentFileQueue(AnalyzeExecuteCommandGet *commandGet)
+{
+    AtomicLock flag(atomicFlagExecuteCommand);
+    Q_UNUSED(flag);
+
+    auto it = std::find(listCommandGet.begin(), listCommandGet.end(), commandGet);
+    assert(it != listCommandGet.end());
+    listCommandGet.erase(it);
 }
 //----------------------------------------------------------------------------------------/
 bool FacadeAnalyzeCommand::IsGettingContentFileDir(const QString& file) const
 {
-    for(auto iterator = gettingContentFile.constBegin(); iterator != gettingContentFile.constEnd(); ++iterator)
+    AtomicLock flag(atomicFlagExecuteCommand);
+    Q_UNUSED(flag);
+
+    for(AnalyzeExecuteCommandGet* command : listCommandGet)
     {
-        if(DirContainsFile(CatDirFile(currentPathRepository.path(), file), *iterator))
-        {
+        if(command->IsGettingContentFileDir(currentPathRepository.path(), file))
             return true;
-        }
     }
     return false;
 }
 //----------------------------------------------------------------------------------------/
 bool FacadeAnalyzeCommand::IsErrorGettingContentFileDir(const QString& file) const
 {
-    for(auto iterator = errorGettingContentFile.constBegin(); iterator != errorGettingContentFile.constEnd(); ++iterator)
-    {
-        if(DirContainsFile(CatDirFile(currentPathRepository.path(), file), iterator.key()))
-        {
-            return true;
-        }
-    }
-    return false;
-}
-//----------------------------------------------------------------------------------------/
-void FacadeAnalyzeCommand::StartDropContentFile(const QString& file)
-{
-    if(std::find(droppingContentFile.begin(), droppingContentFile.end(), file) == droppingContentFile.end()){
-        droppingContentFile.push_back(file);
-    }
-}
-//----------------------------------------------------------------------------------------/
-void FacadeAnalyzeCommand::EndDropContentFile(const QString& file)
-{
-    auto itErase = std::find(droppingContentFile.begin(), droppingContentFile.end(), file);
-    if(itErase != droppingContentFile.end())
-    {
-        droppingContentFile.erase(itErase);
-        // убираем файл из вектора ошибок
-        if(errorDroppingContentFile.contains(file))
-            errorDroppingContentFile.remove(file);
-    }
-    else
-    {
-        std::cout<<"WARNING!!!! В списке удаляемых в текущий момент файлов нет файла, удаление контента которого закончилось!!!"<<std::endl;
-#ifdef DEBUG
-        assert(0);
-#endif
-    }
-}
-//----------------------------------------------------------------------------------------/
-void FacadeAnalyzeCommand::ErrorDropContentFile(const QString& file, const QString& error)
-{
-    auto itErase = std::find(droppingContentFile.begin(), droppingContentFile.end(), file);
-    if(itErase != droppingContentFile.end()) {
-        droppingContentFile.erase(itErase);
-    }
-    else
-    {
-        std::cout<<"WARNING!!!! В списке удаляемых в текущий момент файлов нет файла, удаление контента которого закончилось!!!"<<std::endl;
-#ifdef DEBUG
-        assert(0);
-#endif
-    }
-    // помещаем файл в вектор ошибок
-    if(errorDroppingContentFile.contains(file))
-        errorDroppingContentFile.remove(file);
+    AtomicLock flag(atomicFlagExecuteCommand);
+    Q_UNUSED(flag);
 
-    errorDroppingContentFile[file] = error;
+    return AnalyzeExecuteCommandGet::IsErrorGettingContentFileDir(currentPathRepository.path(), file);
+}
+//----------------------------------------------------------------------------------------/
+void FacadeAnalyzeCommand::AddDropContentFileQueue(AnalyzeExecuteCommandDrop *commandDrop)
+{
+    AtomicLock flag(atomicFlagExecuteCommand);
+    Q_UNUSED(flag);
+
+    listCommandDrop.push_back(commandDrop);
+}
+//----------------------------------------------------------------------------------------/
+void FacadeAnalyzeCommand::RemoveDropContentFileQueue(AnalyzeExecuteCommandDrop *commandDrop)
+{
+    AtomicLock flag(atomicFlagExecuteCommand);
+    Q_UNUSED(flag);
+
+    auto it = std::find(listCommandDrop.begin(), listCommandDrop.end(), commandDrop);
+    assert(it != listCommandDrop.end());
+    listCommandDrop.erase(it);
 }
 //----------------------------------------------------------------------------------------/
 bool FacadeAnalyzeCommand::IsDroppingContentFileDir(const QString& file) const
 {
-    for(auto iterator = droppingContentFile.constBegin(); iterator != droppingContentFile.constEnd(); ++iterator)
+    AtomicLock flag(atomicFlagExecuteCommand);
+    Q_UNUSED(flag);
+
+    for(AnalyzeExecuteCommandDrop* command : listCommandDrop)
     {
-        if(DirContainsFile(CatDirFile(currentPathRepository.path(), file), *iterator))
-        {
+        if(command->IsDroppingContentFileDir(currentPathRepository.path(), file))
             return true;
-        }
     }
     return false;
 }
 //----------------------------------------------------------------------------------------/
 bool FacadeAnalyzeCommand::IsErrorDroppingContentFileDir(const QString& file) const
 {
-    for(auto iterator = errorDroppingContentFile.constBegin(); iterator != errorDroppingContentFile.constEnd(); ++iterator)
-    {
-        if(DirContainsFile(CatDirFile(currentPathRepository.path(), file), iterator.key()))
-        {
-            return true;
-        }
-    }
-    return false;
-}
-//----------------------------------------------------------------------------------------/
-bool FacadeAnalyzeCommand::DirContainsFile(const QString& dir, const QString& file) const
-{
-    return file.startsWith(dir);
-}
-//----------------------------------------------------------------------------------------/
+    AtomicLock flag(atomicFlagExecuteCommand);
+    Q_UNUSED(flag);
 
+    return AnalyzeExecuteCommandDrop::IsErrorDroppingContentFileDir(currentPathRepository.path(), file);
+}
+//----------------------------------------------------------------------------------------/
+void FacadeAnalyzeCommand::ExecuteAddActionForAnalizeCommand()
+{
+    if(currentAnalyzeExecuteCommand)
+    {
+        currentAnalyzeExecuteCommand->ExecuteAddActionForAnalizeExecuteCommand();
+    }
+}
+//----------------------------------------------------------------------------------------/
+bool FacadeAnalyzeCommand::DirContainsFile(const QString& dir, const QString& file)
+{
+    fileInfo.setFile(dir);
+    if(fileInfo.isFile() || fileInfo.isSymLink())
+        return dir == file;
+    else
+    {
+        const QString dir_ = dir + "/";
+        return file.startsWith(dir_);
+    }
+}
+//----------------------------------------------------------------------------------------/
