@@ -28,15 +28,12 @@ void ThreadSyncIcons::UpdateFileSyncIcons()
             if(curRepo)
             {
                 curRepo->UpdateParamSyncFileDir();
-                if(controllerIcons)
-                {
-                    controllerIcons->UpdateStateIconsFileSync();
-                }
             }
             mutex.unlock();
-            // посылаем сигнал, что нужно обновить представление
-            emit facade->GetSystemTray()->updateIconsSyncronization();
-            sleep(1);
+
+            // обновляем представление
+            facade->GetSystemTray()->OnUpdateIconsSyncronization();
+//            sleep(1);
         }
     }
 }

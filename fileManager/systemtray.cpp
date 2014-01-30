@@ -29,7 +29,6 @@ SystemTray::SystemTray():
     trayIcon->show();
 
     connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(ActivateTray(QSystemTrayIcon::ActivationReason)));
-    connect(this, SIGNAL(updateIconsSyncronization), this, SLOT(OnUpdateIconsSyncronization));
 }
 //----------------------------------------------------------------------------------------/
 void SystemTray::ActivateTray(QSystemTrayIcon::ActivationReason reason)
@@ -80,7 +79,7 @@ bool SystemTray::OnUpdateIconsSyncronization() const
     {
         QObjectList parent = mainView->rootObject()->children();
         QList<QObject*> object = parent[1]->findChildren<QObject*>(QString("directoryView"));
-        return QMetaObject::invokeMethod(object[0], "updateIconsStateFileSync");
+        return QMetaObject::invokeMethod(object[0], "updateIconsStateFileSync", Qt::BlockingQueuedConnection);
     }
     return false;
 }
