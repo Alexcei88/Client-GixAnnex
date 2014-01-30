@@ -19,19 +19,17 @@ public:
     inline void         SetCloneRepoView(QQuickView* view) { this->cloneRepoView = view; };
     void                CancelCloneRepository() const;
 
-    /** @brief перезагрузить модель со списком репозиториев */
+    /** @brief Перезагрузить модель со списком репозиториев */
     bool                ReLoadListRepository() const;
+
+    /** @brief Обновить состояние иконок синхронизации */
+    bool                OnUpdateIconsSyncronization() const;
 
 public slots:
     /** @brief слот, отвечающий за обработку нажатия по иконке мышью */
     void                ActivateTray(QSystemTrayIcon::ActivationReason reason);
 
     void                CloneRepository();
-    /** @brief обновить состояние иконок синхронизации */
-    bool                OnUpdateIconsSyncronization() const;
-
-signals:
-    bool                updateIconsSyncronization() const;
 
 private:
 

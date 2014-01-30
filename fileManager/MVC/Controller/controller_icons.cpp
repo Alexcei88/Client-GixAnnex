@@ -19,7 +19,10 @@ ControllerIcons::ControllerIcons() :
     mainModel(QSharedPointer<ModelQmlAndCRepository>(new ModelQmlAndCRepository()))
   , modelIcons(new ModelQmlAndCIcons(this))
 {
-    QObject::connect(this, &ControllerIcons::changedParentDirectory, this, &ControllerIcons::OnChangeParentDirectory, Qt::DirectConnection);
+    QObject::connect(this, &ControllerIcons::changedParentDirectory, [&](const QUrl dir){
+        this->OnChangeParentDirectory(dir);
+        updateStateIconsFileSync();
+        });
     dir.setFilter(QDir::NoDotAndDotDot | QDir::Files | QDir::AllDirs | QDir::System);
 }
 ControllerIcons::~ControllerIcons()
@@ -75,12 +78,9 @@ void ControllerIcons::OnChangeParentDirectory(QUrl curDir)
     mainModel->ChangeCurrentViewDirectory(curDir.toLocalFile());
 
     dir.setPath(curDir.toLocalFile());
-
-    // обновляем полностью список состояния иконок синхронизации
-    UpdateStateIconsFileSync();
 }
 //----------------------------------------------------------------------------------------/
-void ControllerIcons::UpdateStateIconsFileSync()
+void ControllerIcons::updateStateIconsFileSync()
 {
     // получить мэп состояний
     const QMap<QString, IRepository::PARAMETR_FILEFOLDER_GIT_ANNEX>& paramSync = mainModel->GetParamSyncFileDir();

@@ -21,9 +21,7 @@ AnalyzeExecuteCommand::AnalyzeExecuteCommand(FacadeAnalyzeCommand &facadeAnalyze
 {}
 //----------------------------------------------------------------------------------------/
 AnalyzeExecuteCommand::~AnalyzeExecuteCommand()
-{
-
-}
+{}
 //----------------------------------------------------------------------------------------/
 void AnalyzeExecuteCommand::StartExecuteCommand()
 {

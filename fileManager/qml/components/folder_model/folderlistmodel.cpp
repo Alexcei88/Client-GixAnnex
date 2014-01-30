@@ -45,6 +45,7 @@ void QMLFolderListModelPrivate::UpdateSorting()
 //----------------------------------------------------------------------------------------/
 QMLFolderListModel::QMLFolderListModel(QObject *parent):
     QAbstractListModel(parent)
+  , status_(Null)
 {
     roles_[FileNameRole] = "fileName";
     roles_[FilePathRole] = "filePath";

@@ -27,9 +27,6 @@ void AnalyzeExecuteCommandDrop::StartExecuteCommand()
     // определяем файлы, у которого контента уже нет
     if(!modeStart)
     {
-        AtomicLock flag(atomicFlagExecuteCommand);
-        Q_UNUSED(flag);
-
         ForeachFilesNoContentAlready(fileDropContent);
     }
 }
@@ -155,6 +152,9 @@ void AnalyzeExecuteCommandDrop::ForeachFilesNoContentAlready(const QString& path
         }
         else
         {
+            AtomicLock flag(atomicFlagExecuteCommand);
+            Q_UNUSED(flag);
+
             // посылаем сигнал, что контент уже удален
             lastDroppingContentFile = path;
             lastDroppingContentFiles << path;

@@ -57,7 +57,7 @@ public:
     Q_INVOKABLE void    startThreadIconsSync();
 
     /** @brief полностью обновить список состояния иконок(вектор состояний иконок) */
-    void                UpdateStateIconsFileSync();
+    Q_INVOKABLE void    updateStateIconsFileSync();
 
     /** @brief Возвращает новый список */
     //Q_INVOKABLE QVariantList makeNewList() { QVariantList listNew; listNew.push_back("synced"); return listNew;};

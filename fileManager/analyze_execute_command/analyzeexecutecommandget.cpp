@@ -27,9 +27,6 @@ void AnalyzeExecuteCommandGet::StartExecuteCommand()
 
     if(!modeStart)
     {
-        AtomicLock flag(atomicFlagExecuteCommand);
-        Q_UNUSED(flag);
-
         // определеяем файлы, у которого контент уже получен
         ForeachFilesHaveContentAlready(fileGetContent);
     }
@@ -152,6 +149,9 @@ void AnalyzeExecuteCommandGet::ForeachFilesHaveContentAlready(const QString& pat
         // файл
         if(fileInfo.isFile())
         {
+            AtomicLock flag(atomicFlagExecuteCommand);
+            Q_UNUSED(flag);
+
             // посылаем сигнал, что файл уже получен
             lastGettingContentFile = path;
             lastGettingContentFiles << path;
