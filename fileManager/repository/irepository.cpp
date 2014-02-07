@@ -1,8 +1,10 @@
 #include "irepository.h"
 #include "analyze_execute_command/facadeanalyzecommand.h"
+#include "utils/utils.h"
 
 // boost stuff
 #include <boost/make_shared.hpp>
+
 
 
 using namespace GANN_DEFINE;
@@ -56,28 +58,29 @@ void IRepository::InitSignalAndSlots()
     QObject::connect(this, &IRepository::errorCloneRepository, this, &IRepository::OnErrorCloneRepository, Qt::DirectConnection);
     QObject::connect(this, &IRepository::changeDirectMode, this, &IRepository::OnChangeDirectMode, Qt::DirectConnection);
     //----------------------------------------------------------------------------------------/
+
+    // подсоединяем watcher к нашим слотам
+    QObject::connect(&watcher, SIGNAL(directoryChanged(QString)), this, SLOT(OnDirectoryChanged(QString)));
+    QObject::connect(&watcher, SIGNAL(fileChanged(QString)), this, SLOT(OnFileChanged(QString)));
+
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS IRepository::StartWatchRepository() const
+RESULT_EXEC_PROCESS IRepository::StartWatchRepository()
 {
-    RESULT_EXEC_PROCESS result = shellCommand->WatchRepository(localURL);
-    if(result != NO_ERROR)
-    {
-        printf("Error watch repositories: %s \n", localURL.toStdString().c_str());
-        return result;
-    }
-    return result;
+    // запускаем watcher за репозиторием
+    // за всеми каталогами, в том числе и поддиректориями
+    QStringList listPath;
+    GetListDirectoriesOnDirectory(localURL, listPath);
+    watcher.addPaths(listPath);
+    return NO_ERROR;
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS IRepository::StopWatchRepository() const
+RESULT_EXEC_PROCESS IRepository::StopWatchRepository()
 {
-    RESULT_EXEC_PROCESS result = shellCommand->WatchRepository(localURL, false);
-    if(result != NO_ERROR)
-    {
-        printf("Error watch repositories: %s \n", localURL.toStdString().c_str());
-        return result;
-    }
-    return result;
+    QStringList listPath;
+    GetListDirectoriesOnDirectory(localURL, listPath);
+    watcher.removePaths(listPath);
+    return NO_ERROR;
 }
 //----------------------------------------------------------------------------------------/
 GANN_DEFINE::RESULT_EXEC_PROCESS IRepository::SetDirectMode(const bool& direct)
@@ -198,6 +201,25 @@ QString IRepository::CalculateStateFileDir(const QString& file) const
     return QString(curState);
 }
 //----------------------------------------------------------------------------------------/
+void IRepository::GetListDirectoriesOnDirectory(const QString &path, QStringList& listDirectory)
+{
+    QDir dir(path);
+    dir.setFilter(QDir::NoDotAndDotDot | QDir::AllDirs | QDir::Files | QDir::System);
+    QFileInfo fileInfo(path);
+
+    if(fileInfo.isDir())
+    {
+        listDirectory << path;
+        QStringList list = dir.entryList();
+        for(QString& str : list)
+        {
+            GetListDirectoriesOnDirectory(Utils::CatDirFile(path, str), listDirectory);
+        }
+    }
+    else
+    {}
+}
+//----------------------------------------------------------------------------------------/
 //    СЛУЖЕБНЫЕ СЛОТЫ
 //----------------------------------------------------------------------------------------/
 void IRepository::OnErrorCloneRepository(const QString &error)
@@ -215,4 +237,22 @@ void IRepository::OnErrorChangeDirectMode(const QString& error)
 
 }
 //----------------------------------------------------------------------------------------/
+void IRepository::OnDirectoryChanged(const QString& path)
+{
+#ifdef DEBUG
+    std::cout<<"Change directory: "<<path.toStdString()<<std::endl;
+#endif
+    // даем команду потоку синхронизации на выполнение синхронизации
+}
+//----------------------------------------------------------------------------------------/
+void IRepository::OnFileChanged(const QString& path)
+{
+#ifdef DEBUG
+    std::cout<<"Change file: "<<path.toStdString()<<std::endl;
+#endif
+    // даем команду потоку синхронизации на выполнение синхронизации
+
+}
+//----------------------------------------------------------------------------------------/
+
 

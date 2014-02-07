@@ -80,7 +80,7 @@ private:
     void                WatchRepositories(const bool start = true) const;
 
     /** @brief Запуск/Остановка демона просмотра(watch) у конкретного репозитория */
-    void                WatchRepository(const IRepository* repository, const bool start = true) const;
+    void                WatchRepository(IRepository *repository, const bool start = true) const;
 
     /** @brief начать клонирование репозитория */
     GANN_DEFINE::RESULT_EXEC_PROCESS StartCloneRepository(QString& localURL, const QString& remoteURL, const QString& nameRepo);

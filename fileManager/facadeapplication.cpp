@@ -33,7 +33,7 @@ FacadeApplication::FacadeApplication() :
     ResourceGenerator::getInstance();
 
     // запускаем демон за просмотром директорий с репозиториями
-//   WatchRepositories();
+    WatchRepositories();
 
     // инициализируем связь C и QML
     InitClassCAndQML();
@@ -69,13 +69,14 @@ FacadeApplication::~FacadeApplication()
 #warning NOT_WORK
     // все остальные задачи нужно убивать к чертовой матери, и останавливать демоны
     // ждем секунду, чтобы QThreadPool уничтожил все свои потоки
-    QThreadPool::globalInstance()->setExpiryTimeout(1000);
-    QThreadPool::globalInstance()->waitForDone(1000);
+//    QThreadPool::globalInstance()->setExpiryTimeout(1000);
+//    QThreadPool::globalInstance()->waitForDone(1000);
 
     // останавливаем демон просмотра за директориями репозитория
     WatchRepositories(false);
+
     // ждем, пока демоны выключаться
-    QThreadPool::globalInstance()->waitForDone();
+//    QThreadPool::globalInstance()->waitForDone();
 
     ResourceGenerator::RemoveInstance();
 }
@@ -375,7 +376,7 @@ void FacadeApplication::WatchRepositories(const bool start) const
     }
 }
 //----------------------------------------------------------------------------------------/
-void FacadeApplication::WatchRepository(const IRepository* repository, const bool start) const
+void FacadeApplication::WatchRepository(IRepository* repository, const bool start) const
 {
     start ? repository->StartWatchRepository() : repository->StopWatchRepository();
 }
