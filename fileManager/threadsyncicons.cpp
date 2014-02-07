@@ -33,7 +33,7 @@ void ThreadSyncIcons::UpdateFileSyncIcons()
 
             // обновляем представление
             facade->GetSystemTray()->OnUpdateIconsSyncronization();
-//            sleep(1);
+            sleep(1);
         }
     }
 }

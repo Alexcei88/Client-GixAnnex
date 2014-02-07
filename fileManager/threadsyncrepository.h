@@ -2,6 +2,7 @@
 #define THREADSYNCREPOSITORY_H
 
 // класс, выполняющий синхронизацию репозиториев
+// он спит в основном, и срабатывает, когда получает задания
 class ThreadSyncRepository
 {
 public:

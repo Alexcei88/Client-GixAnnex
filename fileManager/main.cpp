@@ -60,6 +60,7 @@ int main(int argc, char *argv[])
     cloneRepoViewer.setX(600);
     cloneRepoViewer.setY(300);    
     cloneRepoViewer.setTitle("Git-Annex Clone Repository");
+    cloneRepoViewer.show();
 
     //=========================================================================== /
 

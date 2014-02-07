@@ -62,7 +62,6 @@ void IRepository::InitSignalAndSlots()
     // подсоединяем watcher к нашим слотам
     QObject::connect(&watcher, SIGNAL(directoryChanged(QString)), this, SLOT(OnDirectoryChanged(QString)));
     QObject::connect(&watcher, SIGNAL(fileChanged(QString)), this, SLOT(OnFileChanged(QString)));
-
 }
 //----------------------------------------------------------------------------------------/
 RESULT_EXEC_PROCESS IRepository::StartWatchRepository()
@@ -220,12 +219,28 @@ void IRepository::GetListDirectoriesOnDirectory(const QString &path, QStringList
     {}
 }
 //----------------------------------------------------------------------------------------/
-//    СЛУЖЕБНЫЕ СЛОТЫ
-//----------------------------------------------------------------------------------------/
 void IRepository::OnErrorCloneRepository(const QString &error)
 {
+    // здесь мы должны удалить репозитории, тк он не создался
     lastError = error;
 }
+//----------------------------------------------------------------------------------------/
+void IRepository::OnSuccessfullyCloneRepository(const QString& folder)
+{
+    this->nameRepo = nameRepo;
+    this->remoteURL = remoteURL;
+    this->localURL  = localURL + "/" + folder;
+
+    shellCommand->SetWorkingDirectory(localURL);
+
+    RESULT_EXEC_PROCESS result = shellCommand->InitRepositories(nameRepo, facadeAnalyzeCommand.get());
+    if(result != NO_ERROR)
+    {
+        printf("Error git-annex init repositories: %s \n", localURL.toStdString().c_str());
+    }
+}
+//----------------------------------------------------------------------------------------/
+//    СЛУЖЕБНЫЕ СЛОТЫ
 //----------------------------------------------------------------------------------------/
 void IRepository::OnChangeDirectMode(const bool mode)
 {

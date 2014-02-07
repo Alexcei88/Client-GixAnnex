@@ -20,30 +20,16 @@ RESULT_EXEC_PROCESS TRepository::CloneRepository(QString& localURL, const QStrin
 {
     // здесь должны переходить в текущую директорию
     shellCommand->SetWorkingDirectory(localURL);
+    this->nameRepo = nameRepo;
+    this->remoteURL = remoteURL;
+    this->localURL  = localURL;
 
-    QString folderToClone = "";
-    RESULT_EXEC_PROCESS result = shellCommand->CloneRepositories(remoteURL, folderToClone, facadeAnalyzeCommand.get());
+    RESULT_EXEC_PROCESS result = shellCommand->CloneRepositories(remoteURL, localURL, facadeAnalyzeCommand.get());
     if(result != int(NO_ERROR))
     {
         printf("Error clone repositories: %s \n", remoteURL.toStdString().c_str());
         return result;
     }
-    folderToClone = "/" + folderToClone;
-    shellCommand->SetWorkingDirectory(localURL + folderToClone);
-
-    result = shellCommand->InitRepositories(nameRepo);
-    if(result != int(NO_ERROR))
-    {
-        printf("Error git-annex init repositories: %s \n", localURL.toStdString().c_str());
-        return result;
-    }
-
-    // переходим в директорию
-    this->nameRepo = nameRepo;
-    this->remoteURL = remoteURL;
-    this->localURL  = localURL + folderToClone;
-
-    localURL +=folderToClone;
     return result;
 }
 //----------------------------------------------------------------------------------------/

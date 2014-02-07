@@ -1,5 +1,5 @@
 #include "threadsyncrepository.h"
 
-threadsyncrepository::threadsyncrepository()
+ThreadSyncRepository::ThreadSyncRepository()
 {
 }

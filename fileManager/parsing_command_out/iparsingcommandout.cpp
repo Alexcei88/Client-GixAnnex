@@ -49,10 +49,11 @@ void IParsingCommandOut::SetParamAfterEndCommand(int exitCode)
     commandStart    = false;
     exitCodeCommand = exitCode;
 
-    if(analyzeCommand.get())
-        analyzeCommand->EndExecuteCommand();
     // выполняем парсинг после выполнения команды
     ParsingData();
+
+    if(analyzeCommand.get())
+        analyzeCommand->EndExecuteCommand();
 }
 //----------------------------------------------------------------------------------------/
 void IParsingCommandOut::SetParamErrorExecuteCommand(QProcess::ProcessError& error)

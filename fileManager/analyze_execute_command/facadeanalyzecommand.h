@@ -39,8 +39,17 @@ public:
 
     /** @brief Установка текущей команды, которая выполняется */
     void                SetCurrentExecuteCommand(AnalyzeExecuteCommand* command);
-    /** @brief Сброс текущей команд */
+    /** @brief Сброс текущей команды */
     void                ResetCurrentExecuteCommand();
+
+    //-------------------  CLONE ---------------------------------------------/
+    /** @brief Окончание клонирования репозитория
+        @param information - поле, которое содержит информацию, название поддиректории куда скопирован
+        репозиторий, в случаи же ошибки, причину ошибки
+    */
+    void                EndCloneRepository(const bool& successfully, const QString& information) const;
+    /** @brief Инициализация репозитория */
+    void                InitNewRepository() const;
 
     //-------------------  GET  ----------------------------------------------/
     /** @brief Добавить команду в список команд , на которых дано задание за скачивание */
@@ -82,14 +91,15 @@ private:
     QList<AnalyzeExecuteCommandGet*> listCommandGet;
     /** @brief Cписок на классы анализа хода выполнения команды drop */
     QList<AnalyzeExecuteCommandDrop*> listCommandDrop;
+
     /** @brief Текущий путь в репозитории */
     QDir                currentPathRepository;
+
     /** @brief Указатель на команду, которая сейчас выполняется */
     AnalyzeExecuteCommand* currentAnalyzeExecuteCommand;
 
     // в качестве служебных целей
     static QFileInfo    fileInfo;
-
 };
 
 }

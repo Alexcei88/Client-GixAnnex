@@ -88,6 +88,10 @@ public:
 
     /** @brief Возвращает локальный путь, по которому храниться репозиторий */
     inline QString       GetLocalURL() const { return localURL; }
+    /** @brief Возвращает удаленный путь, откуда скачан репозиторий */
+    inline QString       GetRemoteURL() const { return remoteURL; }
+    /** @brief Возвращает имя репозитория */
+    inline QString       GetNameRepo() const { return nameRepo; }
 
     /**
     @brief клонирование репозитория
@@ -192,6 +196,11 @@ public:
     /** @brief возвращает последнее сообщение об ошибке */
     const QString&      GetLastError() const { return lastError; };
 
+    // ФУНКЦИИ ОТВЕТЫ
+    /** @brief  удачное/неудачное клонирование репозитория */
+    void                OnErrorCloneRepository(const QString& error);
+    void                OnSuccessfullyCloneRepository(const QString&folder);
+
 protected:
 
     /** @brief Установка состояния у файла(или директории)
@@ -232,7 +241,6 @@ protected:
     QFileSystemWatcher  watcher;
 
 private:
-
     void                InitClass();
     void                InitSignalAndSlots();
 
@@ -242,9 +250,6 @@ private:
     void                GetListDirectoriesOnDirectory(const QString& path, QStringList& listDirectory);
 
 private slots:
-    // неудачное клонирование репозитория
-    void                OnErrorCloneRepository(const QString&);
-
     // смена режима доступа репозитория(прямого/обратного)
     void                OnChangeDirectMode(const bool mode);
     void                OnErrorChangeDirectMode(const QString& error);
@@ -252,6 +257,8 @@ private slots:
     // изменения в директории слежения за репой(нужно делать sync)
     void                OnDirectoryChanged(const QString& path);
     void                OnFileChanged(const QString& path);
+
+
 
 signals:
     // неудачное клонирование

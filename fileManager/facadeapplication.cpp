@@ -43,7 +43,6 @@ FacadeApplication::FacadeApplication() :
     // интервал срабатывания тайминга(в миллисек)
     const int timeInterval = 20000;
     timeSync.setInterval(timeInterval);
-    //timeSync.start();
 }
 //----------------------------------------------------------------------------------------/
 FacadeApplication* FacadeApplication::getInstance()
@@ -383,30 +382,47 @@ void FacadeApplication::WatchRepository(IRepository* repository, const bool star
 //----------------------------------------------------------------------------------------/
 GANN_DEFINE::RESULT_EXEC_PROCESS FacadeApplication::StartCloneRepository(QString &localURL, const QString &remoteURL, const QString &nameRepo)
 {
-    static QDir dir;
+    QDir dir;
     dir.setPath(localURL);
     if(!dir.exists())
     {
         // директория, куда будем копировать, не существует.
         return DIRECTORY_NOT_EXIST;
     }
-    TRepository* newRepo = new TRepository;
+    TRepository *newRepo = new TRepository;
     RESULT_EXEC_PROCESS result = newRepo->CloneRepository(localURL, nameRepo, remoteURL);
-    if(result == NO_ERROR)
-    {
-        std::unique_ptr<IRepository> tempRepo(newRepo);
-        repository[localURL] = std::move(tempRepo);
 
-        // запускаем демон просмотра за каталогом с репозиторием
-        WatchRepository(repository[localURL].get());
+    tempRepo.reset(newRepo);
+    return result;
+}
+//----------------------------------------------------------------------------------------/
+void FacadeApplication::EndCloneRepository(const bool& successfully, const QString& information)
+{
+    assert(tempRepo.get());
+    if(successfully)
+    {
+        tempRepo->OnSuccessfullyCloneRepository(information);
     }
     else
     {
-        lastError = newRepo->GetLastError();
-        delete newRepo;
-        newRepo = 0l;
+        // сбрасываем репозиторий, больше он нам не нужен
+        tempRepo.reset();
     }
-    return result;
+}
+//----------------------------------------------------------------------------------------/
+void FacadeApplication::InitNewRepository()
+{
+    assert(tempRepo.get());
+
+    // запускаем демон просмотра за каталогом с репозиторием
+    WatchRepository(tempRepo.get());
+
+    SaveRepository(tempRepo->GetLocalURL(), tempRepo->GetRemoteURL(), tempRepo->GetNameRepo());
+    // перемещаем наш репозиторий в общий массив репозиториев, теперь он владелец
+    repository[tempRepo->GetLocalURL()] = std::move(tempRepo);
+
+    systemTray->ReLoadListRepository();
+    systemTray->CancelCloneRepository();
 }
 //----------------------------------------------------------------------------------------/
 void FacadeApplication::ChangeCurrentRepository(const QString& dir)
