@@ -26,10 +26,12 @@ public:
     bool                OnUpdateIconsSyncronization() const;
 
 public slots:
-    /** @brief слот, отвечающий за обработку нажатия по иконке мышью */
+    /** @brief Нажатия по иконке мышью */
     void                ActivateTray(QSystemTrayIcon::ActivationReason reason);
-
+    /** @brief Запуск окна клонирования репозитория */
     void                CloneRepository();
+    /** @brief Закрытие программы */
+    void                QuitProgramm();
 
 private:
 

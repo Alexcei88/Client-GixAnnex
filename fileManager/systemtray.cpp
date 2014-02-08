@@ -15,7 +15,7 @@ SystemTray::SystemTray():
     connect(cloneRepoAction, SIGNAL(triggered()), this, SLOT(CloneRepository()));
 
     quitAction      = new QAction(tr("&Quit"), this);
-    connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
+    connect(quitAction, SIGNAL(triggered()), this, SLOT(QuitProgramm()));
 
     //=================================================================================== /
     trayIconMenu    = new QMenu(this);
@@ -54,6 +54,14 @@ void SystemTray::CloneRepository()
 {
     if(cloneRepoView)
         cloneRepoView->show();
+}
+//----------------------------------------------------------------------------------------/
+void SystemTray::QuitProgramm()
+{
+#warning Переменная mainView не защищена от многопоточности!!!
+    cloneRepoView = nullptr;
+    mainView = nullptr;
+    qApp->quit();
 }
 //----------------------------------------------------------------------------------------/
 void SystemTray::CancelCloneRepository() const

@@ -10,6 +10,7 @@
         <file alias="disable_sync.png">resource/images/error.png</file>
         <file alias="synced.png">resource/images/ok.png</file>
         <file alias="syncing.png">resource/images/sync.png</file>
+        <file alias="repo_off.png">resource/images/repository_off.png</file>
     </qresource>
     <qresource prefix="/config">
         <file alias="config_repo">ganx-repository.xml</file>
