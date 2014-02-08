@@ -16,8 +16,8 @@ public:
     ShellCommand();
     ~ShellCommand();
 
-    // 1. Инициализация репозитория
-    GANN_DEFINE::RESULT_EXEC_PROCESS InitRepositories(const QString& nameRepo);
+    /** @brief Инициализация нового репозитория git-annex */
+    GANN_DEFINE::RESULT_EXEC_PROCESS InitRepositories(const QString& nameRepo, AnalyzeCommand::FacadeAnalyzeCommand *facade);
 
     /**
      @brief SetWorkingDirectory - смена рабочего каталога
@@ -29,8 +29,7 @@ public:
     @param folderClone - папка, куда будет скопирован репозиторий
     @return 0 - нет ошибок
     */
-    GANN_DEFINE::RESULT_EXEC_PROCESS CloneRepositories(const QString& remoteURL, QString &folderClone
-                                                       ,AnalyzeCommand::FacadeAnalyzeCommand* facade);
+    GANN_DEFINE::RESULT_EXEC_PROCESS CloneRepositories(const QString& remoteURL, const QString localURL, AnalyzeCommand::FacadeAnalyzeCommand* facade);
 
     /** @brief Запустить/остановить демон просмотра за рабочей директорией
         @param start - true - запускает службу, false - останавливаем службу

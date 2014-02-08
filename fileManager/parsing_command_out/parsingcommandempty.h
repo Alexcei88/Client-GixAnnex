@@ -6,6 +6,7 @@ class ParsingCommandEmpty: public IParsingCommandOut
 {
 public:
     ParsingCommandEmpty();
+    ParsingCommandEmpty(boost::shared_ptr<AnalyzeCommand::AnalyzeExecuteCommand> analyzeCommand);
     virtual void        ParsingData();
 };
 

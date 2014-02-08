@@ -15,6 +15,8 @@
 // analize stuff
 #include "../analyze_execute_command/analyzeexecutecommandget.h"
 #include "../analyze_execute_command/analyzeexecutecommanddrop.h"
+#include "../analyze_execute_command/analyzeexecutecommandclone.h"
+#include "../analyze_execute_command/analyzeexecutecommandinit.h"
 
 // Qt stuff
 #include <QThreadPool>
@@ -30,14 +32,13 @@ ShellCommand::ShellCommand():
 //----------------------------------------------------------------------------------------/
 ShellCommand::~ShellCommand(){}
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS ShellCommand::InitRepositories(const QString& nameRepo)
+RESULT_EXEC_PROCESS ShellCommand::InitRepositories(const QString& nameRepo, FacadeAnalyzeCommand *facade)
 {
     const QString strCommand = baseCommand + "init " + nameRepo;
-    boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandEmpty());
+    boost::shared_ptr<AnalyzeExecuteCommandInit> analizeCommand(new AnalyzeExecuteCommandInit(*facade));
+    boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandEmpty(analizeCommand));
     ShellTask* shellTask = new ShellTask(strCommand, localURL, receiverParsing);
     QThreadPool::globalInstance()->start(shellTask);
-    // ждем окончания клонирования репозитория
-    QThreadPool::globalInstance()->waitForDone();
     RESULT_EXEC_PROCESS codeError = receiverParsing->GetCodeError();
     return codeError;
 }
@@ -47,25 +48,16 @@ void ShellCommand::SetWorkingDirectory(const QString& localURL)
     this->localURL = localURL;
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS ShellCommand::CloneRepositories(const QString& remoteURL, QString& folderClone, FacadeAnalyzeCommand *facade)
+RESULT_EXEC_PROCESS ShellCommand::CloneRepositories(const QString& remoteURL, const QString localURL, FacadeAnalyzeCommand *facade)
 {
     const QString strCommand = "git clone " + remoteURL;
-    boost::shared_ptr<AnalyzeExecuteCommand> analizeCommand(new AnalyzeExecuteCommand(*facade));
+    boost::shared_ptr<AnalyzeExecuteCommandClone> analizeCommand(new AnalyzeExecuteCommandClone(*facade));
     analizeCommand->SetPathExecuteCommand(localURL);
     boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandClone(analizeCommand));
     ShellTask* shellTask = new ShellTask(strCommand, localURL, receiverParsing);
 
     QThreadPool::globalInstance()->start(shellTask);
-    // ждем окончания клонирования репозитория
-    QThreadPool::globalInstance()->waitForDone();
 
-    RESULT_EXEC_PROCESS codeError = receiverParsing->GetCodeError();
-    if(codeError != NO_ERROR)
-        return codeError;
-
-//    QStringList parsingData = receiverParsing->GetParsingData();
-    // иначе нет ошибок
-//    folderClone = parsingData.at(0);
     return NO_ERROR;
 }
 //----------------------------------------------------------------------------------------/

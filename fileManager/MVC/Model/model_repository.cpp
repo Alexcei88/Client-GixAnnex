@@ -69,14 +69,7 @@ GANN_DEFINE::RESULT_EXEC_PROCESS ModelQmlAndCRepository::CloneRepository(const Q
 {
     FacadeApplication *facade = FacadeApplication::getInstance();
     QString localPath = localURL;
-    GANN_DEFINE::RESULT_EXEC_PROCESS result =  facade->StartCloneRepository(localPath, remoteURL, nameRepo);
-    if(result == NO_ERROR)
-    {
-        facade->SaveRepository(localPath, remoteURL, nameRepo);
-        facade->systemTray->ReLoadListRepository();
-        facade->systemTray->CancelCloneRepository();       
-    }
-    return result;
+    return facade->StartCloneRepository(localPath, remoteURL, nameRepo);
 }
 //----------------------------------------------------------------------------------------/
 void ModelQmlAndCRepository::CancelCloneRepository(const bool breakCommand) const

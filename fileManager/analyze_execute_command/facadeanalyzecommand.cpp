@@ -1,4 +1,5 @@
 #include "facadeanalyzecommand.h"
+#include "facadeapplication.h"
 #include "utils/utils.h"
 #include "analizediraction.h"
 #include "analyzeexecutecommandget.h"
@@ -45,6 +46,16 @@ void FacadeAnalyzeCommand::ResetCurrentExecuteCommand()
     Q_UNUSED(flag);
 
     currentAnalyzeExecuteCommand = nullptr;
+}
+//----------------------------------------------------------------------------------------/
+void FacadeAnalyzeCommand::EndCloneRepository(const bool& successfully, const QString& information) const
+{
+    FacadeApplication::getInstance()->EndCloneRepository(successfully, information);
+}
+//----------------------------------------------------------------------------------------/
+void FacadeAnalyzeCommand::InitNewRepository() const
+{
+    FacadeApplication::getInstance()->InitNewRepository();
 }
 //----------------------------------------------------------------------------------------/
 void FacadeAnalyzeCommand::AddGetContentFileQueue(AnalyzeExecuteCommandGet* commandGet)

@@ -48,6 +48,17 @@ public:
     |details если нет активного репозитория, то возвращаем nullptr */
     IRepository*        GetCurrentRepository() const;
 
+    /** @brief окончание клонирование репозитория
+        @param successfully : true - клонирование завершилось удачно
+                              false - клонирование завершилось неудачно
+        @param information - если клонирование выполнено удачно, то название поддиректории,
+        иначе причину ошибки
+    */
+    void                EndCloneRepository(const bool& successfully, const QString& information);
+
+    /** @brief инициализация нового репозитория */
+    void                InitNewRepository();
+
     // классы модели MVC объявим другом для нашего фасада
     // (принято такое архитектурное решение, что все методы фасада сделать приватными, и дать доступ только к моделям MVC,
     // т.к кроме модели никто не может уведомлять о новых событиях, действиях, происходящие на уровне представления)
@@ -80,7 +91,7 @@ private:
     void                WatchRepositories(const bool start = true) const;
 
     /** @brief Запуск/Остановка демона просмотра(watch) у конкретного репозитория */
-    void                WatchRepository(const IRepository* repository, const bool start = true) const;
+    void                WatchRepository(IRepository *repository, const bool start = true) const;
 
     /** @brief начать клонирование репозитория */
     GANN_DEFINE::RESULT_EXEC_PROCESS StartCloneRepository(QString& localURL, const QString& remoteURL, const QString& nameRepo);
@@ -110,6 +121,9 @@ private:
 
     /** @brief Генерирует пустой файл конфигурации */
     void                GenerateEmptyFileConfig(const QString file) const;
+
+    // временный репозиторий
+    std::unique_ptr<IRepository> tempRepo;
 
 signals:
     void                stopThreadIconsSync();

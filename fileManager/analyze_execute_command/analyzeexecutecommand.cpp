@@ -7,9 +7,9 @@ using namespace AnalyzeCommand;
 //----------------------------------------------------------------------------------------/
 AnalyzeExecuteCommand::AnalyzeExecuteCommand(FacadeAnalyzeCommand &facadeAnalyzeCommand):
     facadeAnalyzeCommand(facadeAnalyzeCommand)
+  , atomicFlagExecuteCommand(facadeAnalyzeCommand.atomicFlagExecuteCommand)
   , startCommand(false)
   , endCommand(false)
-  , atomicFlagExecuteCommand(facadeAnalyzeCommand.atomicFlagExecuteCommand)
 {
 }
 //----------------------------------------------------------------------------------------/

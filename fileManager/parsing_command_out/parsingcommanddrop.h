@@ -28,7 +28,7 @@ private:
     void                EndDropContentFile();
     // удаление файла завершилось с ошибкой
     void                ErrorDropContentFile(const QJsonDocument &doc);
-
+    // класс анализа команды drop
     boost::shared_ptr<AnalyzeCommand::AnalyzeExecuteCommandDrop> analizeCommandDrop;
 
 };

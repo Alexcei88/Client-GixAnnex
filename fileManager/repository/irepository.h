@@ -11,6 +11,7 @@
 #include <QMap>
 #include <QVector>
 #include <QFileInfo>
+#include <QFileSystemWatcher>
 
 namespace AnalyzeCommand
 {
@@ -87,6 +88,10 @@ public:
 
     /** @brief Возвращает локальный путь, по которому храниться репозиторий */
     inline QString       GetLocalURL() const { return localURL; }
+    /** @brief Возвращает удаленный путь, откуда скачан репозиторий */
+    inline QString       GetRemoteURL() const { return remoteURL; }
+    /** @brief Возвращает имя репозитория */
+    inline QString       GetNameRepo() const { return nameRepo; }
 
     /**
     @brief клонирование репозитория
@@ -141,12 +146,12 @@ public:
     /**
     @brief запуск демона просмотра за рабочей директорией репозитория
     */
-    virtual GANN_DEFINE::RESULT_EXEC_PROCESS StartWatchRepository() const;
+    virtual GANN_DEFINE::RESULT_EXEC_PROCESS StartWatchRepository();
 
     /**
     @brief остановка демона просмотра за рабочей директорией репозитория
     */
-    virtual GANN_DEFINE::RESULT_EXEC_PROCESS StopWatchRepository() const;
+    virtual GANN_DEFINE::RESULT_EXEC_PROCESS StopWatchRepository();
 
     /**
     @brief перевод репозитория в прямой/косвенный режим
@@ -191,6 +196,11 @@ public:
     /** @brief возвращает последнее сообщение об ошибке */
     const QString&      GetLastError() const { return lastError; };
 
+    // ФУНКЦИИ ОТВЕТЫ
+    /** @brief  удачное/неудачное клонирование репозитория */
+    void                OnErrorCloneRepository(const QString& error);
+    void                OnSuccessfullyCloneRepository(const QString&folder);
+
 protected:
 
     /** @brief Установка состояния у файла(или директории)
@@ -227,21 +237,28 @@ protected:
     /** @brief последнее сообщение об ошибке в репозитории */
     QString             lastError;
 
-private:
+    /** @brief watcher для слежения за директорией */
+    QFileSystemWatcher  watcher;
 
+private:
     void                InitClass();
     void                InitSignalAndSlots();
 
     /** @brief высчитать текущее состояние файла/директории */
     QString             CalculateStateFileDir(const QString& file) const;
+    /** @brief получает список поддиректорий в корневой директории */
+    void                GetListDirectoriesOnDirectory(const QString& path, QStringList& listDirectory);
 
 private slots:
-    // неудачное клонирование репозитория
-    void                OnErrorCloneRepository(const QString&);
-
     // смена режима доступа репозитория(прямого/обратного)
     void                OnChangeDirectMode(const bool mode);
     void                OnErrorChangeDirectMode(const QString& error);
+
+    // изменения в директории слежения за репой(нужно делать sync)
+    void                OnDirectoryChanged(const QString& path);
+    void                OnFileChanged(const QString& path);
+
+
 
 signals:
     // неудачное клонирование
