@@ -144,7 +144,7 @@ void FacadeApplication::LoadRepositories()
             autosync ? tempRepo->SetState(IRepository::Synced) : tempRepo->SetState(IRepository::Disable_sincing);
         }
 
-        // читаем список параметров прямого/косвенного режима
+        // читаем список параметров прямого/косвенного режима работы репозитория
         {
             QDomNamedNodeMap nodeModeMap = node.at(1).attributes();
             assert(nodeModeMap.count() == 1);

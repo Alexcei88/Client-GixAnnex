@@ -50,7 +50,8 @@ SOURCES += main.cpp \
     threadsyncicons.cpp \
     threadsyncrepository.cpp \
     analyze_execute_command/analyzeexecutecommandclone.cpp \
-    analyze_execute_command/analyzeexecutecommandinit.cpp
+    analyze_execute_command/analyzeexecutecommandinit.cpp \
+    analyze_execute_command/analyzeexecutecommandchangedirectmode.cpp
 
 # Installation path
 # target.path =
@@ -108,7 +109,8 @@ HEADERS += \
     threadsyncicons.h \
     threadsyncrepository.h \
     analyze_execute_command/analyzeexecutecommandclone.h \
-    analyze_execute_command/analyzeexecutecommandinit.h
+    analyze_execute_command/analyzeexecutecommandinit.h \
+    analyze_execute_command/analyzeexecutecommandchangedirectmode.h
 
 # Включаем поддержку С++11
 QMAKE_CXXFLAGS += -std=c++0x

@@ -82,12 +82,14 @@ RESULT_EXEC_PROCESS TRepository::RemoveFile(const QString& file)
     DropContentFile(file, false);
     // а теперь удаляем и сам файл
     shellCommand->SetWorkingDirectory(dir.path());
-    RESULT_EXEC_PROCESS result = shellCommand->RemoveFile(file, QFileInfo(dir.path() + "/" + file).isDir());
+    RESULT_EXEC_PROCESS result = shellCommand->RemoveFile(file, paramRepo.directMode, QFileInfo(dir.path() + "/" + file).isDir());
     if(result != NO_ERROR)
     {
         printf("Error git rm file: %s \n", file.toStdString().c_str());
         return result;
     }
+    // и теперь нужно давать команду на синхронизацию контента
+
     return result;
 }
 //----------------------------------------------------------------------------------------/

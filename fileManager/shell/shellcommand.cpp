@@ -17,6 +17,7 @@
 #include "../analyze_execute_command/analyzeexecutecommanddrop.h"
 #include "../analyze_execute_command/analyzeexecutecommandclone.h"
 #include "../analyze_execute_command/analyzeexecutecommandinit.h"
+#include "../analyze_execute_command/analyzeexecutecommandchangedirectmode.h"
 
 // Qt stuff
 #include <QThreadPool>
@@ -115,17 +116,32 @@ RESULT_EXEC_PROCESS ShellCommand::DropContentFile(const QString& path, FacadeAna
     return NO_ERROR;
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS ShellCommand::RemoveFile(const QString& path, const bool recursive) const
-{
-    QString strCommand = "git rm " + path;
+RESULT_EXEC_PROCESS ShellCommand::RemoveFile(const QString& path, const bool mode, const bool recursive) const
+{  
+    if(!mode)
+    {
+        QString strCommand = "git rm " + path;
+        // рекурсивное удаление
+        if(recursive)
+            strCommand += " -r";
+
+        boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandEmpty());
+        ShellTask* shellTask = new ShellTask(strCommand, localURL, receiverParsing);
+
+        QThreadPool::globalInstance()->start(shellTask);
+    }
+    // физическое удаление файла(директории)
+    QString strCommand = "rm " + path;
     // рекурсивное удаление
     if(recursive)
         strCommand += " -r";
 
+    strCommand +=" -f";
+
     boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandEmpty());
     ShellTask* shellTask = new ShellTask(strCommand, localURL, receiverParsing);
-
     QThreadPool::globalInstance()->start(shellTask);
+
     return NO_ERROR;
 }
 //----------------------------------------------------------------------------------------/
@@ -152,7 +168,7 @@ RESULT_EXEC_PROCESS ShellCommand::WhereisFiles(const QString& path, FacadeAnalyz
 RESULT_EXEC_PROCESS ShellCommand::SetDirectMode(const bool& direct, FacadeAnalyzeCommand* facade) const
 {
     const QString strCommand = baseCommand + (direct ? " direct" : " indirect");
-    boost::shared_ptr<AnalyzeExecuteCommand> analizeCommand(new AnalyzeExecuteCommand(*facade));
+    boost::shared_ptr<AnalyzeExecuteCommandChangeDirectMode> analizeCommand(new AnalyzeExecuteCommandChangeDirectMode(*facade));
     analizeCommand->SetPathExecuteCommand(localURL);
     boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandDirectMode(analizeCommand));
     ShellTask* shellTask = new ShellTask(strCommand, localURL, receiverParsing);

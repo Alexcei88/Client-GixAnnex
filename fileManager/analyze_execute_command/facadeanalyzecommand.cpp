@@ -1,4 +1,5 @@
 #include "facadeanalyzecommand.h"
+#include "../repository/irepository.h"
 #include "facadeapplication.h"
 #include "utils/utils.h"
 #include "analizediraction.h"
@@ -15,7 +16,12 @@ using namespace Utils;
 std::atomic_flag* FacadeAnalyzeCommand::atomicFlagExecuteCommand = new std::atomic_flag(ATOMIC_FLAG_INIT);
 QFileInfo FacadeAnalyzeCommand::fileInfo;
 //----------------------------------------------------------------------------------------/
-FacadeAnalyzeCommand::FacadeAnalyzeCommand()
+FacadeAnalyzeCommand::FacadeAnalyzeCommand():
+    repository(0l)
+{}
+//----------------------------------------------------------------------------------------/
+FacadeAnalyzeCommand::FacadeAnalyzeCommand(IRepository* repository):
+    repository(repository)
 {}
 //----------------------------------------------------------------------------------------/
 FacadeAnalyzeCommand::~FacadeAnalyzeCommand()
@@ -134,6 +140,22 @@ bool FacadeAnalyzeCommand::IsErrorDroppingContentFileDir(const QString& file) co
     Q_UNUSED(flag);
 
     return AnalyzeExecuteCommandDrop::IsErrorDroppingContentFileDir(currentPathRepository.path(), file);
+}
+//----------------------------------------------------------------------------------------/
+void FacadeAnalyzeCommand::ErrorChangeDirectMode()
+{
+    if(repository)
+    {
+        repository->OnErrorChangeDirectMode("fffff");
+    }
+}
+//----------------------------------------------------------------------------------------/
+void FacadeAnalyzeCommand::ChangeDirectMode(const bool& mode)
+{
+    if(repository)
+    {
+        repository->OnChangeDirectMode(mode);
+    }
 }
 //----------------------------------------------------------------------------------------/
 void FacadeAnalyzeCommand::ExecuteAddActionForAnalizeCommand()
