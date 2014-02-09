@@ -51,7 +51,9 @@ SOURCES += main.cpp \
     threadsyncrepository.cpp \
     analyze_execute_command/analyzeexecutecommandclone.cpp \
     analyze_execute_command/analyzeexecutecommandinit.cpp \
-    analyze_execute_command/analyzeexecutecommandchangedirectmode.cpp
+    analyze_execute_command/analyzeexecutecommandchangedirectmode.cpp \
+    MVC/Controller/controllerpreferencesapp.cpp \
+    MVC/Model/model_preferencesapp.cpp
 
 # Installation path
 # target.path =
@@ -110,7 +112,9 @@ HEADERS += \
     threadsyncrepository.h \
     analyze_execute_command/analyzeexecutecommandclone.h \
     analyze_execute_command/analyzeexecutecommandinit.h \
-    analyze_execute_command/analyzeexecutecommandchangedirectmode.h
+    analyze_execute_command/analyzeexecutecommandchangedirectmode.h \
+    MVC/Controller/controllerpreferencesapp.h \
+    MVC/Model/model_preferencesapp.h
 
 # Включаем поддержку С++11
 QMAKE_CXXFLAGS += -std=c++0x

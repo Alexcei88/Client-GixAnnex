@@ -5,14 +5,21 @@
 
 //----------------------------------------------------------------------------------------/
 SystemTray::SystemTray():
-    mainView(0l)
-  , cloneRepoView(0l)
+    mainView(nullptr)
+  , cloneRepoView(nullptr)
+  , preferencesAppRepoView(nullptr)
 {
     //=================================================================================== /
     addRepoAction   = new QAction(tr("&New repository"), this);
 
     cloneRepoAction = new QAction(tr("&Clone Repository"), this);
     connect(cloneRepoAction, SIGNAL(triggered()), this, SLOT(CloneRepository()));
+
+    cloneRepoAction = new QAction(tr("&Clone Repository"), this);
+    connect(cloneRepoAction, SIGNAL(triggered()), this, SLOT(CloneRepository()));
+
+    preferencesAction = new QAction(tr("&Preferences"), this);
+    connect(preferencesAction, SIGNAL(triggered()), this, SLOT(PreferencesApplication()));
 
     quitAction      = new QAction(tr("&Quit"), this);
     connect(quitAction, SIGNAL(triggered()), this, SLOT(QuitProgramm()));
@@ -21,6 +28,7 @@ SystemTray::SystemTray():
     trayIconMenu    = new QMenu(this);
     trayIconMenu->addAction(addRepoAction);
     trayIconMenu->addAction(cloneRepoAction);
+    trayIconMenu->addAction(preferencesAction);
     trayIconMenu->addSeparator();
     trayIconMenu->addAction(quitAction);
 
@@ -56,11 +64,17 @@ void SystemTray::CloneRepository()
         cloneRepoView->show();
 }
 //----------------------------------------------------------------------------------------/
+void SystemTray::PreferencesApplication()
+{
+    if(preferencesAppRepoView)
+        preferencesAppRepoView->show();
+}
+//----------------------------------------------------------------------------------------/
 void SystemTray::QuitProgramm()
 {
-#warning Переменная mainView не защищена от многопоточности!!!
     cloneRepoView = nullptr;
     mainView = nullptr;
+    preferencesAppRepoView = nullptr;
     qApp->quit();
 }
 //----------------------------------------------------------------------------------------/
@@ -68,6 +82,12 @@ void SystemTray::CancelCloneRepository() const
 {
     if(cloneRepoView)
         cloneRepoView->hide();
+}
+//----------------------------------------------------------------------------------------/
+void SystemTray::ClosePreferencesApplication() const
+{
+    if(preferencesAppRepoView)
+        preferencesAppRepoView->hide();
 }
 //----------------------------------------------------------------------------------------/
 bool SystemTray::ReLoadListRepository() const

@@ -22,7 +22,7 @@ void ParsingCommandDirectMode::ParsingData()
         // команда завершилась
         if(lastJSONDocument.isNull())
         {
-            analizeCommandChangeMode->ErrorChangeDirectMode();
+            analizeCommandChangeMode->UnChangeDirectMode();
         }
         else
         {

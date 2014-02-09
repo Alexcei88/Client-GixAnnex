@@ -198,7 +198,7 @@ QString IRepository::CalculateStateFileDir(const QString& file) const
 void IRepository::GetListDirectoriesOnDirectory(const QString &path, QStringList& listDirectory)
 {
     QDir dir(path);
-    dir.setFilter(QDir::NoDotAndDotDot | QDir::AllDirs | QDir::Files | QDir::System);
+    dir.setFilter(QDir::NoDotAndDotDot | QDir::AllDirs | QDir::System);
     QFileInfo fileInfo(path);
 
     if(fileInfo.isDir())

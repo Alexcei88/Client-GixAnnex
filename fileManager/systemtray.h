@@ -15,9 +15,12 @@ class SystemTray : public QWidget
 public:
     SystemTray();
 
-    inline void         SetMainView(QQuickView* view) { this->mainView = view; };
-    inline void         SetCloneRepoView(QQuickView* view) { this->cloneRepoView = view; };
+    inline void         SetMainView(QQuickView* view) { this->mainView = view; }
+    inline void         SetCloneRepoView(QQuickView* view) { this->cloneRepoView = view; }
+    inline void         SetPreferencesApplicationView(QQuickView* view) { this->preferencesAppRepoView = view; }
+
     void                CancelCloneRepository() const;
+    void                ClosePreferencesApplication() const;
 
     /** @brief Перезагрузить модель со списком репозиториев */
     bool                ReLoadListRepository() const;
@@ -30,6 +33,9 @@ public slots:
     void                ActivateTray(QSystemTrayIcon::ActivationReason reason);
     /** @brief Запуск окна клонирования репозитория */
     void                CloneRepository();
+    /** @brief Запуск окна свойств репозитория */
+    void                PreferencesApplication();
+
     /** @brief Закрытие программы */
     void                QuitProgramm();
 
@@ -40,13 +46,17 @@ private:
 
     QAction*            addRepoAction;
     QAction*            cloneRepoAction;
+    QAction*            preferencesAction;
     QAction*            quitAction;
 
     // viewer-ы
-    /** @brief viewRepo - главный вид */
+    /** @brief главный вид */
     QQuickView*         mainView;
-    /** @brief cloneRepo - вид окна клонирования репозитория */
+    /** @brief вид окна клонирования репозитория */
     QQuickView*         cloneRepoView;
+    /** @brief вид окна свойств репозитория */
+    QQuickView*         preferencesAppRepoView;
+
 };
 
 #endif // SYSTEMTRAY_H

@@ -24,6 +24,7 @@
 #include "systemtray.h"
 #include "MVC/Model/model_repository.h"
 #include "MVC/Model/model_icons.h"
+#include "MVC/Model/model_preferencesapp.h"
 #include "threadmodel.h"
 
 class IRepository;
@@ -64,6 +65,7 @@ public:
     // т.к кроме модели никто не может уведомлять о новых событиях, действиях, происходящие на уровне представления)
     friend class GANN_MVC::ModelQmlAndCRepository;
     friend class GANN_MVC::ModelQmlAndCIcons;
+    friend class GANN_MVC::ModelQmlAndCPreferencesApp;
 
 private:
     FacadeApplication();
@@ -124,11 +126,6 @@ private:
 
     // временный репозиторий
     std::unique_ptr<IRepository> tempRepo;
-
-signals:
-    void                stopThreadIconsSync();
-
-
 };
 
 #endif // FACADEAPPLICATION_H

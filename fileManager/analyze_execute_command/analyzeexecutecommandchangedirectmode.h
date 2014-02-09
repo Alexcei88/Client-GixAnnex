@@ -15,11 +15,13 @@ public:
 
     void                ChangeDirectMode(const bool& mode);
     void                ErrorChangeDirectMode();
+    void                UnChangeDirectMode();
 
 private:
     // новый режим, который был установлен командой
     bool                mode;
     bool                wasError;
+    bool                wasTryChangeMode;
 };
 }
 #endif // ANALYZEEXECUTECOMMANDCHANGEDIRECTMODE_H

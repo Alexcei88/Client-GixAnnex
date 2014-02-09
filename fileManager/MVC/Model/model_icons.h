@@ -22,14 +22,14 @@ public:
     void            StartThreadIconsSync();
 
     /** @brief Остановка потока обновления иконок синхронизации */
-    static void     StopThreadIconsSync();
+    void            StopThreadIconsSync();
 
 private:
     ControllerIcons* contrIcons;
-    boost::shared_ptr<ThreadSyncIcons> threadSyncIcons;
-
+    // класс потока
+    static ThreadSyncIcons* threadSyncIcons;
     // поток, в котором будет обновление иконок синхронизации в представлении(один на все объекты)
-    static QThread*   thread;
+    static QThread*  thread;
 };
 
 }

@@ -175,11 +175,7 @@ FocusScope{
         }
         onStatusChanged: {
             if(status === NewFolderListModel.Ready)
-            {
-//                console.log(dirModel.lastIndex)
-//                if(dirModel.lastIndex < dirModel.count)
-//                    view.currentIndex = dirModel.lastIndex;
-            }
+            {}
         }
     }
 
@@ -218,9 +214,20 @@ FocusScope{
 
             Component.onCompleted:
             {
+                console.log("ListView Completed")
                 // запускаем поток обновления состояния иконок
                 contrIcons.startThreadIconsSync();
             }
+            Component.onDestruction:
+            {
+                // останавливаем поток обновления состояния иконок
+                contrIcons.stopThreadIconsSync();
+            }
+//            Component.o:
+//            {
+//                console.log("Status = " + Component.status);
+//            }
+
             MouseArea {
                 anchors.fill: parent
                 acceptedButtons: Qt.LeftButton | Qt.RightButton

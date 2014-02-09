@@ -64,6 +64,11 @@ void ControllerIcons::startThreadIconsSync()
     modelIcons->StartThreadIconsSync();
 }
 //----------------------------------------------------------------------------------------/
+void ControllerIcons::stopThreadIconsSync()
+{
+    modelIcons->StopThreadIconsSync();
+}
+//----------------------------------------------------------------------------------------/
 void ControllerIcons::OnChangeParentDirectory(QUrl curDir)
 {
     if(curDir.isEmpty())
