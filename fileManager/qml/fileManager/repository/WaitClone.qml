@@ -1,0 +1,38 @@
+import QtQuick 2.1
+import QtQuick.Window 2.0
+import QtQuick.Controls 1.0
+import QtQuick.Layouts 1.0
+
+Item
+{
+    Window {
+        id: waitWindow
+        title: "Please Wait..."
+        width: 640
+        height: 480
+        visible: true
+        // когда появляеться это окно, все остальные окна перестают принимать сообщения
+        modality: Qt.ApplicationModal
+
+        RowLayout
+        {
+            ProgressBar{
+                id: progressBar
+                indeterminate: true
+                value: 1
+            }
+            Button{
+                id: cancelButton
+                text: qsTr("Cancel")
+                MouseArea{
+                    anchors.fill: parent
+                    onClicked: {
+                        console.log("Cancel clone...")
+                        waitWindow.close();
+                    }
+                }
+            }
+        }
+    }
+}
+

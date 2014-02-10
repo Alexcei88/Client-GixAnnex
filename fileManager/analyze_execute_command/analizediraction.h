@@ -38,7 +38,6 @@ public:
      * @return true - над всеми, поэтому можем список заменить одной директорией
      *         false - не над всеми */
     bool                WasActionForAllFileDirOnDir(  QMap<QString, QString>& filesWasAction
-                                                    , QMap<QString, QString>& filesNotWasAction
                                                     , const QString& dir) const;
 
     /** @brief Объединение списка файлов/директорий  в одну директорию */
@@ -60,10 +59,13 @@ public:
         @param filesMustToBeAction - список файлов, над которым нужно выполнить действия
         @param fileEndAction - файл, над которым закончилось выполняться действие
     */
-    void                ClearListAction(QMap<QString, QString>& filesWasAction, QMap<QString, QString>& filesMustToBeAction, const QString fileEndAction = "");
+    void                ClearListAction(QMap<QString, QString>& filesWasAction, QMap<QString, QString>& filesMustToBeAction,
+                                        QMap<QString, QString>& filesNotNeedAction,  const QString fileEndAction = "");
 
     /** @brief спиcок файлов/директорий, над которыми было выполнено действие */
     QMap<QString, QString> filesWasAction;
+    /** @brief спиcок файлов/директорий, над которыми действие выполнять не нужно(оно уже выполнено ранее) */
+    QMap<QString, QString> filesNotNeedAction;
     /** @brief список файлов/директорий, над которыми нужно выполнить действия */
     QMap<QString, QString> filesMustToBeAction;
 
@@ -71,6 +73,12 @@ private:
     // служебные классы
     mutable QDir        dirService;
     mutable QFileInfo   fileInfo;
+
+    /** @brief Была ли выполнена работа над файлом/директорией
+        @param filesWasAction - список файлов, над которыми было выполнено действие
+        */
+    bool                IsWasActionForFile(QMap<QString, QString> filesWasAction, const QString& file) const;
+
 };
 
 }

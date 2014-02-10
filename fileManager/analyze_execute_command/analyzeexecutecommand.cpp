@@ -32,7 +32,9 @@ void AnalyzeExecuteCommand::StartExecuteCommand()
 //----------------------------------------------------------------------------------------/
 void AnalyzeExecuteCommand::EndExecuteCommand(const bool wasExecute)
 {
-    assert(startCommand && !endCommand);
+    // проверяем на assert только в том случаи, если команда стартонула
+    if(wasExecute)
+        assert(startCommand && !endCommand);
     endCommand = true;
     facadeAnalyzeCommand.ResetCurrentExecuteCommand();
 }

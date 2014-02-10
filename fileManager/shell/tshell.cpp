@@ -49,6 +49,7 @@ RESULT_EXEC_PROCESS TShell::ExecuteProcess(const QString &str, IParsingCommandOu
     if(!process->waitForStarted(20000))
     {
         printf("Process not started! \n");
+        receiverParsing->SetParamErrorExecuteCommand(QProcess::FailedToStart);
         QObject::disconnect(m_connection_readOut);
         QObject::disconnect(m_connection_started);
         QObject::disconnect(m_connection_finished);

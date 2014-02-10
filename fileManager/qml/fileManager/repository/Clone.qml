@@ -9,6 +9,10 @@ import Message 1.0
 
 Rectangle
 {
+//    WaitClone {
+
+//    }
+
     ControllerRepository {
         id: repository
     }

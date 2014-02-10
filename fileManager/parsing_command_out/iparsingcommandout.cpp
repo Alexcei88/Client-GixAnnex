@@ -56,8 +56,14 @@ void IParsingCommandOut::SetParamAfterEndCommand(int exitCode)
         analyzeCommand->EndExecuteCommand();
 }
 //----------------------------------------------------------------------------------------/
-void IParsingCommandOut::SetParamErrorExecuteCommand(QProcess::ProcessError& error)
+void IParsingCommandOut::SetParamErrorExecuteCommand(QProcess::ProcessError error)
 {
+#ifdef DEBUG
+    std::cout<<"Was error to execute process: "<<error<<"!!!"<<std::endl;
+#endif
+    // сообщаем, что команда выполнилась и должна удалиться из списка
+    if(analyzeCommand.get())
+        analyzeCommand->EndExecuteCommand(error != QProcess::FailedToStart);
 }
 //----------------------------------------------------------------------------------------/
 void IParsingCommandOut::SetNewDataStdOut()

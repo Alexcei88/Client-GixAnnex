@@ -41,7 +41,9 @@ void AnalyzeExecuteCommandDrop::EndExecuteCommand(const bool wasExecute)
     Q_UNUSED(flag);
 
     // очищаем список errorDroppingContent
-    errorDroppingContentFile->ClearListAction(errorDroppingContentFile->filesWasAction, errorDroppingContentFile->filesMustToBeAction);
+    errorDroppingContentFile->ClearListAction(errorDroppingContentFile->filesWasAction, errorDroppingContentFile->filesMustToBeAction,
+                                              errorDroppingContentFile->filesNotNeedAction
+                                              );
 }
 //----------------------------------------------------------------------------------------/
 void AnalyzeExecuteCommandDrop::ExecuteAddActionForAnalizeExecuteCommand()
@@ -155,11 +157,12 @@ void AnalyzeExecuteCommandDrop::ForeachFilesNoContentAlready(const QString& path
             AtomicLock flag(atomicFlagExecuteCommand);
             Q_UNUSED(flag);
 
-            // посылаем сигнал, что контент уже удален
-            lastDroppingContentFile = path;
-            lastDroppingContentFiles << path;
+            std::cout<<"Уже удален контент :"<<path.toStdString()<<std::endl;
 
-            droppingContentFileQueue->filesWasAction[path] = "";
+            // посылаем сигнал, что контент уже удален
+            lastDroppingContentFiles << path;
+            // помещаем в вектор файлов/директорий, над которыми действия выполнять не нужно(они уже выполнены)
+            droppingContentFileQueue->filesNotNeedAction[path] = "";
         }
     }
 }
@@ -170,6 +173,10 @@ bool AnalyzeExecuteCommandDrop::ModificationDroppingContentFileQueue()
         return false;
 
     bool wasModification = false;
+
+    //-------------------------------------------------------------------------/
+    // filesWasAction
+    //-------------------------------------------------------------------------/
 
     // модифицируем список, в зависимости от хода выполнения команды
     QStringList listDirs = droppingContentFileQueue->ListAllDirOfFile(droppingContentFileQueue->filesWasAction);
@@ -195,6 +202,36 @@ bool AnalyzeExecuteCommandDrop::ModificationDroppingContentFileQueue()
             wasModification = true;
         }
     }
+
+    //-------------------------------------------------------------------------/
+    // filesNotNeedAction
+    //-------------------------------------------------------------------------/
+
+    listDirs = droppingContentFileQueue->ListAllDirOfFile(droppingContentFileQueue->filesNotNeedAction);
+    if(!endCommand)
+    {
+        // если не конец операции, то удаляем из списка если есть fileDropContent в списке
+        listDirs.removeOne(fileDropContent);
+    }
+
+    // если список файлов, над которыми было выполнено дейтсвие содержит строку fileDropContent, то дальше значит делать ничего не нужно
+    //(команда выполнена над всеми файлами в директории, на которую дано задание. Модификацию списка болше делать незачем)
+    if(droppingContentFileQueue->filesNotNeedAction.contains(fileDropContent))
+        return wasModification;
+
+
+    for(QString& dir : listDirs)
+    {
+        if(droppingContentFileQueue->WasActionForAllFileDirOnDir(droppingContentFileQueue->filesNotNeedAction, dir))
+        {
+            droppingContentFileQueue->UnionAllFileDirOnDir(droppingContentFileQueue->filesNotNeedAction, dir);
+        #ifdef DEBUG
+            printf("Was union directory: %s\n", dir.toStdString().c_str());
+        #endif
+            wasModification = true;
+        }
+    }
+
     return wasModification;
 }
 //----------------------------------------------------------------------------------------/
@@ -215,10 +252,9 @@ bool AnalyzeExecuteCommandDrop::ModificationErrorDroppingContentFile()
     bool wasModification = false;
     // модифицируем список, в зависимости от хода выполнения команды
     QStringList listDirs = errorDroppingContentFile->ListAllDirOfFile(errorDroppingContentFile->filesWasAction);
-    QMap<QString, QString> listFilesNotWasAction;
     for(QString& dir : listDirs)
     {
-        if(errorDroppingContentFile->WasActionForAllFileDirOnDir(errorDroppingContentFile->filesWasAction, listFilesNotWasAction, dir))
+        if(errorDroppingContentFile->WasActionForAllFileDirOnDir(errorDroppingContentFile->filesWasAction, dir))
         {
 #ifdef DEBUG
             printf("Was union directory: %s\n", dir.toStdString().c_str());

@@ -34,7 +34,7 @@ public:
     virtual void        SetParamAfterEndCommand(int exitCode);
 
     /** @brief действия команда при выполнении команды возникла ошибка */
-    virtual void        SetParamErrorExecuteCommand(QProcess::ProcessError& error);
+    virtual void        SetParamErrorExecuteCommand(QProcess::ProcessError error);
 
     /**
      * @brief слот, в который будут поступать данные со стандартного потока вывода при выполнении команды
