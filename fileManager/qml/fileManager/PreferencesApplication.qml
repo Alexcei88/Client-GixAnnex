@@ -5,8 +5,8 @@ import QtQuick.Layouts 1.1
 import Preferences 1.0
 
 Rectangle {
-    width: 200
-    height: 100
+    width: 100
+    height: 200
 
     SystemPalette { id: sysPal }
 
@@ -16,7 +16,8 @@ Rectangle {
     }
 
     color: sysPal.window
-    Column {
+    ColumnLayout {
+        anchors.fill: parent
         TabView
         {
             id: tabPreferences
@@ -24,6 +25,7 @@ Rectangle {
             Component.onCompleted:
             {
                 tabPreferences.addTab("General", generalPreferencesTab);
+                tabPreferences.addTab("Repository", repositoryPreferencesTab);
             }
         }
 
@@ -42,16 +44,49 @@ Rectangle {
             }
         }
     }
-
+    // страницы TabView
+    // general
     Component {
         id: generalPreferencesTab
 
         Item {
-            ColumnLayout {
-                CheckBox {
+            anchors.margins: 40
 
+            Column{
+                height: parent.height
+                anchors.fill: parent
+                spacing: 10
+                CheckBox {
+                    text: qsTr("Show desktop notifications");
                 }
 
+                CheckBox {
+                    text: qsTr("Start git-annex on system startup");
+                }
+
+            }
+        }
+    }
+    // Repository
+    Component {
+        id: repositoryPreferencesTab
+
+        Item {
+            anchors.margins: 40
+            GroupBox {
+                title: qsTr("Mode")
+                 ExclusiveGroup { id: group }
+                   Row {
+                       spacing: 2
+                       RadioButton {
+                           exclusiveGroup: group
+                           text: qsTr("Direct")
+                       }
+                       RadioButton {
+                           exclusiveGroup: group
+                           text: qsTr("Indirect")
+                       }
+                   }
             }
         }
     }
