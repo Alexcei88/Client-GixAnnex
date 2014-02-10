@@ -42,7 +42,9 @@ void AnalyzeExecuteCommandGet::EndExecuteCommand(const bool wasExecute)
     Q_UNUSED(flag);
 
     // очищаем список errorGettingContent
-    errorGettingContentFile->ClearListAction(errorGettingContentFile->filesWasAction, errorGettingContentFile->filesMustToBeAction);
+    errorGettingContentFile->ClearListAction(errorGettingContentFile->filesWasAction, errorGettingContentFile->filesMustToBeAction,
+                                             errorGettingContentFile->filesNotNeedAction
+                                             );
 }
 //----------------------------------------------------------------------------------------/
 void AnalyzeExecuteCommandGet::ExecuteAddActionForAnalizeExecuteCommand()
@@ -153,10 +155,9 @@ void AnalyzeExecuteCommandGet::ForeachFilesHaveContentAlready(const QString& pat
             Q_UNUSED(flag);
 
             // посылаем сигнал, что файл уже получен
-            lastGettingContentFile = path;
             lastGettingContentFiles << path;
 
-            gettingContentFileQueue->filesWasAction[path] = "";
+            gettingContentFileQueue->filesNotNeedAction[path] = "";
         }
         else
         {
@@ -172,6 +173,11 @@ bool AnalyzeExecuteCommandGet::ModificationGettingContentFileQueue()
         return false;
 
     bool wasModification = false;
+
+    //-------------------------------------------------------------------------/
+    // filesWasAction
+    //-------------------------------------------------------------------------/
+
     // модифицируем список, в зависимости от хода выполнения команды
     QStringList listDirs = gettingContentFileQueue->ListAllDirOfFile(gettingContentFileQueue->filesWasAction);
     if(!endCommand)
@@ -196,6 +202,35 @@ bool AnalyzeExecuteCommandGet::ModificationGettingContentFileQueue()
             wasModification = true;
         }
     }
+
+    //-------------------------------------------------------------------------/
+    // filesNotNeedAction
+    //-------------------------------------------------------------------------/
+
+    listDirs = gettingContentFileQueue->ListAllDirOfFile(gettingContentFileQueue->filesNotNeedAction);
+    if(!endCommand)
+    {
+        // если не конец операции, то удаляем из списка если есть fileDropContent в списке
+        listDirs.removeOne(fileGetContent);
+    }
+
+    // если список файлов, над которыми было выполнено дейтсвие содержит строку fileDropContent, то дальше значит делать ничего не нужно
+    //(команда выполнена над всеми файлами в директории, на которую дано задание. Модификацию списка болше делать незачем)
+    if(gettingContentFileQueue->filesNotNeedAction.contains(fileGetContent))
+        return wasModification;
+
+    for(QString& dir : listDirs)
+    {
+        if(gettingContentFileQueue->WasActionForAllFileDirOnDir(gettingContentFileQueue->filesNotNeedAction, dir))
+        {
+            gettingContentFileQueue->UnionAllFileDirOnDir(gettingContentFileQueue->filesNotNeedAction, dir);
+        #ifdef DEBUG
+            printf("Was union directory: %s\n", dir.toStdString().c_str());
+        #endif
+            wasModification = true;
+        }
+    }
+
     return wasModification;
 }
 //----------------------------------------------------------------------------------------/
@@ -216,10 +251,9 @@ bool AnalyzeExecuteCommandGet::ModificationErrorGettingContentFile()
     bool wasModification = false;
     // модифицируем список, в зависимости от хода выполнения команды
     QStringList listDirs = errorGettingContentFile->ListAllDirOfFile(errorGettingContentFile->filesWasAction);
-    QMap<QString, QString> listFilesNotWasAction;
     for(QString& dir : listDirs)
     {
-        if(errorGettingContentFile->WasActionForAllFileDirOnDir(errorGettingContentFile->filesWasAction, listFilesNotWasAction, dir))
+        if(errorGettingContentFile->WasActionForAllFileDirOnDir(errorGettingContentFile->filesWasAction, dir))
         {
 #ifdef DEBUG
             printf("Was union directory: %s\n", dir.toStdString().c_str());
