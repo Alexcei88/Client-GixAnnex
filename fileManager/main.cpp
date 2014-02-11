@@ -64,12 +64,13 @@ int main(int argc, char *argv[])
     // свойства приложения
     QtQuick2ApplicationViewer preferencesAppViewer;
     preferencesAppViewer.setMainQmlFile(QStringLiteral("qml/fileManager/PreferencesApplication.qml"));
-    preferencesAppViewer.setMinimumHeight(170);
-    preferencesAppViewer.setMinimumWidth(540);
+    preferencesAppViewer.setMinimumHeight(400);
+    preferencesAppViewer.setMinimumWidth(500);
     preferencesAppViewer.setMaximumHeight(preferencesAppViewer.minimumHeight());
     preferencesAppViewer.setMaximumWidth(preferencesAppViewer.minimumWidth());
-    preferencesAppViewer.setX(600);
+    preferencesAppViewer.setX(400);
     preferencesAppViewer.setY(300);
+    preferencesAppViewer.setModality(Qt::ApplicationModal);
 //    preferencesAppViewer.setModality(Qt::WindowModality);
     preferencesAppViewer.setTitle("Preferences Git-Annex");
     preferencesAppViewer.show();

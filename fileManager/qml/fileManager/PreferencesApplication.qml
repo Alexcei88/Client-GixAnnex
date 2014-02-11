@@ -1,12 +1,10 @@
 import QtQuick 2.0
 import QtQuick.Window 2.0
 import QtQuick.Controls 1.0
-import QtQuick.Layouts 1.1
+import QtQuick.Layouts 1.0
 import Preferences 1.0
 
 Rectangle {
-    width: 100
-    height: 200
 
     SystemPalette { id: sysPal }
 
@@ -16,11 +14,20 @@ Rectangle {
     }
 
     color: sysPal.window
-    ColumnLayout {
+    Column
+    {
+        id: column
+        property int heightForButton: 0.04 * parent.height
+        anchors.margins: 10
+
+        spacing: 10
         anchors.fill: parent
         TabView
         {
             id: tabPreferences
+            width: parent.width
+            height: parent.height - column.heightForButton
+                    - column.spacing - column.anchors.margins
             tabsVisible: true
             Component.onCompleted:
             {
@@ -30,8 +37,11 @@ Rectangle {
         }
 
         RowLayout {
+            height: column.heightForButton
+            width: parent.width
             Button
             {
+                anchors.right: parent.right
                 id: close
                 text: qsTr("Close")
                 MouseArea {
@@ -43,17 +53,18 @@ Rectangle {
                 }
             }
         }
-    }
+    } // end column
+
+    //-------------------------------------------------------------------------/
     // страницы TabView
     // general
     Component {
         id: generalPreferencesTab
 
         Item {
-            anchors.margins: 40
-
+            anchors.fill: parent
+            anchors.margins: 20
             Column{
-                height: parent.height
                 anchors.fill: parent
                 spacing: 10
                 CheckBox {
@@ -72,21 +83,29 @@ Rectangle {
         id: repositoryPreferencesTab
 
         Item {
-            anchors.margins: 40
-            GroupBox {
-                title: qsTr("Mode")
-                 ExclusiveGroup { id: group }
-                   Row {
-                       spacing: 2
-                       RadioButton {
-                           exclusiveGroup: group
-                           text: qsTr("Direct")
+            anchors.fill: parent
+            anchors.margins: 20
+            Rectangle
+            {
+                border.width: 2
+                radius: 1
+                GroupBox {
+                    //anchors.fill: parent
+                    title: qsTr("Mode")
+                     ExclusiveGroup { id: group }
+                       Row {
+                           spacing: 2
+                           RadioButton {
+                               exclusiveGroup: group
+                               checked: true
+                               text: qsTr("Direct")
+                           }
+                           RadioButton {
+                               exclusiveGroup: group
+                               text: qsTr("Indirect")
+                           }
                        }
-                       RadioButton {
-                           exclusiveGroup: group
-                           text: qsTr("Indirect")
-                       }
-                   }
+                }
             }
         }
     }
