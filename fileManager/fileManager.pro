@@ -50,7 +50,10 @@ SOURCES += main.cpp \
     threadsyncicons.cpp \
     threadsyncrepository.cpp \
     analyze_execute_command/analyzeexecutecommandclone.cpp \
-    analyze_execute_command/analyzeexecutecommandinit.cpp
+    analyze_execute_command/analyzeexecutecommandinit.cpp \
+    analyze_execute_command/analyzeexecutecommandchangedirectmode.cpp \
+    MVC/Controller/controllerpreferencesapp.cpp \
+    MVC/Model/model_preferencesapp.cpp
 
 # Installation path
 # target.path =
@@ -63,7 +66,6 @@ OTHER_FILES += \
     qml/fileManager/WindowContent.qml \
     qml/fileManager/DirectoryView.qml \
     qml/fileManager/propertyFile/PropertyFile.qml \
-    qml/fileManager/getContent/GetContent.qml \
     qml/fileManager/repository/Clone.qml \
 
 QMAKE_LIBDIR += $$_PRO_FILE_PWD_/iniparser/
@@ -109,7 +111,10 @@ HEADERS += \
     threadsyncicons.h \
     threadsyncrepository.h \
     analyze_execute_command/analyzeexecutecommandclone.h \
-    analyze_execute_command/analyzeexecutecommandinit.h
+    analyze_execute_command/analyzeexecutecommandinit.h \
+    analyze_execute_command/analyzeexecutecommandchangedirectmode.h \
+    MVC/Controller/controllerpreferencesapp.h \
+    MVC/Model/model_preferencesapp.h
 
 # Включаем поддержку С++11
 QMAKE_CXXFLAGS += -std=c++0x

@@ -175,11 +175,7 @@ FocusScope{
         }
         onStatusChanged: {
             if(status === NewFolderListModel.Ready)
-            {
-//                console.log(dirModel.lastIndex)
-//                if(dirModel.lastIndex < dirModel.count)
-//                    view.currentIndex = dirModel.lastIndex;
-            }
+            {}
         }
     }
 
@@ -218,10 +214,20 @@ FocusScope{
 
             Component.onCompleted:
             {
-                // запускаем поток и таймер обновления состояния иконок
+                console.log("ListView Completed")
+                // запускаем поток обновления состояния иконок
                 contrIcons.startThreadIconsSync();
-//                timeSyncIcons.start();
             }
+            Component.onDestruction:
+            {
+                // останавливаем поток обновления состояния иконок
+                contrIcons.stopThreadIconsSync();
+            }
+//            Component.o:
+//            {
+//                console.log("Status = " + Component.status);
+//            }
+
             MouseArea {
                 anchors.fill: parent
                 acceptedButtons: Qt.LeftButton | Qt.RightButton
@@ -267,12 +273,14 @@ FocusScope{
                             cache: true
                         }
 
-                        ColorOverlay
+                        Colorize
                         {
                             id: colorEffect
                             anchors.fill: imgFolder
                             source: imgFolder
-                            color: "#BEBEBEFF"
+                            saturation: 0.0
+                            hue: 0.0
+                            lightness: 0.0
                             enabled: false
                             visible: false
                         }
@@ -411,50 +419,4 @@ FocusScope{
             }
         }   // end GridView
     } // end ScrollView
-    Timer
-    {
-        id: timeSyncIcons
-        repeat: true
-        interval: 300
-        onTriggered:
-        {
-            if(dirModel.status === NewFolderListModel.Null)
-                return;
-
-            return;
-//            // Обновление состояния иконок синхронизации у делегатов компонента GridView
-            var item = view.children[0];
-            // этот итем является родителем для делегатов, дальше пойдут итемы делегатов
-            // их количество зависит от количества объектов модели
-            for(var i = 0; i < dirModel.count; ++i)
-            {
-                var itemDelegate = item.children[i];
-                if(contrIcons.stateIconsFileSyncQML[itemDelegate.curFileName] === "Disable_sincingF")
-                    itemDelegate.state = "DISABLE_SYNC";
-                else if(contrIcons.stateIconsFileSyncQML[itemDelegate.curFileName] === "SyncedFError")
-                    itemDelegate.state = "SYNCED_ERROR";
-                else if(contrIcons.stateIconsFileSyncQML[itemDelegate.curFileName] === "SyncedF")
-                    itemDelegate.state = "SYNCED";
-                else if(contrIcons.stateIconsFileSyncQML[itemDelegate.curFileName] === "SyncingF")
-                    itemDelegate.state = "SYNCING";
-            }
-
-//            //view.model.get(0).width = 10;
-//            if(view.currentItem)
-//            {
-//                var item = view.currentItem.children[0].children[0];
-//                if(contrIcons.stateIconsFileSyncQML[view.currentItem.curFileName] === "Disable_sincingF")
-//                    item.state = "DISABLE_SYNC";
-//                else if(contrIcons.stateIconsFileSyncQML[view.currentItem.curFileName] === "SyncedFError")
-//                    item.state = "SYNCED_ERROR"
-//                else if(contrIcons.stateIconsFileSyncQML[view.currentItem.curFileName] === "SyncedF")
-//                    item.state = "SYNCED"
-//                else if(contrIcons.stateIconsFileSyncQML[view.currentItem.curFileName] === "SyncingF")
-//                {
-//                    item.state = "SYNCING"
-//                }
-//            }
-//            updateIconsStateFileSync()
-        } // end Triggered
-    }
 }

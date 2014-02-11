@@ -31,7 +31,7 @@ void ThreadSyncIcons::UpdateFileSyncIcons()
             }
             mutex.unlock();
 
-            // обновляем представление
+            // обновляем представление в основном потоке
             facade->GetSystemTray()->OnUpdateIconsSyncronization();
             sleep(1);
         }

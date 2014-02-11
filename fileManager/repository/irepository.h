@@ -196,10 +196,16 @@ public:
     /** @brief возвращает последнее сообщение об ошибке */
     const QString&      GetLastError() const { return lastError; };
 
-    // ФУНКЦИИ ОТВЕТЫ
+    //====================================================================================/
+    // ФУНКЦИИ-ОТВЕТЫ РЕПОЗИТОРИЯ НА ВЫПОЛНЕНИЕ КОМАНД
+    //====================================================================================/
     /** @brief  удачное/неудачное клонирование репозитория */
     void                OnErrorCloneRepository(const QString& error);
     void                OnSuccessfullyCloneRepository(const QString&folder);
+
+    /** @brief смена режима доступа репозитория(прямого/обратного) */
+    void                OnChangeDirectMode(const bool mode);
+    void                OnErrorChangeDirectMode(const QString& error);
 
 protected:
 
@@ -250,23 +256,13 @@ private:
     void                GetListDirectoriesOnDirectory(const QString& path, QStringList& listDirectory);
 
 private slots:
-    // смена режима доступа репозитория(прямого/обратного)
-    void                OnChangeDirectMode(const bool mode);
-    void                OnErrorChangeDirectMode(const QString& error);
-
     // изменения в директории слежения за репой(нужно делать sync)
     void                OnDirectoryChanged(const QString& path);
     void                OnFileChanged(const QString& path);
 
-
-
 signals:
     // неудачное клонирование
     void                errorCloneRepository(const QString&);
-
-    // смена режима доступа репозитория(прямого/обратного)
-    void                changeDirectMode(const bool);
-    void                errorChangeDirectMode(const QString&);
 
 };
 

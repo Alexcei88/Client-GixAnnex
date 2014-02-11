@@ -1,11 +1,13 @@
 #include "facadeapplication.h"
 #include "MVC/Controller/controller_repository.h"
 #include "MVC/Controller/controller_icons.h"
+#include "MVC/Controller/controllerpreferencesapp.h"
 #include "repository/trepository.h"
 #include "resourcegenerator.h"
 #include <qml/components/message_box//qmlmessage.h>
 #include <qml/components/folder_model/folderlistmodel.h>
 
+// Qt Stuff
 #include <QQmlEngine>
 #include <QQmlComponent>
 #include <QTextStream>
@@ -61,9 +63,6 @@ FacadeApplication::~FacadeApplication()
 {
     // выключаем таймер синхронизации данных
     timeSync.stop();
-
-    // останавливаем поток синхронизации иконок
-    emit stopThreadIconsSync();
 
 #warning NOT_WORK
     // все остальные задачи нужно убивать к чертовой матери, и останавливать демоны
@@ -144,7 +143,7 @@ void FacadeApplication::LoadRepositories()
             autosync ? tempRepo->SetState(IRepository::Synced) : tempRepo->SetState(IRepository::Disable_sincing);
         }
 
-        // читаем список параметров прямого/косвенного режима
+        // читаем список параметров прямого/косвенного режима работы репозитория
         {
             QDomNamedNodeMap nodeModeMap = node.at(1).attributes();
             assert(nodeModeMap.count() == 1);
@@ -522,5 +521,6 @@ void FacadeApplication::InitClassCAndQML()
     qmlRegisterType<GANN_MVC::ControllerIcons>("Icons", 1, 0, "ControllerIcons");
     qmlRegisterType<QMLMessage>("Message", 1, 0, "MessageBox");
     qmlRegisterType<QMLFolderListModel>("FolderListModel", 1, 0, "NewFolderListModel");
+    qmlRegisterType<GANN_MVC::ControllerPreferencesApp>("Preferences", 1, 0, "PreferencesApp");
 }
 //----------------------------------------------------------------------------------------/

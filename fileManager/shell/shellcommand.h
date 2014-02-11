@@ -49,8 +49,10 @@ public:
     */
     GANN_DEFINE::RESULT_EXEC_PROCESS DropContentFile(const QString& path, AnalyzeCommand::FacadeAnalyzeCommand* facade, const bool mode) const;
 
-    // 5. Удалить файл(директорию) из репозитория вместе с контентом
-    GANN_DEFINE::RESULT_EXEC_PROCESS RemoveFile(const QString& path, const bool recursive = false) const;
+    /** @brief  Удалить файл(директорию) из репозитория вместе с контентом
+        @param mode - режим, в котором работает репозиторий(true - в режиме direct, false - иначе
+    */
+    GANN_DEFINE::RESULT_EXEC_PROCESS RemoveFile(const QString& path, const bool mode, const bool recursive = false) const;
     // 6. Синхронизация с главным репозиторием
     GANN_DEFINE::RESULT_EXEC_PROCESS Sync() const;
     // 7. оказывает местонахождение файла в других репозиториях

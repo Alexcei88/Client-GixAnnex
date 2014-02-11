@@ -20,6 +20,8 @@
  * КЛАСС ФАСАД, В КОТОРОМ СОБИРАЕТСЯ ВСЯ ИНФА ДЛЯ АНАЛИЗА ПО ХОДУ ВЫПОЛНЕНИЯ КОМАНД
 */
 
+class IRepository;
+
 namespace AnalyzeCommand
 {
 
@@ -32,6 +34,8 @@ class FacadeAnalyzeCommand
 {
 public:
     FacadeAnalyzeCommand();
+    FacadeAnalyzeCommand(IRepository* repository);
+
     ~FacadeAnalyzeCommand();
 
     /** @brief Установка текущего пути репозитория */
@@ -71,6 +75,11 @@ public:
     /** @brief есть ли ошибка получения контента в текущей директории(или сам текущий файл) в текущий момент времени */
     bool                IsErrorDroppingContentFileDir(const QString& file) const;
 
+    //-------------------  CHANGE DIRECT MODE --------------------------------/
+    void                ErrorChangeDirectMode();
+    void                ChangeDirectMode(const bool& mode);
+
+
     /** @brief функция выполнения дополнительных действий в классах анализа хода выполнения команд у текущей команды
      * данную функцию дергать только из потока синхронизации иконок либо по окончании команды, тк она может быть математически затратной
      * \details например, объединение списка файлов в одну директорию(и наоборот)
@@ -100,6 +109,8 @@ private:
 
     // в качестве служебных целей
     static QFileInfo    fileInfo;
+    // репозиторий, с которым работает данный класс
+    IRepository*        repository;
 };
 
 }

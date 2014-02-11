@@ -230,7 +230,6 @@ FocusScope {
                                 State {
                                     name: "SYNCING"
                                     when: { repository.getStateRepository(localPath) === "Syncing";}
-                                   // StateChangeScript { script: console.log("state = SYNCING") }
                                     PropertyChanges {
                                         target: repoOn
                                         source: "qrc:/repo_on.png"
@@ -241,7 +240,6 @@ FocusScope {
                                 State {
                                     name: "SYNCED"
                                     when: { repository.getStateRepository(localPath) === "Synced";}
-                                   // StateChangeScript { script: console.log("state = SYNCED") }
                                     PropertyChanges {
                                         target: repoOn
                                         source: "qrc:/repo_on.png"
@@ -252,10 +250,9 @@ FocusScope {
                                 State {
                                     name: "DISABLE SYNC"
                                     when: { repository.getStateRepository(localPath) === "Disable_sincing";}
-                                    //StateChangeScript { script: console.log("state = DISABLE_SYNC") }
                                     PropertyChanges {
                                         target: repoOn
-                                        source: "qrc:/images/clear.png"
+                                        source: "qrc:repo_off.png"
 
                                     }
                                 }

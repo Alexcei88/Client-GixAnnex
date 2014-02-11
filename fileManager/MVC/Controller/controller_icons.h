@@ -45,18 +45,22 @@ public:
     @param file - путь к файлу */
     Q_INVOKABLE QVariant getPathIconsFilePropertyFile(QUrl file) const;
 
-    /** @brief дата последней модификации файла(директории)
+    /** @brief Дата последней модификации файла(директории)
     @param file - путь к файлу */
     Q_INVOKABLE QVariant getLastModifiedFile(QUrl file) const;
 
-    /** @brief размер файла(директории)
+    /** @brief Размер файла(директории)
     @param file - путь к файлу */
     Q_INVOKABLE QVariant getSizeFile(QUrl file) const;
 
-    /** @brief  Запуск потока обновления иконок синхронизации */
+    /** @brief Запуск потока обновления иконок синхронизации */
     Q_INVOKABLE void    startThreadIconsSync();
 
-    /** @brief полностью обновить список состояния иконок(вектор состояний иконок) */
+    /** @brief Остановить поток обновления иконок синхронизации */
+    Q_INVOKABLE void    stopThreadIconsSync();
+
+
+    /** @brief Полностью обновить список состояния иконок(вектор состояний иконок) */
     Q_INVOKABLE void    updateStateIconsFileSync();
 
     /** @brief Возвращает новый список */

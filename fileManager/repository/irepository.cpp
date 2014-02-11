@@ -5,8 +5,6 @@
 // boost stuff
 #include <boost/make_shared.hpp>
 
-
-
 using namespace GANN_DEFINE;
 using namespace AnalyzeCommand;
 
@@ -28,7 +26,7 @@ void IRepository::InitClass()
 {
     shellCommand = boost::make_shared<ShellCommand>();
 
-    facadeAnalyzeCommand = boost::make_shared<FacadeAnalyzeCommand>();
+    facadeAnalyzeCommand = boost::make_shared<FacadeAnalyzeCommand>(this);
 
     // устанавливаем состояние репозитория по умолчанию
     paramRepo.autosync = true;
@@ -54,9 +52,6 @@ void IRepository::InitClass()
 void IRepository::InitSignalAndSlots()
 {
     // сигналы/слоты
-    //----------------------------------------------------------------------------------------/
-    QObject::connect(this, &IRepository::errorCloneRepository, this, &IRepository::OnErrorCloneRepository, Qt::DirectConnection);
-    QObject::connect(this, &IRepository::changeDirectMode, this, &IRepository::OnChangeDirectMode, Qt::DirectConnection);
     //----------------------------------------------------------------------------------------/
 
     // подсоединяем watcher к нашим слотам
@@ -203,7 +198,7 @@ QString IRepository::CalculateStateFileDir(const QString& file) const
 void IRepository::GetListDirectoriesOnDirectory(const QString &path, QStringList& listDirectory)
 {
     QDir dir(path);
-    dir.setFilter(QDir::NoDotAndDotDot | QDir::AllDirs | QDir::Files | QDir::System);
+    dir.setFilter(QDir::NoDotAndDotDot | QDir::AllDirs | QDir::System);
     QFileInfo fileInfo(path);
 
     if(fileInfo.isDir())
@@ -249,7 +244,9 @@ void IRepository::OnChangeDirectMode(const bool mode)
 //----------------------------------------------------------------------------------------/
 void IRepository::OnErrorChangeDirectMode(const QString& error)
 {
-
+#ifdef DEBUG
+    std::cout<<"WARNING: Change Direct Mode return error!!!"<<std::endl;
+#endif
 }
 //----------------------------------------------------------------------------------------/
 void IRepository::OnDirectoryChanged(const QString& path)
