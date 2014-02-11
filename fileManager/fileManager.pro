@@ -3,7 +3,6 @@ folder_01.source = qml/fileManager
 folder_01.target = qml
 DEPLOYMENTFOLDERS = folder_01
 
-
 QT += qml quick \
         widgets \
         xml
@@ -35,7 +34,26 @@ SOURCES += main.cpp \
     shell/shelltask.cpp \
     resourcegenerator.cpp \
     MVC/Controller/controller_icons.cpp \
-    MVC/Model/model_icons.cpp
+    MVC/Model/model_icons.cpp \
+    parsing_command_out/parsingcommandempty.cpp \
+    qml/components/folder_model/folderlistmodel.cpp \
+    qml/components/message_box/qmlmessage.cpp \
+    parsing_command_out/parsingcommanddirectmode.cpp \
+    analyze_execute_command/analyzeexecutecommandget.cpp \
+    analyze_execute_command/analyzeexecutecommand.cpp \
+    analyze_execute_command/facadeanalyzecommand.cpp \
+    analyze_execute_command/analyzeexecutecommanddrop.cpp \
+    analyze_execute_command/analizediraction.cpp \
+    utils/utils.cpp \
+    parsing_command_out/parsingcommandfind.cpp \
+    analyze_execute_command/analyzeexecutecommandfind.cpp \
+    threadsyncicons.cpp \
+    threadsyncrepository.cpp \
+    analyze_execute_command/analyzeexecutecommandclone.cpp \
+    analyze_execute_command/analyzeexecutecommandinit.cpp \
+    analyze_execute_command/analyzeexecutecommandchangedirectmode.cpp \
+    MVC/Controller/controllerpreferencesapp.cpp \
+    MVC/Model/model_preferencesapp.cpp
 
 # Installation path
 # target.path =
@@ -48,10 +66,9 @@ OTHER_FILES += \
     qml/fileManager/WindowContent.qml \
     qml/fileManager/DirectoryView.qml \
     qml/fileManager/propertyFile/PropertyFile.qml \
-    qml/fileManager/getContent/GetContent.qml \
     qml/fileManager/repository/Clone.qml \
 
-INCLUDEPATH += iniparser/
+QMAKE_LIBDIR += $$_PRO_FILE_PWD_/iniparser/
 
 RESOURCES += \
     Resource.qrc \
@@ -72,17 +89,37 @@ HEADERS += \
     MVC/Controller/controller_repository.h \
     MVC/Model/model_repository.h \
     define.h \
-    MVC/Model/model_updateviewer.h \
     shell/shelltask.h \
     resourcegenerator.h \
     MVC/Controller/controller_icons.h \
     MVC/Model/model_icons.h \
     iniparser/iniparser.h \
-    iniparser/dictionary.h
+    iniparser/dictionary.h \
+    parsing_command_out/parsingcommandempty.h \
+    qml/components/folder_model/folderlistmodel.h \
+    qml/components/message_box/qmlmessage.h \
+    threadmodel.h \
+    parsing_command_out/parsingcommanddirectmode.h \
+    analyze_execute_command/analyzeexecutecommandget.h \
+    analyze_execute_command/analyzeexecutecommand.h \
+    analyze_execute_command/facadeanalyzecommand.h \
+    utils/utils.h \
+    analyze_execute_command/analyzeexecutecommanddrop.h \
+    analyze_execute_command/analizediraction.h \
+    parsing_command_out/parsingcommandfind.h \
+    analyze_execute_command/analyzeexecutecommandfind.h \
+    threadsyncicons.h \
+    threadsyncrepository.h \
+    analyze_execute_command/analyzeexecutecommandclone.h \
+    analyze_execute_command/analyzeexecutecommandinit.h \
+    analyze_execute_command/analyzeexecutecommandchangedirectmode.h \
+    MVC/Controller/controllerpreferencesapp.h \
+    MVC/Model/model_preferencesapp.h
 
 # Включаем поддержку С++11
 QMAKE_CXXFLAGS += -std=c++0x
 
+
 LIBS += -lboost_system \
         -lboost_filesystem \
-        libiniparser.a
+        -liniparser

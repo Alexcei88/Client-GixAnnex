@@ -15,6 +15,13 @@
 // ради теста
 #include "repository/trepository.h"
 
+
+// функция, выполняющаяся по завершению работы программы
+void Exit()
+{
+    FacadeApplication::RemoveInstance();
+}
+
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
@@ -46,23 +53,36 @@ int main(int argc, char *argv[])
     // viewer копирования репозитория
     QtQuick2ApplicationViewer cloneRepoViewer;
     cloneRepoViewer.setMainQmlFile(QStringLiteral("qml/fileManager/repository/Clone.qml"));
-    cloneRepoViewer.setMinimumHeight(150);
+    cloneRepoViewer.setMinimumHeight(170);
     cloneRepoViewer.setMinimumWidth(540);
+    cloneRepoViewer.setMaximumHeight(cloneRepoViewer.minimumHeight());
+    cloneRepoViewer.setMaximumWidth(cloneRepoViewer.minimumWidth());
     cloneRepoViewer.setX(600);
     cloneRepoViewer.setY(300);    
     cloneRepoViewer.setTitle("Git-Annex Clone Repository");
 
+    // свойства приложения
+    QtQuick2ApplicationViewer preferencesAppViewer;
+    preferencesAppViewer.setMainQmlFile(QStringLiteral("qml/fileManager/PreferencesApplication.qml"));
+    preferencesAppViewer.setMinimumHeight(400);
+    preferencesAppViewer.setMinimumWidth(500);
+    preferencesAppViewer.setMaximumHeight(preferencesAppViewer.minimumHeight());
+    preferencesAppViewer.setMaximumWidth(preferencesAppViewer.minimumWidth());
+    preferencesAppViewer.setX(400);
+    preferencesAppViewer.setY(300);
+    preferencesAppViewer.setModality(Qt::ApplicationModal);
+//    preferencesAppViewer.setModality(Qt::WindowModality);
+    preferencesAppViewer.setTitle("Preferences Git-Annex");
+    preferencesAppViewer.show();
     //=========================================================================== /
 
     // создаем классы трея и передаем нужные для управления viewer-ы
     SystemTray windowTray;
     windowTray.SetMainView(&mainViewer);
     windowTray.SetCloneRepoView(&cloneRepoViewer);
+    windowTray.SetPreferencesApplicationView(&preferencesAppViewer);
     facadeApp->SetSystemTray(&windowTray);
 
-    //TRepository rep;
-//    rep.CloneRepository("/home/alexcei/Copy/copyproject", "MyRepo", "/home/alexcei/Copy/project");
-//    rep.GetContentFile(".");
-    flush(std::cout);
+    atexit(Exit);
     return app.exec();
 }

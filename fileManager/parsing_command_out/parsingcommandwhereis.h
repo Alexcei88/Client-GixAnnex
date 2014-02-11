@@ -5,7 +5,7 @@
 class ParsingCommandWhereIs : public IParsingCommandOut
 {
 public:
-    ParsingCommandWhereIs(const TShell *shell);
+    ParsingCommandWhereIs();
     virtual void        ParsingData();
 };
 

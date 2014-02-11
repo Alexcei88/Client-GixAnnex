@@ -11,6 +11,12 @@
 #include <QMap>
 #include <QVector>
 #include <QFileInfo>
+#include <QFileSystemWatcher>
+
+namespace AnalyzeCommand
+{
+    class FacadeAnalyzeCommand;
+}
 
 class IRepository : public QObject
 {
@@ -23,16 +29,18 @@ public:
     enum STATE_REPOSITORY
     {
             Syncing = 0,        // идет синхронизация
-            Synced = 1,         // синхронизация выполнена
-            Disable_sincing = 2 // синхронизация выключена
+            Synced,             // синхронизация включена и выполнена
+            SyncedError,        // при синхронизации была ошибка
+            Disable_sincing     // синхронизация выключена
     };
 
     // состояния файла
     enum STATE_FILE_AND_DIR
     {
-        SyncingF = 0,        // идет синхронизация
-        SyncedF = 1,         // синхронизация выполнена
-        Disable_sincingF = 2 // синхронизация выключена
+         SyncingF = 0        // идет синхронизация
+        ,SyncedF             // синхронизация выполнена
+        ,SyncedFError        // при синхронизации была ошибка
+        ,Disable_sincingF    // синхронизация выключена
     };
 
     /**
@@ -46,6 +54,8 @@ public:
         bool        autosyncContent;
         // состояние, в котором щас находимся
         QString     currentState;
+        // режим работы репозитория(прямой, косвенный)(true - прямой, false - косвенный)
+        bool        directMode;
     };
 
     /**
@@ -57,8 +67,6 @@ public:
         bool        autosync;
         // состояние синхронизации, в котором находиться текущий файл
         QString     currentState;
-        // свойства файла(директории)
-        QFileInfo   fileInfo;
     };
 
     IRepository();
@@ -72,11 +80,18 @@ public:
     @param autosyncContent -
     @return void
     */
-    void                SetParamSyncRepository(const bool& autosync, const bool& autosyncContent);
+    void                 SetParamSyncRepository(const bool& autosync, const bool& autosyncContent);
 
     /** @brief взятие параметров автосинхронизации репозитория */
-    bool                GetParamSyncRepository() const { return paramSyncRepo.autosync; };
-    bool                GetParamSyncContentRepository() const { return paramSyncRepo.autosyncContent; };
+    inline bool          GetParamSyncRepository() const { return paramRepo.autosync; }
+    inline bool          GetParamSyncContentRepository() const { return paramRepo.autosyncContent; }
+
+    /** @brief Возвращает локальный путь, по которому храниться репозиторий */
+    inline QString       GetLocalURL() const { return localURL; }
+    /** @brief Возвращает удаленный путь, откуда скачан репозиторий */
+    inline QString       GetRemoteURL() const { return remoteURL; }
+    /** @brief Возвращает имя репозитория */
+    inline QString       GetNameRepo() const { return nameRepo; }
 
     /**
     @brief клонирование репозитория
@@ -92,42 +107,67 @@ public:
     @param localURL -
     @return 0 - нет ошибок
     */
-    virtual GANN_DEFINE::RESULT_EXEC_PROCESS DeleteRepository(const QString& localURL) = 0;
+    virtual GANN_DEFINE::RESULT_EXEC_PROCESS DeleteRepository() = 0;
 
     /**
     @brief получение контента у файла из репозитория
     @param file - имя файла(папки) назначения
+    @param mode - режим вызова функции получения контента(true - автоматический, false - пользовательский)
     @return 0 - нет ошибок
     */
-    virtual GANN_DEFINE::RESULT_EXEC_PROCESS GetContentFile(const QString& file = " ") = 0;
+    virtual GANN_DEFINE::RESULT_EXEC_PROCESS GetContentFile(const QString& file = " ", const bool mode = false) = 0;
 
     /**
     @brief удаление контента у файла из репозитория
     @param file - имя файла(папки) назначения
     @return 0 - нет ошибок
     */
-    virtual GANN_DEFINE::RESULT_EXEC_PROCESS DropContentFile(const QString& file = " ") = 0;
+    virtual GANN_DEFINE::RESULT_EXEC_PROCESS DropContentFile(const QString& file = " ", const bool mode = false) = 0;
+
+    /**
+    @brief удалить файл из репозитория
+    @param file - имя файла(папки) назначения
+    @return 0 - нет ошибок
+    */
+    virtual GANN_DEFINE::RESULT_EXEC_PROCESS RemoveFile(const QString& file = " ") = 0;
 
     /**
     @brief получение информации, в каких репозиториях находиться файл
     @param file - имя файла(папки) назначения
     @return 0 - нет ошибок
     */
-    virtual GANN_DEFINE::RESULT_EXEC_PROCESS WhereisFile(const QString& file = " ") const = 0;
+    virtual GANN_DEFINE::RESULT_EXEC_PROCESS WhereisFile(const QString& file = " ") = 0;
 
     /**
-    @brief синхрнизация с удаленным репозиторием
+    @brief синхронизация с удаленным репозиторием
     */
     virtual GANN_DEFINE::RESULT_EXEC_PROCESS SyncRepository() const = 0;
 
     /**
-    @brief Установка состояния репозитория
+    @brief запуск демона просмотра за рабочей директорией репозитория
     */
-    void                SetState(const STATE_REPOSITORY& state);
+    virtual GANN_DEFINE::RESULT_EXEC_PROCESS StartWatchRepository();
 
     /**
-    @brief Взятие состояния репозитория
+    @brief остановка демона просмотра за рабочей директорией репозитория
     */
+    virtual GANN_DEFINE::RESULT_EXEC_PROCESS StopWatchRepository();
+
+    /**
+    @brief перевод репозитория в прямой/косвенный режим
+    */
+    virtual GANN_DEFINE::RESULT_EXEC_PROCESS SetDirectMode(const bool& direct);
+
+    /**
+    @brief Взять состояние, в котором находиться репозиторий
+    */
+    bool                GetDirectMode() const { return paramRepo.directMode; }
+
+
+    /** @brief Установка состояния репозитория */
+    void                SetState(const STATE_REPOSITORY& state);
+
+    /** @brief Взятие состояния репозитория */
     QString             GetState() const;
 
     /**
@@ -138,40 +178,60 @@ public:
 
     /**
     @brief Взятие состояния у всех файлов в текущей директории
-    @return возвращаем константную ссылку на защищенное поле класса(для скорости, состояния файла часто анализируется)
+    @return возвращаем константную ссылку на защищенное поле класса
     */
     inline const QMap<QString, PARAMETR_FILEFOLDER_GIT_ANNEX>& GetStateFileDir() const { return paramSyncFileDir; };
 
-    /** @brief Получить полностью новые параметры синхронизации(при смене рабочей директории) */
-    void                UpdateParamSyncFileDirFull(const QString& curDir);
+    /** @brief Изменение  рабочей директории */
+    void                ChangeCurrentDirectory(const QString& curDir);
 
-    /** @brief Обновить параметры синхронизации у текущей директории */
+    /** @brief Обновить параметры синхронизации у текущей директории
+        Функция дергается из потока синхронизации иконок, чтобы получить последние параметры синхронизации
+    */
     void                UpdateParamSyncFileDir();
 
     /** @brief Является ли выбранный путь поддиректорией корневого пути репозитория */
     bool                DirIsSubRootDirRepository(const QString& dir) const;
 
+    /** @brief возвращает последнее сообщение об ошибке */
+    const QString&      GetLastError() const { return lastError; };
+
+    //====================================================================================/
+    // ФУНКЦИИ-ОТВЕТЫ РЕПОЗИТОРИЯ НА ВЫПОЛНЕНИЕ КОМАНД
+    //====================================================================================/
+    /** @brief  удачное/неудачное клонирование репозитория */
+    void                OnErrorCloneRepository(const QString& error);
+    void                OnSuccessfullyCloneRepository(const QString&folder);
+
+    /** @brief смена режима доступа репозитория(прямого/обратного) */
+    void                OnChangeDirectMode(const bool mode);
+    void                OnErrorChangeDirectMode(const QString& error);
+
 protected:
 
-    /**
-    @brief Установка состояния у файла(или директории)
-    @param fileDirName - название файла(директории), у которого меняем состояние
-    */
+    /** @brief Установка состояния у файла(или директории)
+    @param fileDirName - название файла(директории), у которого меняем состояние */
     void                SetStateFileDir(const QString& fileDirName, const STATE_FILE_AND_DIR& state);
 
     boost::shared_ptr<ShellCommand> shellCommand;
 
-    // удаленный адрес репозитория
+    /** @brief Фасад системы анализа хода выполнения команд */
+    boost::shared_ptr<AnalyzeCommand::FacadeAnalyzeCommand> facadeAnalyzeCommand;
+
+    /** @brief удаленный адрес репозитория */
     QString             remoteURL;
-    // локальный адрес репозитория
+    /** @brief локальный адрес репозитория */
     QString             localURL;
-    // название репозитория Git-Annex
+    /** @brief название репозитория Git-Annex */
     QString             nameRepo;
-    // параметры синхронизации репозитория
-    PARAMETR_REPOSITORY_GI_ANNEX paramSyncRepo;
+
+    // параметры репозитория
+    PARAMETR_REPOSITORY_GI_ANNEX paramRepo;
 
     // перечисление состояний репозитория, в которых мы находимся
+    // репозитория в целом
     QMetaEnum           metaEnumState;
+    // конкретного файла
     QMetaEnum           metaEnumStateF;
 
     // параметры состояния файлов, в которых находиться текущий файл(или директория)
@@ -180,34 +240,29 @@ protected:
     // вспом класс для манипулированием файловой системой
     QDir                dir;
 
+    /** @brief последнее сообщение об ошибке в репозитории */
+    QString             lastError;
+
+    /** @brief watcher для слежения за директорией */
+    QFileSystemWatcher  watcher;
+
 private:
     void                InitClass();
-    // вектор, содержащий файлы, которые сейчас скачиваются(или дано задание на скачивание)
-    QList<QString>      gettingContentFile;
-    // вектор, содержащий файлы, которые сейчас удаляются(или дано задание на удаление)
-    QList<QString>      droppingContentFile;
+    void                InitSignalAndSlots();
 
-    /** @brief идет ли в текущей директории(или сам текущий файл) получение контента в текущий момент времени */
-    bool                IsGettingContentFileDir(const QString& file);
+    /** @brief высчитать текущее состояние файла/директории */
+    QString             CalculateStateFileDir(const QString& file) const;
+    /** @brief получает список поддиректорий в корневой директории */
+    void                GetListDirectoriesOnDirectory(const QString& path, QStringList& listDirectory);
 
-    /** @brief идет ли в текущей директории(или сам текущий файл) удаление контента в текущий момент времени */
-    bool                IsDroppingContentFileDir(const QString& file);
-
-    // содержит ли директория файл, в тч и в поддиректориях)
-    bool                DirContainsFile(const QString& dir, const QString& file) const;
-
-public slots:
-    // слот, говорящий о начале получения контента у файла
-    void                OnStartGetContentFile(const QString&);
-    void                OnEndGetContentFile(const QString&);
-    void                OnStartDropContentFile(const QString&);
-    void                OnEndDropContentFile(const QString&);
+private slots:
+    // изменения в директории слежения за репой(нужно делать sync)
+    void                OnDirectoryChanged(const QString& path);
+    void                OnFileChanged(const QString& path);
 
 signals:
-    void                startGetContentFile(const QString&);
-    void                endGetContentFile(const QString&);
-    void                startDropContentFile(const QString&);
-    void                endDropContentFile(const QString&);
+    // неудачное клонирование
+    void                errorCloneRepository(const QString&);
 
 };
 

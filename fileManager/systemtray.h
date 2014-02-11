@@ -7,11 +7,6 @@
 #include <QApplication>
 #include <QQuickView>
 
-/*
- * КЛАСС, УПРАВЛЯЮЩИЙ ОКНАМИ ПРИЛОЖЕНИЯ:
- * ПОКАЗ, СКРЫТИЕ ФОРМ
-
-*/
 
 class SystemTray : public QWidget
 {
@@ -20,19 +15,29 @@ class SystemTray : public QWidget
 public:
     SystemTray();
 
-    inline void         SetMainView(QQuickView* view) { this->mainView = view; };
-    inline void         SetCloneRepoView(QQuickView* view) { this->cloneRepoView = view; };
-    void                CancelCloneRepository() const;
+    inline void         SetMainView(QQuickView* view) { this->mainView = view; }
+    inline void         SetCloneRepoView(QQuickView* view) { this->cloneRepoView = view; }
+    inline void         SetPreferencesApplicationView(QQuickView* view) { this->preferencesAppRepoView = view; }
 
-    /** @brief перезагрузить модель со списком репозиториев */
+    void                CancelCloneRepository() const;
+    void                ClosePreferencesApplication() const;
+
+    /** @brief Перезагрузить модель со списком репозиториев */
     bool                ReLoadListRepository() const;
-    /** @brief перезагрузить модель с отображением текущей директорией */
-    bool                ReLoadDirectoryView() const;
+
+    /** @brief Обновить состояние иконок синхронизации */
+    bool                OnUpdateIconsSyncronization() const;
 
 public slots:
-    // слот, отвечающий за обработку нажатия по иконке мышью
+    /** @brief Нажатия по иконке мышью */
     void                ActivateTray(QSystemTrayIcon::ActivationReason reason);
+    /** @brief Запуск окна клонирования репозитория */
     void                CloneRepository();
+    /** @brief Запуск окна свойств репозитория */
+    void                PreferencesApplication();
+
+    /** @brief Закрытие программы */
+    void                QuitProgramm();
 
 private:
 
@@ -41,17 +46,17 @@ private:
 
     QAction*            addRepoAction;
     QAction*            cloneRepoAction;
+    QAction*            preferencesAction;
     QAction*            quitAction;
 
     // viewer-ы
-    /**
-    @brief viewRepo - главный вид
-    */
+    /** @brief главный вид */
     QQuickView*         mainView;
-    /**
-    @brief cloneRepo - вид окна клонирования репозитория
-    */
+    /** @brief вид окна клонирования репозитория */
     QQuickView*         cloneRepoView;
+    /** @brief вид окна свойств репозитория */
+    QQuickView*         preferencesAppRepoView;
+
 };
 
 #endif // SYSTEMTRAY_H

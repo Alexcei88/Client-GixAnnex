@@ -6,80 +6,126 @@
  * В ЕГО ОТВЕТСТВЕННОСТЬ ВХОДИТ:
  * - КОНФИГУРИРОВАНИЕ ПРИЛОЖЕНИЯ
  * - ЧТЕНИЕ СПИСКА РЕПОЗИТОРИЕВ ИЗ КОНФИНУРАЦИОННОГО ФАЙЛА
- * - ЗАПУСК ПОТОКА СИНХРОНИЗАЦИИ СУЩЕСТВУЮЩИХ РЕПОЗИТОРИЕВ
+ * - ЗАПУСК ПОТОКА СИНХРОНИЗАЦИИ ДАННЫХ(ПОКА НЕ РЕАЛИЗОВАНО
+ * - УПРАВЛЕНИЕ РЕПОЗИТОРИЯМИ
  */
 
 // std stuff
 #include <map>
-
-// boost stuff
-#include <boost/shared_ptr.hpp>
-#include <boost/make_shared.hpp>
 
 // Qt stuff
 #include <QString>
 #include <QFile>
 #include <QDomDocument>
 #include <QTimer>
+#include <QObject>
 
 // our stuff
 #include "systemtray.h"
 #include "MVC/Model/model_repository.h"
 #include "MVC/Model/model_icons.h"
-#include "repository/irepository.h"
+#include "MVC/Model/model_preferencesapp.h"
+#include "threadmodel.h"
 
 class IRepository;
 
-class FacadeApplication
+class FacadeApplication: public QObject
 {
+    Q_OBJECT
 
 public:
     static FacadeApplication* getInstance();
-    void            SetSystemTray(SystemTray* systemTray) { this->systemTray = systemTray; };
+    static void         RemoveInstance();
+    ~FacadeApplication();
 
-    // классы модели MVC объявим другом для нашего фасада(
-    // принято такое архитектурное решение, что все методы фасада сделать приватными, и дать доступ только к моделям MVC,
-    // т.к кроме модели никто не может уведомлять о новых событиях, действиях, происходящие в приложении)
+    /** @brief Модель для работы с потоками, содержащая переменные синхронизации */
+    static ThreadModel  threadModel;
+
+    /** @brief Методы-аксессоры системного трея для фасада, он создается извне */
+    void                SetSystemTray(SystemTray* systemTray) { this->systemTray = systemTray; }   
+    inline SystemTray*  GetSystemTray() const { return systemTray; }
+
+    /** @brief Вернуть указатель на текущий репозиторий
+    |details если нет активного репозитория, то возвращаем nullptr */
+    IRepository*        GetCurrentRepository() const;
+
+    /** @brief окончание клонирование репозитория
+        @param successfully : true - клонирование завершилось удачно
+                              false - клонирование завершилось неудачно
+        @param information - если клонирование выполнено удачно, то название поддиректории,
+        иначе причину ошибки
+    */
+    void                EndCloneRepository(const bool& successfully, const QString& information);
+
+    /** @brief инициализация нового репозитория */
+    void                InitNewRepository();
+
+    // классы модели MVC объявим другом для нашего фасада
+    // (принято такое архитектурное решение, что все методы фасада сделать приватными, и дать доступ только к моделям MVC,
+    // т.к кроме модели никто не может уведомлять о новых событиях, действиях, происходящие на уровне представления)
     friend class GANN_MVC::ModelQmlAndCRepository;
     friend class GANN_MVC::ModelQmlAndCIcons;
+    friend class GANN_MVC::ModelQmlAndCPreferencesApp;
 
 private:
     FacadeApplication();
     FacadeApplication(const FacadeApplication& facade);
     FacadeApplication& operator = (const FacadeApplication& facade);
-    static boost::shared_ptr<FacadeApplication> instance;
+    static FacadeApplication* instance;
 
-    void            InitClassCAndQML();
+    void                InitClassCAndQML();
 
     /** @brief Загрузка репозиториев из сохраненных конфигов */
-    void            LoadRepositories();
+    void                LoadRepositories();
 
-    /** @brief Сохранения репозитория в конфигах */
-    void            SaveRepository(const QString& localURL, const QString& remoteURL, const QString& nameRepo);
+    /** @brief Сохранения нового репозитория в конфигах */
+    void                SaveRepository(const QString& localURL, const QString& remoteURL, const QString& nameRepo,
+                                       const bool autosync = true, const bool autosyncContent = true,
+                                       const bool directMode = true) const;
+
+    /** @brief Сохранения параметров репозитория в конфигах */
+    void                SaveOptionsRepository(const QString &localURL);
+
+    /** @brief Удаление репозитория из конфигов */
+    void                DeleteRepository(const QString& localURL);
+
+    /** @brief Запуск/Остановка демона просмотра(watch) за директориями у репозиториев */
+    void                WatchRepositories(const bool start = true) const;
+
+    /** @brief Запуск/Остановка демона просмотра(watch) у конкретного репозитория */
+    void                WatchRepository(IRepository *repository, const bool start = true) const;
 
     /** @brief начать клонирование репозитория */
     GANN_DEFINE::RESULT_EXEC_PROCESS StartCloneRepository(QString& localURL, const QString& remoteURL, const QString& nameRepo);
 
-    /** @brief Сменить итератор текущий репозиторий */
-    void            ChangeCurrentRepository(const QString &dir);
+    /** @brief Сменить итератор, указывающий на текущий репозиторий */
+    void                ChangeCurrentRepository(const QString &dir);
 
-    /** @brief Функция-слот, срабатывающий при тайм-айте таймера синхронизации данных*/
-    void            TimeOutTimeSync();
+    /** @brief Функция-слот, срабатывающий при тайм-ауте таймера синхронизации данных*/
+    void                TimeOutTimeSync();
 
-    /** @brief путь к файлу конфигов репозитория, формат xml */
-    const QString   pathFileRepoConfig;
-    /** @brief вектор репозиториев, хранящиеся на клиенте */
+    /** @brief вектор зарегистрированных репозиториев */
     std::map<QString, std::unique_ptr<IRepository> > repository;
     /** @brief итератор на текущий репозиторий */
     std::map<QString, std::unique_ptr<IRepository> >::iterator currentRepository;
 
-    /** @brief таймер, отвественный за синхронизацию контента с другими репозиториями */
-    QTimer          timeSync;
+    /** @brief таймер синхронизации */
+    QTimer              timeSync;
 
     /** @brief системный трей */
-    SystemTray*     systemTray;
-    QFile           fileRepoConfig;
+    SystemTray*         systemTray;
 
+    /** @brief последнее сообщение об ошибке в клиенте */
+    QString             lastError;
+
+    /** @brief Возвращает путь к файлу конфигурации */
+    const QString       GetPathToFileConfig() const;
+
+    /** @brief Генерирует пустой файл конфигурации */
+    void                GenerateEmptyFileConfig(const QString file) const;
+
+    // временный репозиторий
+    std::unique_ptr<IRepository> tempRepo;
 };
 
 #endif // FACADEAPPLICATION_H

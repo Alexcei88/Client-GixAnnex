@@ -5,6 +5,7 @@
 #include <QMimeDatabase>
 #include <QIcon>
 #include <QRegExp>
+#include <QCoreApplication>
 
 // iniparser stuff
 #include "iniparser/iniparser.h"
@@ -12,12 +13,12 @@
 
 using namespace boost::filesystem;
 
-boost::shared_ptr<ResourceGenerator> ResourceGenerator::instance = boost::shared_ptr<ResourceGenerator>();
+ResourceGenerator* ResourceGenerator::instance = 0l;
 //----------------------------------------------------------------------------------------/
 ResourceGenerator::ResourceGenerator() :
-    listAllMimeType(QMimeDatabase().allMimeTypes())
-  , sizeIcons(48, 48)
+    sizeIcons(48, 48)
   , sizeIconsPropertyFile(128, 128)
+  , listAllMimeType(QMimeDatabase().allMimeTypes())
 {
     currentThemeName = QIcon::themeName();
     subPathSearchIcons.push_back("mimetypes");
@@ -30,9 +31,15 @@ ResourceGenerator::~ResourceGenerator()
 //----------------------------------------------------------------------------------------/
 ResourceGenerator* ResourceGenerator::getInstance()
 {
-    if(instance.get() == 0)
-        instance = boost::shared_ptr<ResourceGenerator>(new ResourceGenerator());
-    return instance.get();
+    if(instance == 0l)
+        instance = new ResourceGenerator();
+    return instance;
+}
+//----------------------------------------------------------------------------------------/
+void ResourceGenerator::RemoveInstance()
+{
+    delete instance;
+    instance = 0l;
 }
 //----------------------------------------------------------------------------------------/
 const QString ResourceGenerator::GetResourcePathDirectoryView(const QMimeType& type)
@@ -73,6 +80,9 @@ const QString ResourceGenerator::GetResourcePathPropertyFile(const QMimeType& ty
 //----------------------------------------------------------------------------------------/
 void ResourceGenerator::GenerateResource()
 {
+    pathToIconsDirectoryView.clear();
+    pathToIconsPropertyFile.clear();
+
     // список директорий для просмотра
     QStringList possiblePathToSearch = QIcon::themeSearchPaths();
 
@@ -155,7 +165,6 @@ void ResourceGenerator::GenerateResourceIconsForAllMimeTypes(const QVector<boost
             // мы не нашли, соответственно загружаем какой-то ресурс по умолчанию
         }
     }
-    // теперь загружаем ресурсы для folder-ов
 }
 //----------------------------------------------------------------------------------------/
 bool ResourceGenerator::FindFile(const boost::filesystem::path& dirPath, const std::string& fileName, boost::filesystem::path& pathFound)

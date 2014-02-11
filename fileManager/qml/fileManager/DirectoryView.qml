@@ -1,13 +1,18 @@
 import QtQuick 2.1
 import QtQuick.Controls 1.0
+import QtQuick.Controls.Private 1.0
 import QtQuick.Layouts 1.0
-import Qt.labs.folderlistmodel 1.0
+import QtGraphicalEffects 1.0
+
+//  our stuff
 import Repository 1.0
 import Icons 1.0
+import FolderListModel 1.0
+import Message 1.0
+
 import "utils.js" as UtilsScript
 
-Rectangle
-{
+FocusScope{
     //-------------------------------------------------------------------------/
     // ПОЛЬЗОВАТЕЛЬСКИЕ КЛАССЫ MVC
 
@@ -17,273 +22,401 @@ Rectangle
 
     ControllerIcons {
         id: contrIcons
-        currentPath: UtilsScript.GetFullStrPath(dirModel.folder.toString())
+    }
+
+    MessageBox{
+        id: message
     }
 
     // СВО-ВА, ФУНКЦИИ И СИГНАЛЫ
     //-------------------------------------------------------------------------/
-    property var folderModel: dirModel
-    property var folderView: view
-
+    property alias folderModel: dirModel
+    property alias folderView: view
     // сигнал, что нужно показать свойства у директории
-    signal showPropertyFile(var currentName)
+    signal showPropertyFile(var folder, var currentName)
 
+    //------------------------------------------------------------------------/
     // сигнал о смене родительской директории
-    signal changeParentFolder(string path)
-    onChangeParentFolder:
+    signal changeRepository(string path, string name)
+    onChangeRepository:
     {
         // меняем рабочую директорию у модели
-        console.log(path)
         repository.currentPathRepo = path;
-        contrIcons.currentPath = path;
+        changeParentFolder(path)
         dirModel.folder = path;
-        console.log(dirModel.folder.toString())
         folderView.currentIndex = -1;
+        dirModel.lastIndex = -1;
+        showPropertyFile("file://" + path, name)
     }
-
+    //------------------------------------------------------------------------/
     // функция взятия пути до иконки в зависимости от mymetype файла
     function getResourceImage(fileName)
     {
-        var currentPathRepo = UtilsScript.GetFullStrPath(dirModel.folder.toString());
-        var path = currentPathRepo + "/" + fileName;
-        return contrIcons.GetPathIconsFileDirecoctoryView(path);
+        var path = dirModel.folder.toString() + "/" + fileName;
+        return contrIcons.getPathIconsFileDirectoryView(path);
     }
-
-    // функция обновления списка состояния иконок
-    function updateListStateFileSync(folder)
+    //------------------------------------------------------------------------/
+    // функция смены отображаемой директории в классе ControllertIcons
+    // (currentPath должна поменяться до того, как установиться новый folder у модели)
+    function changeParentFolder(path)
     {
-        contrIcons.currentPath = UtilsScript.GetFullStrPath(folder.toString());
+        contrIcons.currentPath = path
     }
-
-    // функция обновления состояния иконок у текущего списка
+    //------------------------------------------------------------------------/
+    // функция обновления состояния иконок синхронизации
     function updateIconsStateFileSync()
     {
-        var folderTemp = dirModel.folder;
-        dirModel.folder = "";
-        dirModel.folder = folderTemp;
-    }
+        if(dirModel.status === NewFolderListModel.Null)
+            return;
 
+        // обновляем список состояния иконок
+        contrIcons.updateStateIconsFileSync();
+
+        // Обновление состояния иконок синхронизации у делегатов компонента GridView
+        var item = view.children[0];
+        // этот итем является родителем для делегатов, дальше пойдут итемы делегатов
+        // их количество зависит от количества объектов модели
+        for(var i = 0; i < dirModel.count; ++i)
+        {
+            var itemDelegate = item.children[i];
+            if(contrIcons.stateIconsFileSyncQML[itemDelegate.curFileName] === "Disable_sincingF")
+                itemDelegate.state = "DISABLE_SYNC";
+            else if(contrIcons.stateIconsFileSyncQML[itemDelegate.curFileName] === "SyncedFError")
+                itemDelegate.state = "SYNCED_ERROR";
+            else if(contrIcons.stateIconsFileSyncQML[itemDelegate.curFileName] === "SyncedF")
+                itemDelegate.state = "SYNCED";
+            else if(contrIcons.stateIconsFileSyncQML[itemDelegate.curFileName] === "SyncingF")
+                itemDelegate.state = "SYNCING";
+        }
+    }
+    //------------------------------------------------------------------------/
     // функция проверки нахождения свойства folder впределах корневого пути репозитория
     // чтобы выше корня репозитория не выходить
-    function direcotoryIsSubRootRepositoryDirectory(path)
+    function isSubRootRepositoryDirectory(path)
     {
-        return repository.DirIsSubRootDirRepository(path)
+        return repository.dirIsSubRootDirRepository(path)
     }
-
     //-------------------------------------------------------------------------/
+
+    SystemPalette { id: sysPal }
 
     ContextMenu
     {
         id: menudirectory
         onOpenDirectory: {
-            if(dirModel.isFolder(dirModel.index) && view.currentItem)
+            if(view.currentItem && dirModel.isFolder(dirModel.index))
             {
                 var fileName = view.currentItem.curFileName;
                 var folder = dirModel.folder == "file:///" ? dirModel.folder + fileName : dirModel.folder +"/" + fileName;
-                updateListStateFileSync(folder);
+                changeParentFolder(folder)
                 dirModel.folder = folder;
+                dirModel.lastIndex = -1;
                 view.currentIndex = -1;
             }
         }
         onGetContentDirectory:
         {
-            var fileName = view.currentItem.curFileName;
-            var currentPathRepo = UtilsScript.GetFullStrPath(dirModel.folder.toString());
-            var relativePath = UtilsScript.GetRelativeStrPath(repository.currentPathRepo.toString(), currentPathRepo);
-            var addFile =  relativePath === "" ? fileName : relativePath + "/" + fileName;
-            repository.GetContentDirectory(addFile);
+            if(view.currentItem)
+                repository.getContentDirectory(view.currentItem.curFileName);
         }
         onDropContentDirectory:
         {
-            var fileName = view.currentItem.curFileName;
-            var currentPathRepo = UtilsScript.GetFullStrPath(dirModel.folder.toString());
-            var relativePath = UtilsScript.GetRelativeStrPath(repository.currentPathRepo.toString(), currentPathRepo);
-            var addFile =  relativePath === "" ? fileName : relativePath + "/" + fileName;
-            repository.DropContentDirectory(addFile);
+            if(view.currentItem)
+                repository.dropContentDirectory(view.currentItem.curFileName);
+        }
+        onRemoveDirectory:
+        {
+            if(view.currentItem)
+            {
+                var fileName = view.currentItem.curFileName;
+                var text = "Do you really want to delete <i>" + fileName + "</i>?<br>";
+                if(message.showConfirmMessage("Warning", text))
+                    repository.removeDirectory(fileName);
+            }
         }
     }
 
+    id: focusScope
     width: 100
     height: 62
 
-    Keys.forwardTo: [view]
-    focus: true
-
-    FolderListModel
-    {
-        id: dirModel
-        objectName: "dirModel"
-
-        function updateIcons()
-        {
-            console.log("updateIcons")
+    BorderImage {
+        anchors.fill: parent
+        source: Settings.style + "/../Base/images/editbox.png"
+        border { left: 4; top: 4; right: 4; bottom: 4 }
+        BorderImage {
+            anchors.fill: parent
+            anchors.margins: -1
+            anchors.topMargin: -2
+            anchors.rightMargin: 0
+            anchors.bottomMargin: 1
+            source: Settings.style + "/../Base/images/focusframe.png"
+            visible: if(focusScope.activeFocus || menudirectory.isPopup)
+                         true;
+                     else
+                        false;
+            border { left: 4; top: 4; right: 4; bottom: 4 }
         }
+    }
 
-        folder: repository.GetDefaultRepositoryPath()
+    NewFolderListModel
+    {
+        property int lastIndex: -1
+
+        id: dirModel
+        folder: repository.getDefaultRepositoryPath()
         showDirs: true
         showDirsFirst: true
-        showOnlyReadable: true
+        showOnlyReadable: false
+        sortField: NewFolderListModel.Type
+
+        Component.onCompleted: {
+            contrIcons.currentPath = folder
+        }
+        onStatusChanged: {
+            if(status === NewFolderListModel.Ready)
+            {}
+        }
     }
 
-    GridView
+    ScrollView
     {
-        id: view
-        model: dirModel
-        width: parent.width
-
+        id: scrollView
         anchors.fill: parent
-        anchors.margins: 20
-        currentIndex: -1
-
-        cellHeight: 70
-        cellWidth: 70
-
-        keyNavigationWraps: true
-        highlight: Rectangle {
-            color: "skyblue"
-            radius: 5
-            z: 50
-            anchors.margins: 20
-        }
-        Component.onCompleted: {
-            contrIcons.StartThreadIconsSync();
-        }
-
-//        highlightFollowsCurrentItem: true
-        highlightMoveDuration: 0
-        focus: true
-
-        delegate: Item
+        width: parent.width
+        anchors.bottomMargin: 1
+        GridView
         {
-            id: itemView
+            objectName: "gridView";
+            id: view
+            model: dirModel
+            width: parent.width
 
-            property bool isCurrent: GridView.isCurrentItem
-            property var curFileName: fileName
-            property real maxLengthOneLine: 0.95 * view.cellWidth
+            anchors.fill: parent
+            anchors.margins: 15
 
-            width: view.cellWidth
-            height: view.cellHeight
+            cellHeight: 70
+            cellWidth: 70
 
-            Column
-            {
-                spacing: 8
-                width: view.cellWidth
+            // запрещаем свойства объекта Flickable
+            interactive: false
 
-                Image{
-
-                    id: imgFolder
-                    source: getResourceImage(curFileName);
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    Image{
-                        id: dirSync
-                        anchors.bottom: parent.bottom
-                        anchors.left: parent.left
-                        anchors.leftMargin: 2
-                        source: "qrc:/synced.png"
-                        state: "SYNCING"
-                    }
-
-                    // различные состояния, в которых может находиться директория(или файл)
-                    states:[
-                            State {
-                                // 1. Идет синхронизация
-                                name: "SYNCING"
-                                when: { contrIcons.stateIconsFileSyncQML[curFileName] === "SyncingF" }
-                                PropertyChanges {
-                                    target: dirSync
-                                    source: "qrc:/syncing.png"
-                                }
-                            },
-                            // 2. Имеются только символичеcкие ссылки
-                            State {
-                                name: "SYMBOL_LINK"
-                                when: { contrIcons.stateIconsFileSyncQML[curFileName] === "SyncedF" }
-                                PropertyChanges {
-                                    target: dirSync
-                                    source: "qrc:/synced.png"
-                                }
-                            },
-                            // 3. Имеются символичеcкие ссылки, некоторые из них с контентом
-                            State {
-                                name: "SYMBOL_LINK_AND_SOME_CONTENT"
-                                when: { contrIcons.stateIconsFileSyncQML[curFileName] === "sincsng"  }
-                                PropertyChanges {
-                                    target: dirSync
-                                    source: "qrc:/syncing.png"
-
-                                }
-                            },
-
-                            // 4. Символическая ссылка с контенктом
-                            State {
-                                when: { contrIcons.stateIconsFileSyncQML[curFileName] === "sinsdng"  }
-                                name: "SYMBOL_LINK_AND_CONTENT"
-                                PropertyChanges {
-                                    target: dirSync
-                                    source: "qrc:/syncing.png"
-
-                                }
-                            },
-                            // 5. Синхронизация выключена
-                            State {
-                                name: "DISABLE_SYNC"
-                                when: { contrIcons.stateIconsFileSyncQML[curFileName] === "sinssng"  }
-                                PropertyChanges {
-                                    target: dirSync
-                                    source: "qrc:/synced.png"
-
-                                }
-                            }
-
-                            // папка с автосинхронизацией контента(посмотреть, это будет отдельным состоянием, или просто как)
-                        ]
-                }
-
-                Text
+            keyNavigationWraps: true
+            highlight:
+                Rectangle
                 {
-                    id: nameFolder
-                    renderType: Text.NativeRendering
-                    text: curFileName
-                    maximumLineCount: 1
-                    elide: Text.ElideRight
-                    anchors.horizontalCenter: imgFolder.horizontalCenter
-
-                    Component.onCompleted:
-                    {
-                        var contentWidth = nameFolder.contentWidth;
-                        var widthComp = contentWidth > itemView.maxLengthOneLine ? itemView.maxLengthOneLine : contentWidth;
-                        nameFolder.width = widthComp;
-                    }
+                    color: sysPal.highlight
+                    radius: 5
+                    z: 50
+                    anchors.margins: 20
                 }
-            }
-            MouseArea
+            highlightMoveDuration: 0
+
+            Component.onCompleted:
             {
-                id: contextMenu
+                console.log("ListView Completed")
+                // запускаем поток обновления состояния иконок
+                contrIcons.startThreadIconsSync();
+            }
+            Component.onDestruction:
+            {
+                // останавливаем поток обновления состояния иконок
+                contrIcons.stopThreadIconsSync();
+            }
+//            Component.o:
+//            {
+//                console.log("Status = " + Component.status);
+//            }
+
+            MouseArea {
                 anchors.fill: parent
                 acceptedButtons: Qt.LeftButton | Qt.RightButton
-                hoverEnabled: true
+                // разрешаем распостраняться сигналу по иерархии вверх
+                propagateComposedEvents: true
+                onClicked: {
+                    focusScope.focus = true;
+                    // сигнал до конца не обработали, прокидываем по иерархии дальше
+                    mouse.accepted = false;
 
-                onClicked:
-                {
-                    view.currentIndex = model.index
-                    if(mouse.button === Qt.RightButton)
-                        menudirectory.popup()
-                }
-                onDoubleClicked:
-                {
-                    if(dirModel.isFolder(model.index))
-                    {
-                        var folder = dirModel.folder == "file:///" ? dirModel.folder + curFileName : dirModel.folder +"/" + curFileName;
-                        updateListStateFileSync(folder);
-                        dirModel.folder = folder
-                        view.currentIndex = -1;
-                    }
-                }
-                onEntered: {
-                    // посылаем сигнал, что необходимо вывести свойства объекта, на который навели
-                    showPropertyFile(curFileName)
                 }
             }
-        }
-    }
+            delegate: Item
+            {
+                id: itemView
+
+                property bool isCurrent: GridView.isCurrentItem
+                property var curFileName: fileName
+                property real maxLengthOneLine: 0.95 * view.cellWidth
+
+                width: view.cellWidth
+                height: view.cellHeight
+
+                Column
+                {
+                    spacing: 8
+                    width: view.cellWidth
+
+                    Image
+                    {
+
+                        id: imgFolder
+                        source: getResourceImage(curFileName);
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        Image
+                        {
+                            id: dirSync
+                            anchors.bottom: parent.bottom
+                            anchors.left: parent.left
+    //                        anchors.leftMargin: 2
+                            source: "qrc:/synced.png"
+                            state: "SYNCING"
+                            cache: true
+                        }
+
+                        Colorize
+                        {
+                            id: colorEffect
+                            anchors.fill: imgFolder
+                            source: imgFolder
+                            saturation: 0.0
+                            hue: 0.0
+                            lightness: 0.0
+                            enabled: false
+                            visible: false
+                        }
+                    }
+
+                    Text
+                    {
+                        id: nameFolder
+                        renderType: Text.NativeRendering
+                        text: curFileName
+                        maximumLineCount: 1
+                        elide: Text.ElideRight
+                        anchors.horizontalCenter: imgFolder.horizontalCenter
+
+                        Component.onCompleted:
+                        {
+                            var contentWidth = nameFolder.contentWidth;
+                            var widthComp = contentWidth > itemView.maxLengthOneLine ? itemView.maxLengthOneLine : contentWidth;
+                            nameFolder.width = widthComp;
+                        }
+                    }
+                }
+                // различные состояния, в которых может находиться директория(или файл)
+                states:[
+                    State {
+                        // 1. Идет синхронизация
+                        name: "SYNCING"
+                        when: { contrIcons.stateIconsFileSyncQML[curFileName] === "SyncingF" }
+                        PropertyChanges {
+                            target: dirSync
+                            source: "qrc:/syncing.png"
+                            rotation: 1
+                        }
+                        PropertyChanges {
+                            target: colorEffect
+                            enabled: false
+                            visible: false
+                        }
+                    },
+                    // 2. Синхронизация завершилась
+                    State {
+                        name: "SYNCED"
+                        when: { contrIcons.stateIconsFileSyncQML[curFileName] === "SyncedF" }
+                        PropertyChanges {
+                            target: dirSync
+                            source: "qrc:/synced.png"
+                        }
+                        PropertyChanges {
+                            target: colorEffect
+                            enabled: false
+                            visible: false
+                        }
+                    },
+                    // 3. Синхронизация завершилась неудачно
+                    State {
+                        name: "SYNCED_ERROR"
+                        when: { contrIcons.stateIconsFileSyncQML[curFileName] === "SyncedFError"  }
+                        PropertyChanges {
+                            target: dirSync
+                            source: "qrc:/disable_sync.png"
+                        }
+                        PropertyChanges {
+                            target: colorEffect
+                            enabled: false
+                            visible: false
+                        }
+                    },
+
+                    // 4. Синхронизация выключена
+                    State {
+                        name: "DISABLE_SYNC"
+                        when: { contrIcons.stateIconsFileSyncQML[curFileName] === "Disable_sincingF"  }
+                        PropertyChanges {
+                            target: dirSync
+                            source: "qrc:/synced.png"
+                        }
+                        PropertyChanges {
+                            target: colorEffect
+                            enabled: true
+                            visible: true
+                        }
+                    }
+                ]
+                transitions:
+                    [
+                    Transition {
+                        to: "SYNCING"
+                        RotationAnimation
+                        {
+                            from: 0
+                            to: 360
+                            duration: 3300
+                            loops: Animation.Infinite
+                        }
+                    }
+                ]
+                MouseArea
+                {
+                    id: contextMenu
+                    anchors.fill: parent
+                    acceptedButtons: Qt.LeftButton | Qt.RightButton
+                    hoverEnabled: true
+
+                    onClicked:
+                    {
+                        if(model.index !== -1)
+                        {
+                            view.currentIndex = model.index;
+                            dirModel.lastIndex = model.index;
+                            if(mouse.button === Qt.RightButton)
+                            {
+                                menudirectory.popup()
+                            }
+                        }
+                    }
+                    onDoubleClicked:
+                    {
+                        if(model.index !== -1)
+                        {
+                            if(dirModel.isFolder(model.index))
+                            {
+                                var folder = dirModel.folder == "file:///" ? dirModel.folder + curFileName : dirModel.folder +"/" + curFileName;
+                                changeParentFolder(folder)
+                                dirModel.folder = folder
+                                dirModel.lastIndex = -1;
+                                view.currentIndex = -1;
+                            }
+                        }
+                    }
+                    onEntered: {
+                        if(model.index !== -1)
+                            // посылаем сигнал, что необходимо вывести свойства объекта, на который навели
+                            showPropertyFile(dirModel.folder + "/" + curFileName, curFileName)
+                    }
+                }
+            }
+        }   // end GridView
+    } // end ScrollView
 }

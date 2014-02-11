@@ -1,5 +1,6 @@
 import QtQuick 2.1
 import QtQuick.Layouts 1.0
+import QtQuick.Controls 1.0
 import Icons 1.0
 
 Rectangle
@@ -17,89 +18,97 @@ Rectangle
     // СВО-ВА, СИГНАЛЫ, МЕТОДЫ
     //-------------------------------------------------------------------------/
     property var folderView: null
-    property string folderPath: ""
+    property string lastFileName: ""
+    property var maximumWidth: propertyRect.Layout.maximumWidth
+    property var minimumWidth: propertyRect.Layout.minimumWidth
 
     // сигнал, которые говорит, что нужно обновить данные о свойствах папки(файла)
-    signal updateData(var currentName)
+    signal updateData(var fullPath, var currentName)
     onUpdateData:
     {
         if(folderView) // проверка, инициализировали ли представление
         {
+            if(lastFileName === currentName)
+                // у данного файла уже выведены параметр на экран, еще раз не выводим
+                return;
+
             name.text = currentName;
-            propertyWhereis.nameOption = "New Data";
-            propertyLastModified.valueOption = repositoryIcons.GetLastModifiedFile(currentName);
-            propertySize.valueOption = repositoryIcons.GetSizeFile(currentName);
-            iconsImage.source = getResourceImage(currentName)
+            lastFileName = currentName;
+            propertyLastModified.valueOption = repositoryIcons.getLastModifiedFile(fullPath);
+            propertySize.valueOption = repositoryIcons.getSizeFile(fullPath);
+            iconsImage.source = repositoryIcons.getPathIconsFilePropertyFile(fullPath);
         }
     }
-
-    // функция взятия пути до иконки в зависимости от mymetype файла
-    function getResourceImage(fileName)
-    {
-        var path = folderPath + "/"+fileName;
-        return repositoryIcons.GetPathIconsFilePropertyFile(path);
-    }
-    //-------------------------------------------------------------------------/
-
-//        BorderImage {
-//            source: "qrc:images/lineedit_bg.png"
-//            width: parent.width; height: parent.height
-//            border { left: 4; top: 4; right: 4; bottom: 4 }
-//        }
 
     width: parent.width
     height: parent.height
 
-    border.color: "black"
-    border.width: 1
-    radius: 5
+    onWidthChanged:
+    {       
+        columnHead.width = width
+        separatorRect.width = width - 30
+        name.width = width - 40;
+        if(width > maximumWidth - 1 || width < minimumWidth + 1)
+            return;
+        if(iconsImage.status === Image.Ready)
+        {
+//            columnHead.height += (columnHead.height * 0.008);
+        }
+    }
 
-    ColumnLayout {
-
-        anchors.horizontalCenter: parent.horizontalCenter
+    ColumnLayout{
+        width: parent.width
         id: columnHead
+        anchors.horizontalCenter: parent.horizontalCenter
 
         Image {
             id: iconsImage
             anchors.horizontalCenter: parent.horizontalCenter
-
-        }
-        Text
-        {
-            id: name
-            text: "FileName"
-            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
         }
     }
 
-    ColumnLayout
-    {
+    Text {
+        id: name
+        text: "FileName"
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.top : columnHead.bottom
+        anchors.leftMargin: 20
+        anchors.rightMargin: 20
+        width: parent.width - 40
+        horizontalAlignment: Text.AlignHCenter
+        wrapMode: Text.Wrap
+        font.bold: true
+    }
+
+    // разделитель(взят из ToolBarStyle)
+    Rectangle {
+        id: separatorRect
+        width: parent.width - 30
+        height: 1
+        color: "#999"
+        anchors.top: name.bottom
+        anchors.topMargin: 5
+        anchors.horizontalCenter: parent.horizontalCenter
+    }
+
+    ColumnLayout {
         id:column
         spacing: 5
 
         property int maxWidthNameField: 74
 
-        //        onWidthChanged: {console.log(column.width) }
-        anchors.top: columnHead.bottom
+        anchors.top: separatorRect.bottom
         anchors.topMargin: 5
-        anchors.horizontalCenter: columnHead.horizontalCenter
+        anchors.horizontalCenter: parent.horizontalCenter
         anchors.horizontalCenterOffset: -maxWidthNameField
-
-        PropertyValue
-        {
-            id: propertyWhereis
-            nameOption: "WhereIs: "
-            valueOption: "here"
-            widthFieldOption: column.maxWidthNameField
-            height: 20
-        }
 
         PropertyValue
         {
             id: propertySize
             nameOption: "Size: "
             widthFieldOption: column.maxWidthNameField
-            height: 20
+            height: 10
         }
 
         PropertyValue
@@ -107,23 +116,7 @@ Rectangle
             id: propertyLastModified
             nameOption: "LastModified: "
             widthFieldOption: column.maxWidthNameField
-            height: 20
+            height: 10
         }
-    }
-
-    TextEdit {
-        id: text_edit1
-        x: -28
-        y: -103
-        width: 80
-        height: 20
-        text: qsTr("Text Edit")
-        font.pixelSize: 12
-    }
-
-    PropertyValue {
-        id: propertyvalue1
-        x: 265
-        y: -52
     }
 }

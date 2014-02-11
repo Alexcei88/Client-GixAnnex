@@ -1,4 +1,12 @@
 #include "irepository.h"
+#include "analyze_execute_command/facadeanalyzecommand.h"
+#include "utils/utils.h"
+
+// boost stuff
+#include <boost/make_shared.hpp>
+
+using namespace GANN_DEFINE;
+using namespace AnalyzeCommand;
 
 //----------------------------------------------------------------------------------------/
 IRepository::IRepository()
@@ -18,35 +26,89 @@ void IRepository::InitClass()
 {
     shellCommand = boost::make_shared<ShellCommand>();
 
+    facadeAnalyzeCommand = boost::make_shared<FacadeAnalyzeCommand>(this);
+
+    // устанавливаем состояние репозитория по умолчанию
+    paramRepo.autosync = true;
+    paramRepo.autosyncContent = true;
+    paramRepo.currentState = "Synced";
+    paramRepo.directMode = true;
+
+    // init Q_Enums
     const QMetaObject &mo = staticMetaObject;
     int enum_index = mo.indexOfEnumerator("STATE_REPOSITORY");
     metaEnumState = mo.enumerator(enum_index);
 
-    // устанавливаем состояние репозитория по умолчанию
-    paramSyncRepo.autosync = false;
-    paramSyncRepo.autosyncContent = false;
-    paramSyncRepo.currentState = "Disable_sincing";
-
     int enum_indexF = mo.indexOfEnumerator("STATE_FILE_AND_DIR");
     metaEnumStateF = mo.enumerator(enum_indexF);
 
-    QObject::connect(this, &IRepository::startGetContentFile, this, &IRepository::OnStartGetContentFile, Qt::DirectConnection);
-    QObject::connect(this, &IRepository::endGetContentFile, this, &IRepository::OnEndGetContentFile, Qt::DirectConnection);
-    QObject::connect(this, &IRepository::startDropContentFile, this, &IRepository::OnStartDropContentFile, Qt::DirectConnection);
-    QObject::connect(this, &IRepository::endDropContentFile, this, &IRepository::OnEndDropContentFile, Qt::DirectConnection);
+    // сигналы/слоты
+    InitSignalAndSlots();
 
     dir.setPath("");
+    dir.setFilter(QDir::NoDotAndDotDot | QDir::AllEntries | QDir::System);
+}
+//----------------------------------------------------------------------------------------/
+void IRepository::InitSignalAndSlots()
+{
+    // сигналы/слоты
+    //----------------------------------------------------------------------------------------/
+
+    // подсоединяем watcher к нашим слотам
+    QObject::connect(&watcher, SIGNAL(directoryChanged(QString)), this, SLOT(OnDirectoryChanged(QString)));
+    QObject::connect(&watcher, SIGNAL(fileChanged(QString)), this, SLOT(OnFileChanged(QString)));
+}
+//----------------------------------------------------------------------------------------/
+RESULT_EXEC_PROCESS IRepository::StartWatchRepository()
+{
+    // запускаем watcher за репозиторием
+    // за всеми каталогами, в том числе и поддиректориями
+    QStringList listPath;
+    GetListDirectoriesOnDirectory(localURL, listPath);
+    watcher.addPaths(listPath);
+    return NO_ERROR;
+}
+//----------------------------------------------------------------------------------------/
+RESULT_EXEC_PROCESS IRepository::StopWatchRepository()
+{
+    QStringList listPath;
+    GetListDirectoriesOnDirectory(localURL, listPath);
+    watcher.removePaths(listPath);
+    return NO_ERROR;
+}
+//----------------------------------------------------------------------------------------/
+GANN_DEFINE::RESULT_EXEC_PROCESS IRepository::SetDirectMode(const bool& direct)
+{
+    paramRepo.directMode = direct;
+    shellCommand->SetWorkingDirectory(localURL);
+    RESULT_EXEC_PROCESS result = shellCommand->SetDirectMode(direct, facadeAnalyzeCommand.get());
+    if(result != NO_ERROR)
+    {
+        printf("Error SetDirectMode repositories: %s \n", localURL.toStdString().c_str());
+        return result;
+    }
+    return result;
 }
 //----------------------------------------------------------------------------------------/
 void IRepository::SetState(const STATE_REPOSITORY& state)
 {
+    if(state == Disable_sincing)
+    {
+        // репозитория отключен, никаких дейтсвия выполнить над ним нельзя
+        // слежение за ним тоже надо отключать
+        paramRepo.autosync = false;
+    }
+    else if(state == Synced)
+    {
+        paramRepo.autosync = true;
+    }
     QByteArray str = metaEnumState.valueToKey(int(state));
-    paramSyncRepo.currentState = QString(str);
+    paramRepo.currentState = QString(str);
 }
 //----------------------------------------------------------------------------------------/
 QString IRepository::GetState() const
 {
-    return paramSyncRepo.currentState;
+    return paramRepo.currentState;
 }
 //----------------------------------------------------------------------------------------/
 void IRepository::SetStateFileDir(const QString& fileDirName, const STATE_FILE_AND_DIR &state)
@@ -64,149 +126,145 @@ QString IRepository::GetStateFileDir(const QString& fileDirName) const
 //----------------------------------------------------------------------------------------/
 void IRepository::SetParamSyncRepository(const bool& autosync, const bool& autosyncContent)
 {
-    paramSyncRepo.autosync = autosync;
-    paramSyncRepo.autosyncContent = autosyncContent;
+    paramRepo.autosync = autosync;
+    paramRepo.autosyncContent = autosyncContent;
 }
 //----------------------------------------------------------------------------------------/
-void IRepository::UpdateParamSyncFileDirFull(const QString& curDir)
+void IRepository::ChangeCurrentDirectory(const QString& curDir)
 {
-   // std::cout<<"New Dir = "<<curDir.toStdString().c_str()<<std::endl;
-   // std::cout<<"Local URL Dir = "<<localURL.toStdString().c_str()<<std::endl;
-
     // проверка на то, что текущий путь является поддиректорией к корню репозитория
     assert(curDir.length() >= localURL.length() && curDir.contains(localURL, Qt::CaseSensitive));
     dir.setPath(curDir);
 
+    // устанавливаем новый путь в фасаде анализа хода выполнения команд
+    facadeAnalyzeCommand->SetCurrentPathRepository(curDir);
+
     paramSyncFileDir.clear();
     QStringList nameAllFilesAndDir = dir.entryList();
-    QFileInfoList infoList = dir.entryInfoList();
-    auto iteratorInfo = infoList.begin();
-    for(auto iterator = nameAllFilesAndDir.begin(); iterator !=  nameAllFilesAndDir.end(); ++iterator, ++iteratorInfo)
+    for(auto iterator = nameAllFilesAndDir.begin(); iterator != nameAllFilesAndDir.end(); ++iterator)
     {
-        if(*iterator == "." || *iterator == "..") continue;
         PARAMETR_FILEFOLDER_GIT_ANNEX paramTemp;
         paramTemp.autosync = true;
-        {
-            // текущее состояние
-            QByteArray curState;
-            if(IsGettingContentFileDir(*iterator) || IsDroppingContentFileDir(*iterator)){
-                curState = metaEnumStateF.valueToKey(SyncingF);
-            }
-            else {
-                curState = metaEnumStateF.valueToKey(SyncedF);
-            }
-            paramTemp.currentState = QString(curState);
-        }
-        paramTemp.fileInfo = *iteratorInfo;
+        paramTemp.currentState = CalculateStateFileDir(*iterator);
+
         paramSyncFileDir[*iterator] = paramTemp;
     }
 }
 //----------------------------------------------------------------------------------------/
 void IRepository::UpdateParamSyncFileDir()
 {
-    for(auto iterator = paramSyncFileDir.begin(); iterator !=  paramSyncFileDir.end(); ++iterator)
+    facadeAnalyzeCommand->ExecuteAddActionForAnalizeCommand();
+
+    paramSyncFileDir.clear();
+    QStringList nameAllFilesAndDir = dir.entryList();
+    for(auto iterator = nameAllFilesAndDir.begin(); iterator != nameAllFilesAndDir.end(); ++iterator)
     {
-        const QString fileName = iterator.key();
-        PARAMETR_FILEFOLDER_GIT_ANNEX& paramSync = iterator.value();
-        // текущее состояние
-        QByteArray curState;
-        if(IsGettingContentFileDir(fileName) || IsDroppingContentFileDir(fileName))
-        {
-            curState = metaEnumStateF.valueToKey(SyncingF);
-            paramSync.currentState = QString(curState);
-        }
-        else
-        {
-            curState = metaEnumStateF.valueToKey(SyncedF);
-            paramSync.currentState = QString(curState);
-        }
+        PARAMETR_FILEFOLDER_GIT_ANNEX paramTemp;
+        paramTemp.autosync = true;
+        paramTemp.currentState = CalculateStateFileDir(*iterator);
+
+        paramSyncFileDir[*iterator] = paramTemp;
     }
 }
 //----------------------------------------------------------------------------------------/
 bool IRepository::DirIsSubRootDirRepository(const QString& dir) const
 {
-    return (dir.length() >= localURL.length() && dir.contains(localURL, Qt::CaseSensitive) );
+    return (dir.length() >= localURL.length() && dir.contains(localURL, Qt::CaseSensitive));
 }
 //----------------------------------------------------------------------------------------/
-bool IRepository::IsGettingContentFileDir(const QString& file)
+QString IRepository::CalculateStateFileDir(const QString& file) const
 {
-    for(auto iterator = gettingContentFile.constBegin(); iterator != gettingContentFile.constEnd(); ++iterator)
-    {       
-#if 0
-        const QString gettingFile = *iterator;
-        QString fullPathFile = dir.path() + "/" + file;
-        // из fullPath нужно убрать ту часть, которая содержит localURL
-        const QString relativePath = fullPathFile.replace(localURL +"/", "");
-        std::cout<<"GettingFile = "<<gettingFile.toStdString().c_str()<<std::endl;
-        std::cout<<"Full Path = "<<fullPathFile.toStdString().c_str()<<std::endl;
-        std::cout<<"Relative Path = "<<relativePath.toStdString().c_str()<<std::endl;
-#endif
-        const QString relativePath = QString(dir.path() + "/" + file).replace(localURL +"/", "");
-        if(DirContainsFile(*iterator, relativePath))
-            return true;
-    }
-    return false;
-}
-//----------------------------------------------------------------------------------------/
-bool IRepository::IsDroppingContentFileDir(const QString& file)
-{
-    for(auto iterator = droppingContentFile.constBegin(); iterator != droppingContentFile.constEnd(); ++iterator)
+    // текущее состояние
+    QByteArray curState;
+    if(paramRepo.currentState == metaEnumState.valueToKey(Disable_sincing))
     {
-        const QString relativePath = QString(dir.path() + "/" + file).replace(localURL +"/", "");
-        if(DirContainsFile(*iterator, relativePath))
-            return true;
+        curState = metaEnumStateF.valueToKey(Disable_sincingF);
     }
-    return false;
+    else if(facadeAnalyzeCommand->IsErrorDroppingContentFileDir(file) || facadeAnalyzeCommand->IsErrorGettingContentFileDir(file))
+    {
+        curState = metaEnumStateF.valueToKey(SyncedFError);
+    }
+    else if(facadeAnalyzeCommand->IsGettingContentFileDir(file) || facadeAnalyzeCommand->IsDroppingContentFileDir(file))
+    {
+        curState = metaEnumStateF.valueToKey(SyncingF);
+    }
+    else
+    {
+        curState = metaEnumStateF.valueToKey(SyncedF);
+    }
+    return QString(curState);
 }
 //----------------------------------------------------------------------------------------/
-bool IRepository::DirContainsFile(const QString& dir, const QString& file) const
+void IRepository::GetListDirectoriesOnDirectory(const QString &path, QStringList& listDirectory)
 {
-    return dir.contains(file, Qt::CaseSensitive);
+    QDir dir(path);
+    dir.setFilter(QDir::NoDotAndDotDot | QDir::AllDirs | QDir::System);
+    QFileInfo fileInfo(path);
+
+    if(fileInfo.isDir())
+    {
+        listDirectory << path;
+        QStringList list = dir.entryList();
+        for(QString& str : list)
+        {
+            GetListDirectoriesOnDirectory(Utils::CatDirFile(path, str), listDirectory);
+        }
+    }
+    else
+    {}
+}
+//----------------------------------------------------------------------------------------/
+void IRepository::OnErrorCloneRepository(const QString &error)
+{
+    // здесь мы должны удалить репозитории, тк он не создался
+    lastError = error;
+}
+//----------------------------------------------------------------------------------------/
+void IRepository::OnSuccessfullyCloneRepository(const QString& folder)
+{
+    this->nameRepo = nameRepo;
+    this->remoteURL = remoteURL;
+    this->localURL  = localURL + "/" + folder;
+
+    shellCommand->SetWorkingDirectory(localURL);
+
+    RESULT_EXEC_PROCESS result = shellCommand->InitRepositories(nameRepo, facadeAnalyzeCommand.get());
+    if(result != NO_ERROR)
+    {
+        printf("Error git-annex init repositories: %s \n", localURL.toStdString().c_str());
+    }
 }
 //----------------------------------------------------------------------------------------/
 //    СЛУЖЕБНЫЕ СЛОТЫ
 //----------------------------------------------------------------------------------------/
-void IRepository::OnStartGetContentFile(const QString& file)
+void IRepository::OnChangeDirectMode(const bool mode)
 {
-    if(std::find(gettingContentFile.begin(), gettingContentFile.end(), file) == gettingContentFile.end()){
-        gettingContentFile.push_back(file);
-    }
+    paramRepo.directMode = mode;
 }
 //----------------------------------------------------------------------------------------/
-void IRepository::OnEndGetContentFile(const QString& file)
+void IRepository::OnErrorChangeDirectMode(const QString& error)
 {
-    auto itErase = std::find(gettingContentFile.begin(), gettingContentFile.end(), file);
-    if(itErase != gettingContentFile.end()) {
-        gettingContentFile.erase(itErase);
-    }
-    else
-    {
-        std::cout<<"WARNING!!!! В списке получаемых в текущий момент файлов нет файла, получение контента которого закончилось!!!"<<std::endl;
-        #ifdef DEBUG
-                assert(0);
-        #endif
-    }
+#ifdef DEBUG
+    std::cout<<"WARNING: Change Direct Mode return error!!!"<<std::endl;
+#endif
 }
 //----------------------------------------------------------------------------------------/
-void IRepository::OnStartDropContentFile(const QString& file)
+void IRepository::OnDirectoryChanged(const QString& path)
 {
-    if(std::find(droppingContentFile.begin(), droppingContentFile.end(), file) == droppingContentFile.end()){
-        droppingContentFile.push_back(file);
-    }
+#ifdef DEBUG
+    std::cout<<"Change directory: "<<path.toStdString()<<std::endl;
+#endif
+    // даем команду потоку синхронизации на выполнение синхронизации
 }
 //----------------------------------------------------------------------------------------/
-void IRepository::OnEndDropContentFile(const QString& file)
+void IRepository::OnFileChanged(const QString& path)
 {
-    auto itErase = std::find(droppingContentFile.begin(), droppingContentFile.end(), file);
-    if(itErase != droppingContentFile.end()) {
-        droppingContentFile.erase(itErase);
-    }
-    else
-    {
-        std::cout<<"WARNING!!!! В списке удаляемых в текущий момент файлов нет файла, удаление контента которого закончилось!!!"<<std::endl;
-        #ifdef DEBUG
-                assert(0);
-        #endif
-    }
+#ifdef DEBUG
+    std::cout<<"Change file: "<<path.toStdString()<<std::endl;
+#endif
+    // даем команду потоку синхронизации на выполнение синхронизации
+
 }
 //----------------------------------------------------------------------------------------/
+
+

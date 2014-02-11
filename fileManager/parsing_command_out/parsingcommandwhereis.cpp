@@ -1,23 +1,14 @@
 #include "parsingcommandwhereis.h"
 
 //----------------------------------------------------------------------------------------/
-ParsingCommandWhereIs::ParsingCommandWhereIs(const TShell* shell): IParsingCommandOut(shell)
-{
-    // регулярное выражение в случаи успешного парсинга
-    QString succes = "(whereis)(.*)(\()(\\d)";
-    //  ресурс недоступен
-    QString unsucces = "(get)(.*)(not available)";
-    // причина ошибки
-    QString error = "(error: )(.*)";
-
-    listRegExpPossible.push_back(succes);
-    listRegExpPossible.push_back(unsucces);
-    listRegExpPossible.push_back(error);
-    regExp.setPattern("(Cloning into ')(.*)(')(.*)");
-}
+ParsingCommandWhereIs::ParsingCommandWhereIs(): IParsingCommandOut()
+{}
 //----------------------------------------------------------------------------------------/
 void ParsingCommandWhereIs::ParsingData()
 {
+    return;
+
+#if 0
     if(commandStart && !commandEnd)
     {
         // команда стартовала, но еще не завершилась
@@ -45,5 +36,6 @@ void ParsingCommandWhereIs::ParsingData()
     {
         // ничего не делаем
     }
+#endif
 }
 //----------------------------------------------------------------------------------------/

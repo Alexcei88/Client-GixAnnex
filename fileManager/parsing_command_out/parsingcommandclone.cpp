@@ -1,7 +1,10 @@
 #include "parsingcommandclone.h"
+#include "analyze_execute_command/analyzeexecutecommandclone.h"
 
 //----------------------------------------------------------------------------------------/
-ParsingCommandClone::ParsingCommandClone(const TShell* shell): IParsingCommandOut(shell)
+ParsingCommandClone::ParsingCommandClone(boost::shared_ptr<AnalyzeCommand::AnalyzeExecuteCommandClone> analyzeCommand):
+    IParsingCommandOut(analyzeCommand)
+  , analizeCommandClone(analyzeCommand)
 {
     // регулярное выражение в случаи успешного парсинга
     QString succes = "(Cloning into ')(.*)(')(.*)";
@@ -19,6 +22,7 @@ void ParsingCommandClone::ParsingData()
 {
     if(!commandStart && commandEnd && !dataStdOut.empty())
     {
+        std::cout<<"Parsing Command"<<std::endl;
         // выполняем парсинг
         // 1. проверка, есть ли ошибки
         regExp.setPattern(listRegExpPossible[1]);
@@ -27,19 +31,23 @@ void ParsingCommandClone::ParsingData()
             const QString str = dataStdOut[i];
             if(regExp.indexIn(str) != -1)
             {
-                // была ошибка, формируем сообщение об ошибке
-                dataAfterParsing<<regExp.cap(1)<<regExp.cap(2);
+                QString errorString;
 
-                // если есть, то попытка найти причину ошибки
+                errorString += regExp.cap(1);
+                errorString += regExp.cap(2);
+                // если возможно, то пытаемся найти причину ошибки
                 regExp.setPattern(listRegExpPossible[2]);
                 for(int j = 0; j < dataStdOut.size(); ++j)
                 {
                     const QString str = dataStdOut[j];
                     if(regExp.indexIn(str) != -1)
                     {
-                        dataAfterParsing<<regExp.cap(1)<<regExp.cap(2);
+//                        dataAfterParsing<<regExp.cap(1)<<regExp.cap(2);
+                        errorString += regExp.cap(1);
+                        errorString += regExp.cap(2);
                     }
                 }
+                analizeCommandClone->ErrorFolderToClone(errorString);
                 wasErrorCommand = true;
                 return;
             }
@@ -49,8 +57,7 @@ void ParsingCommandClone::ParsingData()
         regExp.setPattern(listRegExpPossible[0]);
         if(regExp.indexIn(str) != -1)
         {
-            const QString nameFolder = regExp.cap(2);
-            dataAfterParsing << nameFolder;
+            analizeCommandClone->SetFolderToClone(regExp.cap(2));
         }
         wasErrorCommand = false;
     }

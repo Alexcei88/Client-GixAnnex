@@ -1,13 +1,16 @@
-import QtQuick 2.0
+import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
 
 Menu
 {
+    property bool isPopup: false
+
     // Меню будет отправлять соот сигналы, а в файле приемнике будет обработка нужной функцией
     signal openDirectory()
     signal getContentDirectory()
     signal dropContentDirectory()
+    signal removeDirectory()
 
     Action
     {
@@ -29,7 +32,6 @@ Menu
         onTriggered: {
             getContentDirectory()
         }
-        //       tooltip: "Open an image"
     }
 
     Action
@@ -41,17 +43,28 @@ Menu
         onTriggered: {
             dropContentDirectory()
         }
-        //       tooltip: "Open an image"
     }
 
-
+    Action
+    {
+        id: removeDirectoryAction
+        text: "&Delete"
+        shortcut: "Del"
+        //       iconSource: "images/document-open.png"
+        onTriggered: {
+            removeDirectory()
+        }
+    }
 
     title: "ActionDirectory"
     MenuItem { action: openAction }
     MenuItem { action: getContentAction }
     MenuItem { action: dropContentAction }
-    MenuItem { text: "On/Off autoget content" }
-    MenuItem { text: "Close" }
+    MenuItem { action: removeDirectoryAction }
+
+    onPopupVisibleChanged:{
+        isPopup = !isPopup;
+    }
 }
 
 

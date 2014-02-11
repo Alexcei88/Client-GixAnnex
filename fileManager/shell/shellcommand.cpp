@@ -1,132 +1,185 @@
 #include "shellcommand.h"
 #include "shelltask.h"
 #include "../repository/irepository.h"
+#include "utils/utils.h"
+#include "../analyze_execute_command/facadeanalyzecommand.h"
 
 // parsing stuff
 #include "../parsing_command_out/parsingcommandclone.h"
 #include "../parsing_command_out/parsingcommandwhereis.h"
 #include "../parsing_command_out/parsingcommandget.h"
 #include "../parsing_command_out/parsingcommanddrop.h"
+#include "../parsing_command_out/parsingcommandempty.h"
+#include "../parsing_command_out/parsingcommanddirectmode.h"
 
+// analize stuff
+#include "../analyze_execute_command/analyzeexecutecommandget.h"
+#include "../analyze_execute_command/analyzeexecutecommanddrop.h"
+#include "../analyze_execute_command/analyzeexecutecommandclone.h"
+#include "../analyze_execute_command/analyzeexecutecommandinit.h"
+#include "../analyze_execute_command/analyzeexecutecommandchangedirectmode.h"
+
+// Qt stuff
 #include <QThreadPool>
+#include <QRunnable>
 
 using namespace GANN_DEFINE;
+using namespace AnalyzeCommand;
+
 //----------------------------------------------------------------------------------------/
 ShellCommand::ShellCommand():
-    baseCommand("git-annex ")
+    baseCommand("git-annex -j ")
 {}
 //----------------------------------------------------------------------------------------/
 ShellCommand::~ShellCommand(){}
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS ShellCommand::InitRepositories(const QString& nameRepo, const TShell *shell)
+RESULT_EXEC_PROCESS ShellCommand::InitRepositories(const QString& nameRepo, FacadeAnalyzeCommand *facade)
 {
     const QString strCommand = baseCommand + "init " + nameRepo;
-    boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandClone(shell));
-    return shell->ExecuteProcess(strCommand, receiverParsing.get());
+    boost::shared_ptr<AnalyzeExecuteCommandInit> analizeCommand(new AnalyzeExecuteCommandInit(*facade));
+    boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandEmpty(analizeCommand));
+    ShellTask* shellTask = new ShellTask(strCommand, localURL, receiverParsing);
+    QThreadPool::globalInstance()->start(shellTask);
+    RESULT_EXEC_PROCESS codeError = receiverParsing->GetCodeError();
+    return codeError;
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS ShellCommand::SetWorkingDirectory(const QString &localURL, const TShell* shell)
+void ShellCommand::SetWorkingDirectory(const QString& localURL)
 {
-    shell->SetWorkingDirectory(localURL);
-    return NO_ERROR;
+    this->localURL = localURL;
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS ShellCommand::CloneRepositories(const QString& remoteURL, QString& folderClone, const boost::shared_ptr<TShell> shell)
+RESULT_EXEC_PROCESS ShellCommand::CloneRepositories(const QString& remoteURL, const QString localURL, FacadeAnalyzeCommand *facade)
 {
     const QString strCommand = "git clone " + remoteURL;
-    boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandClone(shell.get()));
-    ShellTask* shellTask = new ShellTask(strCommand, receiverParsing, shell);
+    boost::shared_ptr<AnalyzeExecuteCommandClone> analizeCommand(new AnalyzeExecuteCommandClone(*facade));
+    analizeCommand->SetPathExecuteCommand(localURL);
+    boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandClone(analizeCommand));
+    ShellTask* shellTask = new ShellTask(strCommand, localURL, receiverParsing);
 
     QThreadPool::globalInstance()->start(shellTask);
-    QThreadPool::globalInstance()->waitForDone();
-    //    RESULT_EXEC_PROCESS result = shell->ExecuteProcess(strCommand, receiverParsing[CLONE_REPO]);
-//    if(result != NO_ERROR)
-//        return result;
 
-    RESULT_EXEC_PROCESS codeError = receiverParsing->GetCodeError();
-    if(codeError != NO_ERROR)
-        return codeError;
-
-    QStringList parsingData = receiverParsing->GetParsingData();
-//    // иначе нет ошибок
-    folderClone = parsingData.at(0);
     return NO_ERROR;
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS ShellCommand::AddFile(const QString& path, const boost::shared_ptr<TShell> shell) const
+RESULT_EXEC_PROCESS ShellCommand::WatchRepository(const QString& path, const bool start) const
+{
+    const QString paramCommand = start ? "" : " --stop";
+    const QString strCommand = baseCommand + "watch " + paramCommand;
+    boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandEmpty());
+#if 0
+    TShell shell;
+    shell.SetWorkingDirectory(path);
+    shell.ExecuteProcess(path, receiverParsing);
+#else
+    ShellTask* shellTask = new ShellTask(strCommand, path, receiverParsing);
+    QThreadPool::globalInstance()->start(shellTask);
+    // ждем окончания выполнения команды
+    QThreadPool::globalInstance()->waitForDone();
+#endif
+    return NO_ERROR;
+}
+//----------------------------------------------------------------------------------------/
+RESULT_EXEC_PROCESS ShellCommand::AddFile(const QString& path) const
 {
     const QString strCommand = baseCommand + "add " + path;
+    return NO_ERROR;
 //    return shell->ExecuteProcess(strCommand, receiverParsing[ADD_FILE]);
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS ShellCommand::GetContentFile(const QString& path, const boost::shared_ptr<TShell> shell, IRepository* repository) const
+RESULT_EXEC_PROCESS ShellCommand::GetContentFile(const QString& path, FacadeAnalyzeCommand* facade, const bool mode) const
 {
     const QString strCommand = baseCommand + "get " + path;
-    boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandGet(shell.get(), repository));
-    ShellTask* shellTask = new ShellTask(strCommand, receiverParsing, shell);
+    boost::shared_ptr<AnalyzeExecuteCommandGet> analizeCommand(new AnalyzeExecuteCommandGet(*facade, mode));
+    analizeCommand->SetPathExecuteCommand(localURL);
+    analizeCommand->SetPathGetContent(Utils::CatDirFile(localURL, path));
+    facade->AddGetContentFileQueue(analizeCommand.get());
 
+    boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandGet(analizeCommand));
+    ShellTask* shellTask = new ShellTask(strCommand, localURL, receiverParsing);
     QThreadPool::globalInstance()->start(shellTask);
     return NO_ERROR;
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS ShellCommand::DropContentFile(const QString& path, const boost::shared_ptr<TShell> shell, IRepository* repository) const
+RESULT_EXEC_PROCESS ShellCommand::DropContentFile(const QString& path, FacadeAnalyzeCommand* facade, const bool mode) const
 {
     const QString strCommand = baseCommand + "drop " + path;
-    boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandDrop(shell.get(), repository));
-    ShellTask* shellTask = new ShellTask(strCommand, receiverParsing, shell);
+    const QString fullPathFile = Utils::CatDirFile(localURL, path);
+    boost::shared_ptr<AnalyzeExecuteCommandDrop> analizeCommand(new AnalyzeExecuteCommandDrop(*facade, mode));
+    analizeCommand->SetPathDropContent(fullPathFile);
+    analizeCommand->SetPathExecuteCommand(localURL);
+    facade->AddDropContentFileQueue(analizeCommand.get());
 
+    boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandDrop(analizeCommand));
+    ShellTask* shellTask = new ShellTask(strCommand, localURL, receiverParsing);
     QThreadPool::globalInstance()->start(shellTask);
     return NO_ERROR;
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS ShellCommand::RemoveFile(const QString& path, const boost::shared_ptr<TShell> shell) const
-{
-#if 0
-    const QString strCommand = "git rm" + path;
-    boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandGet(shell.get()));
-    ShellTask* shellTask = new ShellTask(strCommand, receiverParsing, shell);
+RESULT_EXEC_PROCESS ShellCommand::RemoveFile(const QString& path, const bool mode, const bool recursive) const
+{  
+    if(!mode)
+    {
+        QString strCommand = "git rm " + path;
+        // рекурсивное удаление
+        if(recursive)
+            strCommand += " -r";
 
+        boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandEmpty());
+        ShellTask* shellTask = new ShellTask(strCommand, localURL, receiverParsing);
+
+        QThreadPool::globalInstance()->start(shellTask);
+    }
+    // физическое удаление файла(директории)
+    QString strCommand = "rm " + path;
+    // рекурсивное удаление
+    if(recursive)
+        strCommand += " -r";
+
+    strCommand +=" -f";
+
+    boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandEmpty());
+    ShellTask* shellTask = new ShellTask(strCommand, localURL, receiverParsing);
     QThreadPool::globalInstance()->start(shellTask);
+
     return NO_ERROR;
-//    return shell->ExecuteProcess(strCommand);
-#endif
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS ShellCommand::Sync(const boost::shared_ptr<TShell> shell) const
+RESULT_EXEC_PROCESS ShellCommand::Sync() const
 {    
-#if 0
     const QString strCommand = baseCommand + "sync";
-    boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandGet(shell.get()));
-    ShellTask* shellTask = new ShellTask(strCommand, receiverParsing, shell);
+    boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandEmpty());
+    ShellTask* shellTask = new ShellTask(strCommand, localURL, receiverParsing);
 
     QThreadPool::globalInstance()->start(shellTask);
     return NO_ERROR;
-#endif
-//    return shell->ExecuteProcess(strCommand);
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS ShellCommand::WhereisFiles(const QString& path, const boost::shared_ptr<TShell> shell) const
+RESULT_EXEC_PROCESS ShellCommand::WhereisFiles(const QString& path, FacadeAnalyzeCommand* facade) const
 {
-#if 0
     const QString strCommand = baseCommand + "whereis " + path;
-    boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandGet(shell.get()));
-    ShellTask* shellTask = new ShellTask(strCommand, receiverParsing, shell);
+    boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandEmpty());
+    ShellTask* shellTask = new ShellTask(strCommand, localURL, receiverParsing);
 
     QThreadPool::globalInstance()->start(shellTask);
     return NO_ERROR;
-#endif
-//    return shell->ExecuteProcess(strCommand);
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS ShellCommand::PullRepositories(const boost::shared_ptr<TShell> shell) const
+RESULT_EXEC_PROCESS ShellCommand::SetDirectMode(const bool& direct, FacadeAnalyzeCommand* facade) const
 {
-#if 0
-    const QString strCommand = "git pull";
-    boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandGet(shell.get()));
-    ShellTask* shellTask = new ShellTask(strCommand, receiverParsing, shell);
+    const QString strCommand = baseCommand + (direct ? " direct" : " indirect");
+    boost::shared_ptr<AnalyzeExecuteCommandChangeDirectMode> analizeCommand(new AnalyzeExecuteCommandChangeDirectMode(*facade));
+    analizeCommand->SetPathExecuteCommand(localURL);
+    boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandDirectMode(analizeCommand));
+    ShellTask* shellTask = new ShellTask(strCommand, localURL, receiverParsing);
 
     QThreadPool::globalInstance()->start(shellTask);
-#endif
+    return NO_ERROR;
 }
 //----------------------------------------------------------------------------------------/
-
+RESULT_EXEC_PROCESS ShellCommand::FindFileInPath(const QString &path, FacadeAnalyzeCommand* facade) const
+{
+    Q_UNUSED(path);
+    Q_UNUSED(facade);
+}
+//----------------------------------------------------------------------------------------/

@@ -18,38 +18,22 @@ TRepository::~TRepository() {}
 //----------------------------------------------------------------------------------------/
 RESULT_EXEC_PROCESS TRepository::CloneRepository(QString& localURL, const QString& nameRepo, const QString& remoteURL)
 {
-    boost::shared_ptr<TShell> shell(new TShell());
-
     // здесь должны переходить в текущую директорию
-    RESULT_EXEC_PROCESS result = shellCommand->SetWorkingDirectory(localURL, shell.get());
+    shellCommand->SetWorkingDirectory(localURL);
+    this->nameRepo = nameRepo;
+    this->remoteURL = remoteURL;
+    this->localURL  = localURL;
 
-    QString folderToClone = "";
-    result = shellCommand->CloneRepositories(remoteURL, folderToClone, shell);
-    folderToClone = "/" + folderToClone;
+    RESULT_EXEC_PROCESS result = shellCommand->CloneRepositories(remoteURL, localURL, facadeAnalyzeCommand.get());
     if(result != int(NO_ERROR))
     {
         printf("Error clone repositories: %s \n", remoteURL.toStdString().c_str());
         return result;
     }
-    shellCommand->SetWorkingDirectory(localURL + folderToClone, shell.get());
-
-    result = shellCommand->InitRepositories(nameRepo, shell.get());
-    if(result != int(NO_ERROR))
-    {
-        printf("Error git-annex init repositories: %s \n", localURL.toStdString().c_str());
-        return result;
-    }
-
-    // переходим в директорию
-    this->nameRepo = nameRepo;
-    this->remoteURL = remoteURL;
-    this->localURL  = localURL + folderToClone;
-
-    localURL +=folderToClone;
     return result;
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS TRepository::DeleteRepository(const QString &localURL)
+RESULT_EXEC_PROCESS TRepository::DeleteRepository()
 {
     this->nameRepo = "";
     this->localURL = "";
@@ -58,11 +42,14 @@ RESULT_EXEC_PROCESS TRepository::DeleteRepository(const QString &localURL)
     return NO_ERROR;
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS TRepository::GetContentFile(const QString& file)
+RESULT_EXEC_PROCESS TRepository::GetContentFile(const QString& file, const bool mode)
 {
-    boost::shared_ptr<TShell> shell(new TShell());
-    shellCommand->SetWorkingDirectory(this->localURL, shell.get());
-    RESULT_EXEC_PROCESS result = shellCommand->GetContentFile(file, shell, this);
+    // если репозитория выключен, то ничего не делаем
+    if(paramRepo.currentState == "Disable_sincing")
+        return IGNORE_COMMAND;
+
+    shellCommand->SetWorkingDirectory(dir.path());
+    RESULT_EXEC_PROCESS result = shellCommand->GetContentFile(file, facadeAnalyzeCommand.get(), mode);
     if(result != NO_ERROR)
     {
         printf("Error git-annex get content of file: %s \n", file.toStdString().c_str());
@@ -71,11 +58,13 @@ RESULT_EXEC_PROCESS TRepository::GetContentFile(const QString& file)
     return result;
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS TRepository::DropContentFile(const QString& file)
+RESULT_EXEC_PROCESS TRepository::DropContentFile(const QString& file, const bool mode)
 {
-    boost::shared_ptr<TShell> shell(new TShell());
-    shellCommand->SetWorkingDirectory(this->localURL, shell.get());
-    RESULT_EXEC_PROCESS result = shellCommand->DropContentFile(file, shell, this);
+    if(paramRepo.currentState == metaEnumState.valueToKey(Disable_sincing))
+        return IGNORE_COMMAND;
+
+    shellCommand->SetWorkingDirectory(dir.path());
+    RESULT_EXEC_PROCESS result = shellCommand->DropContentFile(file, facadeAnalyzeCommand.get(), mode);
     if(result != NO_ERROR)
     {
         printf("Error git-annex drop content of file: %s \n", file.toStdString().c_str());
@@ -84,11 +73,33 @@ RESULT_EXEC_PROCESS TRepository::DropContentFile(const QString& file)
     return result;
 }
 //----------------------------------------------------------------------------------------/
-RESULT_EXEC_PROCESS TRepository::WhereisFile(const QString& file) const
+RESULT_EXEC_PROCESS TRepository::RemoveFile(const QString& file)
 {
-    boost::shared_ptr<TShell> shell(new TShell());
-    shellCommand->SetWorkingDirectory(this->localURL, shell.get());
-    RESULT_EXEC_PROCESS result = shellCommand->WhereisFiles(file, shell);
+    if(paramRepo.currentState == metaEnumState.valueToKey(Disable_sincing))
+        return IGNORE_COMMAND;
+
+    // сначала удалим контент
+    DropContentFile(file, false);
+    // а теперь удаляем и сам файл
+    shellCommand->SetWorkingDirectory(dir.path());
+    RESULT_EXEC_PROCESS result = shellCommand->RemoveFile(file, paramRepo.directMode, QFileInfo(dir.path() + "/" + file).isDir());
+    if(result != NO_ERROR)
+    {
+        printf("Error git rm file: %s \n", file.toStdString().c_str());
+        return result;
+    }
+    // и теперь нужно давать команду на синхронизацию контента
+
+    return result;
+}
+//----------------------------------------------------------------------------------------/
+RESULT_EXEC_PROCESS TRepository::WhereisFile(const QString& file)
+{
+    if(paramRepo.currentState == metaEnumState.valueToKey(Disable_sincing))
+        return IGNORE_COMMAND;
+
+    shellCommand->SetWorkingDirectory(dir.path());
+    RESULT_EXEC_PROCESS result = shellCommand->WhereisFiles(file, facadeAnalyzeCommand.get());
     if(result != NO_ERROR)
     {
         printf("Error git-annex drop content of file: %s \n", file.toStdString().c_str());
@@ -99,9 +110,11 @@ RESULT_EXEC_PROCESS TRepository::WhereisFile(const QString& file) const
 //----------------------------------------------------------------------------------------/
 GANN_DEFINE::RESULT_EXEC_PROCESS TRepository::SyncRepository() const
 {
-    boost::shared_ptr<TShell> shell(new TShell());
-    shellCommand->SetWorkingDirectory(this->localURL, shell.get());
-    RESULT_EXEC_PROCESS result = shellCommand->Sync(shell);
+    if(paramRepo.currentState == metaEnumState.valueToKey(Disable_sincing))
+        return IGNORE_COMMAND;
+
+    shellCommand->SetWorkingDirectory(this->localURL);
+    RESULT_EXEC_PROCESS result = shellCommand->Sync();
     if(result != NO_ERROR)
     {
         printf("Error sync repository\n");
