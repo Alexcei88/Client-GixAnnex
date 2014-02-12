@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
     preferencesAppViewer.setModality(Qt::ApplicationModal);
 //    preferencesAppViewer.setModality(Qt::WindowModality);
     preferencesAppViewer.setTitle("Preferences Git-Annex");
-    preferencesAppViewer.show();
+    //preferencesAppViewer.show();
     //=========================================================================== /
 
     // создаем классы трея и передаем нужные для управления viewer-ы

@@ -75,8 +75,7 @@ FocusScope{
         // Обновление состояния иконок синхронизации у делегатов компонента GridView
         var item = view.children[0];
         // этот итем является родителем для делегатов, дальше пойдут итемы делегатов
-        // их количество зависит от количества объектов модели
-        for(var i = 0; i < dirModel.count; ++i)
+        for(var i = 0; i < item.children.length; ++i)
         {
             var itemDelegate = item.children[i];
             if(contrIcons.stateIconsFileSyncQML[itemDelegate.curFileName] === "Disable_sincingF")
@@ -173,10 +172,6 @@ FocusScope{
         Component.onCompleted: {
             contrIcons.currentPath = folder
         }
-        onStatusChanged: {
-            if(status === NewFolderListModel.Ready)
-            {}
-        }
     }
 
     ScrollView
@@ -214,7 +209,6 @@ FocusScope{
 
             Component.onCompleted:
             {
-                console.log("ListView Completed")
                 // запускаем поток обновления состояния иконок
                 contrIcons.startThreadIconsSync();
             }
@@ -223,10 +217,6 @@ FocusScope{
                 // останавливаем поток обновления состояния иконок
                 contrIcons.stopThreadIconsSync();
             }
-//            Component.o:
-//            {
-//                console.log("Status = " + Component.status);
-//            }
 
             MouseArea {
                 anchors.fill: parent
@@ -258,7 +248,6 @@ FocusScope{
 
                     Image
                     {
-
                         id: imgFolder
                         source: getResourceImage(curFileName);
                         anchors.horizontalCenter: parent.horizontalCenter
