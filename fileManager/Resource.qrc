@@ -14,6 +14,6 @@
     </qresource>
     <qresource prefix="/config">
         <file alias="config_repo">ganx-repository.xml</file>
-        <file alias="config_list_repository">resource/ganx-list_type_repositories.xml</file>
+        <file alias="config_list_repository_cloud">resource/ganx-list_type_repositories.xml</file>
     </qresource>
 </RCC>

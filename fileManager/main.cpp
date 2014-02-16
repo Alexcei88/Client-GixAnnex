@@ -80,8 +80,8 @@ int main(int argc, char *argv[])
     // viewer копирования репозитория
     QtQuick2ApplicationViewer cloneRepoViewer1;
     cloneRepoViewer1.setMainQmlFile(QStringLiteral("qml/fileManager/repository/CloneRepositoryWizard.qml"));
-    cloneRepoViewer1.setMinimumHeight(170);
-    cloneRepoViewer1.setMinimumWidth(540);
+    cloneRepoViewer1.setMinimumHeight(500);
+    cloneRepoViewer1.setMinimumWidth(640);
     cloneRepoViewer1.setMaximumHeight(cloneRepoViewer1.minimumHeight());
     cloneRepoViewer1.setMaximumWidth(cloneRepoViewer1.minimumWidth());
     cloneRepoViewer1.setX(300);

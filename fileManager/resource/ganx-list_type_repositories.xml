@@ -1,11 +1,12 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <list_repository>
-    <repo name = "Amazone"/>
-    <repo name = "Remote server"/>
-    <repo name = "Remote server1"/>
-    <repo name = "Remote server2"/>
-    <repo name = "Remote server3"/>
-    <repo name = "Remote server4"/>
-    <repo name = "Remote server5"/>
-    <repo name = "Remote server6"/>
+    <repo name = "Amazone S3" description = "Good choice for professional quality storage.">
+    <option/>
+    </repo>
+    <repo name = "Remote server" description = "Set up a repository on a remote server using ssh.">
+    <option>
+        <url destinition = "ssh_user_data_qml"/>
+    </option>
+    </repo>
+
 </list_repository>
