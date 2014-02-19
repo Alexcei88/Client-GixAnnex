@@ -5,6 +5,7 @@ import QtQuick.Layouts 1.0
 Item
 {
     height: option.height
+    width: option.width + value.width
 
     property alias nameOption: option.text
     property alias widthFieldOption: option.width

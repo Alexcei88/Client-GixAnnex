@@ -1,10 +1,53 @@
 import QtQuick 2.0
 import QtQuick.Controls 1.1
 import QtQuick.Layouts 1.1
+import QtQuick.XmlListModel 2.0
+
 
 Rectangle {
 
     SystemPalette { id: sysPal }
+
+    XmlListModel
+    {
+        id: modelRepoXMLCloud
+        source: "qrc:/config/config_list_repository_cloud"
+        query: "/list_repository/repo"
+        XmlRole { name: "nameRepo"; query: "@name/string()"; }
+        XmlRole { name: "descriptionRepo"; query: "@description/string()"; }
+        XmlRole { name: "url1"; query: "optionURL/url[1]/string()"; }
+        XmlRole { name: "url2"; query: "optionURL/url[2]/string()"; }
+        XmlRole { name: "url3"; query: "optionURL/url[3]/string()"; }
+        XmlRole { name: "url4"; query: "optionURL/url[4]/string()"; }
+        XmlRole { name: "url5"; query: "optionURL/url[5]/string()"; }
+        XmlRole { name: "url6"; query: "optionURL/url[6]/string()"; }
+        XmlRole { name: "url7"; query: "optionURL/url[7]/string()"; }
+        XmlRole { name: "url8"; query: "optionURL/url[8]/string()"; }
+        XmlRole { name: "url9"; query: "optionURL/url[9]/string()"; }
+        XmlRole { name: "url10"; query: "optionURL/url[10]/string()"; }
+        XmlRole { name: "url11"; query: "optionURL/url[11]/string()"; }
+    }
+
+    // репы, которые локальные
+    XmlListModel
+    {
+        id: modelRepoXMLLocal
+        source: "qrc:/config/config_list_repository_local"
+        query: "/list_repository/repo"
+        XmlRole { name: "nameRepo"; query: "@name/string()"; }
+        XmlRole { name: "descriptionRepo"; query: "@description/string()"; }
+        XmlRole { name: "url1"; query: "optionURL/url[1]/string()"; }
+        XmlRole { name: "url2"; query: "optionURL/url[2]/string()"; }
+        XmlRole { name: "url3"; query: "optionURL/url[3]/string()"; }
+        XmlRole { name: "url4"; query: "optionURL/url[4]/string()"; }
+        XmlRole { name: "url5"; query: "optionURL/url[5]/string()"; }
+        XmlRole { name: "url6"; query: "optionURL/url[6]/string()"; }
+        XmlRole { name: "url7"; query: "optionURL/url[7]/string()"; }
+        XmlRole { name: "url8"; query: "optionURL/url[8]/string()"; }
+        XmlRole { name: "url9"; query: "optionURL/url[9]/string()"; }
+        XmlRole { name: "url10"; query: "optionURL/url[10]/string()"; }
+        XmlRole { name: "url11"; query: "optionURL/url[11]/string()"; }
+    }
 
     // модель, содержащая список view, которые будут
     // отображаться в стек-вью
@@ -59,6 +102,8 @@ Rectangle {
     StackView
     {
         id: stackView
+
+        property int selectIndexRepository: -1
         anchors {
             bottom: managerPanel.top
             top: parent.top
@@ -66,7 +111,31 @@ Rectangle {
             right: parent.right
         }
         initialItem: Qt.resolvedUrl("list_repositories.qml");
+
+        delegate: StackViewDelegate {
+            function transitionFinished(properties)
+            {
+                properties.exitItem.opacity = 1
+            }
+
+            property Component pushTransition: StackViewTransition {
+                PropertyAnimation {
+                    target: enterItem
+                    property: "opacity"
+                    from: 0
+                    to: 1
+                }
+                PropertyAnimation {
+                    target: exitItem
+                    property: "opacity"
+                    from: 1
+                    to: 0
+                }
+            }
+        }
     }
+
+    // все страницы должны реализовывать функцию перехода на следующую страницу nextPage();
 
     Rectangle {
         id: managerPanel
@@ -80,27 +149,11 @@ Rectangle {
 
         Row {
             id: rowButton
-            width: parent.width
-            height: parent.height
-            spacing: 30
-            anchors.right: parent.right
-            anchors.rightMargin: 10
+            spacing: 20
+            anchors.fill: parent
+            anchors.rightMargin: 20
+            layoutDirection: Qt.RightToLeft
 
-            Button {
-                id: buttonBack
-                enabled: false
-                text: qsTr("Back")
-
-            }
-            Button {
-                id: buttonNext
-                enabled: false
-                text: qsTr("Next")
-            }
-            Button {
-                id: buttonFinish
-                text: qsTr("Finish")
-            }
             Button {
                 id: buttonCancel
                 text: qsTr("Cancel")
@@ -110,9 +163,45 @@ Rectangle {
 
                     }
                 }
+                anchors.verticalCenter: parent.verticalCenter
             }
 
-
+            Button {
+                id: buttonFinish
+                text: qsTr("Finish")
+                enabled: false
+                anchors.verticalCenter: parent.verticalCenter
+            }
+            Button {
+                id: buttonNext
+                enabled: false
+                text: qsTr("Next >")
+                anchors.verticalCenter: parent.verticalCenter
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        stackView.currentItem.nextPage();
+                    }
+                }
+            }
+            Button {
+                id: buttonBack
+                enabled: false
+                text: qsTr("< Back")
+                anchors.verticalCenter: parent.verticalCenter
+                MouseArea{
+                    anchors.fill: parent
+                    onClicked: {
+                        stackView.pop();
+                        if(stackView.depth == 1)
+                        {
+                            // выключаем кнопку назад и вперед
+                            buttonBack.enabled = false;
+                            buttonNext.enabled = false;
+                        }
+                    }
+                }
+            }
         } // end Row
     }
 }

@@ -3,8 +3,19 @@ import QtQuick.Controls 1.1
 import QtQuick.Layouts 1.1
 Rectangle {
 
+    // функция перехода на следующую страницу
+    function nextPage()
+    {
+        console.log("Page \"ssh_user_data\": call next page...");
+        var nextpage = modelRepoXMLCloud.get(stackView.selectIndexRepository).url2;
+        console.log(nextpage);
+        if(nextpage !== "")
+            stackView.push({ item: Qt.resolvedUrl(nextpage), destroyOnPop: true})
+    }
+
     SystemPalette { id: sysPal }
     color: sysPal.window
+
 
     Text {
         id: head
@@ -21,21 +32,20 @@ Rectangle {
             bold: true
         }
     }
-
     ColumnLayout {
 
         id: column
 
-        property int baseHeight: 15
+        property int baseHeight: 25
         property int widthFieldOption: 100
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.leftMargin: 10
         anchors.rightMargin: 10
-        anchors.topMargin: 15
         anchors.top: head.bottom
-        height: 4 * baseHeight +  column.spacing * 3
-        spacing: 25
+        anchors.topMargin: 15
+        height: 5 * baseHeight +  column.spacing * 4
+        spacing: 10
         PropertyInputValue {
             nameOption: "Host name:"
             widthFieldOption: column.widthFieldOption
@@ -57,13 +67,6 @@ Rectangle {
             nameOption: "Name repository:"
             widthFieldOption: column.widthFieldOption
             height: column.baseHeight
-
-        }
-        PropertyInputValue {
-            nameOption: "Destinition URL:"
-            widthFieldOption: column.widthFieldOption
-            height: column.baseHeight
-
         }
         PropertyInputValue {
             nameOption: "Port:"
