@@ -15,7 +15,6 @@
 // ради теста
 #include "repository/trepository.h"
 
-
 // функция, выполняющаяся по завершению работы программы
 void Exit()
 {

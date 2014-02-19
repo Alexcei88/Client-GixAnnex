@@ -1,6 +1,7 @@
 #include "analyzeexecutecommandget.h"
 #include "analizediraction.h"
 #include "facadeanalyzecommand.h"
+#include "facadeapplication.h"
 #include "utils/utils.h"
 
 // boost stuff
@@ -19,6 +20,14 @@ AnalyzeExecuteCommandGet::AnalyzeExecuteCommandGet(FacadeAnalyzeCommand &facadeA
 {
     gettingContentFileQueue = boost::make_shared<AnalizeDirOnActionPrivate>();
     lastGettingContentFiles.clear();
+
+    FacadeApplication::getInstance()->IncreaseCountCommandThreadSyncIcons();
+    FacadeApplication::getInstance()->ReleaseThreadSyncIcons();
+}
+//----------------------------------------------------------------------------------------/
+AnalyzeExecuteCommandGet::~AnalyzeExecuteCommandGet()
+{
+    FacadeApplication::getInstance()->DecreaseCountCommandThreadSyncIcons();
 }
 //----------------------------------------------------------------------------------------/
 void AnalyzeExecuteCommandGet::StartExecuteCommand()

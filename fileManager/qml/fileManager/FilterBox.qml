@@ -49,6 +49,13 @@ FocusScope {
     onFilterChanges: {}
     property alias textFilter: textInput.text
 
+    onEnabledChanged:  {
+        // спорный момент, нужно ли поле фильтра очищать
+        textFilter = "";
+        // посылаем сигнал
+        filterChanges();
+    }
+
     BorderImage {
         source: "qrc:images/lineedit_bg.png"
         width: parent.width; height: parent.height

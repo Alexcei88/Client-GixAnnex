@@ -20,6 +20,7 @@ class AnalyzeExecuteCommandGet: public AnalyzeExecuteCommand
 public:
     // mode - режим запуска команды, true - автоматический, false - ручной
     AnalyzeExecuteCommandGet(FacadeAnalyzeCommand& facadeAnalyzeCommand, const bool mode);
+    ~AnalyzeExecuteCommandGet();
 
     virtual void        StartExecuteCommand();
     virtual void        EndExecuteCommand(const bool wasExecute = true);

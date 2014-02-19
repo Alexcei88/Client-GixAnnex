@@ -72,7 +72,7 @@ Rectangle
                     // фильтр вывода файлов(директории к сож нет)
                     FilterBox
                     {
-                        id: filterDir;
+                        id: filterDir
                         onFilterChanges: {
                             toolBar.folderModel.nameFilters = textFilter.toString() + "*";
                             toolBar.folderView.currentIndex = -1;

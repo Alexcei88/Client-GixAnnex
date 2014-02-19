@@ -12,10 +12,6 @@
 
 #include "define.h"
 
-// boost stuff
-#include <boost/function.hpp>
-#include <boost/bind.hpp>
-
 /*
  * КЛАСС ФАСАД, В КОТОРОМ СОБИРАЕТСЯ ВСЯ ИНФА ДЛЯ АНАЛИЗА ПО ХОДУ ВЫПОЛНЕНИЯ КОМАНД
 */
@@ -40,7 +36,6 @@ public:
 
     /** @brief Установка текущего пути репозитория */
     void                SetCurrentPathRepository(const QString& currentPath);
-
     /** @brief Установка текущей команды, которая выполняется */
     void                SetCurrentExecuteCommand(AnalyzeExecuteCommand* command);
     /** @brief Сброс текущей команды */
@@ -78,7 +73,6 @@ public:
     //-------------------  CHANGE DIRECT MODE --------------------------------/
     void                ErrorChangeDirectMode();
     void                ChangeDirectMode(const bool& mode);
-
 
     /** @brief функция выполнения дополнительных действий в классах анализа хода выполнения команд у текущей команды
      * данную функцию дергать только из потока синхронизации иконок либо по окончании команды, тк она может быть математически затратной

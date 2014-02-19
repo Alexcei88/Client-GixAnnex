@@ -119,7 +119,6 @@ HEADERS += \
 # Включаем поддержку С++11
 QMAKE_CXXFLAGS += -std=c++0x
 
-
 LIBS += -lboost_system \
         -lboost_filesystem \
         -liniparser

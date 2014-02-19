@@ -34,8 +34,11 @@ FacadeApplication::FacadeApplication() :
     // генерируем список путей до иконок
     ResourceGenerator::getInstance();
 
-    // запускаем демон за просмотром директорий с репозиториями
+    // запускаем демон за просмотром директорий у каждого зарегистрированного репозитория
     WatchRepositories();
+
+    // инициализация потокой модели
+    threadModel.countExecutingCommandWithSyncIcons = 0;
 
     // инициализируем связь C и QML
     InitClassCAndQML();
@@ -422,6 +425,26 @@ void FacadeApplication::InitNewRepository()
 
     systemTray->ReLoadListRepository();
     systemTray->CancelCloneRepository();
+}
+//----------------------------------------------------------------------------------------/
+void FacadeApplication::ReleaseThreadSyncIcons()
+{
+    QSemaphore& sem = threadModel.semSyncIcons;
+    if(sem.available() == 0)
+    {
+        // пробуждаем поток
+        sem.release();
+    }
+}
+//----------------------------------------------------------------------------------------/
+void FacadeApplication::IncreaseCountCommandThreadSyncIcons()
+{
+    ++threadModel.countExecutingCommandWithSyncIcons;
+}
+//----------------------------------------------------------------------------------------/
+void FacadeApplication::DecreaseCountCommandThreadSyncIcons()
+{
+    --threadModel.countExecutingCommandWithSyncIcons;
 }
 //----------------------------------------------------------------------------------------/
 void FacadeApplication::ChangeCurrentRepository(const QString& dir)

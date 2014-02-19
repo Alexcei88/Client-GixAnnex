@@ -51,6 +51,7 @@ Rectangle {
             }
             onSetEnableRepository: {
                 contenItem.enabled = enable;
+                filterDir.enabled = enable;
             }
 
         }
