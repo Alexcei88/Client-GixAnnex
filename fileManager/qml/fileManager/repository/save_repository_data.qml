@@ -13,7 +13,15 @@ Rectangle {
     // функция перехода на следующую страницу
     function nextPage()
     {
-
+        console.log("Page \"saver_repository data\": call next page...");
+        var nextpage = modelRepoXMLCloud.get(stackView.selectIndexRepository).url_review;
+        console.log(nextpage);
+        if(nextpage !== "")
+            stackView.push({ item: Qt.resolvedUrl(nextpage), destroyOnPop: true})
+    }
+    function actualizeButton()
+    {
+        buttonNext.text = "Next >"
     }
 
     FileDialog {
@@ -47,7 +55,7 @@ Rectangle {
 
         id: column
 
-        property int baseHeight: 25
+        property int baseHeight: 23
         property int widthFieldOption: 100
         anchors.left: parent.left
         anchors.right: parent.right
@@ -76,6 +84,7 @@ Rectangle {
                     fileDialogDestinition.open();
                 }
                 anchors.verticalCenter: destUrl.verticalCenter
+                anchors.verticalCenterOffset: -4
 
             }
         }

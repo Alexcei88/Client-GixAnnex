@@ -7,6 +7,7 @@ Item
     property alias nameOption: option.text
     property alias widthFieldOption: option.width
     property alias valueOption: value.text
+    property alias sizeFont: option.font.pixelSize
 
     anchors.horizontalCenter: parent.horizontalCenter
     Text

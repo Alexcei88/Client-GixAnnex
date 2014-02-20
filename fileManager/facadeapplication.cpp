@@ -2,6 +2,7 @@
 #include "MVC/Controller/controller_repository.h"
 #include "MVC/Controller/controller_icons.h"
 #include "MVC/Controller/controllerpreferencesapp.h"
+#include "MVC/Controller/controlleraddrepository.h"
 #include "repository/trepository.h"
 #include "resourcegenerator.h"
 #include <qml/components/message_box//qmlmessage.h>
@@ -26,6 +27,7 @@ FacadeApplication::FacadeApplication() :
 {
     // разрешаем выполнять задачу git-annex только в одном потоке
     // больше 1 процесса git-annex создать все равно не даст
+#if 0
     QThreadPool::globalInstance()->setMaxThreadCount(1);
 
     // загружаем из конфигов существующие репозитории
@@ -37,6 +39,7 @@ FacadeApplication::FacadeApplication() :
     // запускаем демон за просмотром директорий с репозиториями
     WatchRepositories();
 
+#endif
     // инициализируем связь C и QML
     InitClassCAndQML();
 
@@ -522,5 +525,6 @@ void FacadeApplication::InitClassCAndQML()
     qmlRegisterType<QMLMessage>("Message", 1, 0, "MessageBox");
     qmlRegisterType<QMLFolderListModel>("FolderListModel", 1, 0, "NewFolderListModel");
     qmlRegisterType<GANN_MVC::ControllerPreferencesApp>("Preferences", 1, 0, "PreferencesApp");
+    qmlRegisterType<GANN_MVC::ControllerAddRepository>("Repository", 1, 0, "ControllerAddRepository");
 }
 //----------------------------------------------------------------------------------------/

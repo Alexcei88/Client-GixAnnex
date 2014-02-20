@@ -3,8 +3,13 @@ import QtQuick.Controls 1.1
 import QtQuick.Layouts 1.1
 import QtQuick.XmlListModel 2.0
 
+import Repository 1.0
 
 Rectangle {
+
+    ControllerAddRepository{
+        id: addRepository
+    }
 
     SystemPalette { id: sysPal }
 
@@ -25,7 +30,7 @@ Rectangle {
         XmlRole { name: "url8"; query: "optionURL/url[8]/string()"; }
         XmlRole { name: "url9"; query: "optionURL/url[9]/string()"; }
         XmlRole { name: "url10"; query: "optionURL/url[10]/string()"; }
-        XmlRole { name: "url11"; query: "optionURL/url[11]/string()"; }
+        XmlRole { name: "url_review"; query: "optionURL/url_review/string()"; }
     }
 
     // репы, которые локальные
@@ -46,7 +51,7 @@ Rectangle {
         XmlRole { name: "url8"; query: "optionURL/url[8]/string()"; }
         XmlRole { name: "url9"; query: "optionURL/url[9]/string()"; }
         XmlRole { name: "url10"; query: "optionURL/url[10]/string()"; }
-        XmlRole { name: "url11"; query: "optionURL/url[11]/string()"; }
+        XmlRole { name: "url_review"; query: "optionURL/url_review/string()"; }
     }
 
     // модель, содержащая список view, которые будут
@@ -116,6 +121,7 @@ Rectangle {
             function transitionFinished(properties)
             {
                 properties.exitItem.opacity = 1
+                properties.enterItem.actualizeButton();
             }
 
             property Component pushTransition: StackViewTransition {
@@ -135,7 +141,9 @@ Rectangle {
         }
     }
 
-    // все страницы должны реализовывать функцию перехода на следующую страницу nextPage();
+    // все страницы должны реализовывать функции
+    // 1. перехода на следующую страницу nextPage();
+    // 2. актуализации кнопок интерфейса actualizeButton();
 
     Rectangle {
         id: managerPanel
@@ -166,12 +174,6 @@ Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
             }
 
-            Button {
-                id: buttonFinish
-                text: qsTr("Finish")
-                enabled: false
-                anchors.verticalCenter: parent.verticalCenter
-            }
             Button {
                 id: buttonNext
                 enabled: false
@@ -204,6 +206,17 @@ Rectangle {
             }
         } // end Row
     }
+    // функция на проверку пустого значения в компонете PropertyValue
+    function checkForEmpty(field)
+    {
+        if(field.valueOption === "")
+        {
+            console.log("ffff");
+            return false;
+        }
+        return true;
+    }
+
 }
 
 

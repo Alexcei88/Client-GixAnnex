@@ -10,6 +10,7 @@ Item
     property alias nameOption: option.text
     property alias widthFieldOption: option.width
     property alias valueOption: value.text
+
     Text
     {
         id: option

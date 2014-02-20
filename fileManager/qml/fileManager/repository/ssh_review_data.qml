@@ -1,35 +1,23 @@
-import QtQuick 2.1
+import QtQuick 2.0
 import QtQuick.Controls 1.1
 import QtQuick.Layouts 1.1
+import "../propertyFile"
+
 Rectangle {
 
-    // функция перехода на следующую страницу
+
     function nextPage()
     {
-        if(checkInput())
-        {
-            console.log("Page \"ssh_user_data\": call next page...");
-            var nextpage = modelRepoXMLCloud.get(stackView.selectIndexRepository).url2;
-            console.log(nextpage);
-            if(nextpage !== "")
-                stackView.push({ item: Qt.resolvedUrl(nextpage), destroyOnPop: true})
-        }
+
     }
+
     function actualizeButton()
     {
-
-    }
-
-    function checkInput()
-    {
-        if(!checkForEmpty(hostName))
-            return false;
-        return true;
+        buttonNext.text = "Add"
     }
 
     SystemPalette { id: sysPal }
     color: sysPal.window
-
 
     Text {
         id: head
@@ -51,6 +39,7 @@ Rectangle {
         id: column
 
         property int baseHeight: 23
+        property int sizeFont: 14
         property int widthFieldOption: 100
         anchors.left: parent.left
         anchors.right: parent.right
@@ -60,34 +49,36 @@ Rectangle {
         anchors.topMargin: 15
         height: 4 * baseHeight +  column.spacing * 3
         spacing: 10
-        PropertyInputValue {
-            id: hostName
+        PropertyValue {
             nameOption: "Host name:"
             widthFieldOption: column.widthFieldOption
             height: column.baseHeight
+            sizeFont: column.sizeFont
+            anchors.left: column.left
         }
-        PropertyInputValue {
-            id: userName
+        PropertyValue {
             nameOption: "User name:"
             widthFieldOption: column.widthFieldOption
             height: column.baseHeight
             focus: true
+            sizeFont: column.sizeFont
+            anchors.left: column.left
         }
-        PropertyInputValue {
-            id: directory
-            nameOption: "Directory:"
+        PropertyValue {
+            nameOption: "source url:"
             widthFieldOption: column.widthFieldOption
             height: column.baseHeight
-
+            sizeFont: column.sizeFont
+            anchors.left: column.left
         }
-        PropertyInputValue {
-            id: port
+        PropertyValue {
             nameOption: "Port:"
             widthFieldOption: column.widthFieldOption
             valueOption: "22"
             height: column.baseHeight
-
+            sizeFont: column.sizeFont
+            anchors.left: column.left
         }
-    }
+}
 
 }

@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
 
     //=========================================================================== /
     // Фасад приложения
-//    FacadeApplication* facadeApp = FacadeApplication::getInstance();
+    FacadeApplication* facadeApp = FacadeApplication::getInstance();
 
 //    //=========================================================================== /
 
