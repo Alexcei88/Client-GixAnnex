@@ -46,7 +46,7 @@ RESULT_EXEC_PROCESS TShell::ExecuteProcess(const QString &str, IParsingCommandOu
 
     // ждем, пока процесс не запуститься
     // если процесс не запустился, возвращаем -1
-    if(!process->waitForStarted(20000))
+    if(!process->waitForStarted(600000))
     {
         printf("Process not started! \n");
         receiverParsing->SetParamErrorExecuteCommand(QProcess::FailedToStart);

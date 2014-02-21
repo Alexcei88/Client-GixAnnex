@@ -2,6 +2,7 @@
 #include "facadeanalyzecommand.h"
 #include "utils/utils.h"
 #include "analizediraction.h"
+#include "facadeapplication.h"
 
 // boost stuff
 #include <boost/make_shared.hpp>
@@ -19,6 +20,14 @@ AnalyzeExecuteCommandDrop::AnalyzeExecuteCommandDrop(FacadeAnalyzeCommand &facad
 {
     droppingContentFileQueue = boost::make_shared<AnalizeDirOnActionPrivate>();
     lastDroppingContentFiles.clear();
+
+    FacadeApplication::getInstance()->IncreaseCountCommandThreadSyncIcons();
+    FacadeApplication::getInstance()->ReleaseThreadSyncIcons();
+}
+//----------------------------------------------------------------------------------------/
+AnalyzeExecuteCommandDrop::~AnalyzeExecuteCommandDrop()
+{
+    FacadeApplication::getInstance()->DecreaseCountCommandThreadSyncIcons();
 }
 //----------------------------------------------------------------------------------------/
 void AnalyzeExecuteCommandDrop::StartExecuteCommand()

@@ -59,6 +59,8 @@ void ModelQmlAndCRepository::SetEnableRepository(bool enable) const
         FacadeApplication::instance->SaveOptionsRepository(iterRepo->second.get()->GetLocalURL());
         // перезагружаем представление
         FacadeApplication::instance->systemTray->ReLoadListRepository();
+        // даем команду обновить состояние иконок
+        FacadeApplication::instance->ReleaseThreadSyncIcons();
     }
     else{
         assert("CurrentRepo is NULL" && false);

@@ -1,6 +1,7 @@
 #include "irepository.h"
 #include "analyze_execute_command/facadeanalyzecommand.h"
 #include "utils/utils.h"
+#include "facadeapplication.h"
 
 // boost stuff
 #include <boost/make_shared.hpp>
@@ -255,6 +256,7 @@ void IRepository::OnDirectoryChanged(const QString& path)
     std::cout<<"Change directory: "<<path.toStdString()<<std::endl;
 #endif
     // даем команду потоку синхронизации на выполнение синхронизации
+    FacadeApplication::getInstance()->ReleaseThreadSyncIcons();
 }
 //----------------------------------------------------------------------------------------/
 void IRepository::OnFileChanged(const QString& path)
@@ -263,7 +265,7 @@ void IRepository::OnFileChanged(const QString& path)
     std::cout<<"Change file: "<<path.toStdString()<<std::endl;
 #endif
     // даем команду потоку синхронизации на выполнение синхронизации
-
+    FacadeApplication::getInstance()->ReleaseThreadSyncIcons();
 }
 //----------------------------------------------------------------------------------------/
 

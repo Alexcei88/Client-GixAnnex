@@ -23,14 +23,31 @@ void ThreadSyncIcons::UpdateFileSyncIcons()
     int& countCommand = facade->threadModel.countExecutingCommandWithSyncIcons;
 
     const uint64t timeDelay = 0.1E6;
+    bool oneCall = false;
+
     while(!exitThread)
     {
+        // условия на засыпание потока
         if(countCommand == 0)
         {
             // если количество команд, для которых нужна синхронизация иконок равна 0,
-            // то поток засыпает, пока его никто не пробудит
-            sem.acquire();
+            // то поток засыпает, пока его никто внешне не пробудит
+            if(oneCall) {
+                oneCall = false;
+            }
+            else{
+                // ждем пробуждения потока
+                sem.acquire();
+                // поток проснулся
+                if(countCommand > 0)
+                {
+                    // выставляем флаг, что после окончания выполнения команды
+                    // нужно еще один раз вызвать поток
+                    oneCall = true;
+                }
+            }
         }
+        // сама работа потока
         if(facade->GetSystemTray())
         {
             // здесь захватить мьютексом потока синхронизации иконок
@@ -46,8 +63,8 @@ void ThreadSyncIcons::UpdateFileSyncIcons()
 
             // обновляем представление в основном потоке
             facade->GetSystemTray()->OnUpdateIconsSyncronization();
-            LZDelay(timeDelay);
         }
+        LZDelay(timeDelay);
     }
 }
 //----------------------------------------------------------------------------------------/
