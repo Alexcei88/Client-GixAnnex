@@ -1,22 +1,22 @@
-#include "controlleraddrepository.h"
-
-// model stuff
-#include "../Model/AddRepository/model_addrepository_remoteserver.h"
+#include "imodel_addrepository.h"
+#include "facadeapplication.h"
 
 using namespace GANN_MVC;
+
 //----------------------------------------------------------------------------------------/
-ControllerAddRepository::ControllerAddRepository()
+IModelQmlAndCAddRepository::IModelQmlAndCAddRepository()
 {}
 //----------------------------------------------------------------------------------------/
-void ControllerAddRepository::selectRemoteServer()
+void IModelQmlAndCAddRepository::CancelAddRepository() const
 {
-    //model.reset(new ModeladdRepositoryRemoteserver());
+
 }
 //----------------------------------------------------------------------------------------/
-void ControllerAddRepository::closeAddRepository() const
+void IModelQmlAndCAddRepository::CloseWindowAddRepository()
 {
-    IModelQmlAndCAddRepository::CloseWindowAddRepository();
+    FacadeApplication::getInstance()->systemTray->CloseAddRepository();
 }
 //----------------------------------------------------------------------------------------/
+
 
 

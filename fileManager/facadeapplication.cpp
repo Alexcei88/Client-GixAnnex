@@ -424,7 +424,7 @@ void FacadeApplication::InitNewRepository()
     repository[tempRepo->GetLocalURL()] = std::move(tempRepo);
 
     systemTray->ReLoadListRepository();
-    systemTray->CancelCloneRepository();
+//    systemTray->CancelCloneRepository();
 }
 //----------------------------------------------------------------------------------------/
 void FacadeApplication::ChangeCurrentRepository(const QString& dir)

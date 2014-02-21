@@ -16,10 +16,13 @@ public:
     SystemTray();
 
     inline void         SetMainView(QQuickView* view) { this->mainView = view; }
-    inline void         SetCloneRepoView(QQuickView* view) { this->cloneRepoView = view; }
+    inline void         SetAddRepoView(QQuickView* view) { this->addRepoView = view; }
     inline void         SetPreferencesApplicationView(QQuickView* view) { this->preferencesAppRepoView = view; }
 
-    void                CancelCloneRepository() const;
+    /** @brief Закрыть окно добавления репозитория */
+    void                CloseAddRepository() const;
+
+    /** @brief Закрыть окно со свойствами приложения */
     void                ClosePreferencesApplication() const;
 
     /** @brief Перезагрузить модель со списком репозиториев */
@@ -31,8 +34,8 @@ public:
 public slots:
     /** @brief Нажатия по иконке мышью */
     void                ActivateTray(QSystemTrayIcon::ActivationReason reason);
-    /** @brief Запуск окна клонирования репозитория */
-    void                CloneRepository();
+    /** @brief Запуск окна добавления репозитория */
+    void                ShowAddRepository();
     /** @brief Запуск окна свойств репозитория */
     void                PreferencesApplication();
 
@@ -52,8 +55,9 @@ private:
     // viewer-ы
     /** @brief главный вид */
     QQuickView*         mainView;
-    /** @brief вид окна клонирования репозитория */
-    QQuickView*         cloneRepoView;
+    /** @brief вид окна добавления репозитория */
+    QQuickView*         addRepoView;
+
     /** @brief вид окна свойств репозитория */
     QQuickView*         preferencesAppRepoView;
 

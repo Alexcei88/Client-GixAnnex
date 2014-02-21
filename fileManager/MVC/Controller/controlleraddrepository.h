@@ -3,10 +3,12 @@
 
 // Qt stuff
 #include <QObject>
-#include <QSharedPointer>
 
 // our stuff
-#include "../Model/AddRepository/imodeladdrepository.h"
+#include "../Model/AddRepository/imodel_addrepository.h"
+
+// std stuff
+#include <memory>
 
 namespace GANN_MVC
 {
@@ -15,7 +17,16 @@ class ControllerAddRepository: public QObject
     Q_OBJECT
 public:
     ControllerAddRepository();
-    QSharedPointer<IModelQmlAndCAddRepository>  model;
+
+    /** @brief выбран remote server */
+    Q_INVOKABLE void    selectRemoteServer();
+
+    /** @brief Отмена добавления репозитория */
+    Q_INVOKABLE void    closeAddRepository() const;
+
+private:
+    std::shared_ptr<IModelQmlAndCAddRepository> model;
+
 };
 
 }

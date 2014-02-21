@@ -55,7 +55,8 @@ SOURCES += main.cpp \
     MVC/Controller/controllerpreferencesapp.cpp \
     MVC/Model/model_preferencesapp.cpp \
     MVC/Controller/controlleraddrepository.cpp \
-    MVC/Model/AddRepository/imodeladdrepository.cpp
+    MVC/Model/AddRepository/imodel_addrepository.cpp \
+    MVC/Model/AddRepository/model_addrepository_remoteserver.cpp
 
 # Installation path
 # target.path =
@@ -119,7 +120,8 @@ HEADERS += \
     MVC/Controller/controllerpreferencesapp.h \
     MVC/Model/model_preferencesapp.h \
     MVC/Controller/controlleraddrepository.h \
-    MVC/Model/AddRepository/imodeladdrepository.h
+    MVC/Model/AddRepository/imodel_addrepository.h \
+    MVC/Model/AddRepository/model_addrepository_remoteserver.h
 
 # Включаем поддержку С++11
 QMAKE_CXXFLAGS += -std=c++0x

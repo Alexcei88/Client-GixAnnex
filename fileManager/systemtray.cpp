@@ -6,7 +6,7 @@
 //----------------------------------------------------------------------------------------/
 SystemTray::SystemTray():
     mainView(nullptr)
-  , cloneRepoView(nullptr)
+  , addRepoView(nullptr)
   , preferencesAppRepoView(nullptr)
 {
     //=================================================================================== /
@@ -58,10 +58,10 @@ void SystemTray::ActivateTray(QSystemTrayIcon::ActivationReason reason)
     }
 }
 //----------------------------------------------------------------------------------------/
-void SystemTray::CloneRepository()
+void SystemTray::ShowAddRepository()
 {
-    if(cloneRepoView)
-        cloneRepoView->show();
+    if(addRepoView)
+        addRepoView->show();
 }
 //----------------------------------------------------------------------------------------/
 void SystemTray::PreferencesApplication()
@@ -72,16 +72,16 @@ void SystemTray::PreferencesApplication()
 //----------------------------------------------------------------------------------------/
 void SystemTray::QuitProgramm()
 {
-    cloneRepoView = nullptr;
+    addRepoView = nullptr;
     mainView = nullptr;
     preferencesAppRepoView = nullptr;
     qApp->quit();
 }
 //----------------------------------------------------------------------------------------/
-void SystemTray::CancelCloneRepository() const
+void SystemTray::CloseAddRepository() const
 {
-    if(cloneRepoView)
-        cloneRepoView->hide();
+    if(addRepoView)
+        addRepoView->hide();
 }
 //----------------------------------------------------------------------------------------/
 void SystemTray::ClosePreferencesApplication() const
