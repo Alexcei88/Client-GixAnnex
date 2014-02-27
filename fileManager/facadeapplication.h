@@ -98,7 +98,7 @@ private:
     void                WatchRepository(IRepository *repository, const bool start = true) const;
 
     /** @brief начать клонирование репозитория */
-    GANN_DEFINE::RESULT_EXEC_PROCESS StartCloneRepository(QString& localURL, const QString& remoteURL, const QString& nameRepo);
+    GANN_DEFINE::RESULT_EXEC_PROCESS StartCloneRepository(const QString& localURL, const QString& remoteURL, const QString& nameRepo);
 
     /** @brief Сменить итератор, указывающий на текущий репозиторий */
     void                ChangeCurrentRepository(const QString &dir);

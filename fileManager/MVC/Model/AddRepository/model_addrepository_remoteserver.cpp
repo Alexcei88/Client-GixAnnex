@@ -3,12 +3,7 @@
 using namespace GANN_MVC;
 
 //----------------------------------------------------------------------------------------/
-ModeladdRepositoryRemoteServer::ModeladdRepositoryRemoteServer()
+ModelAddRepositoryRemoteServer::ModelAddRepositoryRemoteServer()
 {}
-//----------------------------------------------------------------------------------------/
-GANN_DEFINE::RESULT_EXEC_PROCESS ModeladdRepositoryRemoteServer::StartAddRepository()
-{
-
-}
 //----------------------------------------------------------------------------------------/
 

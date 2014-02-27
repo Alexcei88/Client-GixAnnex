@@ -14,6 +14,14 @@ Rectangle {
     function actualizeButton()
     {
         buttonNext.text = "Add"
+
+        // заполняем поля, если они были заполнены
+        for(var i = 0; i < column.children.length; ++i)
+        {
+            var key = column.children[i].nameOption.substring(0, column.children[i].nameOption.length - 1);
+            var value = addRepository.getOptions(key);
+            column.children[i].valueOption = value;
+        }
     }
 
     SystemPalette { id: sysPal }
@@ -65,7 +73,7 @@ Rectangle {
             anchors.left: column.left
         }
         PropertyValue {
-            nameOption: "source url:"
+            nameOption: "Directory:"
             widthFieldOption: column.widthFieldOption
             height: column.baseHeight
             sizeFont: column.sizeFont
@@ -75,6 +83,20 @@ Rectangle {
             nameOption: "Port:"
             widthFieldOption: column.widthFieldOption
             valueOption: "22"
+            height: column.baseHeight
+            sizeFont: column.sizeFont
+            anchors.left: column.left
+        }
+        PropertyValue {
+            nameOption: "Destinition URL:"
+            widthFieldOption: column.widthFieldOption
+            height: column.baseHeight
+            sizeFont: column.sizeFont
+            anchors.left: column.left
+        }
+        PropertyValue {
+            nameOption: "Name:"
+            widthFieldOption: column.widthFieldOption
             height: column.baseHeight
             sizeFont: column.sizeFont
             anchors.left: column.left

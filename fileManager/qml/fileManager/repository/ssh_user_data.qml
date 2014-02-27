@@ -8,6 +8,14 @@ Rectangle {
     {
         if(checkInput())
         {
+            // добавляем опции
+            for(var i = 0; i < column.children.length; ++i)
+            {
+                var key = column.children[i].nameOption.substring(0, column.children[i].nameOption.length - 1);
+                var value = column.children[i].valueOption;
+                addRepository.setOptions(key, value);
+            }
+
             console.log("Page \"ssh_user_data\": call next page...");
             var nextpage = modelRepoXMLCloud.get(stackView.selectIndexRepository).url2;
             console.log(nextpage);
@@ -17,7 +25,13 @@ Rectangle {
     }
     function actualizeButton()
     {
-
+        // заполняем поля, если они были заполнены
+        for(var i = 0; i < column.children.length; ++i)
+        {
+            var key = column.children[i].nameOption.substring(0, column.children[i].nameOption.length - 1);
+            var value = addRepository.getOptions(key);
+            column.children[i].valueOption = value;
+        }
     }
 
     function checkInput()

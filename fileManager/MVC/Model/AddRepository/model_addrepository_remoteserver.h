@@ -5,13 +5,10 @@
 
 namespace GANN_MVC
 {
-class ModeladdRepositoryRemoteServer: public IModelQmlAndCAddRepository
+class ModelAddRepositoryRemoteServer: public IModelQmlAndCAddRepository
 {
 public:
-    ModeladdRepositoryRemoteServer();
-
-    virtual GANN_DEFINE::RESULT_EXEC_PROCESS StartAddRepository();
-
+    ModelAddRepositoryRemoteServer();
 };
 }
 

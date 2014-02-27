@@ -3,6 +3,11 @@ import QtQuick.Layouts 1.1
 
 Rectangle {
 
+    function actualizeButton()
+    {
+
+    }
+
     color: sysPal.window
 
     Component {
@@ -33,11 +38,12 @@ Rectangle {
                             if(delegateItem.curNextUrl != "")
                             {
                                 stackView.selectIndexRepository = model.index;
+                                // сначала фиксируем, что был выбран удаленный репозиторий
+                                addRepository.selectServer(model.index);
                                 stackView.push({ item: Qt.resolvedUrl(delegateItem.curNextUrl), destroyOnPop: true})
                                 // включаем кнопки назад или вперед
                                 buttonBack.enabled = true;
                                 buttonNext.enabled = true;
-
                             }
                         }
                         onEntered: {

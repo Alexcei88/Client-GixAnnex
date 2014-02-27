@@ -8,9 +8,26 @@ using namespace GANN_MVC;
 ControllerAddRepository::ControllerAddRepository()
 {}
 //----------------------------------------------------------------------------------------/
-void ControllerAddRepository::selectRemoteServer()
+void ControllerAddRepository::setOptions(const QVariant key, const QVariant value)
 {
-    //model.reset(new ModeladdRepositoryRemoteserver());
+    options[key.toString()] = value.toString();
+}
+//----------------------------------------------------------------------------------------/
+QVariant ControllerAddRepository::getOptions(const QVariant key)
+{
+    return options.contains(key.toString()) ? options[key.toString()] : "";
+}
+//----------------------------------------------------------------------------------------/
+void ControllerAddRepository::selectServer(const QVariant index)
+{
+    options.clear();
+    model.reset(new ModelAddRepositoryRemoteServer());
+}
+//----------------------------------------------------------------------------------------/
+void ControllerAddRepository::startAddRepository() const
+{
+    assert(model.get());
+    model->StartAddRepository(options);
 }
 //----------------------------------------------------------------------------------------/
 void ControllerAddRepository::closeAddRepository() const

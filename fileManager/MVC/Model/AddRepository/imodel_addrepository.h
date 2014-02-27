@@ -3,6 +3,10 @@
 
 #include "define.h"
 
+// Qt stuff
+#include <QString>
+#include <QMap>
+
 
 namespace GANN_MVC
 {
@@ -12,7 +16,7 @@ public:
     IModelQmlAndCAddRepository();
 
     /** @brief Начать добавление репозитория */
-    virtual GANN_DEFINE::RESULT_EXEC_PROCESS StartAddRepository() = 0;
+    virtual GANN_DEFINE::RESULT_EXEC_PROCESS StartAddRepository(const QMap<QString, QString>& options);
 
     /** @brief Остановить добавление */
     void                CancelAddRepository() const;
@@ -20,6 +24,15 @@ public:
     /** @brief Закрыть окно добавления репозитория */
     static void         CloseWindowAddRepository();
 
+private:
+    // взять удаленный путь, откуда будет копироваться
+    virtual QString     GetRemoteUrl(const QMap<QString, QString>& options) const;
+
+    // взять локальный путь, куда будет копироваться
+    virtual QString     GetLocalUrl(const QMap<QString, QString>& options) const;
+
+    // взять имя репозитория
+    virtual QString     GetNameRepository(const QMap<QString, QString>& options) const;
 
 };
 

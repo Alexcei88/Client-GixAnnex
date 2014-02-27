@@ -382,7 +382,7 @@ void FacadeApplication::WatchRepository(IRepository* repository, const bool star
     start ? repository->StartWatchRepository() : repository->StopWatchRepository();
 }
 //----------------------------------------------------------------------------------------/
-GANN_DEFINE::RESULT_EXEC_PROCESS FacadeApplication::StartCloneRepository(QString &localURL, const QString &remoteURL, const QString &nameRepo)
+GANN_DEFINE::RESULT_EXEC_PROCESS FacadeApplication::StartCloneRepository(const QString &localURL, const QString &remoteURL, const QString &nameRepo)
 {
     QDir dir;
     dir.setPath(localURL);
@@ -392,7 +392,8 @@ GANN_DEFINE::RESULT_EXEC_PROCESS FacadeApplication::StartCloneRepository(QString
         return DIRECTORY_NOT_EXIST;
     }
     TRepository *newRepo = new TRepository;
-    RESULT_EXEC_PROCESS result = newRepo->CloneRepository(localURL, nameRepo, remoteURL);
+    QString localUrl = localURL;
+    RESULT_EXEC_PROCESS result = newRepo->CloneRepository(localUrl, nameRepo, remoteURL);
 
     tempRepo.reset(newRepo);
     return result;

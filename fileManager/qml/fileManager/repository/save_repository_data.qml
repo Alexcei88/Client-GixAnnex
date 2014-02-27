@@ -16,12 +16,30 @@ Rectangle {
         console.log("Page \"saver_repository data\": call next page...");
         var nextpage = modelRepoXMLCloud.get(stackView.selectIndexRepository).url_review;
         console.log(nextpage);
+
+        // сохраняем опции
+        var key = destUrl.nameOption.substring(0, destUrl.nameOption.length - 1);
+        var value = destUrl.valueOption;
+        addRepository.setOptions(key, value);
+
+        key = nameRepository.nameOption.substring(0, nameRepository.nameOption.length - 1);
+        value = nameRepository.valueOption;
+        addRepository.setOptions(key, value);
+
         if(nextpage !== "")
             stackView.push({ item: Qt.resolvedUrl(nextpage), destroyOnPop: true})
     }
     function actualizeButton()
     {
         buttonNext.text = "Next >"
+
+        var key = destUrl.nameOption.substring(0, destUrl.nameOption.length - 1);
+        var value = addRepository.getOptions(key);
+        destUrl.valueOption = value;
+
+        key = nameRepository.nameOption.substring(0, nameRepository.nameOption.length - 1);
+        value = addRepository.getOptions(key);
+        nameRepository.valueOption = value;
     }
 
     FileDialog {
@@ -90,6 +108,7 @@ Rectangle {
         }
 
         PropertyInputValue {
+            id: nameRepository
             nameOption: "Name:"
             widthFieldOption: column.widthFieldOption
             height: column.baseHeight

@@ -3,6 +3,8 @@
 
 // Qt stuff
 #include <QObject>
+#include <QMap>
+#include <QVariant>
 
 // our stuff
 #include "../Model/AddRepository/imodel_addrepository.h"
@@ -18,14 +20,25 @@ class ControllerAddRepository: public QObject
 public:
     ControllerAddRepository();
 
-    /** @brief выбран remote server */
-    Q_INVOKABLE void    selectRemoteServer();
+    /** @brief Добавление опции в вектор */
+    Q_INVOKABLE void    setOptions(const QVariant key, const QVariant value);
+
+    /** @brief Добавление опции в вектор */
+    Q_INVOKABLE QVariant getOptions(const QVariant key);
+
+    /** @brief Выбран репозиторий */
+    Q_INVOKABLE void    selectServer(const QVariant index);
+
+    /** @brief Старт добавления репозитория */
+    Q_INVOKABLE void    startAddRepository() const;
 
     /** @brief Отмена добавления репозитория */
-    Q_INVOKABLE void    closeAddRepository() const;
+    Q_INVOKABLE void    closeAddRepository() const;    
 
 private:
     std::shared_ptr<IModelQmlAndCAddRepository> model;
+    // параметры копирования
+    QMap<QString, QString> options;
 
 };
 
