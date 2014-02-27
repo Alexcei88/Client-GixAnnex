@@ -183,3 +183,13 @@ RESULT_EXEC_PROCESS ShellCommand::FindFileInPath(const QString &path, FacadeAnal
     Q_UNUSED(facade);
 }
 //----------------------------------------------------------------------------------------/
+GANN_DEFINE::RESULT_EXEC_PROCESS ShellCommand::CopyFileToOtherRepository(const QString& file, const QString& nameRepository)
+{
+
+}
+//----------------------------------------------------------------------------------------/
+GANN_DEFINE::RESULT_EXEC_PROCESS ShellCommand::MoveFileToOtherRepository(const QString& file, const QString& nameRepository)
+{
+
+}
+//----------------------------------------------------------------------------------------/

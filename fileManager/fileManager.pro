@@ -53,7 +53,9 @@ SOURCES += main.cpp \
     analyze_execute_command/analyzeexecutecommandinit.cpp \
     analyze_execute_command/analyzeexecutecommandchangedirectmode.cpp \
     MVC/Controller/controllerpreferencesapp.cpp \
-    MVC/Model/model_preferencesapp.cpp
+    MVC/Model/model_preferencesapp.cpp \
+    analyze_execute_command/analyzeexecutecommandcopy.cpp \
+    parsing_command_out/parsingcommandcopy.cpp
 
 # Installation path
 # target.path =
@@ -114,7 +116,9 @@ HEADERS += \
     analyze_execute_command/analyzeexecutecommandinit.h \
     analyze_execute_command/analyzeexecutecommandchangedirectmode.h \
     MVC/Controller/controllerpreferencesapp.h \
-    MVC/Model/model_preferencesapp.h
+    MVC/Model/model_preferencesapp.h \
+    analyze_execute_command/analyzeexecutecommandcopy.h \
+    parsing_command_out/parsingcommandcopy.h
 
 # Включаем поддержку С++11
 QMAKE_CXXFLAGS += -std=c++0x

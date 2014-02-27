@@ -166,8 +166,6 @@ void AnalyzeExecuteCommandDrop::ForeachFilesNoContentAlready(const QString& path
             AtomicLock flag(atomicFlagExecuteCommand);
             Q_UNUSED(flag);
 
-            std::cout<<"Уже удален контент :"<<path.toStdString()<<std::endl;
-
             // посылаем сигнал, что контент уже удален
             lastDroppingContentFiles << path;
             // помещаем в вектор файлов/директорий, над которыми действия выполнять не нужно(они уже выполнены)

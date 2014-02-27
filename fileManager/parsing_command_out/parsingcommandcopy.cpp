@@ -1,17 +1,18 @@
-#include "parsingcommanddrop.h"
-#include "../analyze_execute_command/analyzeexecutecommanddrop.h"
+#include "parsingcommandcopy.h"
+#include "../analyze_execute_command/analyzeexecutecommandcopy.h"
 #include <assert.h>
 //  Qt stuff
 #include <QJsonObject>
 
 //----------------------------------------------------------------------------------------/
-ParsingCommandDrop::ParsingCommandDrop(boost::shared_ptr<AnalyzeCommand::AnalyzeExecuteCommandDrop> analyzeCommand) :
+//----------------------------------------------------------------------------------------/
+ParsingCommandCopy::ParsingCommandCopy(boost::shared_ptr<AnalyzeCommand::AnalyzeExecuteCommandCopy> analyzeCommand) :
     IParsingCommandOut(analyzeCommand)
-  , startDrop(false)
-  , analizeCommandDrop(analyzeCommand)
+  , startCopy(false)
+  , analizeCommandCopy(analyzeCommand)
 {}
 //----------------------------------------------------------------------------------------/
-void ParsingCommandDrop::ParsingData()
+void ParsingCommandCopy::ParsingData()
 {
     // команда стартовала, но еще не завершилась
     if(commandStart && !commandEnd)
@@ -24,18 +25,18 @@ void ParsingCommandDrop::ParsingData()
                 if(doc.object().take("file").toString() != lastJSONDocument.object().take("file").toString())
                 {
                     // документ не был в обработке, запускаем
-                    StartDropContentFile(doc);
+                    StartCopyContentFile(doc);
                 }
             }
             else
             {
-                StartDropContentFile(doc);
+                StartCopyContentFile(doc);
             }
             bool ok = false;
             if(IsEndMiniCommand(doc, ok))
             {
                 // команда завершилась
-                ok ? EndDropContentFile() : ErrorDropContentFile(doc);
+                ok ? EndCopyContentFile() : ErrorCopyContentFile(doc);
             }
         }
     }
@@ -49,26 +50,26 @@ void ParsingCommandDrop::ParsingData()
     }
 }
 //----------------------------------------------------------------------------------------/
-void ParsingCommandDrop::StartDropContentFile(const QJsonDocument &doc)
+void ParsingCommandCopy::StartCopyContentFile(const QJsonDocument &doc)
 {
-    assert(!startDrop && "Предыдущий ресурс еще не удалился, и началось новое удаление. Что то пошло не так!!!");
-    startDrop = true;
+    assert(!startCopy && "Предыдущий ресурс еще не скопировался, и началось новое копирование. Что то пошло не так!!!");
+    startCopy = true;
     nameFileGetContent = doc.object().take("file").toString();
-    analizeCommandDrop->StartDropContentFile(nameFileGetContent);
+    analizeCommandCopy->StartCopyContentFile(nameFileGetContent);
 }
 //----------------------------------------------------------------------------------------/
-void ParsingCommandDrop::EndDropContentFile()
+void ParsingCommandCopy::EndCopyContentFile()
 {
-    assert(startDrop && "Удаление ресурса не было запущено");
-    startDrop = false;
-    analizeCommandDrop->EndDropContentFile(nameFileGetContent);
+    assert(startCopy && "Копирование ресурса не было запущено");
+    startCopy = false;
+    analizeCommandCopy->EndCopyContentFile(nameFileGetContent);
 }
 //----------------------------------------------------------------------------------------/
-void ParsingCommandDrop::ErrorDropContentFile(const QJsonDocument &doc)
+void ParsingCommandCopy::ErrorCopyContentFile(const QJsonDocument &doc)
 {
-    assert(startDrop && "Удаление ресурса не было запущено");
-    startDrop = false;
+    assert(startCopy && "Удаление ресурса не было запущено");
+    startCopy = false;
     Q_UNUSED(doc);
-    analizeCommandDrop->ErrorDropContentFile(nameFileGetContent, "Error");
+    analizeCommandCopy->ErrorCopyContentFile(nameFileGetContent, "Error");
 }
 //----------------------------------------------------------------------------------------/

@@ -64,6 +64,12 @@ public:
     /** @brief Поиск файлов в директории(узнаем файлы, у которых есть контент) */
     GANN_DEFINE::RESULT_EXEC_PROCESS FindFileInPath(const QString& path, AnalyzeCommand::FacadeAnalyzeCommand* facade) const;
 
+    /** @brief Копирование файла на удаленный сервер */
+    GANN_DEFINE::RESULT_EXEC_PROCESS CopyFileToOtherRepository(const QString& file, const QString& nameRepository = "origin");
+
+    /** @brief Перемещение файла на удаленный сервер */
+    GANN_DEFINE::RESULT_EXEC_PROCESS MoveFileToOtherRepository(const QString& file, const QString& nameRepository = "origin");
+
     inline const QString getStrCommand() const { return strCommand; }
     inline const QString getLocalURL() const { return localURL; }
 
