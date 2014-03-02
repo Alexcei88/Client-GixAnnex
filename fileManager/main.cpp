@@ -90,11 +90,11 @@ int main(int argc, char *argv[])
     cloneRepoViewer1.show();
 
 //    // создаем классы трея и передаем нужные для управления viewer-ы
-//    SystemTray windowTray;
+    SystemTray windowTray;
 //    windowTray.SetMainView(&mainViewer);
-//    windowTray.SetCloneRepoView(&cloneRepoViewer);
+    windowTray.SetAddRepoView(&cloneRepoViewer1);
 //    windowTray.SetPreferencesApplicationView(&preferencesAppViewer);
-//    facadeApp->SetSystemTray(&windowTray);
+    facadeApp->SetSystemTray(&windowTray);
 
 //    atexit(Exit);
     return app.exec();

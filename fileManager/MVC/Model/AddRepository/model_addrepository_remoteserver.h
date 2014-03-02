@@ -9,6 +9,8 @@ class ModelAddRepositoryRemoteServer: public IModelQmlAndCAddRepository
 {
 public:
     ModelAddRepositoryRemoteServer();
+
+    virtual QString GetRemoteUrl(const QMap<QString, QString> &options) const;
 };
 }
 

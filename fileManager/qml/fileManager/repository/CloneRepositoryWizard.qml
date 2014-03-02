@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.1
 import QtQuick.XmlListModel 2.0
 
 import Repository 1.0
+import Message 1.0
 
 Rectangle {
 
@@ -11,6 +12,9 @@ Rectangle {
         id: addRepository
     }
 
+    MessageBox{
+        id: message
+    }
     SystemPalette { id: sysPal }
 
     XmlListModel
@@ -29,7 +33,7 @@ Rectangle {
         XmlRole { name: "url7"; query: "optionURL/url[7]/string()"; }
         XmlRole { name: "url8"; query: "optionURL/url[8]/string()"; }
         XmlRole { name: "url9"; query: "optionURL/url[9]/string()"; }
-        XmlRole { name: "url10"; query: "optionURL/url[10]/string()"; }
+        XmlRole { name: "url_addrepo"; query: "optionURL/url_addrepo/string()"; }
         XmlRole { name: "url_review"; query: "optionURL/url_review/string()"; }
     }
 
@@ -107,6 +111,7 @@ Rectangle {
     StackView
     {
         id: stackView
+        objectName: "StackView"
 
         property int selectIndexRepository: -1
         anchors {
@@ -139,6 +144,11 @@ Rectangle {
                 }
             }
         }
+        // результат клонирования
+        function resultClone(text)
+        {
+            stackView.currentItem.resultAddRepository(text);
+        }
     }
 
     // все страницы должны реализовывать функции
@@ -168,7 +178,9 @@ Rectangle {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-
+                        var text = "Do you really want to cancel add a repository?<br>"
+                        if(message.showConfirmMessage("Warning", text))
+                            addRepository.closeAddRepository();
                     }
                 }
                 anchors.verticalCenter: parent.verticalCenter

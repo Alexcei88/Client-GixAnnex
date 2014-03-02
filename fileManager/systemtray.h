@@ -31,6 +31,9 @@ public:
     /** @brief Обновить состояние иконок синхронизации */
     bool                OnUpdateIconsSyncronization() const;
 
+    /** @brief Сообщаем, что клонирование завершилось */
+    bool                ResultAddRepository(const QString& text) const;
+
 public slots:
     /** @brief Нажатия по иконке мышью */
     void                ActivateTray(QSystemTrayIcon::ActivationReason reason);

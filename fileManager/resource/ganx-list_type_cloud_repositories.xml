@@ -9,7 +9,7 @@
             <url>ssh_user_data.qml</url>
             <url>save_repository_data.qml</url>
             <url_review>ssh_review_data.qml</url_review>
-            <url>fffff3</url>
+            <url_addrepo>wait_clone.qml</url_addrepo>
         </optionURL>
     </repo>
 </list_repository>

@@ -32,8 +32,12 @@ public:
     /** @brief Старт добавления репозитория */
     Q_INVOKABLE void    startAddRepository() const;
 
-    /** @brief Отмена добавления репозитория */
-    Q_INVOKABLE void    closeAddRepository() const;    
+    /** @brief Закрыть окно добавления репозитория */
+    Q_INVOKABLE void    cancelAddRepository() const;
+
+    /** @brief Закрыть окно добавления репозитория */
+    Q_INVOKABLE void    closeAddRepository() const;
+
 
 private:
     std::shared_ptr<IModelQmlAndCAddRepository> model;

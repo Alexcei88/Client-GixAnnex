@@ -8,6 +8,14 @@ Rectangle {
 
     function nextPage()
     {
+        console.log("Page \"ssh_review_data\": start clone...");
+        var nextpage = modelRepoXMLCloud.get(stackView.selectIndexRepository).url_addrepo;
+        console.log(nextpage);
+
+        if(nextpage !== "")
+            stackView.push({ item: Qt.resolvedUrl(nextpage), destroyOnPop: true})
+
+        addRepository.startAddRepository();
 
     }
 
@@ -82,7 +90,6 @@ Rectangle {
         PropertyValue {
             nameOption: "Port:"
             widthFieldOption: column.widthFieldOption
-            valueOption: "22"
             height: column.baseHeight
             sizeFont: column.sizeFont
             anchors.left: column.left
@@ -102,5 +109,4 @@ Rectangle {
             anchors.left: column.left
         }
 }
-
 }

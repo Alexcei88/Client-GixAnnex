@@ -389,6 +389,7 @@ GANN_DEFINE::RESULT_EXEC_PROCESS FacadeApplication::StartCloneRepository(const Q
     if(!dir.exists())
     {
         // директория, куда будем копировать, не существует.
+        systemTray->ResultAddRepository("Destinition URL not exist");
         return DIRECTORY_NOT_EXIST;
     }
     TRepository *newRepo = new TRepository;

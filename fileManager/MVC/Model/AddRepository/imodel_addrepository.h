@@ -19,7 +19,7 @@ public:
     virtual GANN_DEFINE::RESULT_EXEC_PROCESS StartAddRepository(const QMap<QString, QString>& options);
 
     /** @brief Остановить добавление */
-    void                CancelAddRepository() const;
+    virtual void        CancelAddRepository(const QMap<QString, QString> &options) const;
 
     /** @brief Закрыть окно добавления репозитория */
     static void         CloseWindowAddRepository();

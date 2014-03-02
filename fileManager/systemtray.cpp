@@ -12,11 +12,8 @@ SystemTray::SystemTray():
     //=================================================================================== /
     addRepoAction   = new QAction(tr("&New repository"), this);
 
-    cloneRepoAction = new QAction(tr("&Clone Repository"), this);
-    connect(cloneRepoAction, SIGNAL(triggered()), this, SLOT(CloneRepository()));
-
-    cloneRepoAction = new QAction(tr("&Clone Repository"), this);
-    connect(cloneRepoAction, SIGNAL(triggered()), this, SLOT(CloneRepository()));
+    addRepoAction = new QAction(tr("&Add Repository"), this);
+    connect(cloneRepoAction, SIGNAL(triggered()), this, SLOT(ShowAddRepository()));
 
     preferencesAction = new QAction(tr("&Preferences"), this);
     connect(preferencesAction, SIGNAL(triggered()), this, SLOT(PreferencesApplication()));
@@ -108,6 +105,16 @@ bool SystemTray::OnUpdateIconsSyncronization() const
         QObjectList parent = mainView->rootObject()->children();
         QList<QObject*> object = parent[1]->findChildren<QObject*>(QString("directoryView"));
         return QMetaObject::invokeMethod(object[0], "updateIconsStateFileSync", Qt::BlockingQueuedConnection);
+    }
+    return false;
+}
+//----------------------------------------------------------------------------------------/
+bool SystemTray::ResultAddRepository(const QString& text) const
+{
+    if(addRepoView && addRepoView->isVisible())
+    {
+        QObjectList parent = addRepoView->rootObject()->findChildren<QObject*>("StackView");
+        return QMetaObject::invokeMethod(parent[0], "resultClone", Q_ARG(QVariant, text));
     }
     return false;
 }

@@ -16,9 +16,9 @@ GANN_DEFINE::RESULT_EXEC_PROCESS IModelQmlAndCAddRepository::StartAddRepository(
     return FacadeApplication::getInstance()->StartCloneRepository(localUrl, remoteUrl, nameRepository);
 }
 //----------------------------------------------------------------------------------------/
-void IModelQmlAndCAddRepository::CancelAddRepository() const
+void IModelQmlAndCAddRepository::CancelAddRepository(const QMap<QString, QString> &options) const
 {
-
+    Q_UNUSED(options);
 }
 //----------------------------------------------------------------------------------------/
 void IModelQmlAndCAddRepository::CloseWindowAddRepository()
@@ -28,17 +28,17 @@ void IModelQmlAndCAddRepository::CloseWindowAddRepository()
 //----------------------------------------------------------------------------------------/
 QString IModelQmlAndCAddRepository::GetRemoteUrl(const QMap<QString, QString>& options) const
 {
-
+    return options.contains("Source URL") ? options["Source URL"] : "";
 }
 //----------------------------------------------------------------------------------------/
 QString IModelQmlAndCAddRepository::GetLocalUrl(const QMap<QString, QString>& options) const
 {
-
+    return options.contains("Destinition URL") ? options["Destinition URL"] : "";
 }
 //----------------------------------------------------------------------------------------/
 QString IModelQmlAndCAddRepository::GetNameRepository(const QMap<QString, QString>& options) const
 {
-
+    return options.contains("Name") ? options["Name"] : "";
 }
 //----------------------------------------------------------------------------------------/
 
