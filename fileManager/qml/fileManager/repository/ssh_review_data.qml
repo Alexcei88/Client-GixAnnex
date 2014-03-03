@@ -3,110 +3,54 @@ import QtQuick.Controls 1.1
 import QtQuick.Layouts 1.1
 import "../propertyFile"
 
-Rectangle {
+ReviewData {
+    id: viewData
 
+    anchors.fill: parent
 
-    function nextPage()
-    {
-        console.log("Page \"ssh_review_data\": start clone...");
-        var nextpage = modelRepoXMLCloud.get(stackView.selectIndexRepository).url_addrepo;
-        console.log(nextpage);
-
-        if(nextpage !== "")
-            stackView.push({ item: Qt.resolvedUrl(nextpage), destroyOnPop: true})
-
-        addRepository.startAddRepository();
-
+    // нужно создавать список, и динамически создавать
+    PropertyValue {
+        nameOption: "Host name:"
+        widthFieldOption: viewData.column.widthFieldOption
+        height: viewData.column.baseHeight
+        sizeFont: viewData.column.sizeFont
+        anchors.left: viewData.column.left
     }
-
-    function actualizeButton()
-    {
-        buttonNext.text = "Add"
-
-        // заполняем поля, если они были заполнены
-        for(var i = 0; i < column.children.length; ++i)
-        {
-            var key = column.children[i].nameOption.substring(0, column.children[i].nameOption.length - 1);
-            var value = addRepository.getOptions(key);
-            column.children[i].valueOption = value;
-        }
+    PropertyValue {
+        nameOption: "User name:"
+        widthFieldOption: viewData.column.widthFieldOption
+        height: viewData.column.baseHeight
+        focus: true
+        sizeFont: viewData.column.sizeFont
+        anchors.left: viewData.column.left
     }
-
-    SystemPalette { id: sysPal }
-    color: sysPal.window
-
-    Text {
-        id: head
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.leftMargin: 10
-        anchors.rightMargin: 10
-        anchors.top: parent.top
-        anchors.topMargin: 15
-
-        text: "Adding a remote server using ssh"
-        font {
-            pixelSize: 16
-            bold: true
-        }
+    PropertyValue {
+        nameOption: "Directory:"
+        widthFieldOption: viewData.column.widthFieldOption
+        height: viewData.column.baseHeight
+        sizeFont: viewData.column.sizeFont
+        anchors.left: viewData.column.left
     }
-    ColumnLayout {
-
-        id: column
-
-        property int baseHeight: 23
-        property int sizeFont: 14
-        property int widthFieldOption: 100
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.leftMargin: 10
-        anchors.rightMargin: 10
-        anchors.top: head.bottom
-        anchors.topMargin: 15
-        height: 4 * baseHeight +  column.spacing * 3
-        spacing: 10
-        PropertyValue {
-            nameOption: "Host name:"
-            widthFieldOption: column.widthFieldOption
-            height: column.baseHeight
-            sizeFont: column.sizeFont
-            anchors.left: column.left
-        }
-        PropertyValue {
-            nameOption: "User name:"
-            widthFieldOption: column.widthFieldOption
-            height: column.baseHeight
-            focus: true
-            sizeFont: column.sizeFont
-            anchors.left: column.left
-        }
-        PropertyValue {
-            nameOption: "Directory:"
-            widthFieldOption: column.widthFieldOption
-            height: column.baseHeight
-            sizeFont: column.sizeFont
-            anchors.left: column.left
-        }
-        PropertyValue {
-            nameOption: "Port:"
-            widthFieldOption: column.widthFieldOption
-            height: column.baseHeight
-            sizeFont: column.sizeFont
-            anchors.left: column.left
-        }
-        PropertyValue {
-            nameOption: "Destinition URL:"
-            widthFieldOption: column.widthFieldOption
-            height: column.baseHeight
-            sizeFont: column.sizeFont
-            anchors.left: column.left
-        }
-        PropertyValue {
-            nameOption: "Name:"
-            widthFieldOption: column.widthFieldOption
-            height: column.baseHeight
-            sizeFont: column.sizeFont
-            anchors.left: column.left
-        }
+    PropertyValue {
+        nameOption: "Port:"
+        widthFieldOption: column.widthFieldOption
+        height: column.baseHeight
+        sizeFont: column.sizeFont
+        anchors.left: column.left
+    }
+    PropertyValue {
+        nameOption: "Destinition URL:"
+        widthFieldOption: column.widthFieldOption
+        height: column.baseHeight
+        sizeFont: column.sizeFont
+        anchors.left: column.left
+    }
+    PropertyValue {
+        nameOption: "Name:"
+        widthFieldOption: column.widthFieldOption
+        height: column.baseHeight
+        sizeFont: column.sizeFont
+        anchors.left: column.left
+    }
 }
-}
+

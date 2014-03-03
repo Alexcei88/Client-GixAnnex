@@ -10,10 +10,8 @@ SystemTray::SystemTray():
   , preferencesAppRepoView(nullptr)
 {
     //=================================================================================== /
-    addRepoAction   = new QAction(tr("&New repository"), this);
-
     addRepoAction = new QAction(tr("&Add Repository"), this);
-    connect(cloneRepoAction, SIGNAL(triggered()), this, SLOT(ShowAddRepository()));
+    connect(addRepoAction, SIGNAL(triggered()), this, SLOT(ShowAddRepository()));
 
     preferencesAction = new QAction(tr("&Preferences"), this);
     connect(preferencesAction, SIGNAL(triggered()), this, SLOT(PreferencesApplication()));
@@ -24,7 +22,6 @@ SystemTray::SystemTray():
     //=================================================================================== /
     trayIconMenu    = new QMenu(this);
     trayIconMenu->addAction(addRepoAction);
-    trayIconMenu->addAction(cloneRepoAction);
     trayIconMenu->addAction(preferencesAction);
     trayIconMenu->addSeparator();
     trayIconMenu->addAction(quitAction);

@@ -71,7 +71,8 @@ OTHER_FILES += \
     qml/fileManager/propertyFile/PropertyFile.qml \
     qml/fileManager/repository/Clone.qml \
     qml/fileManager/repository/PropertyInputValue.qml \
-    qml/fileManager/repository/wait_clone.qml
+    qml/fileManager/repository/wait_clone.qml \
+    qml/fileManager/repository/ReviewData.qml
 
 QMAKE_LIBDIR += $$_PRO_FILE_PWD_/iniparser/
 

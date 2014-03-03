@@ -2,7 +2,6 @@ import QtQuick 2.1
 import QtQuick.Controls 1.1
 import QtQuick.Layouts 1.1
 import QtQuick.Dialogs 1.1
-
 import "../utils.js" as UtilsScript
 
 Rectangle {
@@ -14,7 +13,7 @@ Rectangle {
     function nextPage()
     {
         console.log("Page \"saver_repository data\": call next page...");
-        var nextpage = modelRepoXMLCloud.get(stackView.selectIndexRepository).url_review;
+        var nextpage = modelRepoXMLCommon.get(0).url_review;
         console.log(nextpage);
 
         // сохраняем опции

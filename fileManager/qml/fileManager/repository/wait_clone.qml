@@ -25,6 +25,11 @@ Rectangle
     {
         console.log("End Clone Repository");
         textArea.append(text);
+//        textArea.select(0, 6);
+        // выделить только последнюю строчку
+//        textArea.textColor = "red";
+       // textArea.deselect();
+        buttonCancel.text = "Finish";
     }
 
     SystemPalette { id: sysPal }
@@ -50,7 +55,6 @@ Rectangle
             text: initText
             readOnly: true
             textColor: "blue"
-
         }
 
     }

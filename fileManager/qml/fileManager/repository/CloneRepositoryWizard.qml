@@ -29,12 +29,6 @@ Rectangle {
         XmlRole { name: "url3"; query: "optionURL/url[3]/string()"; }
         XmlRole { name: "url4"; query: "optionURL/url[4]/string()"; }
         XmlRole { name: "url5"; query: "optionURL/url[5]/string()"; }
-        XmlRole { name: "url6"; query: "optionURL/url[6]/string()"; }
-        XmlRole { name: "url7"; query: "optionURL/url[7]/string()"; }
-        XmlRole { name: "url8"; query: "optionURL/url[8]/string()"; }
-        XmlRole { name: "url9"; query: "optionURL/url[9]/string()"; }
-        XmlRole { name: "url_addrepo"; query: "optionURL/url_addrepo/string()"; }
-        XmlRole { name: "url_review"; query: "optionURL/url_review/string()"; }
     }
 
     // репы, которые локальные
@@ -50,12 +44,17 @@ Rectangle {
         XmlRole { name: "url3"; query: "optionURL/url[3]/string()"; }
         XmlRole { name: "url4"; query: "optionURL/url[4]/string()"; }
         XmlRole { name: "url5"; query: "optionURL/url[5]/string()"; }
-        XmlRole { name: "url6"; query: "optionURL/url[6]/string()"; }
-        XmlRole { name: "url7"; query: "optionURL/url[7]/string()"; }
-        XmlRole { name: "url8"; query: "optionURL/url[8]/string()"; }
-        XmlRole { name: "url9"; query: "optionURL/url[9]/string()"; }
-        XmlRole { name: "url10"; query: "optionURL/url[10]/string()"; }
-        XmlRole { name: "url_review"; query: "optionURL/url_review/string()"; }
+    }
+
+    // общие параметры
+    XmlListModel
+    {
+        id: modelRepoXMLCommon
+        source: "qrc:/config/config_list_repository_common"
+        query: "/optionURL"
+        XmlRole { name: "url_save"; query: "url_save/string()"; }
+        XmlRole { name: "url_review"; query: "url_review/string()"; }
+        XmlRole { name: "url_addrepo"; query: "url_addrepo/string()"; }
     }
 
     // модель, содержащая список view, которые будут
@@ -178,9 +177,15 @@ Rectangle {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
+                        if(buttonCancel.text == "Finish")
+                        {
+                            addRepository.closeAddRepository();
+                        }
+                        else {
                         var text = "Do you really want to cancel add a repository?<br>"
                         if(message.showConfirmMessage("Warning", text))
                             addRepository.closeAddRepository();
+                        }
                     }
                 }
                 anchors.verticalCenter: parent.verticalCenter

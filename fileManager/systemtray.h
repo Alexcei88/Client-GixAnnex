@@ -51,7 +51,6 @@ private:
     QMenu*              trayIconMenu;
 
     QAction*            addRepoAction;
-    QAction*            cloneRepoAction;
     QAction*            preferencesAction;
     QAction*            quitAction;
 

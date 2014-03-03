@@ -1,6 +1,7 @@
 import QtQuick 2.1
 import QtQuick.Controls 1.1
 import QtQuick.Layouts 1.1
+
 Rectangle {
 
     // функция перехода на следующую страницу
@@ -17,7 +18,7 @@ Rectangle {
             }
 
             console.log("Page \"ssh_user_data\": call next page...");
-            var nextpage = modelRepoXMLCloud.get(stackView.selectIndexRepository).url2;
+            var nextpage = modelRepoXMLCommon.get(0).url_save;
             console.log(nextpage);
             if(nextpage !== "")
                 stackView.push({ item: Qt.resolvedUrl(nextpage), destroyOnPop: true})

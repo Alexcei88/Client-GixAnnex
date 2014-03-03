@@ -16,5 +16,6 @@
         <file alias="config_repo">ganx-repository.xml</file>
         <file alias="config_list_repository_cloud">resource/ganx-list_type_cloud_repositories.xml</file>
         <file alias="config_list_repository_local">resource/ganx-list_type_local_repositories.xml</file>
+        <file alias="config_list_repository_common">resource/ganx-list_type_common.xml</file>
     </qresource>
 </RCC>
