@@ -3,12 +3,15 @@
 
 #include "tshell.h"
 
+#include <QList>
+#include <QQueue>
 class IRepository;
 
 namespace AnalyzeCommand
 {
-    class FacadeAnalyzeCommand;
+    class FacadeAnalyzeCommand;  
 }
+class ShellTask;
 
 class ShellCommand
 {
@@ -70,14 +73,11 @@ public:
     /** @brief Перемещение файла на удаленный сервер */
     GANN_DEFINE::RESULT_EXEC_PROCESS MoveFileToOtherRepository(const QString& file, const QString& nameRepository = "origin");
 
-    inline const QString getStrCommand() const { return strCommand; }
     inline const QString getLocalURL() const { return localURL; }
 
 private:
     const QString   baseCommand;
 
-    /** @brief команда, которая выполняется */
-    QString         strCommand;
     /** @brief путь, откуда запускаеться shell */
     QString         localURL;
 

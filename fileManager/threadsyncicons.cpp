@@ -22,7 +22,7 @@ void ThreadSyncIcons::UpdateFileSyncIcons()
     QSemaphore& sem = facade->threadModel.semSyncIcons;
     int& countCommand = facade->threadModel.countExecutingCommandWithSyncIcons;
 
-    const uint64t timeDelay = 0.1E6;
+    const uint64t timeDelay = 0.2E6;
     bool oneCall = false;
 
     while(!exitThread)
@@ -53,7 +53,7 @@ void ThreadSyncIcons::UpdateFileSyncIcons()
             // здесь захватить мьютексом потока синхронизации иконок
             mutex.lock();
 #ifdef DEBUG
-            std::cout<<"Thread sync icons working..."<<std::endl;
+//            std::cout<<"Thread sync icons working..."<<std::endl;
 #endif
             IRepository* curRepo = facade->GetCurrentRepository();
             if(curRepo) {

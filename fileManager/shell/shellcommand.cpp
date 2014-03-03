@@ -3,6 +3,7 @@
 #include "../repository/irepository.h"
 #include "utils/utils.h"
 #include "../analyze_execute_command/facadeanalyzecommand.h"
+#include "facade_shellcommand.h"
 
 // parsing stuff
 #include "../parsing_command_out/parsingcommandclone.h"
@@ -97,7 +98,7 @@ RESULT_EXEC_PROCESS ShellCommand::GetContentFile(const QString& path, FacadeAnal
 
     boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandGet(analizeCommand));
     ShellTask* shellTask = new ShellTask(strCommand, localURL, receiverParsing);
-    QThreadPool::globalInstance()->start(shellTask);
+    FacadeShellCommand::getInstance()->TryStartNextcommand("get", shellTask, facade->GetRepository());
     return NO_ERROR;
 }
 //----------------------------------------------------------------------------------------/

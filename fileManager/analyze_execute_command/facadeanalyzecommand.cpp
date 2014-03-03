@@ -5,6 +5,7 @@
 #include "analizediraction.h"
 #include "analyzeexecutecommandget.h"
 #include "analyzeexecutecommanddrop.h"
+#include "../shell/facade_shellcommand.h"
 
 // std stuff
 #include <iostream>
@@ -52,6 +53,8 @@ void FacadeAnalyzeCommand::ResetCurrentExecuteCommand()
     Q_UNUSED(flag);
 
     currentAnalyzeExecuteCommand = nullptr;
+    // запускаем следующуйю команду, если она там есть
+    FacadeShellCommand::getInstance()->TryStartNextcommand();
 }
 //----------------------------------------------------------------------------------------/
 void FacadeAnalyzeCommand::EndCloneRepository(const bool& successfully, const QString& information) const

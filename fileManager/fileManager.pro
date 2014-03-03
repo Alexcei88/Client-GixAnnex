@@ -55,7 +55,8 @@ SOURCES += main.cpp \
     MVC/Controller/controllerpreferencesapp.cpp \
     MVC/Model/model_preferencesapp.cpp \
     analyze_execute_command/analyzeexecutecommandcopy.cpp \
-    parsing_command_out/parsingcommandcopy.cpp
+    parsing_command_out/parsingcommandcopy.cpp \
+    shell/facade_shellcommand.cpp
 
 # Installation path
 # target.path =
@@ -118,7 +119,8 @@ HEADERS += \
     MVC/Controller/controllerpreferencesapp.h \
     MVC/Model/model_preferencesapp.h \
     analyze_execute_command/analyzeexecutecommandcopy.h \
-    parsing_command_out/parsingcommandcopy.h
+    parsing_command_out/parsingcommandcopy.h \
+    shell/facade_shellcommand.h
 
 # Включаем поддержку С++11
 QMAKE_CXXFLAGS += -std=c++0x

@@ -86,6 +86,9 @@ public:
     // атомарный флаг для потоков, выполняющий команды во threadPool
     static std::atomic_flag* atomicFlagExecuteCommand;
 
+    /** @brief Возвращает константный указатель на класс репозитория, с которым фасад работает */
+    inline const IRepository* GetRepository() { return repository; }
+
 private:
 
     Q_DISABLE_COPY(FacadeAnalyzeCommand)

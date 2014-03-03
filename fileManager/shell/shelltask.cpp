@@ -6,7 +6,7 @@
 
 using namespace GANN_DEFINE;
 //----------------------------------------------------------------------------------------/
-ShellTask::ShellTask(const QString strCommand, const QString localURL, boost::shared_ptr<IParsingCommandOut> parsingCommand):
+ShellTask::ShellTask(const QString& strCommand, const QString localURL, boost::shared_ptr<IParsingCommandOut> parsingCommand):
     command(strCommand)
   , parsingCommand(parsingCommand)
   , localURL(localURL)
@@ -18,6 +18,7 @@ ShellTask::~ShellTask()
     delete shell;
     shell = 0;
 }
+
 //----------------------------------------------------------------------------------------/
 void ShellTask::run()
 {
@@ -25,6 +26,11 @@ void ShellTask::run()
     shell->SetWorkingDirectory(localURL);
     parsingCommand->SetShell(shell);
     shell->ExecuteProcess(command, parsingCommand.get());
+}
+//----------------------------------------------------------------------------------------/
+void ShellTask::TerminateProcess()
+{
+    shell->TerminateProcess();
 }
 //----------------------------------------------------------------------------------------/
 

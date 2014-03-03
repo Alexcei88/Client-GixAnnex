@@ -5,8 +5,6 @@
 #include <QProcess>
 #include <QStringList>
 
-#include <boost/shared_ptr.hpp>
-
 #include "../define.h"
 
 class IParsingCommandOut;

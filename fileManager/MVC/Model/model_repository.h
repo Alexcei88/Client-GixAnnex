@@ -2,7 +2,6 @@
 
 #include <QVariantList>
 
-#include <boost/shared_ptr.hpp>
 #include <map>
 #include "../define.h"
 #include "../repository/irepository.h"
