@@ -18,8 +18,6 @@ class IRepository;
 class FacadeShellCommand
 {
 public:
-    static FacadeShellCommand *getInstance();
-
     /** @brief пытается запустить переданную команду(если удачно, то запускает ее, иначе
          добавляет ее в очередь)
         @param baseNameCommand - базовое имя команды(например, get, drop...)
@@ -32,9 +30,14 @@ public:
     static void         TryStartNextcommand();
 
     /** @brief Очищает список команд для заданного репозитория, мы их не запускаем */
-    static void         ClearCommandForRepostory(const IRepository* repoitory);
+    static void         ClearCommandForRepository(const IRepository* repository);
+
+    /** @brief Выполняется ли команда у данного репозитория */
+    static bool         IsExecuteCommandForRepository(const IRepository* repository);
 
 private:
+
+    Q_DISABLE_COPY(FacadeShellCommand);
 
     struct SDescriptionCommand
     {
@@ -42,12 +45,13 @@ private:
         ShellTask* task;
         // репозиторий, откуда запускаем
         const IRepository* repository;
+
+        bool operator ==(const IRepository* repository)
+        {
+            if(this->repository == repository) return true;
+            else return false;
+        }
     };
-
-    FacadeShellCommand();
-    FacadeShellCommand(const FacadeShellCommand&);
-
-    static std::unique_ptr<FacadeShellCommand> instance;
 
     /** @brief список команд с низким приоритетом */
     static QStringList  listCommandPriorityLow;
@@ -55,11 +59,14 @@ private:
     /** @brief список команд с высоким приоритетом */
     static QStringList  listCommandPriorityHigh;
 
-    // очереди для запуска команд
+    /** @brief очереди для запуска команд */
     static QQueue<SDescriptionCommand>  queueComanndPriorityLow;
     static QQueue<SDescriptionCommand>  queueComanndPriorityHigh;
 
-    // мьютекс для многопоточности
+    /** @brief очереди для запуска команд */
+    static std::unique_ptr<SDescriptionCommand> currentCommand;
+
+    /** @brief мьютекс для многопоточности */
     static QMutex       mutex;
 
     static void         InitClass();

@@ -1,4 +1,5 @@
 #include "facadeapplication.h"
+#include "shell/facade_shellcommand.h"
 #include "MVC/Controller/controller_repository.h"
 #include "MVC/Controller/controller_icons.h"
 #include "MVC/Controller/controllerpreferencesapp.h"
@@ -67,17 +68,17 @@ FacadeApplication::~FacadeApplication()
     // выключаем таймер синхронизации данных
     timeSync.stop();
 
-#warning NOT_WORK
-    // все остальные задачи нужно убивать к чертовой матери, и останавливать демоны
-    // ждем секунду, чтобы QThreadPool уничтожил все свои потоки
-//    QThreadPool::globalInstance()->setExpiryTimeout(1000);
-//    QThreadPool::globalInstance()->waitForDone(1000);
-
     // останавливаем демон просмотра за директориями репозитория
     WatchRepositories(false);
 
+    // удаляем все задачи у репозиториев
+    for(auto itRepo = repository.begin(); itRepo != repository.end(); ++itRepo)
+    {
+        FacadeShellCommand::ClearCommandForRepository(itRepo->second.get());
+    }
+
     // ждем, пока демоны выключаться
-//    QThreadPool::globalInstance()->waitForDone();
+    QThreadPool::globalInstance()->waitForDone();
 
     ResourceGenerator::RemoveInstance();
 }

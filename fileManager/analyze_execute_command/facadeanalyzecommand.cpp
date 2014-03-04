@@ -54,7 +54,7 @@ void FacadeAnalyzeCommand::ResetCurrentExecuteCommand()
 
     currentAnalyzeExecuteCommand = nullptr;
     // запускаем следующуйю команду, если она там есть
-    FacadeShellCommand::getInstance()->TryStartNextcommand();
+    FacadeShellCommand::TryStartNextcommand();
 }
 //----------------------------------------------------------------------------------------/
 void FacadeAnalyzeCommand::EndCloneRepository(const bool& successfully, const QString& information) const
