@@ -224,13 +224,16 @@ Rectangle {
         } // end Row
     }
     // функция на проверку пустого значения в компонете PropertyValue
-    function checkForEmpty(field)
+    function checkForEmpty(field, errorString)
     {
         if(field.valueOption === "")
         {
-            console.log("ffff");
+            field.errorValue = true;
+            errorString = "Field <i>" + field.nameOption + "</i>" + " not must to be empty";
             return false;
         }
+        field.errorValue = false;
+        errorString = "";
         return true;
     }
 

@@ -7,7 +7,8 @@ Rectangle {
     // функция перехода на следующую страницу
     function nextPage()
     {
-        if(checkInput())
+        var errorMessage = "";
+        if(checkInput(errorMessage))
         {
             // добавляем опции
             for(var i = 0; i < column.children.length; ++i)
@@ -23,6 +24,11 @@ Rectangle {
             if(nextpage !== "")
                 stackView.push({ item: Qt.resolvedUrl(nextpage), destroyOnPop: true})
         }
+        else
+        {
+            console.log("There are errors on fill field:" + errorMessage);
+            showErrorMessage(errorMessage);
+        }
     }
     function actualizeButton()
     {
@@ -35,11 +41,20 @@ Rectangle {
         }
     }
 
-    function checkInput()
+    function checkInput(errorString)
     {
-        if(!checkForEmpty(hostName))
+        if(!checkForEmpty(hostName, errorString))
+        {
             return false;
+        }
         return true;
+    }
+
+    function showErrorMessage(messageError)
+    {
+        rectForError.setSource("error_input_field.qml",
+                               {"textError" : messageError }
+                              );
     }
 
     SystemPalette { id: sysPal }
@@ -61,6 +76,16 @@ Rectangle {
             bold: true
         }
     }
+    Loader {
+        id: rectForError
+        anchors.top: head.bottom
+        width: hostName.width - anchors.leftMargin
+        anchors.left: parent.left
+        anchors.leftMargin: 20
+        anchors.topMargin: 10
+
+    }
+
     ColumnLayout {
 
         id: column
@@ -71,7 +96,7 @@ Rectangle {
         anchors.right: parent.right
         anchors.leftMargin: 10
         anchors.rightMargin: 10
-        anchors.top: head.bottom
+        anchors.top: rectForError.bottom
         anchors.topMargin: 15
         height: 4 * baseHeight +  column.spacing * 3
         spacing: 10

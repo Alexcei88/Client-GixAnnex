@@ -34,7 +34,7 @@ Rectangle {
 
     function checkInput()
     {
-        if(!checkForEmpty(sourceURL))
+        if(!checkForEmpty(sourceUrl))
             return false;
         return true;
     }

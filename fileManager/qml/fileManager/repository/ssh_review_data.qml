@@ -6,8 +6,6 @@ import "../propertyFile"
 ReviewData {
     id: viewData
 
-    anchors.fill: parent
-
     // нужно создавать список, и динамически создавать
     PropertyValue {
         nameOption: "Host name:"

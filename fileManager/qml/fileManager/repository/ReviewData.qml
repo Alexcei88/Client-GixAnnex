@@ -12,7 +12,7 @@ Rectangle {
     function nextPage()
     {
         console.log("Page \"ssh_review_data\": start clone...");
-        var nextpage = modelRepoXMLCloud.get(stackView.selectIndexRepository).url_addrepo;
+        var nextpage = modelRepoXMLCommon.get(0).url_addrepo;
         console.log(nextpage);
 
         if(nextpage !== "")
