@@ -13,6 +13,11 @@ Rectangle
 
     }
 
+    function prevPage()
+    {
+
+    }
+
     function actualizeButton()
     {        
         buttonBack.enabled = false;

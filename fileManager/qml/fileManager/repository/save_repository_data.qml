@@ -12,22 +12,35 @@ Rectangle {
     // функция перехода на следующую страницу
     function nextPage()
     {
-        console.log("Page \"saver_repository data\": call next page...");
-        var nextpage = modelRepoXMLCommon.get(0).url_review;
-        console.log(nextpage);
+        var errorMessage = {val:1,toString:function(){return this.val}};
+        if(checkInput(errorMessage))
+        {
+            console.log("Page \"saver_repository data\": call next page...");
+            var nextpage = modelRepoXMLCommon.get(0).url_review;
+            console.log(nextpage);
 
-        // сохраняем опции
-        var key = destUrl.nameOption.substring(0, destUrl.nameOption.length - 1);
-        var value = destUrl.valueOption;
-        addRepository.setOptions(key, value);
+            // сохраняем опции
+            var key = destUrl.nameOption.substring(0, destUrl.nameOption.length - 1);
+            var value = destUrl.valueOption;
+            addRepository.setOptions(key, value);
 
-        key = nameRepository.nameOption.substring(0, nameRepository.nameOption.length - 1);
-        value = nameRepository.valueOption;
-        addRepository.setOptions(key, value);
+            key = nameRepository.nameOption.substring(0, nameRepository.nameOption.length - 1);
+            value = nameRepository.valueOption;
+            addRepository.setOptions(key, value);
 
-        if(nextpage !== "")
-            stackView.push({ item: Qt.resolvedUrl(nextpage), destroyOnPop: true})
+            if(nextpage !== "")
+                stackView.push({ item: Qt.resolvedUrl(nextpage), destroyOnPop: true})
+        }
+        else
+        {
+            showErrorMessage(errorMessage);
+        }
     }
+    function prevPage()
+    {
+
+    }
+
     function actualizeButton()
     {
         buttonNext.text = "Next >"
@@ -41,13 +54,40 @@ Rectangle {
         nameRepository.valueOption = value;
     }
 
+    function checkInput(errorMessage)
+    {
+        if(!checkForEmpty(destUrl, errorMessage))
+            return false;
+
+        if(!checkForEmpty(nameRepository, errorMessage))
+            return false;
+
+        return true;
+    }
+
+    function showErrorMessage(messageError)
+    {
+        rectForError.setSource("error_input_field.qml",
+                               {"textError" : messageError.val }
+                              );
+    }
+
     FileDialog {
         id: fileDialogDestinition
         title: "Please choose a destinition folder"
         selectFolder: true
         onAccepted: {
             var path = fileDialogDestinition.folder.toString();
-            destUrl.valueOption = UtilsScript.getFullStrPath(path);
+            if(path)
+            {
+                destUrl.valueOption = UtilsScript.getFullStrPath(path);
+                if(destUrl.wasErrorValue)
+                {
+                    // убираем ошибку
+                    rectForError.setSource("no_error_input_field.qml");
+                    destUrl.wasErrorValue = false;
+                }
+            }
         }
         onRejected: {
         }
@@ -68,6 +108,16 @@ Rectangle {
             bold: true
         }
     }
+
+    Loader {
+        id: rectForError
+        anchors.top: head.bottom
+        width: destUrl.width - anchors.leftMargin
+        anchors.left: parent.left
+        anchors.leftMargin: 20
+        anchors.topMargin: 10
+    }
+
     ColumnLayout {
 
         id: column
@@ -78,7 +128,7 @@ Rectangle {
         anchors.right: parent.right
         anchors.leftMargin: 10
         anchors.rightMargin: 10
-        anchors.top: head.bottom
+        anchors.top: rectForError.bottom
         anchors.topMargin: 15
         height: 2 * baseHeight + column.spacing
         spacing: 10
@@ -93,6 +143,7 @@ Rectangle {
                 nameOption: "Destinition URL:"
                 widthFieldOption: column.widthFieldOption
                 height: column.baseHeight
+                readonly: true
             }
             Button {
                 id: buttonDestBrowser
@@ -112,6 +163,16 @@ Rectangle {
             widthFieldOption: column.widthFieldOption
             height: column.baseHeight
             focus: true
+
+            onValueOptionChanged:
+            {
+                if(nameRepository.wasErrorValue && nameRepository.valueOption !== "")
+                {
+                    // убираем ошибку
+                    rectForError.setSource("no_error_input_field.qml");
+                    nameRepository.wasErrorValue = false;
+                }
+            }
         }
     }
 }

@@ -8,9 +8,8 @@ Rectangle {
     width: 200
     height: text.contentHeight + 6
     color: "#ffe2e1"
-    anchors.verticalCenter: parent.verticalCenter
     anchors.centerIn: parent
-    border.color: "#808080"
+    border.color: "#bbbbbb"
     border.width: 1
     radius: 4
 
@@ -22,7 +21,7 @@ Rectangle {
         anchors.rightMargin: 8
         anchors.centerIn: parent
         text: textError
-        color: "red"
+        color: "#708090"
         horizontalAlignment: TextInput.AlignHCenter
         verticalAlignment: TextInput.AlignVCenter
         wrapMode: Text.WordWrap

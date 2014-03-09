@@ -7,7 +7,7 @@ Rectangle {
     // функция перехода на следующую страницу
     function nextPage()
     {
-        var errorMessage = "";
+        var errorMessage = {val:1,toString:function(){return this.val}};
         if(checkInput(errorMessage))
         {
             // добавляем опции
@@ -26,9 +26,12 @@ Rectangle {
         }
         else
         {
-            console.log("There are errors on fill field:" + errorMessage);
             showErrorMessage(errorMessage);
         }
+    }
+    function prevPage()
+    {
+
     }
     function actualizeButton()
     {
@@ -47,19 +50,29 @@ Rectangle {
         {
             return false;
         }
+        if(!checkForEmpty(port, errorString))
+        {
+            return false;
+        }
+
+        if(!port.acceptedInput)
+        {
+            console.log("Port not valid");
+            return false;
+        }
+
         return true;
     }
 
     function showErrorMessage(messageError)
-    {
+    {      
         rectForError.setSource("error_input_field.qml",
-                               {"textError" : messageError }
+                               {"textError" : messageError.val }
                               );
     }
 
     SystemPalette { id: sysPal }
     color: sysPal.window
-
 
     Text {
         id: head
@@ -126,7 +139,7 @@ Rectangle {
             widthFieldOption: column.widthFieldOption
             valueOption: "22"
             height: column.baseHeight
-
+            textValidator: IntValidator { bottom: 21; top: 10000; }
         }
     }
 

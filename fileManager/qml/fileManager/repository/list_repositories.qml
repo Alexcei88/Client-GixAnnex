@@ -11,6 +11,7 @@ Rectangle {
     color: sysPal.window
 
     Component {
+
         id: contactDelegate
         Item {
             id: delegateItem
@@ -109,8 +110,6 @@ Rectangle {
             {
                 topMargin: 10
                 top: viewCloud.bottom
-//                left: parent.left
-//                right: parent.right
             }
             spacing: 10
 

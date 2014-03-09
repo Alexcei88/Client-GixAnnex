@@ -10,7 +10,8 @@ Rectangle {
 
     function nextPage()
     {
-        if(checkInput())
+        var errorMessage = {val:1,toString:function(){return this.val}};
+        if(checkInput(errorMessage))
         {
             // сохраняем опции
             var key = sourceUrl.nameOption.substring(0, sourceUrl.nameOption.length - 1);
@@ -23,7 +24,17 @@ Rectangle {
             if(nextpage !== "")
                 stackView.push({ item: Qt.resolvedUrl(nextpage), destroyOnPop: true})
         }
+        else
+        {
+            showErrorMessage(errorMessage);
+        }
     }
+
+    function prevPage()
+    {
+
+    }
+
     function actualizeButton()
     {
         var key = sourceUrl.nameOption.substring(0, sourceUrl.nameOption.length - 1);
@@ -32,11 +43,18 @@ Rectangle {
 
     }
 
-    function checkInput()
+    function checkInput(errorMessage)
     {
-        if(!checkForEmpty(sourceUrl))
+        if(!checkForEmpty(sourceUrl, errorMessage))
             return false;
         return true;
+    }
+
+    function showErrorMessage(messageError)
+    {
+        rectForError.setSource("error_input_field.qml",
+                               {"textError" : messageError.val }
+                              );
     }
 
     SystemPalette { id: sysPal }
@@ -58,13 +76,30 @@ Rectangle {
         }
     }
 
+    Loader {
+        id: rectForError
+        anchors.top: head.bottom
+        width: sourceUrl.width - anchors.leftMargin
+        anchors.left: parent.left
+        anchors.leftMargin: 20
+        anchors.topMargin: 10
+    }
+
     FileDialog {
         id: fileDialogSource
         title: "Please choose a source folder"
         selectFolder: true
         onAccepted: {
             var path = fileDialogSource.folder.toString();
-            sourceUrl.valueOption = UtilsScript.getFullStrPath(path);
+            if(path)
+            {
+                sourceUrl.valueOption = UtilsScript.getFullStrPath(path);
+                if(sourceUrl.wasErrorValue)
+                {
+                    // убираем ошибку
+                    rectForError.setSource("no_error_input_field.qml");
+                }
+            }
         }
         onRejected: {
         }
@@ -80,7 +115,7 @@ Rectangle {
         anchors.right: parent.right
         anchors.leftMargin: 10
         anchors.rightMargin: 10
-        anchors.top: head.bottom
+        anchors.top: rectForError.bottom
         anchors.topMargin: 15
         height: baseHeight
         spacing: 10
@@ -95,6 +130,7 @@ Rectangle {
                 nameOption: "Source URL:"
                 widthFieldOption: column.widthFieldOption
                 height: column.baseHeight
+                readonly: true
             }
             Button {
                 id: buttonDestBrowser

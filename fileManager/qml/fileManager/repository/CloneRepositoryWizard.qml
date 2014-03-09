@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import QtQuick.Controls 1.1
 import QtQuick.Layouts 1.1
+import QtGraphicalEffects 1.0
 import QtQuick.XmlListModel 2.0
 
 import Repository 1.0
@@ -12,7 +13,8 @@ Rectangle {
         id: addRepository
     }
 
-    MessageBox{
+    MessageBox
+    {
         id: message
     }
     SystemPalette { id: sysPal }
@@ -75,40 +77,58 @@ Rectangle {
         }
     }
 
-//            // 4 как бы кнопки
-//            // 1 - выбор типа репозитория
-//            // 2 - настройки репозитория(в зависимости от типа репозитория)
-//            // 3 ... дополнительные поля, если нужно( у репозитория)
-//            // 3 - общая информация по настройкам где нажимаем начать клонирование
+            // 5 минимальных полей
+            // 1 - выбор типа репозитория
+            // 2 - настройки репозитория(в зависимости от типа репозитория)
+            // 3 - общая информация по настройкам где нажимаем начать клонирование
+            // 4 - процесс клонирования
+            // 5 - окончание клонирования
 
     Rectangle {
-        id: head
+        id: menu
         anchors {
             left: parent.left
             bottom: parent.bottom
             top: parent.top
         }
-
         width: parent.width/4
 
-        // 4 как бы кнопки
-        // 1 - выбор типа репозитория
-        // 2 - настройки репозитория(в зависимости от типа репозитория)
-        // 3 ... дополнительные поля, если нужно( у репозитория)
-        // 3 - общая информация по настройкам где нажимаем начать клонирование
+        LinearGradient {
+            anchors.fill: parent
+            start: Qt.point(0, 0)
+            end: Qt.point(0, 300)
+            gradient: Gradient {
+                GradientStop { position: 0.0; color: "white" }
+                GradientStop { position: 0.5; color: "blue" }
+                GradientStop { position: 1.0; color: "gray" }
+            }
+        }
 
         ListView {
             id: view
             anchors.fill: parent
+            anchors.topMargin: 20
+            anchors.leftMargin: 20
             model: pageModel
+            spacing: 5
             delegate: Text {
-                    text: title
+
+                text: title
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: 10
+                anchors.rightMargin: 10
             }
         }
     }
 
     StackView
     {
+        // все страницы должны реализовывать функции
+        // 1. перехода на следующую страницу nextPage();
+        // 2. переход на предыдущую страницу prevPage();
+        // 3. актуализации кнопок интерфейса actualizeButton();
+
         id: stackView
         objectName: "StackView"
 
@@ -116,7 +136,7 @@ Rectangle {
         anchors {
             bottom: managerPanel.top
             top: parent.top
-            left: head.right
+            left: menu.right
             right: parent.right
         }
         initialItem: Qt.resolvedUrl("list_repositories.qml");
@@ -149,10 +169,16 @@ Rectangle {
             stackView.currentItem.resultAddRepository(text);
         }
     }
-
-    // все страницы должны реализовывать функции
-    // 1. перехода на следующую страницу nextPage();
-    // 2. актуализации кнопок интерфейса actualizeButton();
+    // разделитель(взят из ToolBarStyle)
+    Rectangle {
+        id: separatorRect
+        width: parent.width - 30
+        height: 1
+        color: "#999"
+        anchors.top: menu.bottom
+        anchors.topMargin: 25
+        anchors.horizontalCenter: parent.horizontalCenter
+    }
 
     Rectangle {
         id: managerPanel
@@ -161,7 +187,7 @@ Rectangle {
             bottom: parent.bottom
             right: parent.right
         }
-        height: 50
+        height: 60
         color: sysPal.window
 
         Row {
@@ -211,13 +237,18 @@ Rectangle {
                 MouseArea{
                     anchors.fill: parent
                     onClicked: {
-                        stackView.pop();
-                        if(stackView.depth == 1)
+                        if(stackView.depth == 2)
                         {
                             // выключаем кнопку назад и вперед
                             buttonBack.enabled = false;
                             buttonNext.enabled = false;
                         }
+                        else
+                        {
+                            stackView.currentItem.prevPage();
+                        }
+                        stackView.pop();
+
                     }
                 }
             }
@@ -228,12 +259,13 @@ Rectangle {
     {
         if(field.valueOption === "")
         {
-            field.errorValue = true;
-            errorString = "Field <i>" + field.nameOption + "</i>" + " not must to be empty";
+            field.wasErrorValue = true;
+            errorString.val = "Field <i>" + field.nameOption.substring(0, field.nameOption.length - 1)
+                                + "</i>" + " not must to be empty";
             return false;
         }
-        field.errorValue = false;
-        errorString = "";
+        field.wasErrorValue = false;
+        errorString.val = "";
         return true;
     }
 

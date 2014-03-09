@@ -3,12 +3,12 @@ import QtQuick.Controls 1.1
 import QtQuick.Layouts 1.1
 import "../propertyFile"
 
-
 Rectangle {
 
     default property alias content: columnPrederences.children
     property alias column: columnPrederences
     property int countOption: 4
+
     function nextPage()
     {
         console.log("Page \"ssh_review_data\": start clone...");
@@ -19,6 +19,11 @@ Rectangle {
             stackView.push({ item: Qt.resolvedUrl(nextpage), destroyOnPop: true})
 
         addRepository.startAddRepository();
+    }
+
+    function prevPage()
+    {
+
     }
 
     function actualizeButton()
@@ -56,16 +61,15 @@ Rectangle {
 
         id: columnPrederences
 
-        property int baseHeight: 23
-        property int sizeFont: 14
+        property int sizeFont: 12
         property int widthFieldOption: 100
+
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.leftMargin: 10
         anchors.rightMargin: 10
         anchors.top: head.bottom
         anchors.topMargin: 15
-        height: countOption * baseHeight +  column.spacing * (countOption - 1)
         spacing: 10
     }
 }
