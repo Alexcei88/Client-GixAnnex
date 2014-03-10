@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <list_repository>
-    <repo name = "Amazone S3" description = "Good choice for professional quality storage.">
+    <repo name = "Amazone S3" description = "Good choice for professional quality storage." index = "0">
     <optionURL>
     </optionURL>
     </repo>
-    <repo name = "Remote server" description = "Set up a repository on a remote server using ssh.">
+    <repo name = "Remote server" description = "Set up a repository on a remote server using ssh." index = "1">
         <optionURL>
             <url>ssh_user_data.qml</url>
             <url_save>save_repository_data.qml</url_save>

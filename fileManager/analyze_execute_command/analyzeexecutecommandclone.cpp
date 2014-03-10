@@ -22,7 +22,7 @@ void AnalyzeExecuteCommandClone::SetFolderToClone(const QString& path)
     wasError = false;
 }
 //----------------------------------------------------------------------------------------/
-void AnalyzeExecuteCommandClone::ErrorFolderToClone(const QString& error)
+void AnalyzeExecuteCommandClone::WasErrorToClone(const QString& error)
 {
     wasError = true;
     reasonError = error;

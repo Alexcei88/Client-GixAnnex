@@ -9,12 +9,12 @@ Item
     property alias valueOption: value.text
     property int sizeFont: 10
     anchors.horizontalCenter: parent.horizontalCenter
-    height: option.implicitHeight + value.implicitHeight
+    height: value.implicitHeight
 
     Text
     {
         id: option
-        text: qsTr("SDFGDFfdfdf:")
+        text: qsTr("SDFGDFfdfdf: ")
         font.pixelSize: sizeFont
         wrapMode: Text.WrapAnywhere
     }

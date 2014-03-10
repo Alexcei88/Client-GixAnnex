@@ -39,8 +39,9 @@ Rectangle {
                             if(delegateItem.curNextUrl != "")
                             {
                                 stackView.selectIndexRepository = model.index;
+                                var index = model.indexRepo;
                                 // сначала фиксируем, что был выбран удаленный репозиторий
-                                addRepository.selectServer(model.index);
+                                addRepository.selectServer(index);
                                 stackView.push({ item: Qt.resolvedUrl(delegateItem.curNextUrl), destroyOnPop: true})
                                 // включаем кнопки назад или вперед
                                 buttonBack.enabled = true;

@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <list_repository>
-    <repo name = "Another repository" description = "Add another repository on your computer.">
+    <repo name = "Another repository" description = "Add another repository on your computer." index = "30">
     <optionURL>
         <url>local_data.qml</url>
         <url>save_repository_data.qml</url>

@@ -5,10 +5,6 @@ import "../propertyFile"
 
 Rectangle {
 
-    default property alias content: columnPrederences.children
-    property alias column: columnPrederences
-    property int countOption: 4
-
     function nextPage()
     {
         console.log("Page \"ssh_review_data\": start clone...");
@@ -30,13 +26,22 @@ Rectangle {
     {
         buttonNext.text = "Add"
 
-        // заполняем поля, если они были заполнены
-        for(var i = 0; i < column.children.length; ++i)
+        var array = addRepository.options;
+        for(var i = 0; i < array.length; ++i)
         {
-            var key = column.children[i].nameOption.substring(0, column.children[i].nameOption.length - 1);
-            var value = addRepository.getOptions(key);
-            column.children[i].valueOption = value;
+            modelReviewData.append({"_nameOption": array[i] + ":", "_valueOption" : ""});
         }
+
+        // заполняем поля, если они были заполнены
+        for(var k = 0; k < modelReviewData.count; ++k)
+        {
+            var key = modelReviewData.get(k)._nameOption.substring(0, modelReviewData.get(k)._nameOption.length - 1);
+            var value = addRepository.getOptions(key);
+            modelReviewData.get(k)._valueOption = value;
+        }
+    }
+    ListModel {
+        id: modelReviewData
     }
 
     SystemPalette { id: sysPal }
@@ -57,9 +62,10 @@ Rectangle {
             bold: true
         }
     }
-    ColumnLayout {
 
-        id: columnPrederences
+    ListView {
+
+        id: viewPreferences
 
         property int sizeFont: 12
         property int widthFieldOption: 100
@@ -70,6 +76,18 @@ Rectangle {
         anchors.rightMargin: 10
         anchors.top: head.bottom
         anchors.topMargin: 15
+        anchors.bottom: parent.bottom
         spacing: 10
+
+        model: modelReviewData
+
+        delegate: PropertyValue
+        {
+            widthFieldOption: viewPreferences.widthFieldOption
+            sizeFont: viewPreferences.sizeFont
+            nameOption: _nameOption
+            valueOption: _valueOption
+            anchors.left: parent.left
+        }
     }
 }

@@ -14,7 +14,7 @@ public:
     virtual void        EndExecuteCommand(const bool wasExecute = true);
 
     void                SetFolderToClone(const QString& path);
-    void                ErrorFolderToClone(const QString& error);
+    void                WasErrorToClone(const QString& error);
 
 private:
     /** @brief папка, куда идет клонирование репозитория */

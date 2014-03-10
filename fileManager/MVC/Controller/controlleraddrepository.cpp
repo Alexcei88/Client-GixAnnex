@@ -2,11 +2,18 @@
 
 // model stuff
 #include "../Model/AddRepository/model_addrepository_remoteserver.h"
+#include "../Model/AddRepository/model_addrepository_other.h"
 
 using namespace GANN_MVC;
 //----------------------------------------------------------------------------------------/
 ControllerAddRepository::ControllerAddRepository()
 {}
+//----------------------------------------------------------------------------------------/
+const QVariantList ControllerAddRepository::GetListOptions()
+{
+    if(!model) return QVariantList();
+    return model->GetListOptions();
+}
 //----------------------------------------------------------------------------------------/
 void ControllerAddRepository::setOptions(const QVariant key, const QVariant value)
 {
@@ -23,8 +30,18 @@ QVariant ControllerAddRepository::getOptions(const QVariant key)
 void ControllerAddRepository::selectServer(const QVariant index)
 {
     options.clear();
-    model.reset(new ModelAddRepositoryRemoteServer());
-    options["Port"] = "22";
+    switch(index.toInt())
+    {
+        // Cloud repository
+        case 0: model.reset(new ModelAddRepositoryRemoteServer()); break;
+        case 1: model.reset(new ModelAddRepositoryRemoteServer()); break;
+
+        // Local repository
+        case 30: model.reset(new ModelAddOtherRepository()); break;
+
+        default:
+            assert("Unknow index repository!!!" && 0);
+    }
 }
 //----------------------------------------------------------------------------------------/
 void ControllerAddRepository::startAddRepository() const
@@ -44,5 +61,3 @@ void ControllerAddRepository::closeAddRepository() const
     IModelQmlAndCAddRepository::CloseWindowAddRepository();
 }
 //----------------------------------------------------------------------------------------/
-
-

@@ -410,6 +410,9 @@ void FacadeApplication::EndCloneRepository(const bool& successfully, const QStri
     }
     else
     {
+        // сообщаем пользователю, что клонирование завершилось
+        if(systemTray)
+            systemTray->ResultAddRepository(information);
         // сбрасываем репозиторий, больше он нам не нужен
         tempRepo.reset();
     }
@@ -427,7 +430,10 @@ void FacadeApplication::InitNewRepository()
     repository[tempRepo->GetLocalURL()] = std::move(tempRepo);
 
     systemTray->ReLoadListRepository();
-//    systemTray->CancelCloneRepository();
+
+    // сообщаем пользователю, что клонирование завершилось
+    if(systemTray)
+        systemTray->ResultAddRepository("Add new repository successfully");
 }
 //----------------------------------------------------------------------------------------/
 void FacadeApplication::ChangeCurrentRepository(const QString& dir)

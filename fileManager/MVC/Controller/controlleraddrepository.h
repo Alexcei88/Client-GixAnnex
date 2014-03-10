@@ -18,12 +18,18 @@ class ControllerAddRepository: public QObject
 {
     Q_OBJECT
 public:
+
     ControllerAddRepository();
+
+    /** @brief вектор состояний иконок */
+    Q_PROPERTY(QVariantList options READ GetListOptions);
+
+    const QVariantList GetListOptions();
 
     /** @brief Добавление опции в вектор */
     Q_INVOKABLE void    setOptions(const QVariant key, const QVariant value);
 
-    /** @brief Добавление опции в вектор */
+    /** @brief Взять значение опции */
     Q_INVOKABLE QVariant getOptions(const QVariant key);
 
     /** @brief Выбран репозиторий */

@@ -29,7 +29,9 @@ Rectangle {
             addRepository.setOptions(key, value);
 
             if(nextpage !== "")
+            {
                 stackView.push({ item: Qt.resolvedUrl(nextpage), destroyOnPop: true})
+            }
         }
         else
         {

@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <optionURL>
 <url_save>save_repository_data.qml</url_save>
-<url_review>ssh_review_data.qml</url_review>
+<url_review>ReviewData.qml</url_review>
 <url_addrepo>wait_clone.qml</url_addrepo>
 </optionURL>

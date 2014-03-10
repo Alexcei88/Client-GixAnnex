@@ -16,6 +16,11 @@ GANN_DEFINE::RESULT_EXEC_PROCESS IModelQmlAndCAddRepository::StartAddRepository(
     return FacadeApplication::getInstance()->StartCloneRepository(localUrl, remoteUrl, nameRepository);
 }
 //----------------------------------------------------------------------------------------/
+QVariantList IModelQmlAndCAddRepository::GetListOptions() const
+{
+    return listOptions;
+}
+//----------------------------------------------------------------------------------------/
 void IModelQmlAndCAddRepository::CancelAddRepository(const QMap<QString, QString> &options) const
 {
     Q_UNUSED(options);

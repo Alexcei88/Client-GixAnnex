@@ -26,6 +26,7 @@ Rectangle {
         query: "/list_repository/repo"
         XmlRole { name: "nameRepo"; query: "@name/string()"; }
         XmlRole { name: "descriptionRepo"; query: "@description/string()"; }
+        XmlRole { name: "indexRepo"; query: "@index/string()"; }
         XmlRole { name: "url1"; query: "optionURL/url[1]/string()"; }
         XmlRole { name: "url2"; query: "optionURL/url[2]/string()"; }
         XmlRole { name: "url3"; query: "optionURL/url[3]/string()"; }
@@ -41,6 +42,7 @@ Rectangle {
         query: "/list_repository/repo"
         XmlRole { name: "nameRepo"; query: "@name/string()"; }
         XmlRole { name: "descriptionRepo"; query: "@description/string()"; }
+        XmlRole { name: "indexRepo"; query: "@index/string()"; }
         XmlRole { name: "url1"; query: "optionURL/url[1]/string()"; }
         XmlRole { name: "url2"; query: "optionURL/url[2]/string()"; }
         XmlRole { name: "url3"; query: "optionURL/url[3]/string()"; }
