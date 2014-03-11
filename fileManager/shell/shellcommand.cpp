@@ -57,7 +57,7 @@ RESULT_EXEC_PROCESS ShellCommand::CloneRepositories(const QString& remoteURL, co
     analizeCommand->SetPathExecuteCommand(localURL);
     boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandClone(analizeCommand));
     ShellTask* shellTask = new ShellTask(strCommand, localURL, receiverParsing);
-    FacadeShellCommand::TryStartNextcommand("clone", shellTask, facade->GetRepository());
+    FacadeShellCommand::TryStartNextCommand("clone", shellTask, facade->GetRepository());
     return NO_ERROR;
 }
 //----------------------------------------------------------------------------------------/
@@ -90,7 +90,7 @@ RESULT_EXEC_PROCESS ShellCommand::GetContentFile(const QString& path, FacadeAnal
 
     boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandGet(analizeCommand));
     ShellTask* shellTask = new ShellTask(strCommand, localURL, receiverParsing);
-    FacadeShellCommand::TryStartNextcommand("get", shellTask, facade->GetRepository());
+    FacadeShellCommand::TryStartNextCommand("get", shellTask, facade->GetRepository());
     return NO_ERROR;
 }
 //----------------------------------------------------------------------------------------/
@@ -105,7 +105,7 @@ RESULT_EXEC_PROCESS ShellCommand::DropContentFile(const QString& path, FacadeAna
 
     boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandDrop(analizeCommand));
     ShellTask* shellTask = new ShellTask(strCommand, localURL, receiverParsing);
-    FacadeShellCommand::TryStartNextcommand("drop", shellTask, facade->GetRepository());
+    FacadeShellCommand::TryStartNextCommand("drop", shellTask, facade->GetRepository());
     return NO_ERROR;
 }
 //----------------------------------------------------------------------------------------/
@@ -124,7 +124,7 @@ RESULT_EXEC_PROCESS ShellCommand::RemoveFile(const QString& path, const bool mod
         boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandEmpty());
         ShellTask* shellTask = new ShellTask(strCommand, localURL, receiverParsing);
 
-        FacadeShellCommand::TryStartNextcommand("git rm", shellTask, facade->GetRepository());
+        FacadeShellCommand::TryStartNextCommand("git rm", shellTask, facade->GetRepository());
     }
     // физическое удаление файла(директории)
     QString strCommand = "rm " + path;
@@ -136,7 +136,7 @@ RESULT_EXEC_PROCESS ShellCommand::RemoveFile(const QString& path, const bool mod
 
     boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandEmpty());
     ShellTask* shellTask = new ShellTask(strCommand, localURL, receiverParsing);
-    FacadeShellCommand::TryStartNextcommand("rm", shellTask, facade->GetRepository());
+    FacadeShellCommand::TryStartNextCommand("rm", shellTask, facade->GetRepository());
     return NO_ERROR;
 #endif
 }
@@ -169,7 +169,7 @@ RESULT_EXEC_PROCESS ShellCommand::SetDirectMode(const bool& direct, FacadeAnalyz
     boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandDirectMode(analizeCommand));
 
     ShellTask* shellTask = new ShellTask(strCommand, localURL, receiverParsing);
-    FacadeShellCommand::TryStartNextcommand(direct ? " direct" : " indirect", shellTask, facade->GetRepository());
+    FacadeShellCommand::TryStartNextCommand(direct ? " direct" : " indirect", shellTask, facade->GetRepository());
     return NO_ERROR;
 }
 //----------------------------------------------------------------------------------------/

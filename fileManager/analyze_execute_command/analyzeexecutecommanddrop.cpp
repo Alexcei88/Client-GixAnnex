@@ -27,6 +27,8 @@ AnalyzeExecuteCommandDrop::AnalyzeExecuteCommandDrop(FacadeAnalyzeCommand &facad
 //----------------------------------------------------------------------------------------/
 AnalyzeExecuteCommandDrop::~AnalyzeExecuteCommandDrop()
 {
+    // сообщаем фасаду, что команда выполнена
+    facadeAnalyzeCommand.RemoveDropContentFileQueue(this);
     FacadeApplication::getInstance()->DecreaseCountCommandThreadSyncIcons();
 }
 //----------------------------------------------------------------------------------------/

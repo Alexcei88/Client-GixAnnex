@@ -15,19 +15,23 @@
 class ShellTask;
 class IRepository;
 
-class FacadeShellCommand
+class FacadeShellCommand : public QObject
 {
+    Q_OBJECT
 public:
+
+    static FacadeShellCommand* GetInstance();
+
     /** @brief пытается запустить переданную команду(если удачно, то запускает ее, иначе
          добавляет ее в очередь)
         @param baseNameCommand - базовое имя команды(например, get, drop...)
         @param currentTask - текущая команда
     */
-    static void         TryStartNextcommand(const QString& baseNameCommand, ShellTask* currentTask,
+    static void         TryStartNextCommand(const QString& baseNameCommand, ShellTask* currentTask,
                                         const IRepository* repository);
 
     /** @brief Пытается запустить команду из очереди, если они там есть */
-    static void         TryStartNextcommand();
+    static void         TryStartNextCommand();
 
     /** @brief Очищает список команд для заданного репозитория, мы их не запускаем */
     static void         ClearCommandForRepository(const IRepository* repository);
@@ -37,6 +41,7 @@ public:
 
 private:
 
+    FacadeShellCommand(QObject *parent = 0);
     Q_DISABLE_COPY(FacadeShellCommand);
 
     struct SDescriptionCommand
@@ -52,6 +57,8 @@ private:
             else return false;
         }
     };
+    /** @brief список команд с низким приоритетом */
+    static std::unique_ptr<FacadeShellCommand> instance;
 
     /** @brief список команд с низким приоритетом */
     static QStringList  listCommandPriorityLow;
@@ -69,7 +76,11 @@ private:
     /** @brief мьютекс для многопоточности */
     static QMutex       mutex;
 
-    static void         InitClass();
+    static void         InitClass();   
+
+signals:
+    // сигнал, послыаемый когда текущая команда завершается
+    void                FinishWaitCommand();
 
 };
 

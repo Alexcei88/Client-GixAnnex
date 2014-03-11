@@ -27,6 +27,8 @@ AnalyzeExecuteCommandGet::AnalyzeExecuteCommandGet(FacadeAnalyzeCommand &facadeA
 //----------------------------------------------------------------------------------------/
 AnalyzeExecuteCommandGet::~AnalyzeExecuteCommandGet()
 {
+    // удаляем из очереди команду, если она еще не была удалена
+    facadeAnalyzeCommand.RemoveGetContentFileQueue(this);
     FacadeApplication::getInstance()->DecreaseCountCommandThreadSyncIcons();
 }
 //----------------------------------------------------------------------------------------/
@@ -43,7 +45,7 @@ void AnalyzeExecuteCommandGet::StartExecuteCommand()
 //----------------------------------------------------------------------------------------/
 void AnalyzeExecuteCommandGet::EndExecuteCommand(const bool wasExecute)
 {
-    AnalyzeExecuteCommand::EndExecuteCommand(wasExecute);   
+    AnalyzeExecuteCommand::EndExecuteCommand(wasExecute);
     // сообщаем фасаду, что команда выполнена
     facadeAnalyzeCommand.RemoveGetContentFileQueue(this);
 

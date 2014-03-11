@@ -10,15 +10,18 @@ ShellTask::ShellTask(const QString& strCommand, const QString localURL, boost::s
     command(strCommand)
   , parsingCommand(parsingCommand)
   , localURL(localURL)
+  , shell(nullptr)
 {}
 //----------------------------------------------------------------------------------------/
 ShellTask::~ShellTask()
 {
-    shell->TerminateProcess();
-    delete shell;
-    shell = 0;
+    if(shell)
+    {
+        shell->TerminateProcess();
+        delete shell;
+        shell = nullptr;
+    }
 }
-
 //----------------------------------------------------------------------------------------/
 void ShellTask::run()
 {

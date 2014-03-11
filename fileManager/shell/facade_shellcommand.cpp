@@ -5,8 +5,10 @@
 #include <QMap>
 #include <QStringList>
 #include <QThreadPool>
+#include <QMutexLocker>
 
 
+std::unique_ptr<FacadeShellCommand> FacadeShellCommand::instance(new FacadeShellCommand());
 QStringList FacadeShellCommand::listCommandPriorityLow;
 QStringList FacadeShellCommand::listCommandPriorityHigh;
 QQueue<FacadeShellCommand::SDescriptionCommand> FacadeShellCommand::queueComanndPriorityLow;
@@ -14,6 +16,9 @@ QQueue<FacadeShellCommand::SDescriptionCommand> FacadeShellCommand::queueComannd
 std::unique_ptr<FacadeShellCommand::SDescriptionCommand> FacadeShellCommand::currentCommand;
 QMutex FacadeShellCommand::mutex;
 
+//----------------------------------------------------------------------------------------/
+FacadeShellCommand::FacadeShellCommand(QObject *parent): QObject(parent)
+{}
 //----------------------------------------------------------------------------------------/
 void FacadeShellCommand::InitClass()
 {
@@ -24,11 +29,16 @@ void FacadeShellCommand::InitClass()
     listCommandPriorityHigh << "clone" << "sync" << "whereis" << "rm";
 }
 //----------------------------------------------------------------------------------------/
-void FacadeShellCommand::TryStartNextcommand(const QString& baseNameCommand, ShellTask* currentTask,
+FacadeShellCommand* FacadeShellCommand::GetInstance()
+{
+    assert(instance);
+    return instance.get();
+}
+//----------------------------------------------------------------------------------------/
+void FacadeShellCommand::TryStartNextCommand(const QString& baseNameCommand, ShellTask* currentTask,
                                              const IRepository* repository)
 {
-    mutex.lock();
-
+    QMutexLocker locker(&mutex);
     if(listCommandPriorityHigh.contains(baseNameCommand))
     {
         // команда с высоким приоритетом
@@ -74,12 +84,15 @@ void FacadeShellCommand::TryStartNextcommand(const QString& baseNameCommand, She
             QThreadPool::globalInstance()->start(currentTask);
         }
     }
-    mutex.unlock();
 }
 //----------------------------------------------------------------------------------------/
-void FacadeShellCommand::TryStartNextcommand()
+void FacadeShellCommand::TryStartNextCommand()
 {
-    mutex.lock();
+    QMutexLocker locker(&mutex);
+
+    // сообщаем, что команда завершилась
+    emit instance->FinishWaitCommand();
+
     if(!queueComanndPriorityHigh.isEmpty())
     {
         // очередь комманд с высоким приоритетом не пуста, запускаем эти команды в первую очередь
@@ -106,18 +119,27 @@ void FacadeShellCommand::TryStartNextcommand()
 
         QThreadPool::globalInstance()->start(nextCommand.task);
     }
-    mutex.unlock();
+    else
+    {
+        // больше команд нет, сбрасываем указатель
+        currentCommand.reset();
+    }
 }
 //----------------------------------------------------------------------------------------/
 void FacadeShellCommand::ClearCommandForRepository(const IRepository* repository)
 {
+    QMutexLocker locker(&mutex);
     // ищем в командах с низким приоритетом
     QQueue<SDescriptionCommand>::iterator it;
     do
     {
         it = std::find(queueComanndPriorityLow.begin(), queueComanndPriorityLow.end(), repository);
         if(it != queueComanndPriorityLow.end())
+        {
+              // перед удалением указателя чистим еще и таск(тк задача не выполнялась)
+              delete it->task;
               it = queueComanndPriorityLow.erase(it);
+        }
     }
     while(it != queueComanndPriorityLow.end());
 
@@ -126,20 +148,24 @@ void FacadeShellCommand::ClearCommandForRepository(const IRepository* repository
     {
         it = std::find(queueComanndPriorityHigh.begin(), queueComanndPriorityHigh.end(), repository);
         if(it != queueComanndPriorityHigh.end())
-              it = queueComanndPriorityHigh.erase(it);
+        {
+            // перед удалением указателя чистим еще и таск(тк задача не выполнялась)
+            delete it->task;
+            it = queueComanndPriorityHigh.erase(it);
+        }
     }
     while(it != queueComanndPriorityHigh.end());
 }
 //----------------------------------------------------------------------------------------/
 bool FacadeShellCommand::IsExecuteCommandForRepository(const IRepository* repository)
 {
+    QMutexLocker locker(&mutex);
     if(currentCommand && currentCommand->repository == repository)
         return true;
     else
         return false;
 }
 //----------------------------------------------------------------------------------------/
-
 
 
 
