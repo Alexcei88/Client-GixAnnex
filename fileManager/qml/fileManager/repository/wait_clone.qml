@@ -28,13 +28,11 @@ Rectangle
 
     function resultAddRepository(text)
     {
-        console.log("End Clone Repository");
-        textArea.append(text);
-//        textArea.select(0, 6);
-        // выделить только последнюю строчку
-//        textArea.textColor = "red";
-       // textArea.deselect();
+        var textHtml = "<FONT COLOR=Red>" + text + "</FONT>";
+        textArea.append(textHtml);
         buttonCancel.text = "Finish";
+        progressBar.indeterminate = false;
+        progressBar.value = 1;
     }
 
     SystemPalette { id: sysPal }
@@ -50,6 +48,7 @@ Rectangle
             anchors.right: parent.right
             anchors.left: parent.left
         }
+
         TextArea{
             id: textArea
             anchors.top: progressBar.bottom
@@ -60,8 +59,8 @@ Rectangle
             text: initText
             readOnly: true
             textColor: "blue"
+            textFormat: TextEdit.AutoText
         }
-
     }
 }
 

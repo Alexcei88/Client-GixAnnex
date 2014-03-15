@@ -41,7 +41,6 @@ private:
 
     // взять имя репозитория
     virtual QString     GetNameRepository(const QMap<QString, QString>& options) const;
-
 };
 
 }

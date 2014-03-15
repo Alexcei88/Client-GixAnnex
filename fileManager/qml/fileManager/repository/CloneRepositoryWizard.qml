@@ -9,6 +9,12 @@ import Message 1.0
 
 Rectangle {
 
+    // размер шрифта заголовков
+    property int sizeFontHead: 18
+
+    // размер шрифта текста с деталями копирования
+    property int sizeFontTextDetails: 18
+
     ControllerAddRepository{
         id: addRepository
     }
@@ -86,24 +92,30 @@ Rectangle {
             // 4 - процесс клонирования
             // 5 - окончание клонирования
 
+    color: sysPal.window
+
     Rectangle {
         id: menu
         anchors {
             left: parent.left
-            bottom: parent.bottom
+            bottom: separatorRect.top
+            bottomMargin: 10
             top: parent.top
         }
         width: parent.width/4
 
-        LinearGradient {
+        RadialGradient {
             anchors.fill: parent
-            start: Qt.point(0, 0)
-            end: Qt.point(0, 300)
             gradient: Gradient {
-                GradientStop { position: 0.0; color: "white" }
-                GradientStop { position: 0.5; color: "blue" }
-                GradientStop { position: 1.0; color: "gray" }
+//                GradientStop { position: 0.0; color: "#0095b6" }
+                GradientStop { position: 0.0; color: "#007fff" }
+                GradientStop { position: 1.0; color: "white" }
             }
+            horizontalOffset: -200
+            verticalOffset: parent.width
+            angle: 0
+            verticalRadius: 400
+            horizontalRadius: 300
         }
 
         ListView {
@@ -136,7 +148,8 @@ Rectangle {
 
         property int selectIndexRepository: -1
         anchors {
-            bottom: managerPanel.top
+            bottom: separatorRect.top
+            bottomMargin: 10
             top: parent.top
             left: menu.right
             right: parent.right
@@ -174,12 +187,11 @@ Rectangle {
     // разделитель(взят из ToolBarStyle)
     Rectangle {
         id: separatorRect
-        width: parent.width - 30
         height: 1
         color: "#999"
-        anchors.top: menu.bottom
-        anchors.topMargin: 25
-        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: managerPanel.top
+        anchors.right: parent.right
+        anchors.left: parent.left
     }
 
     Rectangle {
@@ -189,7 +201,7 @@ Rectangle {
             bottom: parent.bottom
             right: parent.right
         }
-        height: 60
+        height: 55
         color: sysPal.window
 
         Row {

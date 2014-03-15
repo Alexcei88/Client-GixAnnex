@@ -7,13 +7,19 @@ Rectangle {
 
     function nextPage()
     {
-        console.log("Page \"ssh_review_data\": start clone...");
+        console.log("Page \"ssh_review_data\": Cloning repository into...");
         var nextpage = modelRepoXMLCommon.get(0).url_addrepo;
         console.log(nextpage);
 
-        if(nextpage !== "")
-            stackView.push({ item: Qt.resolvedUrl(nextpage), destroyOnPop: true})
+        var destUrl = addRepository.getOptions("Destinition URL")
+        var initText = "Cloning repository into <i>"+ destUrl + "</i>";
 
+        if(nextpage !== "")
+        {
+            stackView.push({ item: Qt.resolvedUrl(nextpage), destroyOnPop: true,
+                             properties: { initText: initText}
+                           })
+        }
         addRepository.startAddRepository();
     }
 
@@ -75,7 +81,7 @@ Rectangle {
         anchors.leftMargin: 10
         anchors.rightMargin: 10
         anchors.top: head.bottom
-        anchors.topMargin: 15
+        anchors.topMargin: 10
         anchors.bottom: parent.bottom
         spacing: 10
 

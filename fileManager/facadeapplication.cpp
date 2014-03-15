@@ -433,7 +433,7 @@ void FacadeApplication::InitNewRepository()
 
     // сообщаем пользователю, что клонирование завершилось
     if(systemTray)
-        systemTray->ResultAddRepository("Add new repository successfully");
+        systemTray->ResultAddRepository("Addition new repository executed successfully");
 }
 //----------------------------------------------------------------------------------------/
 void FacadeApplication::ChangeCurrentRepository(const QString& dir)

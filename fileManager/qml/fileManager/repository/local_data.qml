@@ -22,7 +22,9 @@ Rectangle {
             var nextpage = modelRepoXMLCommon.get(0).url_save;
             console.log(nextpage);
             if(nextpage !== "")
-                stackView.push({ item: Qt.resolvedUrl(nextpage), destroyOnPop: true})
+                stackView.push({ item: Qt.resolvedUrl(nextpage), destroyOnPop: true,
+                                properties: { headText: "Add another local repository"}
+                               })
         }
         else
         {
@@ -60,25 +62,43 @@ Rectangle {
     SystemPalette { id: sysPal }
     color: sysPal.window
 
-    Text {
-        id: head
+    ColumnLayout {
+        id: textColumn
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.leftMargin: 10
         anchors.rightMargin: 10
         anchors.top: parent.top
         anchors.topMargin: 15
+        height: head.implicitHeight + textDetails.implicitHeight
+        spacing: 5
 
-        text: "Adding a remote server using ssh"
-        font {
-            pixelSize: 16
-            bold: true
+        Text {
+            id: head
+            anchors.left: parent.left
+            anchors.right: parent.right
+            text: "Add another local repository"
+            font {
+                pixelSize: sizeFontHead
+                bold: true
+            }
+        }
+        Text {
+            id: textDetails
+            anchors.left: parent.left
+            anchors.right: parent.right
+            text: "Where do you want to take repository?"
+            font {
+                pixelSize: 14
+                family: "Verdana"
+            }
+            wrapMode: Text.WordWrap
         }
     }
 
     Loader {
         id: rectForError
-        anchors.top: head.bottom
+        anchors.top: textColumn.bottom
         width: sourceUrl.width - anchors.leftMargin
         anchors.left: parent.left
         anchors.leftMargin: 20
@@ -98,6 +118,7 @@ Rectangle {
                 {
                     // убираем ошибку
                     rectForError.setSource("no_error_input_field.qml");
+                    sourceUrl.wasErrorValue = false;
                 }
             }
         }
@@ -116,7 +137,7 @@ Rectangle {
         anchors.leftMargin: 10
         anchors.rightMargin: 10
         anchors.top: rectForError.bottom
-        anchors.topMargin: 15
+        anchors.topMargin: 10
         height: baseHeight
         spacing: 10
 

@@ -6,6 +6,8 @@ import "../utils.js" as UtilsScript
 
 Rectangle {
 
+    property string headText: ""
+
     SystemPalette { id: sysPal }
     color: sysPal.window
 
@@ -95,25 +97,43 @@ Rectangle {
         }
     }
 
-    Text {
-        id: head
+    ColumnLayout {
+
+        id: textColumn
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.leftMargin: 10
         anchors.rightMargin: 10
         anchors.top: parent.top
         anchors.topMargin: 15
+        height: head.implicitHeight + textDetails.implicitHeight
+        spacing: 5
 
-        text: "Adding a remote server using ssh"
-        font {
-            pixelSize: 16
-            bold: true
+        Text {
+            id: head
+            anchors.left: parent.left
+            anchors.right: parent.right
+            text: headText
+            font {
+                pixelSize: 18
+                bold: true
+            }
+        }
+        Text {
+            id: textDetails
+            anchors.left: parent.left
+            anchors.right: parent.right
+            text: "Where do you want save to put and what name to give this repository?"
+            font {
+                pixelSize: 14
+            }
+            wrapMode: Text.WordWrap
         }
     }
 
     Loader {
         id: rectForError
-        anchors.top: head.bottom
+        anchors.top: textColumn.bottom
         width: destUrl.width - anchors.leftMargin
         anchors.left: parent.left
         anchors.leftMargin: 20
@@ -131,7 +151,7 @@ Rectangle {
         anchors.leftMargin: 10
         anchors.rightMargin: 10
         anchors.top: rectForError.bottom
-        anchors.topMargin: 15
+        anchors.topMargin: 10
         height: 2 * baseHeight + column.spacing
         spacing: 10
 

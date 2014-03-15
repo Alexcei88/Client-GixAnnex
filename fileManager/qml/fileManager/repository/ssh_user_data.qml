@@ -85,7 +85,7 @@ Rectangle {
 
         text: "Adding a remote server using ssh"
         font {
-            pixelSize: 16
+            pixelSize: 18
             bold: true
         }
     }
@@ -110,7 +110,7 @@ Rectangle {
         anchors.leftMargin: 10
         anchors.rightMargin: 10
         anchors.top: rectForError.bottom
-        anchors.topMargin: 15
+        anchors.topMargin: 10
         height: 4 * baseHeight +  column.spacing * 3
         spacing: 10
         PropertyInputValue {

@@ -45,6 +45,8 @@ public:
     Q_INVOKABLE void    closeAddRepository() const;
 
 
+
+
 private:
     std::shared_ptr<IModelQmlAndCAddRepository> model;
     // параметры копирования
