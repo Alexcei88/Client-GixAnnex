@@ -18,12 +18,13 @@ Rectangle
 
     }
 
-    function actualizeButton()
+    function updateUI()
     {        
         buttonBack.enabled = false;
         buttonNext.enabled = false;
         buttonBack.visible = false;
         buttonNext.visible = false;
+        treeView.currentIndex = 4;
     }
 
     function resultAddRepository(text)
@@ -33,6 +34,7 @@ Rectangle
         buttonCancel.text = "Finish";
         progressBar.indeterminate = false;
         progressBar.value = 1;
+        treeView.currentIndex = 5;
     }
 
     SystemPalette { id: sysPal }

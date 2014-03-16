@@ -58,7 +58,8 @@ SOURCES += main.cpp \
     MVC/Model/AddRepository/imodel_addrepository.cpp \
     MVC/Model/AddRepository/model_addrepository_remoteserver.cpp \
     qml/components/validatorfilesystem.cpp \
-    MVC/Model/AddRepository/model_addrepository_other.cpp
+    MVC/Model/AddRepository/model_addrepository_other.cpp \
+    qml/components/treemodel.cpp
 
 # Installation path
 # target.path =
@@ -127,7 +128,8 @@ HEADERS += \
     MVC/Model/AddRepository/imodel_addrepository.h \
     MVC/Model/AddRepository/model_addrepository_remoteserver.h \
     qml/components/validatorfilesystem.h \
-    MVC/Model/AddRepository/model_addrepository_other.h
+    MVC/Model/AddRepository/model_addrepository_other.h \
+    qml/components/treemodel.h
 
 # Включаем поддержку С++11
 QMAKE_CXXFLAGS += -std=c++0x

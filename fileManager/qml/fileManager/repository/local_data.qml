@@ -37,11 +37,13 @@ Rectangle {
 
     }
 
-    function actualizeButton()
+    function updateUI()
     {
         var key = sourceUrl.nameOption.substring(0, sourceUrl.nameOption.length - 1);
         var value = addRepository.getOptions(key);
         sourceUrl.valueOption = value;
+
+        treeView.currentIndex = 1;
 
     }
 
@@ -90,7 +92,7 @@ Rectangle {
             text: "Where do you want to take repository?"
             font {
                 pixelSize: 14
-                family: "Verdana"
+                family: "DejaVu Sans Mono"
             }
             wrapMode: Text.WordWrap
         }

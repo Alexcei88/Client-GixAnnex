@@ -7,6 +7,7 @@
 #include "resourcegenerator.h"
 #include "qml/components/message_box//qmlmessage.h"
 #include "qml/components/folder_model/folderlistmodel.h"
+#include "qml/components/treemodel.h"
 #include "qml/components/validatorfilesystem.h"
 
 // Qt Stuff
@@ -536,5 +537,6 @@ void FacadeApplication::InitClassCAndQML()
     qmlRegisterType<GANN_MVC::ControllerPreferencesApp>("Preferences", 1, 0, "PreferencesApp");
     qmlRegisterType<GANN_MVC::ControllerAddRepository>("Repository", 1, 0, "ControllerAddRepository");
     qmlRegisterType<ValidatorFileSystem>("Validator", 1, 0, "FileSystemValidator");
+    qmlRegisterType<TreeModel>("TreeModel", 1, 0 , "TreeModel");
 }
 //----------------------------------------------------------------------------------------/

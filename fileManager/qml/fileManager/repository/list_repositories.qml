@@ -3,7 +3,7 @@ import QtQuick.Layouts 1.1
 
 Rectangle {
 
-    function actualizeButton()
+    function updateUI()
     {
 
     }

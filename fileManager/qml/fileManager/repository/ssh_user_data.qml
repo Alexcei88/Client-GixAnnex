@@ -33,7 +33,7 @@ Rectangle {
     {
 
     }
-    function actualizeButton()
+    function updateUI()
     {
         // заполняем поля, если они были заполнены
         for(var i = 0; i < column.children.length; ++i)

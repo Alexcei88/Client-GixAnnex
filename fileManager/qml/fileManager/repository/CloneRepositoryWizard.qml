@@ -6,6 +6,7 @@ import QtQuick.XmlListModel 2.0
 
 import Repository 1.0
 import Message 1.0
+import TreeModel 1.0
 
 Rectangle {
 
@@ -67,30 +68,16 @@ Rectangle {
         XmlRole { name: "url_addrepo"; query: "url_addrepo/string()"; }
     }
 
-    // модель, содержащая список view, которые будут
-    // отображаться в стек-вью
-    ListModel {
+    TreeModel {
         id: pageModel
-        ListElement {
-            title: "Select Type"         // текст сообщения, который отображается когда отображаем этот viewer
-            urlComponent: "bla-bla-bla" // url репозитория, откуда загружать viewer
-        }
-        ListElement {
-            title: "Options"
-            urlComponent: "bla-bla-bla"
-        }
-        ListElement {
-            title: "Reviewer"
-            urlComponent: "bla-bla-bla"
-        }
     }
 
-            // 5 минимальных полей
-            // 1 - выбор типа репозитория
-            // 2 - настройки репозитория(в зависимости от типа репозитория)
-            // 3 - общая информация по настройкам где нажимаем начать клонирование
-            // 4 - процесс клонирования
-            // 5 - окончание клонирования
+    // 5 минимальных полей
+    // 1 - выбор типа репозитория
+    // 2 - настройки репозитория(в зависимости от типа репозитория)
+    // 3 - общая информация по настройкам где нажимаем начать клонирование
+    // 4 - процесс клонирования
+    // 5 - окончание клонирования
 
     color: sysPal.window
 
@@ -107,7 +94,7 @@ Rectangle {
         RadialGradient {
             anchors.fill: parent
             gradient: Gradient {
-//                GradientStop { position: 0.0; color: "#0095b6" }
+                //                GradientStop { position: 0.0; color: "#0095b6" }
                 GradientStop { position: 0.0; color: "#007fff" }
                 GradientStop { position: 1.0; color: "white" }
             }
@@ -118,21 +105,134 @@ Rectangle {
             horizontalRadius: 300
         }
 
+        // отображаем наше дерево
         ListView {
-            id: view
+            id: treeView
             anchors.fill: parent
-            anchors.topMargin: 20
-            anchors.leftMargin: 20
+            anchors.topMargin: 2
+            anchors.leftMargin: 2
             model: pageModel
             spacing: 5
-            delegate: Text {
+            delegate: treeDelegate
+            interactive: false
+            currentIndex: 0
 
-                text: title
+            Item {
+                id: markNode
                 anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.leftMargin: 10
-                anchors.rightMargin: 10
+                x: treeView.currentItem.x
+                y: treeView.currentItem.y
+                width: imageMarkNode.implicitWidth
+
+                Image {
+                    id: imageMarkNode
+                    source: "qrc:/node_closed.png"
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            treeView.currentIndex++;
+                        }
+                    }
+                }
             }
+
+            Component {
+                id: treeDelegate                
+
+                Item {
+                    id: wrapper
+                    property bool isCurrent: ListView.isCurrentItem
+
+                    height: 20
+                    width: treeView.width
+
+                    //"Отбой" слева элементов-потомков
+                    Item {
+                        id: levelMarginElement
+                        //Начиная с 6 уровня вложенности не сдвигаем потомков,
+                        //так как иначе можно получить очень широкое окно
+                        width: (level> 5 ? 6: level)* 32 + 5
+                        anchors.left: parent.left
+                        anchors.leftMargin: markNode.width
+                    }
+                    //Область для открытия/закрытия потомков.
+                    //На листьях не виден
+                    Item {
+                        id: nodeOpenElement
+                        anchors.left: levelMarginElement.right
+                        anchors.verticalCenter: wrapper.verticalCenter
+                        height: 24
+                        state: "leafNode"
+                        Image {
+                            id: triangleOpenImage
+                            //Отлавливаем нажатие мышкой и открываем/закрываем элемент
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: { (isOpened) ?
+                                                 pageModel.closeItem(index) :
+                                                 pageModel.openItem(index)
+                                            }
+                            }
+                        }
+                        states: [
+                            //Лист
+                            //Область не видна
+                            State {
+                                name: "leafNode"
+                                when: !hasChildren
+                                PropertyChanges {
+                                    target: nodeOpenElement
+                                    visible: false
+                                    width: 0
+                                }
+                            },
+                            //Открытый элемент
+                            //Область видна и отображена соответствующая иконка
+                            State {
+                                name: "openedNode"
+                                when: (hasChildren)&&(isOpened)
+                                PropertyChanges {
+                                    target: nodeOpenElement
+                                    visible: true
+                                    width: 32
+                                }
+                                PropertyChanges {
+                                    target: triangleOpenImage
+                                    source: "qrc:/node_opened.png"
+                                }
+                            },
+                            //Закрытый элемент
+                            //Область видна и отображена соответствующая иконка
+                            State {
+                                name: "closedNode"
+                                when: (hasChildren)&&(!isOpened)
+                                PropertyChanges {
+                                    target: nodeOpenElement
+                                    visible: true
+                                    width: 32
+                                }
+                                PropertyChanges {
+                                    target: triangleOpenImage
+                                    source: "qrc:/node_closed.png"
+                                }
+                            }
+                        ]
+                    }
+                    //Область для отображения данных элемента
+                    Text {
+                        id: nameTextElement
+                        text: name
+                        verticalAlignment: "AlignVCenter"
+                        anchors.left: nodeOpenElement.right
+                        anchors.top: parent.top
+                        anchors.bottom: parent.bottom
+                        anchors.right: parent.right
+                        font {
+                            bold: isCurrent
+                        }
+                    }
+                } // end Item
+            } // end Component
         }
     }
 
@@ -141,7 +241,7 @@ Rectangle {
         // все страницы должны реализовывать функции
         // 1. перехода на следующую страницу nextPage();
         // 2. переход на предыдущую страницу prevPage();
-        // 3. актуализации кнопок интерфейса actualizeButton();
+        // 3. актуализации кнопок интерфейса updateUI();
 
         id: stackView
         objectName: "StackView"
@@ -160,7 +260,7 @@ Rectangle {
             function transitionFinished(properties)
             {
                 properties.exitItem.opacity = 1
-                properties.enterItem.actualizeButton();
+                properties.enterItem.updateUI();
             }
 
             property Component pushTransition: StackViewTransition {
@@ -256,6 +356,8 @@ Rectangle {
                             // выключаем кнопку назад и вперед
                             buttonBack.enabled = false;
                             buttonNext.enabled = false;
+                            // мы в самом начале, индекс скидываем
+                            treeView.currentIndex = 0;
                         }
                         else
                         {

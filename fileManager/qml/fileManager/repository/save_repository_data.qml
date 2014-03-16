@@ -45,7 +45,7 @@ Rectangle {
 
     }
 
-    function actualizeButton()
+    function updateUI()
     {
         buttonNext.text = "Next >"
 
@@ -56,6 +56,8 @@ Rectangle {
         key = nameRepository.nameOption.substring(0, nameRepository.nameOption.length - 1);
         value = addRepository.getOptions(key);
         nameRepository.valueOption = value;
+
+        treeView.currentIndex = 2;
     }
 
     function checkInput(errorMessage)
@@ -126,6 +128,7 @@ Rectangle {
             text: "Where do you want save to put and what name to give this repository?"
             font {
                 pixelSize: 14
+//                family: "DejaVu Sans Mono"
             }
             wrapMode: Text.WordWrap
         }

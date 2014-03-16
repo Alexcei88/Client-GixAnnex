@@ -28,7 +28,7 @@ Rectangle {
 
     }
 
-    function actualizeButton()
+    function updateUI()
     {
         buttonNext.text = "Add"
 
@@ -45,6 +45,7 @@ Rectangle {
             var value = addRepository.getOptions(key);
             modelReviewData.get(k)._valueOption = value;
         }
+        treeView.currentIndex = 3;
     }
     ListModel {
         id: modelReviewData
