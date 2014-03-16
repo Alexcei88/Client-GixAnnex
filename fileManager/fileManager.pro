@@ -53,7 +53,13 @@ SOURCES += main.cpp \
     analyze_execute_command/analyzeexecutecommandinit.cpp \
     analyze_execute_command/analyzeexecutecommandchangedirectmode.cpp \
     MVC/Controller/controllerpreferencesapp.cpp \
-    MVC/Model/model_preferencesapp.cpp
+    MVC/Model/model_preferencesapp.cpp \
+    MVC/Controller/controlleraddrepository.cpp \
+    MVC/Model/AddRepository/imodel_addrepository.cpp \
+    MVC/Model/AddRepository/model_addrepository_remoteserver.cpp \
+    qml/components/validatorfilesystem.cpp \
+    MVC/Model/AddRepository/model_addrepository_other.cpp \
+    qml/components/treemodel.cpp
 
 # Installation path
 # target.path =
@@ -67,6 +73,9 @@ OTHER_FILES += \
     qml/fileManager/DirectoryView.qml \
     qml/fileManager/propertyFile/PropertyFile.qml \
     qml/fileManager/repository/Clone.qml \
+    qml/fileManager/repository/PropertyInputValue.qml \
+    qml/fileManager/repository/wait_clone.qml \
+    qml/fileManager/repository/ReviewData.qml
 
 QMAKE_LIBDIR += $$_PRO_FILE_PWD_/iniparser/
 
@@ -114,7 +123,13 @@ HEADERS += \
     analyze_execute_command/analyzeexecutecommandinit.h \
     analyze_execute_command/analyzeexecutecommandchangedirectmode.h \
     MVC/Controller/controllerpreferencesapp.h \
-    MVC/Model/model_preferencesapp.h
+    MVC/Model/model_preferencesapp.h \
+    MVC/Controller/controlleraddrepository.h \
+    MVC/Model/AddRepository/imodel_addrepository.h \
+    MVC/Model/AddRepository/model_addrepository_remoteserver.h \
+    qml/components/validatorfilesystem.h \
+    MVC/Model/AddRepository/model_addrepository_other.h \
+    qml/components/treemodel.h
 
 # Включаем поддержку С++11
 QMAKE_CXXFLAGS += -std=c++0x

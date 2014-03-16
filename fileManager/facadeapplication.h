@@ -22,11 +22,12 @@
 
 // our stuff
 #include "systemtray.h"
+#include "threadmodel.h"
+// model stuff
 #include "MVC/Model/model_repository.h"
 #include "MVC/Model/model_icons.h"
 #include "MVC/Model/model_preferencesapp.h"
-#include "threadmodel.h"
-
+#include "MVC/Model/AddRepository/imodel_addrepository.h"
 class IRepository;
 
 class FacadeApplication: public QObject
@@ -66,6 +67,7 @@ public:
     friend class GANN_MVC::ModelQmlAndCRepository;
     friend class GANN_MVC::ModelQmlAndCIcons;
     friend class GANN_MVC::ModelQmlAndCPreferencesApp;
+    friend class GANN_MVC::IModelQmlAndCAddRepository;
 
 private:
     FacadeApplication();
@@ -96,7 +98,7 @@ private:
     void                WatchRepository(IRepository *repository, const bool start = true) const;
 
     /** @brief начать клонирование репозитория */
-    GANN_DEFINE::RESULT_EXEC_PROCESS StartCloneRepository(QString& localURL, const QString& remoteURL, const QString& nameRepo);
+    GANN_DEFINE::RESULT_EXEC_PROCESS StartCloneRepository(const QString& localURL, const QString& remoteURL, const QString& nameRepo);
 
     /** @brief Сменить итератор, указывающий на текущий репозиторий */
     void                ChangeCurrentRepository(const QString &dir);

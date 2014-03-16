@@ -11,8 +11,14 @@
         <file alias="synced.png">resource/images/ok.png</file>
         <file alias="syncing.png">resource/images/sync.png</file>
         <file alias="repo_off.png">resource/images/repository_off.png</file>
+        <file alias="images/lineedit_bg_error.png">resource/images/lineedit-bg-error.png</file>
+        <file alias="node_closed.png">resource/images/node_closed.png</file>
+        <file alias="node_opened.png">resource/images/node_opened.png</file>
     </qresource>
     <qresource prefix="/config">
         <file alias="config_repo">ganx-repository.xml</file>
+        <file alias="config_list_repository_cloud">resource/ganx-list_type_cloud_repositories.xml</file>
+        <file alias="config_list_repository_local">resource/ganx-list_type_local_repositories.xml</file>
+        <file alias="config_list_repository_common">resource/ganx-list_type_common.xml</file>
     </qresource>
 </RCC>

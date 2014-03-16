@@ -22,7 +22,6 @@ void ParsingCommandClone::ParsingData()
 {
     if(!commandStart && commandEnd && !dataStdOut.empty())
     {
-        std::cout<<"Parsing Command"<<std::endl;
         // выполняем парсинг
         // 1. проверка, есть ли ошибки
         regExp.setPattern(listRegExpPossible[1]);
@@ -42,12 +41,11 @@ void ParsingCommandClone::ParsingData()
                     const QString str = dataStdOut[j];
                     if(regExp.indexIn(str) != -1)
                     {
-//                        dataAfterParsing<<regExp.cap(1)<<regExp.cap(2);
                         errorString += regExp.cap(1);
                         errorString += regExp.cap(2);
                     }
                 }
-                analizeCommandClone->ErrorFolderToClone(errorString);
+                analizeCommandClone->WasErrorToClone(errorString);
                 wasErrorCommand = true;
                 return;
             }

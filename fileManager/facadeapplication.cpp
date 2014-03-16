@@ -2,10 +2,13 @@
 #include "MVC/Controller/controller_repository.h"
 #include "MVC/Controller/controller_icons.h"
 #include "MVC/Controller/controllerpreferencesapp.h"
+#include "MVC/Controller/controlleraddrepository.h"
 #include "repository/trepository.h"
 #include "resourcegenerator.h"
-#include <qml/components/message_box//qmlmessage.h>
-#include <qml/components/folder_model/folderlistmodel.h>
+#include "qml/components/message_box//qmlmessage.h"
+#include "qml/components/folder_model/folderlistmodel.h"
+#include "qml/components/treemodel.h"
+#include "qml/components/validatorfilesystem.h"
 
 // Qt Stuff
 #include <QQmlEngine>
@@ -379,17 +382,19 @@ void FacadeApplication::WatchRepository(IRepository* repository, const bool star
     start ? repository->StartWatchRepository() : repository->StopWatchRepository();
 }
 //----------------------------------------------------------------------------------------/
-GANN_DEFINE::RESULT_EXEC_PROCESS FacadeApplication::StartCloneRepository(QString &localURL, const QString &remoteURL, const QString &nameRepo)
+GANN_DEFINE::RESULT_EXEC_PROCESS FacadeApplication::StartCloneRepository(const QString &localURL, const QString &remoteURL, const QString &nameRepo)
 {
     QDir dir;
     dir.setPath(localURL);
     if(!dir.exists())
     {
         // директория, куда будем копировать, не существует.
+        systemTray->ResultAddRepository("Destinition URL not exist");
         return DIRECTORY_NOT_EXIST;
     }
     TRepository *newRepo = new TRepository;
-    RESULT_EXEC_PROCESS result = newRepo->CloneRepository(localURL, nameRepo, remoteURL);
+    QString localUrl = localURL;
+    RESULT_EXEC_PROCESS result = newRepo->CloneRepository(localUrl, nameRepo, remoteURL);
 
     tempRepo.reset(newRepo);
     return result;
@@ -404,6 +409,9 @@ void FacadeApplication::EndCloneRepository(const bool& successfully, const QStri
     }
     else
     {
+        // сообщаем пользователю, что клонирование завершилось
+        if(systemTray)
+            systemTray->ResultAddRepository(information);
         // сбрасываем репозиторий, больше он нам не нужен
         tempRepo.reset();
     }
@@ -421,7 +429,10 @@ void FacadeApplication::InitNewRepository()
     repository[tempRepo->GetLocalURL()] = std::move(tempRepo);
 
     systemTray->ReLoadListRepository();
-    systemTray->CancelCloneRepository();
+
+    // сообщаем пользователю, что клонирование завершилось
+    if(systemTray)
+        systemTray->ResultAddRepository("Addition new repository executed successfully");
 }
 //----------------------------------------------------------------------------------------/
 void FacadeApplication::ChangeCurrentRepository(const QString& dir)
@@ -522,5 +533,8 @@ void FacadeApplication::InitClassCAndQML()
     qmlRegisterType<QMLMessage>("Message", 1, 0, "MessageBox");
     qmlRegisterType<QMLFolderListModel>("FolderListModel", 1, 0, "NewFolderListModel");
     qmlRegisterType<GANN_MVC::ControllerPreferencesApp>("Preferences", 1, 0, "PreferencesApp");
+    qmlRegisterType<GANN_MVC::ControllerAddRepository>("Repository", 1, 0, "ControllerAddRepository");
+    qmlRegisterType<ValidatorFileSystem>("Validator", 1, 0, "FileSystemValidator");
+    qmlRegisterType<TreeModel>("TreeModel", 1, 0 , "TreeModel");
 }
 //----------------------------------------------------------------------------------------/

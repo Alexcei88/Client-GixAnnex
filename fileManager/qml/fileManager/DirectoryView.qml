@@ -237,7 +237,6 @@ FocusScope{
                     focusScope.focus = true;
                     // сигнал до конца не обработали, прокидываем по иерархии дальше
                     mouse.accepted = false;
-
                 }
             }
             delegate: Item
@@ -256,9 +255,7 @@ FocusScope{
                     spacing: 8
                     width: view.cellWidth
 
-                    Image
-                    {
-
+                    Image  {
                         id: imgFolder
                         source: getResourceImage(curFileName);
                         anchors.horizontalCenter: parent.horizontalCenter
@@ -273,8 +270,7 @@ FocusScope{
                             cache: true
                         }
 
-                        Colorize
-                        {
+                        Colorize {
                             id: colorEffect
                             anchors.fill: imgFolder
                             source: imgFolder
