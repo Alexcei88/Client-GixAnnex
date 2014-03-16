@@ -42,6 +42,7 @@ Rectangle {
             var value = addRepository.getOptions(key);
             column.children[i].valueOption = value;
         }
+        treeView.currentIndex = 1;
     }
 
     function checkInput(errorString)

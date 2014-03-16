@@ -109,8 +109,8 @@ Rectangle {
         ListView {
             id: treeView
             anchors.fill: parent
-            anchors.topMargin: 2
-            anchors.leftMargin: 2
+            anchors.leftMargin: 10
+            anchors.topMargin: 10
             model: pageModel
             spacing: 5
             delegate: treeDelegate
@@ -119,13 +119,15 @@ Rectangle {
 
             Item {
                 id: markNode
-                anchors.left: parent.left
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.horizontalCenterOffset: -parent.width/3
                 x: treeView.currentItem.x
                 y: treeView.currentItem.y
                 width: imageMarkNode.implicitWidth
 
                 Image {
                     id: imageMarkNode
+                    anchors.left: parent.left
                     source: "qrc:/node_closed.png"
                     MouseArea {
                         anchors.fill: parent
@@ -152,8 +154,7 @@ Rectangle {
                         //Начиная с 6 уровня вложенности не сдвигаем потомков,
                         //так как иначе можно получить очень широкое окно
                         width: (level> 5 ? 6: level)* 32 + 5
-                        anchors.left: parent.left
-                        anchors.leftMargin: markNode.width
+                        x: markNode.x + markNode.width + 4
                     }
                     //Область для открытия/закрытия потомков.
                     //На листьях не виден
@@ -384,7 +385,6 @@ Rectangle {
         errorString.val = "";
         return true;
     }
-
 }
 
 

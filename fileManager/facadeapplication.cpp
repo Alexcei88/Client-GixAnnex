@@ -29,7 +29,6 @@ FacadeApplication::FacadeApplication() :
 {
     // разрешаем выполнять задачу git-annex только в одном потоке
     // больше 1 процесса git-annex создать все равно не даст
-#if 0
     QThreadPool::globalInstance()->setMaxThreadCount(1);
 
     // загружаем из конфигов существующие репозитории
@@ -41,7 +40,6 @@ FacadeApplication::FacadeApplication() :
     // запускаем демон за просмотром директорий с репозиториями
     WatchRepositories();
 
-#endif
     // инициализируем связь C и QML
     InitClassCAndQML();
 
