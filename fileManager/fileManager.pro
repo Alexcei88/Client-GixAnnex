@@ -54,9 +54,15 @@ SOURCES += main.cpp \
     analyze_execute_command/analyzeexecutecommandchangedirectmode.cpp \
     MVC/Controller/controllerpreferencesapp.cpp \
     MVC/Model/model_preferencesapp.cpp \
+    MVC/Controller/controlleraddrepository.cpp \
+    MVC/Model/AddRepository/imodel_addrepository.cpp \
+    MVC/Model/AddRepository/model_addrepository_remoteserver.cpp \
+    qml/components/validatorfilesystem.cpp \
+    MVC/Model/AddRepository/model_addrepository_other.cpp \
+    qml/components/treemodel.cpp
     analyze_execute_command/analyzeexecutecommandcopy.cpp \
     parsing_command_out/parsingcommandcopy.cpp \
-    shell/facade_shellcommand.cpp
+    shell/facade_shellcommand.cpp    
 
 # Installation path
 # target.path =
@@ -71,6 +77,9 @@ OTHER_FILES += \
     qml/fileManager/propertyFile/PropertyFile.qml \
     qml/fileManager/repository/Clone.qml \
     qml/fileManager/repository/wait_finish_command.qml
+    qml/fileManager/repository/PropertyInputValue.qml \
+    qml/fileManager/repository/wait_clone.qml \
+    qml/fileManager/repository/ReviewData.qml
 
 QMAKE_LIBDIR += $$_PRO_FILE_PWD_/iniparser/
 
@@ -122,6 +131,12 @@ HEADERS += \
     analyze_execute_command/analyzeexecutecommandcopy.h \
     parsing_command_out/parsingcommandcopy.h \
     shell/facade_shellcommand.h
+    MVC/Controller/controlleraddrepository.h \
+    MVC/Model/AddRepository/imodel_addrepository.h \
+    MVC/Model/AddRepository/model_addrepository_remoteserver.h \
+    qml/components/validatorfilesystem.h \
+    MVC/Model/AddRepository/model_addrepository_other.h \
+    qml/components/treemodel.h
 
 # Включаем поддержку С++11
 QMAKE_CXXFLAGS += -std=c++0x

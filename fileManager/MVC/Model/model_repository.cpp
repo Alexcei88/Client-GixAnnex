@@ -102,7 +102,7 @@ GANN_DEFINE::RESULT_EXEC_PROCESS ModelQmlAndCRepository::CloneRepository(const Q
 //----------------------------------------------------------------------------------------/
 void ModelQmlAndCRepository::CancelCloneRepository(const bool breakCommand) const
 {
-    FacadeApplication::instance->systemTray->CancelCloneRepository();
+  //  FacadeApplication::instance->systemTray->CancelCloneRepository();
 }
 //----------------------------------------------------------------------------------------/
 GANN_DEFINE::RESULT_EXEC_PROCESS ModelQmlAndCRepository::GetContentDirectory(const QString& dir) const

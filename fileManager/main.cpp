@@ -51,14 +51,15 @@ int main(int argc, char *argv[])
 
     // viewer копирования репозитория
     QtQuick2ApplicationViewer cloneRepoViewer;
-    cloneRepoViewer.setMainQmlFile(QStringLiteral("qml/fileManager/repository/Clone.qml"));
-    cloneRepoViewer.setMinimumHeight(170);
-    cloneRepoViewer.setMinimumWidth(540);
+    cloneRepoViewer.setMainQmlFile(QStringLiteral("qml/fileManager/repository/CloneRepositoryWizard.qml"));
+    cloneRepoViewer.setMinimumHeight(500);
+    cloneRepoViewer.setMinimumWidth(640);
     cloneRepoViewer.setMaximumHeight(cloneRepoViewer.minimumHeight());
     cloneRepoViewer.setMaximumWidth(cloneRepoViewer.minimumWidth());
-    cloneRepoViewer.setX(600);
-    cloneRepoViewer.setY(300);    
-    cloneRepoViewer.setTitle("Git-Annex Clone Repository");
+    cloneRepoViewer.setX(300);
+    cloneRepoViewer.setY(300);
+    cloneRepoViewer.setTitle("Git-Annex Add Repository");
+//    cloneRepoViewer.show();
 
     // свойства приложения
     QtQuick2ApplicationViewer preferencesAppViewer;
@@ -72,13 +73,17 @@ int main(int argc, char *argv[])
     preferencesAppViewer.setModality(Qt::ApplicationModal);
 //    preferencesAppViewer.setModality(Qt::WindowModality);
     preferencesAppViewer.setTitle("Preferences Git-Annex");
+<<<<<<< HEAD
     //preferencesAppViewer.show();
+=======
+//    preferencesAppViewer.show();
+>>>>>>> refs/remotes/origin/master
     //=========================================================================== /
 
     // создаем классы трея и передаем нужные для управления viewer-ы
     SystemTray windowTray;
     windowTray.SetMainView(&mainViewer);
-    windowTray.SetCloneRepoView(&cloneRepoViewer);
+    windowTray.SetAddRepoView(&cloneRepoViewer);
     windowTray.SetPreferencesApplicationView(&preferencesAppViewer);
     facadeApp->SetSystemTray(&windowTray);
 

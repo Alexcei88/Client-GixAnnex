@@ -6,17 +6,12 @@
 //----------------------------------------------------------------------------------------/
 SystemTray::SystemTray():
     mainView(nullptr)
-  , cloneRepoView(nullptr)
+  , addRepoView(nullptr)
   , preferencesAppRepoView(nullptr)
 {
     //=================================================================================== /
-    addRepoAction   = new QAction(tr("&New repository"), this);
-
-    cloneRepoAction = new QAction(tr("&Clone Repository"), this);
-    connect(cloneRepoAction, SIGNAL(triggered()), this, SLOT(CloneRepository()));
-
-    cloneRepoAction = new QAction(tr("&Clone Repository"), this);
-    connect(cloneRepoAction, SIGNAL(triggered()), this, SLOT(CloneRepository()));
+    addRepoAction = new QAction(tr("&Add Repository"), this);
+    connect(addRepoAction, SIGNAL(triggered()), this, SLOT(ShowAddRepository()));
 
     preferencesAction = new QAction(tr("&Preferences"), this);
     connect(preferencesAction, SIGNAL(triggered()), this, SLOT(PreferencesApplication()));
@@ -27,7 +22,6 @@ SystemTray::SystemTray():
     //=================================================================================== /
     trayIconMenu    = new QMenu(this);
     trayIconMenu->addAction(addRepoAction);
-    trayIconMenu->addAction(cloneRepoAction);
     trayIconMenu->addAction(preferencesAction);
     trayIconMenu->addSeparator();
     trayIconMenu->addAction(quitAction);
@@ -58,10 +52,12 @@ void SystemTray::ActivateTray(QSystemTrayIcon::ActivationReason reason)
     }
 }
 //----------------------------------------------------------------------------------------/
-void SystemTray::CloneRepository()
+void SystemTray::ShowAddRepository()
 {
-    if(cloneRepoView)
-        cloneRepoView->show();
+    if(addRepoView)
+    {
+        addRepoView->show();
+    }
 }
 //----------------------------------------------------------------------------------------/
 void SystemTray::PreferencesApplication()
@@ -72,16 +68,16 @@ void SystemTray::PreferencesApplication()
 //----------------------------------------------------------------------------------------/
 void SystemTray::QuitProgramm()
 {
-    cloneRepoView = nullptr;
+    addRepoView = nullptr;
     mainView = nullptr;
     preferencesAppRepoView = nullptr;
     qApp->quit();
 }
 //----------------------------------------------------------------------------------------/
-void SystemTray::CancelCloneRepository() const
+void SystemTray::CloseAddRepository() const
 {
-    if(cloneRepoView)
-        cloneRepoView->hide();
+    if(addRepoView)
+        addRepoView->hide();
 }
 //----------------------------------------------------------------------------------------/
 void SystemTray::ClosePreferencesApplication() const
@@ -108,6 +104,16 @@ bool SystemTray::OnUpdateIconsSyncronization() const
         QObjectList parent = mainView->rootObject()->children();
         QList<QObject*> object = parent[1]->findChildren<QObject*>(QString("directoryView"));
         return QMetaObject::invokeMethod(object[0], "updateIconsStateFileSync", Qt::BlockingQueuedConnection);
+    }
+    return false;
+}
+//----------------------------------------------------------------------------------------/
+bool SystemTray::ResultAddRepository(const QString& text) const
+{
+    if(addRepoView && addRepoView->isVisible())
+    {
+        QObjectList parent = addRepoView->rootObject()->findChildren<QObject*>("StackView");
+        return QMetaObject::invokeMethod(parent[0], "resultClone", Q_ARG(QVariant, text));
     }
     return false;
 }

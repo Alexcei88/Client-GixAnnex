@@ -84,7 +84,7 @@ public:
     static bool         DirContainsFile(const QString& dir, const QString& file);
 
     // атомарный флаг для потоков, выполняющий команды во threadPool
-    static std::atomic_flag* atomicFlagExecuteCommand;
+    static std::unique_ptr<std::atomic_flag> atomicFlagExecuteCommand;
 
     /** @brief Возвращает константный указатель на класс репозитория, с которым фасад работает */
     inline const IRepository* GetRepository() { return repository; }
