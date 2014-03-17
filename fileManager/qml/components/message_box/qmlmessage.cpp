@@ -20,11 +20,15 @@ void QMLMessage::showErrorMessage(QVariant title, QVariant text) const
 //----------------------------------------------------------------------------------------/
 QVariant QMLMessage::showConfirmMessage(QVariant title, QVariant text) const
 {
-    if(QMessageBox::question(box, title.toString(), text.toString()) == QMessageBox::Yes){
+    if(QMessageBox::question(box, title.toString(), text.toString()) == QMessageBox::Yes)
         return 1;
-    }
-    else {
+    else
         return 0;
-    }
+}
+//----------------------------------------------------------------------------------------/
+QVariant QMLMessage::showWarningMessage(QVariant title, QVariant text) const
+{
+    int result = QMessageBox::warning(box, title.toString(), text.toString(), QMessageBox::Ok, QMessageBox::Cancel);
+    return result == QMessageBox::Ok;
 }
 //----------------------------------------------------------------------------------------/

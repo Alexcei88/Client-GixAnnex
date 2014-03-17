@@ -2,7 +2,6 @@
 
 #include <QVariantList>
 
-#include <boost/shared_ptr.hpp>
 #include <map>
 #include "../define.h"
 #include "../repository/irepository.h"
@@ -24,8 +23,11 @@ public:
     /** @brief Удаление репозитория */
     void                DeleteRepository(const QString &path) const;
 
-    /** @brief включает/выключает синхронизацию репозитория */
-    void                SetEnableRepository(bool enable) const;
+    /** @brief включает/выключает синхронизацию текущего репозитория */
+    void                SetEnableRepository(bool enable);
+
+    /** @brief есть ли команды у текущего репозитория */
+    bool                IsExecuteCommandForCurrentRepository() const;
 
     /** @brief Клонировать репозиторий */
     GANN_DEFINE::RESULT_EXEC_PROCESS CloneRepository(const QString& localUlr, const QString& remoteURL, const QString& nameRepo);
@@ -68,7 +70,15 @@ public:
 private:
     // в качестве служебных целей
     QFileInfo           fileInfo;
+    // текущее соединение с классом выполнения команд
+    mutable QMetaObject::Connection connectionFacadeShellCommand;
+    // состояние, в которое перейдет репозиторий по истечении выполнения команды
+    bool                willEnableRepository;
 
+
+private slots:
+    /** @brief изменяет режим синхронизации текущего репозитория */
+    void                ChangeEnabledRepository(const bool enable, const bool hideWaitWindow = false) const;
 };
 
 }

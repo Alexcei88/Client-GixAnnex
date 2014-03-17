@@ -5,6 +5,7 @@
 #include "analizediraction.h"
 #include "analyzeexecutecommandget.h"
 #include "analyzeexecutecommanddrop.h"
+#include "../shell/facade_shellcommand.h"
 
 // std stuff
 #include <iostream>
@@ -50,6 +51,8 @@ void FacadeAnalyzeCommand::ResetCurrentExecuteCommand()
     Q_UNUSED(flag);
 
     currentAnalyzeExecuteCommand = nullptr;
+    // запускаем следующую команду, если она там есть
+    FacadeShellCommand::TryStartNextCommand();
 }
 //----------------------------------------------------------------------------------------/
 void FacadeAnalyzeCommand::EndCloneRepository(const bool& successfully, const QString& information) const
@@ -76,8 +79,8 @@ void FacadeAnalyzeCommand::RemoveGetContentFileQueue(AnalyzeExecuteCommandGet *c
     Q_UNUSED(flag);
 
     auto it = std::find(listCommandGet.begin(), listCommandGet.end(), commandGet);
-    assert(it != listCommandGet.end());
-    listCommandGet.erase(it);
+    if(it != listCommandGet.end())
+        listCommandGet.erase(it);
 }
 //----------------------------------------------------------------------------------------/
 bool FacadeAnalyzeCommand::IsGettingContentFileDir(const QString& file) const
@@ -115,8 +118,8 @@ void FacadeAnalyzeCommand::RemoveDropContentFileQueue(AnalyzeExecuteCommandDrop 
     Q_UNUSED(flag);
 
     auto it = std::find(listCommandDrop.begin(), listCommandDrop.end(), commandDrop);
-    assert(it != listCommandDrop.end());
-    listCommandDrop.erase(it);
+    if(it != listCommandDrop.end())
+        listCommandDrop.erase(it);
 }
 //----------------------------------------------------------------------------------------/
 bool FacadeAnalyzeCommand::IsDroppingContentFileDir(const QString& file) const

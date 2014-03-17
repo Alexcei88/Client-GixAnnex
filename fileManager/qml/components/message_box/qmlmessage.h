@@ -17,6 +17,10 @@ public:
         2 кнопки - Yes No
     */
     Q_INVOKABLE QVariant showConfirmMessage(QVariant title, QVariant text) const;
+
+    /** @brief Сообщения для предупреждения */
+    Q_INVOKABLE QVariant showWarningMessage(QVariant title, QVariant text) const;
+
 private:
     QMessageBox*    box;
 };

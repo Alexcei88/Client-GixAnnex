@@ -99,7 +99,7 @@ bool SystemTray::ReLoadListRepository() const
 //----------------------------------------------------------------------------------------/
 bool SystemTray::OnUpdateIconsSyncronization() const
 {
-    if(mainView)
+    if(mainView && mainView->isVisible())
     {
         QObjectList parent = mainView->rootObject()->children();
         QList<QObject*> object = parent[1]->findChildren<QObject*>(QString("directoryView"));

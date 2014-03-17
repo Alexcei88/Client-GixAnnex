@@ -1,6 +1,7 @@
 #include "analyzeexecutecommandget.h"
 #include "analizediraction.h"
 #include "facadeanalyzecommand.h"
+#include "facadeapplication.h"
 #include "utils/utils.h"
 
 // boost stuff
@@ -19,6 +20,16 @@ AnalyzeExecuteCommandGet::AnalyzeExecuteCommandGet(FacadeAnalyzeCommand &facadeA
 {
     gettingContentFileQueue = boost::make_shared<AnalizeDirOnActionPrivate>();
     lastGettingContentFiles.clear();
+
+    FacadeApplication::getInstance()->IncreaseCountCommandThreadSyncIcons();
+    FacadeApplication::getInstance()->ReleaseThreadSyncIcons();
+}
+//----------------------------------------------------------------------------------------/
+AnalyzeExecuteCommandGet::~AnalyzeExecuteCommandGet()
+{
+    // удаляем из очереди команду, если она еще не была удалена
+    facadeAnalyzeCommand.RemoveGetContentFileQueue(this);
+    FacadeApplication::getInstance()->DecreaseCountCommandThreadSyncIcons();
 }
 //----------------------------------------------------------------------------------------/
 void AnalyzeExecuteCommandGet::StartExecuteCommand()
@@ -34,7 +45,7 @@ void AnalyzeExecuteCommandGet::StartExecuteCommand()
 //----------------------------------------------------------------------------------------/
 void AnalyzeExecuteCommandGet::EndExecuteCommand(const bool wasExecute)
 {
-    AnalyzeExecuteCommand::EndExecuteCommand(wasExecute);   
+    AnalyzeExecuteCommand::EndExecuteCommand(wasExecute);
     // сообщаем фасаду, что команда выполнена
     facadeAnalyzeCommand.RemoveGetContentFileQueue(this);
 

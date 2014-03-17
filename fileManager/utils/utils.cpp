@@ -3,7 +3,7 @@
 using namespace Utils;
 
 //----------------------------------------------------------------------------------------/
-void LZDelay(const uint64t &time)
+void Utils::LZDelay(const uint64t& time)
 {
 #if 1
     usleep(time);

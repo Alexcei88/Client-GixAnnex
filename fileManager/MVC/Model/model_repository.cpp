@@ -1,5 +1,6 @@
 #include "model_repository.h"
 #include "../facadeapplication.h"
+#include "../shell/facade_shellcommand.h"
 
 using namespace GANN_MVC;
 using namespace GANN_DEFINE;
@@ -48,21 +49,48 @@ void ModelQmlAndCRepository::DeleteRepository(const QString& path) const
     }
 }
 //----------------------------------------------------------------------------------------/
-void ModelQmlAndCRepository::SetEnableRepository(bool enable) const
-{
+void ModelQmlAndCRepository::SetEnableRepository(bool enable)
+{          
     auto iterRepo = FacadeApplication::instance->currentRepository;
     if(iterRepo != FacadeApplication::instance->repository.end())
     {
         IRepository* curRepo = iterRepo->second.get();
-        enable ? curRepo->SetState(IRepository::Synced) : curRepo->SetState(IRepository::Disable_sincing);
-        // пересохраняем настройки конфиг-файла
-        FacadeApplication::instance->SaveOptionsRepository(iterRepo->second.get()->GetLocalURL());
-        // перезагружаем представление
-        FacadeApplication::instance->systemTray->ReLoadListRepository();
+        // чистим список команд для вкл/выкл репозитория
+        FacadeShellCommand::ClearCommandForRepository(curRepo);
+        if(FacadeShellCommand::IsExecuteCommandForRepository(curRepo))
+        {
+            assert("У включаемого репозитория не должно быть в очереди команд" && enable == false);
+
+            // фиксируем, что репозиторий будет выключен
+            willEnableRepository = enable;
+            connectionFacadeShellCommand = QObject::connect(FacadeShellCommand::GetInstance(), &FacadeShellCommand::FinishWaitCommand, [&]()
+            {
+                // меняем по истечению времени
+                this->ChangeEnabledRepository(willEnableRepository);
+            });
+        }
+        else
+        {
+            // сразу же меняем
+            ChangeEnabledRepository(enable);
+        }
     }
     else{
         assert("CurrentRepo is NULL" && false);
     }
+}
+//----------------------------------------------------------------------------------------/
+bool ModelQmlAndCRepository::IsExecuteCommandForCurrentRepository() const
+{
+    auto iterRepo = FacadeApplication::instance->currentRepository;
+    if(iterRepo != FacadeApplication::instance->repository.end()) {
+        IRepository* curRepo = iterRepo->second.get();
+        return FacadeShellCommand::IsExecuteCommandForRepository(curRepo);
+    }
+    else{
+        assert("CurrentRepo is NULL" && false);
+    }
+
 }
 //----------------------------------------------------------------------------------------/
 GANN_DEFINE::RESULT_EXEC_PROCESS ModelQmlAndCRepository::CloneRepository(const QString& localURL, const QString& remoteURL, const QString& nameRepo)
@@ -207,4 +235,29 @@ const QString ModelQmlAndCRepository::GetFullPathFileConfigRepositories() const
     return fullPath;
 }
 //----------------------------------------------------------------------------------------/
+void ModelQmlAndCRepository::ChangeEnabledRepository(const bool enable, const bool hideWaitWindow) const
+{
+    auto iterRepo = FacadeApplication::instance->currentRepository;
+    if(iterRepo != FacadeApplication::instance->repository.end())
+    {
+        IRepository* curRepo = iterRepo->second.get();
+        enable ? curRepo->SetState(IRepository::Synced) : curRepo->SetState(IRepository::Disable_sincing);
+        // пересохраняем настройки конфиг-файла
+        FacadeApplication::instance->SaveOptionsRepository(iterRepo->second.get()->GetLocalURL());
+        // перезагружаем представление
+        FacadeApplication::instance->systemTray->ReLoadListRepository();
+        // даем команду обновить состояние иконок
+        FacadeApplication::instance->ReleaseThreadSyncIcons();
 
+        if(hideWaitWindow)
+        {
+            // нужно еще скрыть окно
+        }
+        QObject::disconnect(connectionFacadeShellCommand);
+
+    }
+    else{
+        assert("CurrentRepo is NULL" && false);
+    }
+}
+//----------------------------------------------------------------------------------------/

@@ -3,8 +3,6 @@ import QtQuick.Controls 1.0
 import QtQuick.Window 2.0
 import QtQuick.Layouts 1.0
 import Qt.labs.folderlistmodel 1.0
-// окно с отображением контента
-import "getContent"
 
 Rectangle
 {
@@ -74,7 +72,7 @@ Rectangle
                     // фильтр вывода файлов(директории к сож нет)
                     FilterBox
                     {
-                        id: filterDir;
+                        id: filterDir
                         onFilterChanges: {
                             toolBar.folderModel.nameFilters = textFilter.toString() + "*";
                             toolBar.folderView.currentIndex = -1;

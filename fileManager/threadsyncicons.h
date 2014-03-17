@@ -1,5 +1,6 @@
 #ifndef THREADSYNCICONS_H
 #define THREADSYNCICONS_H
+
 #include <QObject>
 
 namespace GANN_MVC {
