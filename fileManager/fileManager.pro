@@ -59,10 +59,10 @@ SOURCES += main.cpp \
     MVC/Model/AddRepository/model_addrepository_remoteserver.cpp \
     qml/components/validatorfilesystem.cpp \
     MVC/Model/AddRepository/model_addrepository_other.cpp \
-    qml/components/treemodel.cpp
+    qml/components/treemodel.cpp \
     analyze_execute_command/analyzeexecutecommandcopy.cpp \
     parsing_command_out/parsingcommandcopy.cpp \
-    shell/facade_shellcommand.cpp    
+    shell/facade_shellcommand.cpp
 
 # Installation path
 # target.path =
@@ -76,7 +76,7 @@ OTHER_FILES += \
     qml/fileManager/DirectoryView.qml \
     qml/fileManager/propertyFile/PropertyFile.qml \
     qml/fileManager/repository/Clone.qml \
-    qml/fileManager/repository/wait_finish_command.qml
+    qml/fileManager/repository/wait_finish_command.qml \
     qml/fileManager/repository/PropertyInputValue.qml \
     qml/fileManager/repository/wait_clone.qml \
     qml/fileManager/repository/ReviewData.qml
@@ -130,7 +130,7 @@ HEADERS += \
     MVC/Model/model_preferencesapp.h \
     analyze_execute_command/analyzeexecutecommandcopy.h \
     parsing_command_out/parsingcommandcopy.h \
-    shell/facade_shellcommand.h
+    shell/facade_shellcommand.h \
     MVC/Controller/controlleraddrepository.h \
     MVC/Model/AddRepository/imodel_addrepository.h \
     MVC/Model/AddRepository/model_addrepository_remoteserver.h \

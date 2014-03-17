@@ -11,13 +11,10 @@
         <file alias="synced.png">resource/images/ok.png</file>
         <file alias="syncing.png">resource/images/sync.png</file>
         <file alias="repo_off.png">resource/images/repository_off.png</file>
-<<<<<<< HEAD
         <file alias="progressbar_wait_finish_command.gif">resource/images/progressBar_wait_finishcommand.gif</file>
-=======
         <file alias="images/lineedit_bg_error.png">resource/images/lineedit-bg-error.png</file>
         <file alias="node_closed.png">resource/images/node_closed.png</file>
         <file alias="node_opened.png">resource/images/node_opened.png</file>
->>>>>>> refs/remotes/origin/master
     </qresource>
     <qresource prefix="/config">
         <file alias="config_repo">ganx-repository.xml</file>
