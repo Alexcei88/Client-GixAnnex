@@ -40,8 +40,7 @@ RESULT_EXEC_PROCESS ShellCommand::InitRepositories(const QString& nameRepo, Faca
     boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandEmpty(analizeCommand));
     ShellTask* shellTask = new ShellTask(strCommand, localURL, receiverParsing);
     QThreadPool::globalInstance()->start(shellTask);
-    RESULT_EXEC_PROCESS codeError = receiverParsing->GetCodeError();
-    return codeError;
+    return NO_ERROR;
 }
 //----------------------------------------------------------------------------------------/
 void ShellCommand::SetWorkingDirectory(const QString& localURL)

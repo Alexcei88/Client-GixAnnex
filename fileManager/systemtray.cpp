@@ -55,7 +55,9 @@ void SystemTray::ActivateTray(QSystemTrayIcon::ActivationReason reason)
 void SystemTray::ShowAddRepository()
 {
     if(addRepoView)
+    {
         addRepoView->show();
+    }
 }
 //----------------------------------------------------------------------------------------/
 void SystemTray::PreferencesApplication()

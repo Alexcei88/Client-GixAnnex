@@ -80,6 +80,8 @@ FacadeApplication::~FacadeApplication()
 //    QThreadPool::globalInstance()->waitForDone();
 
     ResourceGenerator::RemoveInstance();
+
+
 }
 //----------------------------------------------------------------------------------------/
 IRepository* FacadeApplication::GetCurrentRepository() const

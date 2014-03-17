@@ -327,6 +327,7 @@ Rectangle {
                         if(message.showConfirmMessage("Warning", text))
                             addRepository.closeAddRepository();
                         }
+                        resetAddRepository();
                     }
                 }
                 anchors.verticalCenter: parent.verticalCenter
@@ -370,6 +371,13 @@ Rectangle {
                 }
             }
         } // end Row
+    }
+    // функция на проверку пустого значения в компонете PropertyValue
+    function resetAddRepository()
+    {
+       treeView.currentIndex = 0;
+       stackView.clear();
+
     }
     // функция на проверку пустого значения в компонете PropertyValue
     function checkForEmpty(field, errorString)

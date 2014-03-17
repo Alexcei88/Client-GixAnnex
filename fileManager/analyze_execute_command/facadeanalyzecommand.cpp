@@ -13,7 +13,8 @@
 using namespace AnalyzeCommand;
 using namespace Utils;
 
-std::atomic_flag* FacadeAnalyzeCommand::atomicFlagExecuteCommand = new std::atomic_flag(ATOMIC_FLAG_INIT);
+std::unique_ptr<std::atomic_flag> FacadeAnalyzeCommand::atomicFlagExecuteCommand =
+        std::unique_ptr<std::atomic_flag>(new std::atomic_flag(ATOMIC_FLAG_INIT));
 QFileInfo FacadeAnalyzeCommand::fileInfo;
 //----------------------------------------------------------------------------------------/
 FacadeAnalyzeCommand::FacadeAnalyzeCommand():
@@ -25,14 +26,11 @@ FacadeAnalyzeCommand::FacadeAnalyzeCommand(IRepository* repository):
 {}
 //----------------------------------------------------------------------------------------/
 FacadeAnalyzeCommand::~FacadeAnalyzeCommand()
-{
-    delete atomicFlagExecuteCommand;
-    atomicFlagExecuteCommand = 0l;
-}
+{}
 //----------------------------------------------------------------------------------------/
 void FacadeAnalyzeCommand::SetCurrentPathRepository(const QString& currentPath)
 {
-    AtomicLock flag(atomicFlagExecuteCommand);
+    AtomicLock flag(atomicFlagExecuteCommand.get());
     Q_UNUSED(flag);
 
     currentPathRepository.setPath(currentPath);
@@ -40,7 +38,7 @@ void FacadeAnalyzeCommand::SetCurrentPathRepository(const QString& currentPath)
 //----------------------------------------------------------------------------------------/
 void FacadeAnalyzeCommand::SetCurrentExecuteCommand(AnalyzeExecuteCommand* command)
 {
-    AtomicLock flag(atomicFlagExecuteCommand);
+    AtomicLock flag(atomicFlagExecuteCommand.get());
     Q_UNUSED(flag);
 
     currentAnalyzeExecuteCommand = command;
@@ -48,7 +46,7 @@ void FacadeAnalyzeCommand::SetCurrentExecuteCommand(AnalyzeExecuteCommand* comma
 //----------------------------------------------------------------------------------------/
 void FacadeAnalyzeCommand::ResetCurrentExecuteCommand()
 {
-    AtomicLock flag(atomicFlagExecuteCommand);
+    AtomicLock flag(atomicFlagExecuteCommand.get());
     Q_UNUSED(flag);
 
     currentAnalyzeExecuteCommand = nullptr;
@@ -66,7 +64,7 @@ void FacadeAnalyzeCommand::InitNewRepository() const
 //----------------------------------------------------------------------------------------/
 void FacadeAnalyzeCommand::AddGetContentFileQueue(AnalyzeExecuteCommandGet* commandGet)
 {
-    AtomicLock flag(atomicFlagExecuteCommand);
+    AtomicLock flag(atomicFlagExecuteCommand.get());
     Q_UNUSED(flag);
 
     listCommandGet.push_back(commandGet);
@@ -74,7 +72,7 @@ void FacadeAnalyzeCommand::AddGetContentFileQueue(AnalyzeExecuteCommandGet* comm
 //----------------------------------------------------------------------------------------/
 void FacadeAnalyzeCommand::RemoveGetContentFileQueue(AnalyzeExecuteCommandGet *commandGet)
 {
-    AtomicLock flag(atomicFlagExecuteCommand);
+    AtomicLock flag(atomicFlagExecuteCommand.get());
     Q_UNUSED(flag);
 
     auto it = std::find(listCommandGet.begin(), listCommandGet.end(), commandGet);
@@ -84,7 +82,7 @@ void FacadeAnalyzeCommand::RemoveGetContentFileQueue(AnalyzeExecuteCommandGet *c
 //----------------------------------------------------------------------------------------/
 bool FacadeAnalyzeCommand::IsGettingContentFileDir(const QString& file) const
 {
-    AtomicLock flag(atomicFlagExecuteCommand);
+    AtomicLock flag(atomicFlagExecuteCommand.get());
     Q_UNUSED(flag);
 
     for(AnalyzeExecuteCommandGet* command : listCommandGet)
@@ -97,7 +95,7 @@ bool FacadeAnalyzeCommand::IsGettingContentFileDir(const QString& file) const
 //----------------------------------------------------------------------------------------/
 bool FacadeAnalyzeCommand::IsErrorGettingContentFileDir(const QString& file) const
 {
-    AtomicLock flag(atomicFlagExecuteCommand);
+    AtomicLock flag(atomicFlagExecuteCommand.get());
     Q_UNUSED(flag);
 
     return AnalyzeExecuteCommandGet::IsErrorGettingContentFileDir(currentPathRepository.path(), file);
@@ -105,7 +103,7 @@ bool FacadeAnalyzeCommand::IsErrorGettingContentFileDir(const QString& file) con
 //----------------------------------------------------------------------------------------/
 void FacadeAnalyzeCommand::AddDropContentFileQueue(AnalyzeExecuteCommandDrop *commandDrop)
 {
-    AtomicLock flag(atomicFlagExecuteCommand);
+    AtomicLock flag(atomicFlagExecuteCommand.get());
     Q_UNUSED(flag);
 
     listCommandDrop.push_back(commandDrop);
@@ -113,7 +111,7 @@ void FacadeAnalyzeCommand::AddDropContentFileQueue(AnalyzeExecuteCommandDrop *co
 //----------------------------------------------------------------------------------------/
 void FacadeAnalyzeCommand::RemoveDropContentFileQueue(AnalyzeExecuteCommandDrop *commandDrop)
 {
-    AtomicLock flag(atomicFlagExecuteCommand);
+    AtomicLock flag(atomicFlagExecuteCommand.get());
     Q_UNUSED(flag);
 
     auto it = std::find(listCommandDrop.begin(), listCommandDrop.end(), commandDrop);
@@ -123,7 +121,7 @@ void FacadeAnalyzeCommand::RemoveDropContentFileQueue(AnalyzeExecuteCommandDrop 
 //----------------------------------------------------------------------------------------/
 bool FacadeAnalyzeCommand::IsDroppingContentFileDir(const QString& file) const
 {
-    AtomicLock flag(atomicFlagExecuteCommand);
+    AtomicLock flag(atomicFlagExecuteCommand.get());
     Q_UNUSED(flag);
 
     for(AnalyzeExecuteCommandDrop* command : listCommandDrop)
@@ -136,7 +134,7 @@ bool FacadeAnalyzeCommand::IsDroppingContentFileDir(const QString& file) const
 //----------------------------------------------------------------------------------------/
 bool FacadeAnalyzeCommand::IsErrorDroppingContentFileDir(const QString& file) const
 {
-    AtomicLock flag(atomicFlagExecuteCommand);
+    AtomicLock flag(atomicFlagExecuteCommand.get());
     Q_UNUSED(flag);
 
     return AnalyzeExecuteCommandDrop::IsErrorDroppingContentFileDir(currentPathRepository.path(), file);
