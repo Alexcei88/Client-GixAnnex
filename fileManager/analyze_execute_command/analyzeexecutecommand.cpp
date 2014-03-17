@@ -7,11 +7,10 @@ using namespace AnalyzeCommand;
 //----------------------------------------------------------------------------------------/
 AnalyzeExecuteCommand::AnalyzeExecuteCommand(FacadeAnalyzeCommand &facadeAnalyzeCommand):
     facadeAnalyzeCommand(facadeAnalyzeCommand)
-  , atomicFlagExecuteCommand(facadeAnalyzeCommand.atomicFlagExecuteCommand)
+  , atomicFlagExecuteCommand(facadeAnalyzeCommand.atomicFlagExecuteCommand.get())
   , startCommand(false)
   , endCommand(false)
-{
-}
+{}
 //----------------------------------------------------------------------------------------/
 AnalyzeExecuteCommand::AnalyzeExecuteCommand(FacadeAnalyzeCommand &facadeAnalyzeCommand, const QString& pathExecuteCommand):
     facadeAnalyzeCommand(facadeAnalyzeCommand)

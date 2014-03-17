@@ -1,6 +1,7 @@
 #include "irepository.h"
 #include "analyze_execute_command/facadeanalyzecommand.h"
 #include "utils/utils.h"
+#include "facadeapplication.h"
 
 // boost stuff
 #include <boost/make_shared.hpp>
@@ -67,6 +68,30 @@ RESULT_EXEC_PROCESS IRepository::StartWatchRepository()
     GetListDirectoriesOnDirectory(localURL, listPath);
     watcher.addPaths(listPath);
     return NO_ERROR;
+}
+//----------------------------------------------------------------------------------------/
+GANN_DEFINE::RESULT_EXEC_PROCESS IRepository::CopyFileToOtherRepository(const QString& file, const QString& nameRepository)
+{
+    shellCommand->SetWorkingDirectory(localURL);
+    RESULT_EXEC_PROCESS result = shellCommand->CopyFileToOtherRepository(file, nameRepository);
+    if(result != NO_ERROR)
+    {
+        printf("Error CopyFile");
+        return result;
+    }
+    return result;
+}
+//----------------------------------------------------------------------------------------/
+GANN_DEFINE::RESULT_EXEC_PROCESS IRepository::MoveFileToOtherRepository(const QString& file, const QString& nameRepository)
+{
+    shellCommand->SetWorkingDirectory(localURL);
+    RESULT_EXEC_PROCESS result = shellCommand->MoveFileToOtherRepository(file, nameRepository);
+    if(result != NO_ERROR)
+    {
+        printf("Error MoveFile");
+        return result;
+    }
+    return result;
 }
 //----------------------------------------------------------------------------------------/
 RESULT_EXEC_PROCESS IRepository::StopWatchRepository()
@@ -255,6 +280,7 @@ void IRepository::OnDirectoryChanged(const QString& path)
     std::cout<<"Change directory: "<<path.toStdString()<<std::endl;
 #endif
     // даем команду потоку синхронизации на выполнение синхронизации
+    FacadeApplication::getInstance()->ReleaseThreadSyncIcons();
 }
 //----------------------------------------------------------------------------------------/
 void IRepository::OnFileChanged(const QString& path)
@@ -263,7 +289,7 @@ void IRepository::OnFileChanged(const QString& path)
     std::cout<<"Change file: "<<path.toStdString()<<std::endl;
 #endif
     // даем команду потоку синхронизации на выполнение синхронизации
-
+    FacadeApplication::getInstance()->ReleaseThreadSyncIcons();
 }
 //----------------------------------------------------------------------------------------/
 

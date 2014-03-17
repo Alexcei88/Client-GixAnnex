@@ -132,6 +132,22 @@ public:
     virtual GANN_DEFINE::RESULT_EXEC_PROCESS RemoveFile(const QString& file = " ") = 0;
 
     /**
+    @brief скопировать контент файла у репозитория
+    @param file - имя файла(папки) назначения
+            nameRepository - имя репозитория, куда отправить копию
+    @return 0 - нет ошибок
+    */
+    virtual GANN_DEFINE::RESULT_EXEC_PROCESS CopyFileToOtherRepository(const QString& file, const QString& nameRepository);
+
+    /**
+    @brief переместить контент файла у репозитория
+    @param file - имя файла(папки) назначения
+           nameRepository - имя репозитория, куда переместить контент
+    @return 0 - нет ошибок
+    */
+    virtual GANN_DEFINE::RESULT_EXEC_PROCESS MoveFileToOtherRepository(const QString& file, const QString& nameRepository);
+
+    /**
     @brief получение информации, в каких репозиториях находиться файл
     @param file - имя файла(папки) назначения
     @return 0 - нет ошибок
@@ -162,7 +178,6 @@ public:
     @brief Взять состояние, в котором находиться репозиторий
     */
     bool                GetDirectMode() const { return paramRepo.directMode; }
-
 
     /** @brief Установка состояния репозитория */
     void                SetState(const STATE_REPOSITORY& state);

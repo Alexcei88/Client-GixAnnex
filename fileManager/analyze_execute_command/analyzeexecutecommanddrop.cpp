@@ -2,6 +2,7 @@
 #include "facadeanalyzecommand.h"
 #include "utils/utils.h"
 #include "analizediraction.h"
+#include "facadeapplication.h"
 
 // boost stuff
 #include <boost/make_shared.hpp>
@@ -19,6 +20,16 @@ AnalyzeExecuteCommandDrop::AnalyzeExecuteCommandDrop(FacadeAnalyzeCommand &facad
 {
     droppingContentFileQueue = boost::make_shared<AnalizeDirOnActionPrivate>();
     lastDroppingContentFiles.clear();
+
+    FacadeApplication::getInstance()->IncreaseCountCommandThreadSyncIcons();
+    FacadeApplication::getInstance()->ReleaseThreadSyncIcons();
+}
+//----------------------------------------------------------------------------------------/
+AnalyzeExecuteCommandDrop::~AnalyzeExecuteCommandDrop()
+{
+    // сообщаем фасаду, что команда выполнена
+    facadeAnalyzeCommand.RemoveDropContentFileQueue(this);
+    FacadeApplication::getInstance()->DecreaseCountCommandThreadSyncIcons();
 }
 //----------------------------------------------------------------------------------------/
 void AnalyzeExecuteCommandDrop::StartExecuteCommand()
@@ -42,8 +53,7 @@ void AnalyzeExecuteCommandDrop::EndExecuteCommand(const bool wasExecute)
 
     // очищаем список errorDroppingContent
     errorDroppingContentFile->ClearListAction(errorDroppingContentFile->filesWasAction, errorDroppingContentFile->filesMustToBeAction,
-                                              errorDroppingContentFile->filesNotNeedAction
-                                              );
+                                              errorDroppingContentFile->filesNotNeedAction);
 }
 //----------------------------------------------------------------------------------------/
 void AnalyzeExecuteCommandDrop::ExecuteAddActionForAnalizeExecuteCommand()
@@ -156,8 +166,6 @@ void AnalyzeExecuteCommandDrop::ForeachFilesNoContentAlready(const QString& path
         {
             AtomicLock flag(atomicFlagExecuteCommand);
             Q_UNUSED(flag);
-
-            std::cout<<"Уже удален контент :"<<path.toStdString()<<std::endl;
 
             // посылаем сигнал, что контент уже удален
             lastDroppingContentFiles << path;

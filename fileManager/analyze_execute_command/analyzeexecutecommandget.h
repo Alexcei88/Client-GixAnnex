@@ -20,6 +20,7 @@ class AnalyzeExecuteCommandGet: public AnalyzeExecuteCommand
 public:
     // mode - режим запуска команды, true - автоматический, false - ручной
     AnalyzeExecuteCommandGet(FacadeAnalyzeCommand& facadeAnalyzeCommand, const bool mode);
+    ~AnalyzeExecuteCommandGet();
 
     virtual void        StartExecuteCommand();
     virtual void        EndExecuteCommand(const bool wasExecute = true);
@@ -55,7 +56,7 @@ private:
     static QStringList  lastGettingContentFiles;
 
     /** @brief Перебирает рекурсивно все файлы в переданном пути,
-     *  если у файла есть уже контент, то послыает сигнал, что контент уже получен */
+     *  если у файла есть уже контент, то посылает сигнал, что контент уже получен */
     void                ForeachFilesHaveContentAlready(const QString& path);
     /** @brief Модификация списка файлов GettingContentFile */
     bool                ModificationGettingContentFileQueue();

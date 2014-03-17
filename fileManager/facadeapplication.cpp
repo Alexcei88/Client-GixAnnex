@@ -1,4 +1,5 @@
 #include "facadeapplication.h"
+#include "shell/facade_shellcommand.h"
 #include "MVC/Controller/controller_repository.h"
 #include "MVC/Controller/controller_icons.h"
 #include "MVC/Controller/controllerpreferencesapp.h"
@@ -37,8 +38,11 @@ FacadeApplication::FacadeApplication() :
     // генерируем список путей до иконок
     ResourceGenerator::getInstance();
 
-    // запускаем демон за просмотром директорий с репозиториями
+    // запускаем демон за просмотром директорий у каждого зарегистрированного репозитория
     WatchRepositories();
+
+    // инициализация потокой модели
+    threadModel.countExecutingCommandWithSyncIcons = 0;
 
     // инициализируем связь C и QML
     InitClassCAndQML();
@@ -67,19 +71,21 @@ FacadeApplication::~FacadeApplication()
     // выключаем таймер синхронизации данных
     timeSync.stop();
 
-#warning NOT_WORK
-    // все остальные задачи нужно убивать к чертовой матери, и останавливать демоны
-    // ждем секунду, чтобы QThreadPool уничтожил все свои потоки
-//    QThreadPool::globalInstance()->setExpiryTimeout(1000);
-//    QThreadPool::globalInstance()->waitForDone(1000);
-
     // останавливаем демон просмотра за директориями репозитория
     WatchRepositories(false);
 
+    // удаляем все задачи у репозиториев
+    for(auto itRepo = repository.begin(); itRepo != repository.end(); ++itRepo)
+    {
+        FacadeShellCommand::ClearCommandForRepository(itRepo->second.get());
+    }
+
     // ждем, пока демоны выключаться
-//    QThreadPool::globalInstance()->waitForDone();
+    QThreadPool::globalInstance()->waitForDone();
 
     ResourceGenerator::RemoveInstance();
+
+
 }
 //----------------------------------------------------------------------------------------/
 IRepository* FacadeApplication::GetCurrentRepository() const
@@ -433,6 +439,26 @@ void FacadeApplication::InitNewRepository()
     // сообщаем пользователю, что клонирование завершилось
     if(systemTray)
         systemTray->ResultAddRepository("Addition new repository executed successfully");
+}
+//----------------------------------------------------------------------------------------/
+void FacadeApplication::ReleaseThreadSyncIcons()
+{
+    QSemaphore& sem = threadModel.semSyncIcons;
+    if(sem.available() == 0)
+    {
+        // пробуждаем поток
+        sem.release();
+    }
+}
+//----------------------------------------------------------------------------------------/
+void FacadeApplication::IncreaseCountCommandThreadSyncIcons()
+{
+    ++threadModel.countExecutingCommandWithSyncIcons;
+}
+//----------------------------------------------------------------------------------------/
+void FacadeApplication::DecreaseCountCommandThreadSyncIcons()
+{
+    --threadModel.countExecutingCommandWithSyncIcons;
 }
 //----------------------------------------------------------------------------------------/
 void FacadeApplication::ChangeCurrentRepository(const QString& dir)

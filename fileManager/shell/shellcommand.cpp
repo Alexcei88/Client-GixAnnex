@@ -3,6 +3,7 @@
 #include "../repository/irepository.h"
 #include "utils/utils.h"
 #include "../analyze_execute_command/facadeanalyzecommand.h"
+#include "facade_shellcommand.h"
 
 // parsing stuff
 #include "../parsing_command_out/parsingcommandclone.h"
@@ -40,8 +41,7 @@ RESULT_EXEC_PROCESS ShellCommand::InitRepositories(const QString& nameRepo, Faca
     boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandEmpty(analizeCommand));
     ShellTask* shellTask = new ShellTask(strCommand, localURL, receiverParsing);
     QThreadPool::globalInstance()->start(shellTask);
-    RESULT_EXEC_PROCESS codeError = receiverParsing->GetCodeError();
-    return codeError;
+    return NO_ERROR;
 }
 //----------------------------------------------------------------------------------------/
 void ShellCommand::SetWorkingDirectory(const QString& localURL)
@@ -56,9 +56,7 @@ RESULT_EXEC_PROCESS ShellCommand::CloneRepositories(const QString& remoteURL, co
     analizeCommand->SetPathExecuteCommand(localURL);
     boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandClone(analizeCommand));
     ShellTask* shellTask = new ShellTask(strCommand, localURL, receiverParsing);
-
-    QThreadPool::globalInstance()->start(shellTask);
-
+    FacadeShellCommand::TryStartNextCommand("clone", shellTask, facade->GetRepository());
     return NO_ERROR;
 }
 //----------------------------------------------------------------------------------------/
@@ -67,16 +65,10 @@ RESULT_EXEC_PROCESS ShellCommand::WatchRepository(const QString& path, const boo
     const QString paramCommand = start ? "" : " --stop";
     const QString strCommand = baseCommand + "watch " + paramCommand;
     boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandEmpty());
-#if 0
-    TShell shell;
-    shell.SetWorkingDirectory(path);
-    shell.ExecuteProcess(path, receiverParsing);
-#else
     ShellTask* shellTask = new ShellTask(strCommand, path, receiverParsing);
     QThreadPool::globalInstance()->start(shellTask);
     // ждем окончания выполнения команды
     QThreadPool::globalInstance()->waitForDone();
-#endif
     return NO_ERROR;
 }
 //----------------------------------------------------------------------------------------/
@@ -97,7 +89,7 @@ RESULT_EXEC_PROCESS ShellCommand::GetContentFile(const QString& path, FacadeAnal
 
     boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandGet(analizeCommand));
     ShellTask* shellTask = new ShellTask(strCommand, localURL, receiverParsing);
-    QThreadPool::globalInstance()->start(shellTask);
+    FacadeShellCommand::TryStartNextCommand("get", shellTask, facade->GetRepository());
     return NO_ERROR;
 }
 //----------------------------------------------------------------------------------------/
@@ -112,12 +104,15 @@ RESULT_EXEC_PROCESS ShellCommand::DropContentFile(const QString& path, FacadeAna
 
     boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandDrop(analizeCommand));
     ShellTask* shellTask = new ShellTask(strCommand, localURL, receiverParsing);
-    QThreadPool::globalInstance()->start(shellTask);
+    FacadeShellCommand::TryStartNextCommand("drop", shellTask, facade->GetRepository());
     return NO_ERROR;
 }
 //----------------------------------------------------------------------------------------/
 RESULT_EXEC_PROCESS ShellCommand::RemoveFile(const QString& path, const bool mode, const bool recursive) const
 {  
+
+    assert(0);
+#if 0
     if(!mode)
     {
         QString strCommand = "git rm " + path;
@@ -128,7 +123,7 @@ RESULT_EXEC_PROCESS ShellCommand::RemoveFile(const QString& path, const bool mod
         boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandEmpty());
         ShellTask* shellTask = new ShellTask(strCommand, localURL, receiverParsing);
 
-        QThreadPool::globalInstance()->start(shellTask);
+        FacadeShellCommand::TryStartNextCommand("git rm", shellTask, facade->GetRepository());
     }
     // физическое удаление файла(директории)
     QString strCommand = "rm " + path;
@@ -140,9 +135,9 @@ RESULT_EXEC_PROCESS ShellCommand::RemoveFile(const QString& path, const bool mod
 
     boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandEmpty());
     ShellTask* shellTask = new ShellTask(strCommand, localURL, receiverParsing);
-    QThreadPool::globalInstance()->start(shellTask);
-
+    FacadeShellCommand::TryStartNextCommand("rm", shellTask, facade->GetRepository());
     return NO_ERROR;
+#endif
 }
 //----------------------------------------------------------------------------------------/
 RESULT_EXEC_PROCESS ShellCommand::Sync() const
@@ -171,9 +166,9 @@ RESULT_EXEC_PROCESS ShellCommand::SetDirectMode(const bool& direct, FacadeAnalyz
     boost::shared_ptr<AnalyzeExecuteCommandChangeDirectMode> analizeCommand(new AnalyzeExecuteCommandChangeDirectMode(*facade));
     analizeCommand->SetPathExecuteCommand(localURL);
     boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandDirectMode(analizeCommand));
-    ShellTask* shellTask = new ShellTask(strCommand, localURL, receiverParsing);
 
-    QThreadPool::globalInstance()->start(shellTask);
+    ShellTask* shellTask = new ShellTask(strCommand, localURL, receiverParsing);
+    FacadeShellCommand::TryStartNextCommand(direct ? " direct" : " indirect", shellTask, facade->GetRepository());
     return NO_ERROR;
 }
 //----------------------------------------------------------------------------------------/
@@ -181,5 +176,15 @@ RESULT_EXEC_PROCESS ShellCommand::FindFileInPath(const QString &path, FacadeAnal
 {
     Q_UNUSED(path);
     Q_UNUSED(facade);
+}
+//----------------------------------------------------------------------------------------/
+GANN_DEFINE::RESULT_EXEC_PROCESS ShellCommand::CopyFileToOtherRepository(const QString& file, const QString& nameRepository)
+{
+
+}
+//----------------------------------------------------------------------------------------/
+GANN_DEFINE::RESULT_EXEC_PROCESS ShellCommand::MoveFileToOtherRepository(const QString& file, const QString& nameRepository)
+{
+
 }
 //----------------------------------------------------------------------------------------/

@@ -3,12 +3,15 @@
 
 #include "tshell.h"
 
+#include <QList>
+#include <QQueue>
 class IRepository;
 
 namespace AnalyzeCommand
 {
-    class FacadeAnalyzeCommand;
+    class FacadeAnalyzeCommand;  
 }
+class ShellTask;
 
 class ShellCommand
 {
@@ -64,14 +67,17 @@ public:
     /** @brief Поиск файлов в директории(узнаем файлы, у которых есть контент) */
     GANN_DEFINE::RESULT_EXEC_PROCESS FindFileInPath(const QString& path, AnalyzeCommand::FacadeAnalyzeCommand* facade) const;
 
-    inline const QString getStrCommand() const { return strCommand; }
+    /** @brief Копирование файла на удаленный сервер */
+    GANN_DEFINE::RESULT_EXEC_PROCESS CopyFileToOtherRepository(const QString& file, const QString& nameRepository = "origin");
+
+    /** @brief Перемещение файла на удаленный сервер */
+    GANN_DEFINE::RESULT_EXEC_PROCESS MoveFileToOtherRepository(const QString& file, const QString& nameRepository = "origin");
+
     inline const QString getLocalURL() const { return localURL; }
 
 private:
     const QString   baseCommand;
 
-    /** @brief команда, которая выполняется */
-    QString         strCommand;
     /** @brief путь, откуда запускаеться shell */
     QString         localURL;
 

@@ -17,6 +17,7 @@ class AnalyzeExecuteCommandDrop: public AnalyzeExecuteCommand
 {
 public:
     AnalyzeExecuteCommandDrop(FacadeAnalyzeCommand& facadeAnalyzeCommand, const bool mode);
+    ~AnalyzeExecuteCommandDrop();
 
     virtual void        StartExecuteCommand();
     virtual void        EndExecuteCommand(const bool wasExecute = true);
