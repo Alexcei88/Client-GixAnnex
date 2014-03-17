@@ -39,6 +39,9 @@ public:
     /** @brief включает/выключает синхронизацию репозитория */
     Q_INVOKABLE void        setEnableRepository(bool enable) const;
 
+    /** @brief есть ли команды у текущего репозитория */
+    Q_INVOKABLE bool        isExecuteCommandForCurrentRepository() const;
+
     /** @brief путь до репозитория по умолчанию */
     Q_INVOKABLE QVariant    getDefaultRepositoryPath() const;
 

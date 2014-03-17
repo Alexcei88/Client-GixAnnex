@@ -26,6 +26,9 @@ public:
     /** @brief включает/выключает синхронизацию текущего репозитория */
     void                SetEnableRepository(bool enable);
 
+    /** @brief есть ли команды у текущего репозитория */
+    bool                IsExecuteCommandForCurrentRepository() const;
+
     /** @brief Клонировать репозиторий */
     GANN_DEFINE::RESULT_EXEC_PROCESS CloneRepository(const QString& localUlr, const QString& remoteURL, const QString& nameRepo);
 

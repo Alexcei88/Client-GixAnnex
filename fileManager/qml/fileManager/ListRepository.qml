@@ -2,7 +2,6 @@ import QtQuick 2.0
 import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
 import QtQuick.XmlListModel 2.0
-import Repository 1.0
 import Message 1.0
 
 FocusScope {
@@ -23,13 +22,18 @@ FocusScope {
     //-------------------------------------------------------------------------/
     function switchEnableRepository(enabled)
     {
+        if(!enabled && repository.isExecuteCommandForCurrentRepository())
+        {
+            // выводим окно предупреждения о завершении некоторых задач
+            if(!message.showWarningMessage("Warning", "You are disabling synchronization the repository. \n <b>All tasks</b> except the current one, <b> will be canceled </b>."))
+            {
+                return;
+            }
+        }
         repository.setEnableRepository(enabled)
         setEnableRepository(enabled)
     }
 
-    ControllerRepository {
-        id: repository
-    }
     MessageBox{
         id: message
     }
@@ -63,9 +67,6 @@ FocusScope {
                 }
                 else
                 {
-                    if(viewModel.highlightItem)
-                    {
-                    }
                     lastIndex = 0;
                     viewModel.currentIndex = -1;
                     // у нас нет больше репозиториев для показа

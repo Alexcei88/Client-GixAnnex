@@ -53,8 +53,7 @@ void AnalyzeExecuteCommandDrop::EndExecuteCommand(const bool wasExecute)
 
     // очищаем список errorDroppingContent
     errorDroppingContentFile->ClearListAction(errorDroppingContentFile->filesWasAction, errorDroppingContentFile->filesMustToBeAction,
-                                              errorDroppingContentFile->filesNotNeedAction
-                                              );
+                                              errorDroppingContentFile->filesNotNeedAction);
 }
 //----------------------------------------------------------------------------------------/
 void AnalyzeExecuteCommandDrop::ExecuteAddActionForAnalizeExecuteCommand()

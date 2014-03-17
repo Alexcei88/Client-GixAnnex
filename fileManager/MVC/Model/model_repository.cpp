@@ -59,7 +59,8 @@ void ModelQmlAndCRepository::SetEnableRepository(bool enable)
         FacadeShellCommand::ClearCommandForRepository(curRepo);
         if(FacadeShellCommand::IsExecuteCommandForRepository(curRepo))
         {
-            // показываем табличку ожидания и ждем окончания команды
+            assert("У включаемого репозитория не должно быть в очереди команд" && enable == false);
+
             // фиксируем, что репозиторий будет выключен
             willEnableRepository = enable;
             connectionFacadeShellCommand = QObject::connect(FacadeShellCommand::GetInstance(), &FacadeShellCommand::FinishWaitCommand, [&]()
@@ -77,6 +78,19 @@ void ModelQmlAndCRepository::SetEnableRepository(bool enable)
     else{
         assert("CurrentRepo is NULL" && false);
     }
+}
+//----------------------------------------------------------------------------------------/
+bool ModelQmlAndCRepository::IsExecuteCommandForCurrentRepository() const
+{
+    auto iterRepo = FacadeApplication::instance->currentRepository;
+    if(iterRepo != FacadeApplication::instance->repository.end()) {
+        IRepository* curRepo = iterRepo->second.get();
+        return FacadeShellCommand::IsExecuteCommandForRepository(curRepo);
+    }
+    else{
+        assert("CurrentRepo is NULL" && false);
+    }
+
 }
 //----------------------------------------------------------------------------------------/
 GANN_DEFINE::RESULT_EXEC_PROCESS ModelQmlAndCRepository::CloneRepository(const QString& localURL, const QString& remoteURL, const QString& nameRepo)

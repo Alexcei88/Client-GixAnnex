@@ -34,6 +34,11 @@ void ControllerRepository::setEnableRepository(bool enable) const
     model->SetEnableRepository(enable);
 }
 //----------------------------------------------------------------------------------------/
+bool ControllerRepository::isExecuteCommandForCurrentRepository() const
+{
+    return model->IsExecuteCommandForCurrentRepository();
+}
+//----------------------------------------------------------------------------------------/
 QVariant ControllerRepository::getDefaultRepositoryPath() const
 {
     return model->GetDefaultRepository();
