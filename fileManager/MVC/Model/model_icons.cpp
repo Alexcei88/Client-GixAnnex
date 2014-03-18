@@ -23,7 +23,6 @@ ModelQmlAndCIcons::~ModelQmlAndCIcons()
 //----------------------------------------------------------------------------------------/
 void ModelQmlAndCIcons::StartThreadIconsSync()
 {
-    return;
     if(thread && thread->isRunning())
         return;
 

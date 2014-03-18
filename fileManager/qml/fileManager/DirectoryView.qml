@@ -15,11 +15,6 @@ import "utils.js" as UtilsScript
 FocusScope{
     //-------------------------------------------------------------------------/
     // ПОЛЬЗОВАТЕЛЬСКИЕ КЛАССЫ MVC
-
-    ControllerRepository {
-        id: repository
-    }
-
     ControllerIcons {
         id: contrIcons
     }

@@ -123,6 +123,7 @@ bool SystemTray::ResultAddRepository(const QString& text) const
     {
         QObjectList parent = addRepoView->rootObject()->findChildren<QObject*>("StackView");
         return QMetaObject::invokeMethod(parent[0], "resultClone", Q_ARG(QVariant, text));
+    }
 }
 //----------------------------------------------------------------------------------------/
 bool SystemTray::HideWindowWaitCommand() const

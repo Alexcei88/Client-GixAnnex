@@ -29,7 +29,6 @@ public:
     void                CloseAddRepository() const;
 
     /** @brief Закрыть окно со свойствами приложения */   
-    void                CancelCloneRepository() const;
     void                ClosePreferencesApplication() const;
 
     /** @brief Перезагрузить модель со списком репозиториев */
