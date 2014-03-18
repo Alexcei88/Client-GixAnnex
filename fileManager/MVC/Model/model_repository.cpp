@@ -66,7 +66,7 @@ void ModelQmlAndCRepository::SetEnableRepository(bool enable)
             connectionFacadeShellCommand = QObject::connect(FacadeShellCommand::GetInstance(), &FacadeShellCommand::FinishWaitCommand, [&]()
             {
                 // меняем по истечению времени
-                this->ChangeEnabledRepository(willEnableRepository);
+                this->ChangeEnabledRepository(willEnableRepository, true);
             });
         }
         else
@@ -244,15 +244,17 @@ void ModelQmlAndCRepository::ChangeEnabledRepository(const bool enable, const bo
         enable ? curRepo->SetState(IRepository::Synced) : curRepo->SetState(IRepository::Disable_sincing);
         // пересохраняем настройки конфиг-файла
         FacadeApplication::instance->SaveOptionsRepository(iterRepo->second.get()->GetLocalURL());
+
+        if(hideWaitWindow)
+        {
+            // нужно еще скрыть окно
+            FacadeApplication::instance->systemTray->HideWindowWaitCommand();
+        }
         // перезагружаем представление
         FacadeApplication::instance->systemTray->ReLoadListRepository();
         // даем команду обновить состояние иконок
         FacadeApplication::instance->ReleaseThreadSyncIcons();
 
-        if(hideWaitWindow)
-        {
-            // нужно еще скрыть окно
-        }
         QObject::disconnect(connectionFacadeShellCommand);
 
     }
