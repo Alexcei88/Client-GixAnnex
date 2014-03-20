@@ -74,11 +74,6 @@ QVariant ControllerRepository::dirIsSubRootDirRepository(QUrl dir) const
     return model->DirIsSubRootDirRepository(dir.toLocalFile());
 }
 //----------------------------------------------------------------------------------------/
-const QVariant ControllerRepository::getLastError() const
-{
-    return model->GetLastError();
-}
-//----------------------------------------------------------------------------------------/
 const QVariant ControllerRepository::GetPathRepoConfig() const
 {
     return model->GetFullPathFileConfigRepositories();

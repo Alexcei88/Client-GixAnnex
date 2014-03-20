@@ -6,6 +6,7 @@
 #include <QString>
 #include <QFileInfo>
 
+// our stuff
 #include "analyzeexecutecommand.h"
 #include "define.h"
 
@@ -14,6 +15,7 @@ namespace AnalyzeCommand
 
 class FacadeAnalyzeCommand;
 class AnalizeDirOnActionPrivate;
+class ParsingErrorExecuteCommandGet;
 
 class AnalyzeExecuteCommandGet: public AnalyzeExecuteCommand
 {
@@ -45,8 +47,9 @@ private:
     QString             fileGetContent;
     /** @brief файл/директория, на которые дано задание на скачивание */
     boost::shared_ptr<AnalizeDirOnActionPrivate> gettingContentFileQueue;
-    /** @brief файл/директория, скачивание которых завершилось неудачей */
-    static boost::shared_ptr<AnalizeDirOnActionPrivate> errorGettingContentFile;
+    /** @brief класс анализа сообщений об ошибках */
+    static boost::shared_ptr<ParsingErrorExecuteCommandGet> errorGettingContentFile;
+
     /** @brief файл, который сейчас скачивается */
     QString             gettingContentFile;
     /** @brief Последний файл, который скачивается */

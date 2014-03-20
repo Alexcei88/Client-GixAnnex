@@ -222,11 +222,6 @@ bool ModelQmlAndCRepository::DirIsSubRootDirRepository(const QString& dir) const
     return false;
 }
 //----------------------------------------------------------------------------------------/
-const QString& ModelQmlAndCRepository::GetLastError() const
-{
-    return FacadeApplication::getInstance()->lastError;
-}
-//----------------------------------------------------------------------------------------/
 const QString ModelQmlAndCRepository::GetFullPathFileConfigRepositories() const
 {
     const QString fileName = "ganx-repository.xml";

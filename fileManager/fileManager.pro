@@ -62,7 +62,10 @@ SOURCES += main.cpp \
     qml/components/treemodel.cpp \
     analyze_execute_command/analyzeexecutecommandcopy.cpp \
     parsing_command_out/parsingcommandcopy.cpp \
-    shell/facade_shellcommand.cpp
+    shell/facade_shellcommand.cpp \
+    analyze_execute_command/parsing_error_execute_command/parsingerrorexecutecommand.cpp \
+    analyze_execute_command/parsing_error_execute_command/parsingerrorexecutecommandget.cpp \
+    analyze_execute_command/parsing_error_execute_command/parsingerrorexecutecommanddrop.cpp
 
 # Installation path
 # target.path =
@@ -75,7 +78,6 @@ OTHER_FILES += \
     qml/fileManager/WindowContent.qml \
     qml/fileManager/DirectoryView.qml \
     qml/fileManager/propertyFile/PropertyFile.qml \
-    qml/fileManager/repository/Clone.qml \
     qml/fileManager/repository/wait_finish_command.qml \
     qml/fileManager/repository/PropertyInputValue.qml \
     qml/fileManager/repository/wait_clone.qml \
@@ -136,7 +138,10 @@ HEADERS += \
     MVC/Model/AddRepository/model_addrepository_remoteserver.h \
     qml/components/validatorfilesystem.h \
     MVC/Model/AddRepository/model_addrepository_other.h \
-    qml/components/treemodel.h
+    qml/components/treemodel.h \
+    analyze_execute_command/parsing_error_execute_command/parsingerrorexecutecommand.h \
+    analyze_execute_command/parsing_error_execute_command/parsingerrorexecutecommandget.h \
+    analyze_execute_command/parsing_error_execute_command/parsingerrorexecutecommanddrop.h
 
 # Включаем поддержку С++11
 QMAKE_CXXFLAGS += -std=c++0x

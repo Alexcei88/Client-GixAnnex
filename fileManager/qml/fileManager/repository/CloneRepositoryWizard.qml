@@ -72,13 +72,6 @@ Rectangle {
         id: pageModel
     }
 
-    // 5 минимальных полей
-    // 1 - выбор типа репозитория
-    // 2 - настройки репозитория(в зависимости от типа репозитория)
-    // 3 - общая информация по настройкам где нажимаем начать клонирование
-    // 4 - процесс клонирования
-    // 5 - окончание клонирования
-
     color: sysPal.window
 
     Rectangle {
@@ -94,7 +87,6 @@ Rectangle {
         RadialGradient {
             anchors.fill: parent
             gradient: Gradient {
-                //                GradientStop { position: 0.0; color: "#0095b6" }
                 GradientStop { position: 0.0; color: "#007fff" }
                 GradientStop { position: 1.0; color: "white" }
             }
@@ -372,12 +364,15 @@ Rectangle {
             }
         } // end Row
     }
-    // функция на проверку пустого значения в компонете PropertyValue
+    // сбрасывание компонентов
     function resetAddRepository()
     {
        treeView.currentIndex = 0;
-       stackView.clear();
-
+       // отматываем стэквью на initItem
+       while(stackView.depth > 1)
+       {
+            stackView.pop();
+       }
     }
     // функция на проверку пустого значения в компонете PropertyValue
     function checkForEmpty(field, errorString)

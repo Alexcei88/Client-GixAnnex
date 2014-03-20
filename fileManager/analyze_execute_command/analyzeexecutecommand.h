@@ -30,9 +30,11 @@ public:
 
     /** @brief Установка пути, откуда запущена команда */
     inline void         SetPathExecuteCommand(const QString& path) { pathExecuteCommand = path; }
+    inline const QString& GetDescriptionCommand() const { return description; }
 
     /** @brief Функция, которая выполняет доп действия индивидуальные для каждой команды */
     virtual void        ExecuteAddActionForAnalizeExecuteCommand() { }
+
 
 protected:
     /** @brief Фасад, управляющий анализом выполнения команд */
@@ -45,6 +47,9 @@ protected:
 
     bool                startCommand;
     bool                endCommand;
+
+    /** @brief описание команды */
+    QString             description;
 
 
 };
