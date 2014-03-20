@@ -77,10 +77,13 @@ FocusScope {
         }
     }
 
-    SystemPalette { id: sysPal }
+    Loader {
+        id: preferencesLoader
+        height: 500
+        width: 4000
+    }
 
     id: focusScope
-
     ColumnLayout {
         id: mainListRepoColumn
         anchors.top: parent.top
@@ -111,6 +114,7 @@ FocusScope {
             anchors.topMargin: 4
             focus: true
 
+
             Menu
             {
                 id: menuRepository
@@ -140,8 +144,23 @@ FocusScope {
                         }
                     }
                 }
+                Action
+                {
+                    id: preferencesRepository
+                    text: "&Preferences"
+                    onTriggered:
+                    {
+                        if(viewModel.currentItem)
+                        {
+                            console.log("Window create")
+                            preferencesLoader.setSource("preferences_repository.qml");
+                        }
+                    }
+                }
+
                 MenuItem { action: switchEnable }
                 MenuItem { action: removeRepository }
+                MenuItem { action: preferencesRepository }
             }
 
             GridView
