@@ -27,7 +27,7 @@ void ParsingCommandDirectMode::ParsingData()
         else
         {
             QJsonObject object = lastJSONDocument.object();
-            assert(object.take("file").toString("dffsdf") == "");
+            assert(object.value("file").toString("dffsdf") == "");
             bool ok;
             IsEndMiniCommand(lastJSONDocument, ok);
             if(!ok)
@@ -36,7 +36,7 @@ void ParsingCommandDirectMode::ParsingData()
             }
             else
             {
-                const bool mode = object.take("command").toString() == "direct";
+                const bool mode = object.value("command").toString() == "direct";
                 analizeCommandChangeMode->ChangeDirectMode(mode);
             }
         }

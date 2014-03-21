@@ -13,7 +13,6 @@ namespace AnalyzeCommand
     // будет разделять все ошибки каждой команды на категории ошибок
     // и предлагать возможные решения, если таковы существуют
 
-typedef QMap<QString, QList<AnalizeDirOnActionPrivate> > mapListAnalizeDir;
 
 class ParsingErrorExecuteCommand
 {
@@ -21,16 +20,14 @@ public:
     ParsingErrorExecuteCommand();
     virtual ~ParsingErrorExecuteCommand();
 
-    /** @brief добавление файла с ошибкой
-        @param file - файл
-        @param error - строка с ошибкой
-    */
-    void                AddFileWithError(const QString& file, const QString& error, const QString& description);
-
 protected:
 
-    // перечисление типов ошибок, будет определяться в производных классах
-    enum class ErrorType: int;
+    // перечисление всех типов ошибок
+    enum class ErrorType: int {
+        UNKNOW_ERROR = -1,
+        GET_UNAVAIBLE_CONTENT = 0,
+        DROP_HAVE_CONTENT_COUNT_MINIMUM = 10
+    };
 
     /** @brief возвращает идентификатор ошибки
         @param error - строка с ошибкой
@@ -44,10 +41,6 @@ protected:
     QMap <ErrorType, QString> errorIdDescription;
 
 private:
-    /** @brief мэп файлов ошибок с идентификаторами
-        @details каждый вид ошибок содержит список ошибок, который идентифицируется строкой описания
-    */
-    QMap <ErrorType, QMap<QString, QList<AnalizeDirOnActionPrivate> > > errorFiles;
 
     /** @brief мэп функции-решений для каждой ошибки */
     QMap <ErrorType, int>     funcSolution;

@@ -1,11 +1,11 @@
 #ifndef PARSINGERROREXECUTECOMMANDGET_H
 #define PARSINGERROREXECUTECOMMANDGET_H
 
-#include "parsingerrorexecutecommand.h"
+#include "parsingerrorexecutecommandwithfiles.h"
 
 namespace AnalyzeCommand
 {
-class ParsingErrorExecuteCommandGet : public ParsingErrorExecuteCommand
+class ParsingErrorExecuteCommandGet : public ParsingErrorExecuteCommandWithFiles
 {
 public:
     ParsingErrorExecuteCommandGet();

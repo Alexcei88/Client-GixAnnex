@@ -113,7 +113,7 @@ bool IParsingCommandOut::IsEndMiniCommand(const QJsonDocument& doc, bool& ok) co
     QJsonObject object = doc.object();
     if(object.find(keyEndDoc) != object.end())
     {
-        ok = object.take(keyEndDoc).toBool();
+        ok = object.value(keyEndDoc).toBool();
         return true;
     }
     ok = false;

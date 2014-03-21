@@ -65,7 +65,8 @@ SOURCES += main.cpp \
     shell/facade_shellcommand.cpp \
     analyze_execute_command/parsing_error_execute_command/parsingerrorexecutecommand.cpp \
     analyze_execute_command/parsing_error_execute_command/parsingerrorexecutecommandget.cpp \
-    analyze_execute_command/parsing_error_execute_command/parsingerrorexecutecommanddrop.cpp
+    analyze_execute_command/parsing_error_execute_command/parsingerrorexecutecommanddrop.cpp \
+    analyze_execute_command/parsing_error_execute_command/parsingerrorexecutecommandwithfiles.cpp
 
 # Installation path
 # target.path =
@@ -142,7 +143,8 @@ HEADERS += \
     qml/components/treemodel.h \
     analyze_execute_command/parsing_error_execute_command/parsingerrorexecutecommand.h \
     analyze_execute_command/parsing_error_execute_command/parsingerrorexecutecommandget.h \
-    analyze_execute_command/parsing_error_execute_command/parsingerrorexecutecommanddrop.h
+    analyze_execute_command/parsing_error_execute_command/parsingerrorexecutecommanddrop.h \
+    analyze_execute_command/parsing_error_execute_command/parsingerrorexecutecommandwithfiles.h
 
 # Включаем поддержку С++11
 QMAKE_CXXFLAGS += -std=c++0x

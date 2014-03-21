@@ -1,11 +1,11 @@
 #ifndef PARSINGERROREXECUTECOMMANDDROP_H
 #define PARSINGERROREXECUTECOMMANDDROP_H
 
-#include "parsingerrorexecutecommand.h"
+#include "parsingerrorexecutecommandwithfiles.h"
 
 namespace AnalyzeCommand
 {
-class ParsingErrorExecuteCommandDrop : public ParsingErrorExecuteCommand
+class ParsingErrorExecuteCommandDrop : public ParsingErrorExecuteCommandWithFiles
 {
 public:
     ParsingErrorExecuteCommandDrop();

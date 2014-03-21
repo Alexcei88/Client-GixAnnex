@@ -3,20 +3,17 @@
 using namespace AnalyzeCommand;
 
 //----------------------------------------------------------------------------------------/
-ParsingErrorExecuteCommandGet::ParsingErrorExecuteCommandGet(): ParsingErrorExecuteCommand()
+ParsingErrorExecuteCommandGet::ParsingErrorExecuteCommandGet():
+    ParsingErrorExecuteCommandWithFiles()
 {
-    // определяем перечисление ошибок
-    enum class ErrorType {
-        UNKNOW_ERROR = -1,
-        UNAVAIBLE_CONTENT = 0
-    };    
+    FillErrorIdDescription();
 }
 //----------------------------------------------------------------------------------------/
 ParsingErrorExecuteCommandGet::~ParsingErrorExecuteCommandGet()
 {}
 //----------------------------------------------------------------------------------------/
 void ParsingErrorExecuteCommandGet::FillErrorIdDescription()
-{
-
+{   
+    errorIdDescription[ErrorType::GET_UNAVAIBLE_CONTENT] = "not avaible";
 }
 //----------------------------------------------------------------------------------------/

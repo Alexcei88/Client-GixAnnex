@@ -3,17 +3,14 @@
 using namespace AnalyzeCommand;
 
 //----------------------------------------------------------------------------------------/
-ParsingErrorExecuteCommandDrop::ParsingErrorExecuteCommandDrop(): ParsingErrorExecuteCommand()
+ParsingErrorExecuteCommandDrop::ParsingErrorExecuteCommandDrop():
+    ParsingErrorExecuteCommandWithFiles()
 {
-    // определяем перечисление ошибок
-    enum class ErrorType {
-        UNKNOW_ERROR = -1,
-        HAVE_CONTENT_COUNT_MINIMUM = 0
-    };
+    FillErrorIdDescription();
 }
 //----------------------------------------------------------------------------------------/
 void ParsingErrorExecuteCommandDrop::FillErrorIdDescription()
-{
-
+{   
+    errorIdDescription[ErrorType::DROP_HAVE_CONTENT_COUNT_MINIMUM] = "Gjrgh";
 }
 //----------------------------------------------------------------------------------------/

@@ -28,9 +28,9 @@ public:
     virtual void        EndExecuteCommand(const bool wasExecute = true);
     virtual void        ExecuteAddActionForAnalizeExecuteCommand();
 
-    void                StartGetContentFile(const QString&file);
+    void                StartGetContentFile(const QString& file);
     void                EndGetContentFile(const QString& file);
-    void                ErrorGetContentFile(const QString&file, const QString&error);
+    void                ErrorGetContentFile(const QString& file, const QMap<QString, QString>& error);
 
     void                SetPathGetContent(const QString& file);
 
