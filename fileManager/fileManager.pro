@@ -70,6 +70,7 @@ SOURCES += main.cpp \
     parsing_command_out/parsingcommandstatus.cpp \
     analyze_execute_command/analizeexecutecommandstatus.cpp \
     preferencesapplication.cpp
+    analyze_execute_command/parsing_error_execute_command/parsingerrorexecutecommandwithfiles.cpp
 
 # Installation path
 # target.path =
@@ -151,6 +152,7 @@ HEADERS += \
     parsing_command_out/parsingcommandstatus.h \
     analyze_execute_command/analizeexecutecommandstatus.h \
     preferencesapplication.h
+    analyze_execute_command/parsing_error_execute_command/parsingerrorexecutecommandwithfiles.h
 
 # Включаем поддержку С++11
 QMAKE_CXXFLAGS += -std=c++0x
