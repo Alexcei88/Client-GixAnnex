@@ -158,9 +158,12 @@ void FacadeAnalyzeCommand::ChangeDirectMode(const bool& mode)
 void FacadeAnalyzeCommand::ExecuteAddActionForAnalizeCommand()
 {
     if(currentAnalyzeExecuteCommand)
-    {
         currentAnalyzeExecuteCommand->ExecuteAddActionForAnalizeExecuteCommand();
-    }
+}
+//----------------------------------------------------------------------------------------/
+bool FacadeAnalyzeCommand::ReStartCommand(const QString& command)
+{
+
 }
 //----------------------------------------------------------------------------------------/
 bool FacadeAnalyzeCommand::DirContainsFile(const QString& dir, const QString& file)

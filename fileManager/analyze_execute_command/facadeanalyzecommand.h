@@ -79,6 +79,9 @@ public:
     */
     void                ExecuteAddActionForAnalizeCommand();
 
+    /** @brief Функция перезапуска команды */
+    bool                ReStartCommand(const QString& command);
+
     /** @brief Содержит ли директория файл(в том числе и в поддиректориях) */
     static bool         DirContainsFile(const QString& dir, const QString& file);
 

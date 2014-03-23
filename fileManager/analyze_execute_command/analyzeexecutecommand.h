@@ -35,7 +35,6 @@ public:
     /** @brief Функция, которая выполняет доп действия индивидуальные для каждой команды */
     virtual void        ExecuteAddActionForAnalizeExecuteCommand() { }
 
-
 protected:
     /** @brief Фасад, управляющий анализом выполнения команд */
     FacadeAnalyzeCommand& facadeAnalyzeCommand;
