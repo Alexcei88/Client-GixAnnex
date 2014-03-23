@@ -33,7 +33,6 @@ void IRepository::InitClass()
     paramRepo.autosync = true;
     paramRepo.autosyncContent = true;
     paramRepo.currentState = "Synced";
-    paramRepo.directMode = true;
 
     // init Q_Enums
     const QMetaObject &mo = staticMetaObject;
@@ -110,6 +109,18 @@ GANN_DEFINE::RESULT_EXEC_PROCESS IRepository::SetDirectMode(const bool& direct)
     if(result != NO_ERROR)
     {
         printf("Error SetDirectMode repositories: %s \n", localURL.toStdString().c_str());
+        return result;
+    }
+    return result;
+}
+//----------------------------------------------------------------------------------------/
+GANN_DEFINE::RESULT_EXEC_PROCESS IRepository::GetStatus() const
+{
+    shellCommand->SetWorkingDirectory(localURL);
+    RESULT_EXEC_PROCESS result = shellCommand->GetStatusRepository(facadeAnalyzeCommand.get());
+    if(result != NO_ERROR)
+    {
+        printf("Error Status repositories: %s \n", localURL.toStdString().c_str());
         return result;
     }
     return result;

@@ -27,6 +27,8 @@ public:
 private:
     static ResourceGenerator* instance;
     ResourceGenerator();
+    ResourceGenerator(const ResourceGenerator& generator);
+
 
     /** @brief Генерация ресурсов */
     void                GenerateResource();

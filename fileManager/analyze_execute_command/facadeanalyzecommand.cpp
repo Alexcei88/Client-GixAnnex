@@ -146,17 +146,13 @@ bool FacadeAnalyzeCommand::IsErrorDroppingContentFileDir(const QString& file) co
 void FacadeAnalyzeCommand::ErrorChangeDirectMode()
 {
     if(repository)
-    {
         repository->OnErrorChangeDirectMode("fffff");
-    }
 }
 //----------------------------------------------------------------------------------------/
 void FacadeAnalyzeCommand::ChangeDirectMode(const bool& mode)
 {
     if(repository)
-    {
         repository->OnChangeDirectMode(mode);
-    }
 }
 //----------------------------------------------------------------------------------------/
 void FacadeAnalyzeCommand::ExecuteAddActionForAnalizeCommand()

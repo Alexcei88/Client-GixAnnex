@@ -266,6 +266,11 @@ QString IParsingCommandOut::ProcessingErrorString(const QString& str, const QJso
             // strJSONData не трогаем
             retStr = ""; break;
 
+        case QJsonParseError::TerminationByNumber:
+            retStr.remove(offset, str.length() - offset);
+            strJSONData = retStr;
+            retStr += "}";break;
+
         default:
             assert("При парсинге JSON-строки произошла неизвестная ошибка." && false);
     }

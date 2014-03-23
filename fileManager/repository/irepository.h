@@ -175,7 +175,13 @@ public:
     virtual GANN_DEFINE::RESULT_EXEC_PROCESS SetDirectMode(const bool& direct);
 
     /**
-    @brief Взять состояние, в котором находиться репозиторий
+    @brief взять статус репозитория
+    @return 0 - нет ошибок
+    */
+    virtual GANN_DEFINE::RESULT_EXEC_PROCESS GetStatus() const;
+
+    /**
+    @brief Взять directMode, в котором находиться репозиторий
     */
     bool                GetDirectMode() const { return paramRepo.directMode; }
 
@@ -221,6 +227,7 @@ public:
     /** @brief смена режима доступа репозитория(прямого/обратного) */
     void                OnChangeDirectMode(const bool mode);
     void                OnErrorChangeDirectMode(const QString& error);
+
 
 protected:
 

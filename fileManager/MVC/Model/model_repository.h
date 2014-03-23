@@ -62,7 +62,16 @@ public:
     bool                DirIsSubRootDirRepository(const QString& dir) const;
 
     /** @brief возвращает полный путь до файла конфигурации */
-    const QString GetFullPathFileConfigRepositories() const;
+    const QString       GetFullPathFileConfigRepositories() const;
+
+    /** @brief возвращает режим работы репозитория*/
+    bool                GetDirectModeWorkRepositoryOfCurrentRepository() const;
+
+    /** @brief возвращает полный путь текущего репозитория */
+    QString             GetPathOfCurrentRepository() const;
+
+    /** @brief перемещение пути текущего репозитория */
+    bool                MovePathOfCurrentRepository() const;
 
 private:
     // в качестве служебных целей

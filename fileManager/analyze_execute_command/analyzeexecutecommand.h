@@ -51,7 +51,6 @@ protected:
     /** @brief описание команды */
     QString             description;
 
-
 };
 }
 

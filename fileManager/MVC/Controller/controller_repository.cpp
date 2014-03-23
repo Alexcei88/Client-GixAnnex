@@ -79,4 +79,19 @@ const QVariant ControllerRepository::GetPathRepoConfig() const
     return model->GetFullPathFileConfigRepositories();
 }
 //----------------------------------------------------------------------------------------/
+QVariant ControllerRepository::GetModeWorkRepositoryOfCurrentRepository() const
+{
+    return model->GetDirectModeWorkRepositoryOfCurrentRepository();
+}
+//----------------------------------------------------------------------------------------/
+QVariant ControllerRepository::GetPathOfCurrentRepository() const
+{
+    return model->GetPathOfCurrentRepository();
+}
+//----------------------------------------------------------------------------------------/
+QVariant ControllerRepository::MovePathOfCurrentRepository() const
+{
+
+}
+//----------------------------------------------------------------------------------------/
 

@@ -230,6 +230,48 @@ const QString ModelQmlAndCRepository::GetFullPathFileConfigRepositories() const
     return fullPath;
 }
 //----------------------------------------------------------------------------------------/
+bool ModelQmlAndCRepository::GetDirectModeWorkRepositoryOfCurrentRepository() const
+{
+    auto iterRepo = FacadeApplication::instance->currentRepository;
+    if(iterRepo != FacadeApplication::instance->repository.end())
+    {
+        IRepository* curRepo = iterRepo->second.get();
+        return curRepo->GetDirectMode();
+    }
+    else{
+        assert("CurrentRepo is NULL" && false);
+        return false;
+    }
+}
+//----------------------------------------------------------------------------------------/
+QString ModelQmlAndCRepository::GetPathOfCurrentRepository() const
+{
+    auto iterRepo = FacadeApplication::instance->currentRepository;
+    if(iterRepo != FacadeApplication::instance->repository.end())
+    {
+        IRepository* curRepo = iterRepo->second.get();
+        return curRepo->GetLocalURL();
+    }
+    else{
+        assert("CurrentRepo is NULL" && false);
+        return "";
+    }
+}
+//----------------------------------------------------------------------------------------/
+bool ModelQmlAndCRepository::MovePathOfCurrentRepository() const
+{
+    auto iterRepo = FacadeApplication::instance->currentRepository;
+    if(iterRepo != FacadeApplication::instance->repository.end())
+    {
+        IRepository* curRepo = iterRepo->second.get();
+//        return curRepo->
+    }
+    else{
+        assert("CurrentRepo is NULL" && false);
+        return "";
+    }
+}
+//----------------------------------------------------------------------------------------/
 void ModelQmlAndCRepository::ChangeEnabledRepository(const bool enable, const bool hideWaitWindow) const
 {
     auto iterRepo = FacadeApplication::instance->currentRepository;

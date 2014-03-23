@@ -12,6 +12,7 @@
 #include "../parsing_command_out/parsingcommanddrop.h"
 #include "../parsing_command_out/parsingcommandempty.h"
 #include "../parsing_command_out/parsingcommanddirectmode.h"
+#include "../parsing_command_out/parsingcommandstatus.h"
 
 // analize stuff
 #include "../analyze_execute_command/analyzeexecutecommandget.h"
@@ -19,6 +20,7 @@
 #include "../analyze_execute_command/analyzeexecutecommandclone.h"
 #include "../analyze_execute_command/analyzeexecutecommandinit.h"
 #include "../analyze_execute_command/analyzeexecutecommandchangedirectmode.h"
+#include "../analyze_execute_command/analizeexecutecommandstatus.h"
 
 // Qt stuff
 #include <QThreadPool>
@@ -176,15 +178,30 @@ RESULT_EXEC_PROCESS ShellCommand::FindFileInPath(const QString &path, FacadeAnal
 {
     Q_UNUSED(path);
     Q_UNUSED(facade);
+    return NO_ERROR;
 }
 //----------------------------------------------------------------------------------------/
 GANN_DEFINE::RESULT_EXEC_PROCESS ShellCommand::CopyFileToOtherRepository(const QString& file, const QString& nameRepository)
 {
-
+    assert(0);
 }
 //----------------------------------------------------------------------------------------/
 GANN_DEFINE::RESULT_EXEC_PROCESS ShellCommand::MoveFileToOtherRepository(const QString& file, const QString& nameRepository)
 {
-
+    assert(0);
 }
 //----------------------------------------------------------------------------------------/
+GANN_DEFINE::RESULT_EXEC_PROCESS ShellCommand::GetStatusRepository(FacadeAnalyzeCommand* facade) const
+{
+    const QString strCommand = baseCommand + " status";
+    boost::shared_ptr<AnalizeExecuteCommandStatus> analizeCommand(new AnalizeExecuteCommandStatus(*facade));
+    analizeCommand->SetPathExecuteCommand(localURL);
+    boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandStatus(analizeCommand));
+
+    ShellTask* shellTask = new ShellTask(strCommand, localURL, receiverParsing);
+    FacadeShellCommand::TryStartNextCommand("status", shellTask, facade->GetRepository());
+    return NO_ERROR;
+}
+//----------------------------------------------------------------------------------------/
+
+

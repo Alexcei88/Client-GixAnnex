@@ -130,11 +130,6 @@ private:
     /** @brief Генерирует пустой файл конфигурации */
     void                GenerateEmptyFileConfigRepositories(const QString file) const;
 
-    /** @brief Возвращает путь к файлу конфигурации приложения */
-    const QString       GetPathToFileConfigApp() const;
-    /** @brief Генерирует пустой файл конфигурации приложения*/
-    void                GenerateEmptyFileConfigApp(const QString file) const;
-
     // временный репозиторий
     std::unique_ptr<IRepository> tempRepo;
 };

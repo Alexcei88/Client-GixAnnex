@@ -159,8 +159,7 @@ void FacadeApplication::LoadRepositories()
             QDomAttr attrModeRepo = nodeModeMap.namedItem("directMode").toAttr();
 
             // актуализируем данные репозитория
-            const bool directMode = attrModeRepo.value().toInt();
-            tempRepo->SetDirectMode(directMode);
+            tempRepo->GetStatus();
         }
 
         repository[localUrl] = std::move(tempRepo);
@@ -516,34 +515,6 @@ void FacadeApplication::GenerateEmptyFileConfigRepositories(const QString file) 
 
         QDomDocument doc;
         doc.setContent(QString("<?xml version=\'1.0\' encoding=\'UTF-8\'?>\n<reporegistry>\n</reporegistry>"));
-        fileRepoConfig.reset();
-        QTextStream(&fileRepoConfig) << doc.toString();
-        fileRepoConfig.close();
-    }
-}
-//----------------------------------------------------------------------------------------/
-const QString FacadeApplication::GetPathToFileConfigApp() const
-{
-    // в linux путь следующий: homeDirecoty/ganxrc.xml
-    const QString fileName = "ganxrc.xml";
-    const QString fullPath = QDir::homePath() + "/" + fileName;
-    // есть ли уже файл
-    if(!QFile::exists(fullPath))
-        // создаем пустой конфигурационный файл
-        GenerateEmptyFileConfigRepositories(fullPath);
-
-    return fullPath;
-}
-//----------------------------------------------------------------------------------------/
-void FacadeApplication::GenerateEmptyFileConfigApp(const QString file) const
-{
-    QFile fileRepoConfig(file);
-    if (fileRepoConfig.open(QIODevice::WriteOnly | QIODevice::Append))
-    {
-        printf("Will generate empty config app file");
-
-        QDomDocument doc;
-        doc.setContent(QString("<?xml version=\'1.0\' encoding=\'UTF-8\'?>\n<app-options>\n</app-options>"));
         fileRepoConfig.reset();
         QTextStream(&fileRepoConfig) << doc.toString();
         fileRepoConfig.close();

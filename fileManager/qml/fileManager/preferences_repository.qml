@@ -16,6 +16,7 @@ Window {
     title: "Preferences repository"
     SystemPalette { id: sysPal }
     flags: Qt.Dialog
+    modality: "ApplicationModal"
     visible: true
 
     PreferencesApp
@@ -134,13 +135,17 @@ Window {
 
             Item {
 
+                Component.onCompleted: {
+                    destUrl.placeholderText = repository.GetPathOfCurrentRepository();
+                }
                 FileDialog {
                     id: fileDialogDestinition
                     title: "Please choose a destinition folder"
                     selectFolder: true
                     onAccepted: {
                         var path = fileDialogDestinition.folder.toString();
-                        destUrl.text = UtilsScript.getFullStrPath(path);
+                        destUrl.placeholderText = UtilsScript.getFullStrPath(path);
+                        // начинаем перемещение
                     }
                     onRejected: {
                     }
@@ -168,13 +173,13 @@ Window {
                                 id: destUrl
                                 Layout.fillWidth: true
                                 focus: true
-                                text: "URL"
+                                text: ""
                                 readOnly: true
                             }
 
                             Button {
                                 id: buttonDestBrowser
-                                text: "Browser"
+                                text: "Move"
                                 onClicked:  {
                                     fileDialogDestinition.visible = true;
                                 }
