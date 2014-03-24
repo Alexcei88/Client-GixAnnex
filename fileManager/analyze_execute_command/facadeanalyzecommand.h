@@ -6,11 +6,14 @@
 #include <QList>
 #include <QMap>
 #include <QDir>
+#include <QMetaMethod>
 
 // std stuff
 #include <atomic>
+#include <memory>
 
 #include "define.h"
+#include "managerrestartcommand.h"
 
 /*
  * КЛАСС ФАСАД, В КОТОРОМ СОБИРАЕТСЯ ВСЯ ИНФА ДЛЯ АНАЛИЗА ПО ХОДУ ВЫПОЛНЕНИЯ КОМАНД
@@ -29,7 +32,6 @@ class AnalyzeExecuteCommandDrop;
 class FacadeAnalyzeCommand
 {
 public:
-    FacadeAnalyzeCommand();
     FacadeAnalyzeCommand(IRepository* repository);
 
     ~FacadeAnalyzeCommand();
@@ -80,8 +82,21 @@ public:
     void                ExecuteAddActionForAnalizeCommand();
 
     /** @brief Функция перезапуска команды */
-    bool                ReStartCommand(const QString& command);
+    //----------------------------------------------------------------------------------------/
+    template<class T>
+    bool ReStartCommand(const QString& command, const T arg0)
+    {
+        const QMetaObject* metaObject = managerRestartCommand->metaObject();
+        std::cout<<metaObject->methodCount()<<std::endl;
+    //    std::cout<<metaObject->method(i).name()<<std::en
+         QStringList methods;
+         for(int i = metaObject->methodOffset(); i < metaObject->methodCount(); ++i)
+         {
+             methods << QString::fromLatin1(metaObject->method(i).name());
+         }
 
+        QMetaObject::invokeMethod(managerRestartCommand.get(), "setDirectMode", Q_ARG(bool, arg0));
+    }
     /** @brief Содержит ли директория файл(в том числе и в поддиректориях) */
     static bool         DirContainsFile(const QString& dir, const QString& file);
 
@@ -110,6 +125,8 @@ private:
     static QFileInfo    fileInfo;
     // репозиторий, с которым работает данный класс
     IRepository*        repository;
+    // класс-обертка для перезапуска команд в репозитории
+    std::unique_ptr<ManagerRestartCommand> managerRestartCommand;
 };
 
 }

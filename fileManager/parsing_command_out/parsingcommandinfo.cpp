@@ -1,5 +1,5 @@
-#include "parsingcommandstatus.h"
-#include "analyze_execute_command/analizeexecutecommandstatus.h"
+#include "parsingcommandinfo.h"
+#include "analyze_execute_command/analizeexecutecommandinfo.h"
 
 //  Qt stuff
 #include <QJsonObject>
@@ -8,12 +8,12 @@
 #include <QVector>
 
 //----------------------------------------------------------------------------------------/
-ParsingCommandStatus::ParsingCommandStatus(boost::shared_ptr<AnalyzeCommand::AnalizeExecuteCommandStatus> analyzeCommand) :
+ParsingCommandInfo::ParsingCommandInfo(boost::shared_ptr<AnalyzeCommand::AnalizeExecuteCommandInfo> analyzeCommand) :
     IParsingCommandOut(analyzeCommand)
-  , analizeCommandStatus(analyzeCommand)
+  , analizeCommandInfo(analyzeCommand)
 {}
 //----------------------------------------------------------------------------------------/
-void ParsingCommandStatus::ParsingData()
+void ParsingCommandInfo::ParsingData()
 {
     // команда стартовала, но еще не завершилась
     if(commandStart && !commandEnd)
@@ -25,7 +25,7 @@ void ParsingCommandStatus::ParsingData()
         // команда завершилась
         if(lastJSONDocument.isNull())
         {
-            assert("команда status не верно пропарсилась " && 0);
+            assert("команда Info не верно пропарсилась " && 0);
         }
         // команда завершилась
         QJsonObject object = lastJSONDocument.object();
@@ -37,17 +37,17 @@ void ParsingCommandStatus::ParsingData()
             {
                 // удачно
                 QVariantMap map = object.toVariantMap();
-                analizeCommandStatus->SetStatusRepository(map);
+                analizeCommandInfo->SetInfoRepository(map);
             }
             else
             {
                 // неудачно
-                analizeCommandStatus->WasErrorGetStatusRepository();
+                analizeCommandInfo->WasErrorGetInfoRepository();
             }
         }
         else
         {
-            assert("команда status не верно пропарсилась" && 0);
+            assert("команда Info не верно пропарсилась" && 0);
         }
     }
 }

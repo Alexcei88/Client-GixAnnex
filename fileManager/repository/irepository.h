@@ -178,7 +178,7 @@ public:
     @brief взять статус репозитория
     @return 0 - нет ошибок
     */
-    virtual GANN_DEFINE::RESULT_EXEC_PROCESS GetStatus() const;
+    virtual GANN_DEFINE::RESULT_EXEC_PROCESS GetInfo() const;
 
     /**
     @brief Взять directMode, в котором находиться репозиторий

@@ -18,12 +18,9 @@ std::unique_ptr<std::atomic_flag> FacadeAnalyzeCommand::atomicFlagExecuteCommand
         std::unique_ptr<std::atomic_flag>(new std::atomic_flag(ATOMIC_FLAG_INIT));
 QFileInfo FacadeAnalyzeCommand::fileInfo;
 //----------------------------------------------------------------------------------------/
-FacadeAnalyzeCommand::FacadeAnalyzeCommand():
-    repository(0l)
-{}
-//----------------------------------------------------------------------------------------/
 FacadeAnalyzeCommand::FacadeAnalyzeCommand(IRepository* repository):
     repository(repository)
+  , managerRestartCommand(new ManagerRestartCommand(repository))
 {}
 //----------------------------------------------------------------------------------------/
 FacadeAnalyzeCommand::~FacadeAnalyzeCommand()
@@ -160,11 +157,21 @@ void FacadeAnalyzeCommand::ExecuteAddActionForAnalizeCommand()
     if(currentAnalyzeExecuteCommand)
         currentAnalyzeExecuteCommand->ExecuteAddActionForAnalizeExecuteCommand();
 }
-//----------------------------------------------------------------------------------------/
-bool FacadeAnalyzeCommand::ReStartCommand(const QString& command)
-{
+////----------------------------------------------------------------------------------------/
+//template<class T>
+//bool FacadeAnalyzeCommand::ReStartCommand(const QString& command)
+//{
+//    const QMetaObject* metaObject = managerRestartCommand->metaObject();
+//    std::cout<<metaObject->methodCount()<<std::endl;
+////    std::cout<<metaObject->method(i).name()<<std::en
+//     QStringList methods;
+//     for(int i = metaObject->methodOffset(); i < metaObject->methodCount(); ++i)
+//     {
+//         methods << QString::fromLatin1(metaObject->method(i).name());
+//     }
 
-}
+//    QMetaObject::invokeMethod(managerRestartCommand.get(), "setDirectMode", Q_ARG(bool, true));
+//}
 //----------------------------------------------------------------------------------------/
 bool FacadeAnalyzeCommand::DirContainsFile(const QString& dir, const QString& file)
 {

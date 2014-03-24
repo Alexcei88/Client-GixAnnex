@@ -29,7 +29,7 @@ void FacadeShellCommand::InitClass()
                               ;
     // с высоким приоритетом
     listCommandPriorityHigh << "clone" << "sync" << "whereis" << "rm"
-                            << "status";
+                            << "Info";
 }
 //----------------------------------------------------------------------------------------/
 FacadeShellCommand* FacadeShellCommand::GetInstance()

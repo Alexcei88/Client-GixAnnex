@@ -5,15 +5,15 @@
 #include <QDirModel>
 #include <QDebug>
 #include <QUrl>
-#include <QtDeclarative/QDeclarativeParserStatus>
+#include <QtDeclarative/QDeclarativeParserInfo>
 //#include <qdeclarativecontext.h>
 
 class QDeclarativeFolderListModelPrivate;
 
-class QDeclarativeFolderListModel : public QAbstractListModel, public QDeclarativeParserStatus
+class QDeclarativeFolderListModel : public QAbstractListModel, public QDeclarativeParserInfo
 {
     Q_OBJECT
-    Q_INTERFACES(QDeclarativeParserStatus)
+    Q_INTERFACES(QDeclarativeParserInfo)
 
     Q_PROPERTY(QUrl folder READ folder WRITE setFolder NOTIFY folderChanged)
     Q_PROPERTY(QUrl parentFolder READ parentFolder NOTIFY folderChanged)

@@ -159,7 +159,7 @@ void FacadeApplication::LoadRepositories()
             QDomAttr attrModeRepo = nodeModeMap.namedItem("directMode").toAttr();
 
             // актуализируем данные репозитория
-            tempRepo->GetStatus();
+            tempRepo->GetInfo();
         }
 
         repository[localUrl] = std::move(tempRepo);

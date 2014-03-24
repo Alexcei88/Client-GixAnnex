@@ -66,6 +66,7 @@ RESULT_EXEC_PROCESS IRepository::StartWatchRepository()
     QStringList listPath;
     GetListDirectoriesOnDirectory(localURL, listPath);
     watcher.addPaths(listPath);
+
     return NO_ERROR;
 }
 //----------------------------------------------------------------------------------------/
@@ -103,7 +104,6 @@ RESULT_EXEC_PROCESS IRepository::StopWatchRepository()
 //----------------------------------------------------------------------------------------/
 GANN_DEFINE::RESULT_EXEC_PROCESS IRepository::SetDirectMode(const bool& direct)
 {
-    paramRepo.directMode = direct;
     shellCommand->SetWorkingDirectory(localURL);
     RESULT_EXEC_PROCESS result = shellCommand->SetDirectMode(direct, facadeAnalyzeCommand.get());
     if(result != NO_ERROR)
@@ -114,13 +114,13 @@ GANN_DEFINE::RESULT_EXEC_PROCESS IRepository::SetDirectMode(const bool& direct)
     return result;
 }
 //----------------------------------------------------------------------------------------/
-GANN_DEFINE::RESULT_EXEC_PROCESS IRepository::GetStatus() const
+GANN_DEFINE::RESULT_EXEC_PROCESS IRepository::GetInfo() const
 {
     shellCommand->SetWorkingDirectory(localURL);
-    RESULT_EXEC_PROCESS result = shellCommand->GetStatusRepository(facadeAnalyzeCommand.get());
+    RESULT_EXEC_PROCESS result = shellCommand->GetInfoRepository(facadeAnalyzeCommand.get());
     if(result != NO_ERROR)
     {
-        printf("Error Status repositories: %s \n", localURL.toStdString().c_str());
+        printf("Error Info repositories: %s \n", localURL.toStdString().c_str());
         return result;
     }
     return result;

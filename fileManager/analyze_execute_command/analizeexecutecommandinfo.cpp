@@ -1,4 +1,4 @@
-#include "analizeexecutecommandstatus.h"
+#include "analizeexecutecommandinfo.h"
 #include "facadeanalyzecommand.h"
 #include "repository/irepository.h"
 
@@ -9,11 +9,11 @@
 using namespace AnalyzeCommand;
 
 //----------------------------------------------------------------------------------------/
-AnalizeExecuteCommandStatus::AnalizeExecuteCommandStatus(FacadeAnalyzeCommand& facadeAnalizeCommand):
+AnalizeExecuteCommandInfo::AnalizeExecuteCommandInfo(FacadeAnalyzeCommand& facadeAnalizeCommand):
     AnalyzeExecuteCommand(facadeAnalizeCommand)
 {}
 //----------------------------------------------------------------------------------------/
-void AnalizeExecuteCommandStatus::SetStatusRepository(const QVariantMap& values)
+void AnalizeExecuteCommandInfo::SetInfoRepository(const QVariantMap& values)
 {
     // проверяем directMode
     QVariantMap::const_iterator itMode = values.find("repository mode");
@@ -25,10 +25,11 @@ void AnalizeExecuteCommandStatus::SetStatusRepository(const QVariantMap& values)
         {
             facadeAnalyzeCommand.ChangeDirectMode(mode);
         }
+        facadeAnalyzeCommand.ReStartCommand<bool>("ffff", true);
     }
 }
 //----------------------------------------------------------------------------------------/
-void AnalizeExecuteCommandStatus::WasErrorGetStatusRepository()
+void AnalizeExecuteCommandInfo::WasErrorGetInfoRepository()
 {
 
 }
