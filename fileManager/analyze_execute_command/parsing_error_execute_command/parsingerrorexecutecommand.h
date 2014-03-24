@@ -13,7 +13,6 @@ namespace AnalyzeCommand
     // будет разделять все ошибки каждой команды на категории ошибок
     // и предлагать возможные решения, если таковы существуют
 
-
 class ParsingErrorExecuteCommand
 {
 public:

@@ -9,9 +9,9 @@ ManagerRestartCommand::ManagerRestartCommand(IRepository* repository, QObject *p
   , repository(repository)
 {}
 //----------------------------------------------------------------------------------------/
-GANN_DEFINE::RESULT_EXEC_PROCESS ManagerRestartCommand::setDirectMode(const bool& mode)
+GANN_DEFINE::RESULT_EXEC_PROCESS ManagerRestartCommand::setDirectMode(const QVariant& mode)
 {
-    return repository->SetDirectMode(mode);
+    return repository->SetDirectMode(mode.toBool());
 }
 //----------------------------------------------------------------------------------------/
 

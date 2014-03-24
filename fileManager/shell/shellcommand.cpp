@@ -193,7 +193,7 @@ GANN_DEFINE::RESULT_EXEC_PROCESS ShellCommand::MoveFileToOtherRepository(const Q
 //----------------------------------------------------------------------------------------/
 GANN_DEFINE::RESULT_EXEC_PROCESS ShellCommand::GetInfoRepository(FacadeAnalyzeCommand* facade) const
 {
-    const QString strCommand = baseCommand + " info";
+    const QString strCommand = baseCommand + " status";
     boost::shared_ptr<AnalizeExecuteCommandInfo> analizeCommand(new AnalizeExecuteCommandInfo(*facade));
     analizeCommand->SetPathExecuteCommand(localURL);
     boost::shared_ptr<IParsingCommandOut> receiverParsing(new ParsingCommandInfo(analizeCommand));

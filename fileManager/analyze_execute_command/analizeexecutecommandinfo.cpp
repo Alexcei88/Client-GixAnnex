@@ -1,6 +1,7 @@
 #include "analizeexecutecommandinfo.h"
 #include "facadeanalyzecommand.h"
 #include "repository/irepository.h"
+#include "preferencesapplication.h"
 
 // Qt stuff
 #include <QString>
@@ -21,11 +22,15 @@ void AnalizeExecuteCommandInfo::SetInfoRepository(const QVariantMap& values)
     {
         const bool mode = itMode->toString() == "direct";
         const IRepository* repository = facadeAnalyzeCommand.GetRepository();
+
+        if(mode != PreferencesApplication::GetInstance()->GetDirectMode())
+        {
+            facadeAnalyzeCommand.ReStartCommand("fff", QVariant(PreferencesApplication::GetInstance()->GetDirectMode()));
+        }
         if(mode != repository->GetDirectMode())
         {
             facadeAnalyzeCommand.ChangeDirectMode(mode);
         }
-        facadeAnalyzeCommand.ReStartCommand<bool>("ffff", true);
     }
 }
 //----------------------------------------------------------------------------------------/

@@ -3,6 +3,7 @@
 
 // Qt stuff
 #include <QObject>
+#include <QVariant>
 #include "define.h"
 
 class IRepository;
@@ -21,7 +22,7 @@ public:
 
 public slots:
 
-    GANN_DEFINE::RESULT_EXEC_PROCESS setDirectMode(const bool& mode);
+    GANN_DEFINE::RESULT_EXEC_PROCESS setDirectMode(const QVariant& mode);
 
 private:
     IRepository*        repository;

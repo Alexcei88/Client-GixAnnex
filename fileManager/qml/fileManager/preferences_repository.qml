@@ -24,7 +24,6 @@ Window {
         id: contrPreferences
     }
 
-
     Rectangle {
 
         anchors.fill: parent
@@ -103,6 +102,14 @@ Window {
             id: repositoryPreferencesTab
 
             Item {
+                Component.onCompleted: {
+                    var mode = repository.GetModeWorkRepositoryOfCurrentRepository()
+                    if(mode === true)
+                        direct.checked = true;
+                    else
+                        indirect.checked = true;
+                }
+
                 anchors.fill: parent
                 anchors.margins: 20
                 Rectangle
@@ -115,11 +122,13 @@ Window {
                         Row {
                             spacing: 2
                             RadioButton {
+                                id: direct
                                 exclusiveGroup: group
                                 checked: true
                                 text: qsTr("Direct")
                             }
                             RadioButton {
+                                id: indirect
                                 exclusiveGroup: group
                                 text: qsTr("Indirect")
                             }

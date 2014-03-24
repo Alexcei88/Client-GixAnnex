@@ -157,21 +157,18 @@ void FacadeAnalyzeCommand::ExecuteAddActionForAnalizeCommand()
     if(currentAnalyzeExecuteCommand)
         currentAnalyzeExecuteCommand->ExecuteAddActionForAnalizeExecuteCommand();
 }
-////----------------------------------------------------------------------------------------/
-//template<class T>
-//bool FacadeAnalyzeCommand::ReStartCommand(const QString& command)
-//{
-//    const QMetaObject* metaObject = managerRestartCommand->metaObject();
-//    std::cout<<metaObject->methodCount()<<std::endl;
-////    std::cout<<metaObject->method(i).name()<<std::en
-//     QStringList methods;
-//     for(int i = metaObject->methodOffset(); i < metaObject->methodCount(); ++i)
-//     {
-//         methods << QString::fromLatin1(metaObject->method(i).name());
-//     }
+//----------------------------------------------------------------------------------------/
+bool FacadeAnalyzeCommand::ReStartCommand(const QString& command, const QVariant arg0)
+{
+    const QMetaObject* metaObject = managerRestartCommand->metaObject();
+    std::cout<<metaObject->methodCount()<<std::endl;
+    for(int i = metaObject->methodOffset(); i < metaObject->methodCount(); ++i)
+    {
+        std::cout<<QString::fromLatin1(metaObject->method(i).name()).toStdString()<<std::endl;
+    }
 
-//    QMetaObject::invokeMethod(managerRestartCommand.get(), "setDirectMode", Q_ARG(bool, true));
-//}
+    QMetaObject::invokeMethod(managerRestartCommand.get(), "setDirectMode", Q_ARG(QVariant, arg0));
+}
 //----------------------------------------------------------------------------------------/
 bool FacadeAnalyzeCommand::DirContainsFile(const QString& dir, const QString& file)
 {

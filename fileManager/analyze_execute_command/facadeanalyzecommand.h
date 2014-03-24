@@ -19,6 +19,9 @@
  * КЛАСС ФАСАД, В КОТОРОМ СОБИРАЕТСЯ ВСЯ ИНФА ДЛЯ АНАЛИЗА ПО ХОДУ ВЫПОЛНЕНИЯ КОМАНД
 */
 
+
+const char* BoolChar();
+
 class IRepository;
 
 namespace AnalyzeCommand
@@ -83,20 +86,8 @@ public:
 
     /** @brief Функция перезапуска команды */
     //----------------------------------------------------------------------------------------/
-    template<class T>
-    bool ReStartCommand(const QString& command, const T arg0)
-    {
-        const QMetaObject* metaObject = managerRestartCommand->metaObject();
-        std::cout<<metaObject->methodCount()<<std::endl;
-    //    std::cout<<metaObject->method(i).name()<<std::en
-         QStringList methods;
-         for(int i = metaObject->methodOffset(); i < metaObject->methodCount(); ++i)
-         {
-             methods << QString::fromLatin1(metaObject->method(i).name());
-         }
+    bool ReStartCommand(const QString& command, const QVariant arg0);
 
-        QMetaObject::invokeMethod(managerRestartCommand.get(), "setDirectMode", Q_ARG(bool, arg0));
-    }
     /** @brief Содержит ли директория файл(в том числе и в поддиректориях) */
     static bool         DirContainsFile(const QString& dir, const QString& file);
 
