@@ -97,7 +97,9 @@ FocusScope{
     ContextMenu
     {
         id: menudirectory
-        onOpenDirectory: {
+        onOpenDirectory:
+        {
+            errorRectangle.setSource(Qt.resolvedUrl("panelerrorexecutecommand.qml"));
             if(view.currentItem && dirModel.isFolder(dirModel.index))
             {
                 var fileName = view.currentItem.curFileName;
@@ -115,6 +117,7 @@ FocusScope{
         }
         onDropContentDirectory:
         {
+            errorRectangle.setSource(Qt.resolvedUrl("repository/no_error_input_field.qml"));
             if(view.currentItem)
                 repository.dropContentDirectory(view.currentItem.curFileName);
         }
@@ -129,30 +132,6 @@ FocusScope{
             }
         }
     }
-
-    id: focusScope
-    width: 100
-    height: 62
-
-    BorderImage {
-        anchors.fill: parent
-        source: Settings.style + "/../Base/images/editbox.png"
-        border { left: 4; top: 4; right: 4; bottom: 4 }
-        BorderImage {
-            anchors.fill: parent
-            anchors.margins: -1
-            anchors.topMargin: -2
-            anchors.rightMargin: 0
-            anchors.bottomMargin: 1
-            source: Settings.style + "/../Base/images/focusframe.png"
-            visible: if(focusScope.activeFocus || menudirectory.isPopup)
-                         true;
-                     else
-                        false;
-            border { left: 4; top: 4; right: 4; bottom: 4 }
-        }
-    }
-
     NewFolderListModel
     {
         property int lastIndex: -1
@@ -169,12 +148,47 @@ FocusScope{
         }
     }
 
+    id: focusScope
+    width: 100
+    height: 62
+
+    Loader {
+        id: errorRectangle
+        width: parent.width
+
+    }
+
+    BorderImage {
+        anchors.bottom: parent.bottom
+        anchors.right: parent.right
+        anchors.left: parent.left
+        anchors.top: errorRectangle.bottom
+        source: Settings.style + "/../Base/images/editbox.png"
+        border { left: 4; top: 4; right: 4; bottom: 4 }
+        BorderImage {
+            anchors.fill: parent
+            anchors.margins: -1
+            anchors.topMargin: -1
+            anchors.rightMargin: 0
+            anchors.bottomMargin: 1
+            source: Settings.style + "/../Base/images/focusframe.png"
+            visible: if(focusScope.activeFocus || menudirectory.isPopup)
+                         true;
+                     else
+                        false;
+            border { left: 4; top: 4; right: 4; bottom: 4 }
+        }
+    }
     ScrollView
     {
         id: scrollView
-        anchors.fill: parent
         width: parent.width
+        anchors.right: parent.right
+        anchors.left: parent.left
+        anchors.bottom: parent.bottom
+        anchors.top: errorRectangle.bottom
         anchors.bottomMargin: 1
+
         GridView
         {
             objectName: "gridView";

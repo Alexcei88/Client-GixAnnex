@@ -81,9 +81,8 @@ public:
 private:
     const QString   baseCommand;
 
-    /** @brief путь, откуда запускаеться shell */
+    /** @brief путь, откуда запускается shell */
     QString         localURL;
-
 };
 
 #endif // SHELLCOMMAND_H
