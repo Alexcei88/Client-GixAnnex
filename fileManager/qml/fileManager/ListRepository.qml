@@ -27,11 +27,28 @@ FocusScope {
             // выводим окно предупреждения о завершении некоторых задач
             if(!message.showWarningMessage("Warning", "You are disabling synchronization the repository. \n <b>All tasks</b> except the current one, <b> will be canceled </b>."))
             {
+                menuRepository.enabled = true;
                 return;
             }
+
         }
         repository.setEnableRepository(enabled)
         setEnableRepository(enabled)
+    }
+    function disabledContextMenu()
+    {
+        menuRepository.enabled = false;
+        switchEnable.enabled = false;
+        removeRepository.enabled = false;
+        preferencesRepository.enabled = false;
+    }
+
+    function enabledContextMenu()
+    {
+        menuRepository.enabled = true;
+        switchEnable.enabled = true;
+        removeRepository.enabled = true;
+        preferencesRepository.enabled = true;
     }
 
     MessageBox{
@@ -113,7 +130,6 @@ FocusScope {
             anchors.left: parent.left
             anchors.topMargin: 4
             focus: true
-
 
             Menu
             {

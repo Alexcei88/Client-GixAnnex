@@ -84,14 +84,14 @@ QVariant ControllerRepository::GetModeWorkRepositoryOfCurrentRepository() const
     return model->GetDirectModeWorkRepositoryOfCurrentRepository();
 }
 //----------------------------------------------------------------------------------------/
-QVariant ControllerRepository::GetPathOfCurrentRepository() const
+QVariant ControllerRepository::getPathOfCurrentRepository() const
 {
     return model->GetPathOfCurrentRepository();
 }
 //----------------------------------------------------------------------------------------/
-QVariant ControllerRepository::MovePathOfCurrentRepository() const
+QVariant ControllerRepository::movePathOfCurrentRepository(QUrl newDir) const
 {
-
+    return model->MovePathOfCurrentRepository(newDir);
 }
 //----------------------------------------------------------------------------------------/
 

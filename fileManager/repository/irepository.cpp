@@ -187,6 +187,21 @@ void IRepository::ChangeCurrentDirectory(const QString& curDir)
     }
 }
 //----------------------------------------------------------------------------------------/
+GANN_DEFINE::RESULT_EXEC_PROCESS IRepository::MoveRepository(const QString& newDir)
+{
+    bool result = QFile::copy(localURL, newDir + "/FFFFF/");
+    if(result)
+    {
+        localURL = newDir;
+        return NO_ERROR;
+    }
+    else
+    {
+        printf("Error move repository: %s \n", newDir.toStdString().c_str());
+        return ERROR_EXECUTE;
+    }
+}
+//----------------------------------------------------------------------------------------/
 void IRepository::UpdateParamSyncFileDir()
 {
     facadeAnalyzeCommand->ExecuteAddActionForAnalizeCommand();

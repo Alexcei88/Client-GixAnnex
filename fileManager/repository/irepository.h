@@ -206,6 +206,9 @@ public:
     /** @brief Изменение  рабочей директории */
     void                ChangeCurrentDirectory(const QString& curDir);
 
+    /** @brief Изменение корневого пути репозитория */
+    GANN_DEFINE::RESULT_EXEC_PROCESS MoveRepository(const QString& newDir);
+
     /** @brief Обновить параметры синхронизации у текущей директории
         Функция дергается из потока синхронизации иконок, чтобы получить последние параметры синхронизации
     */

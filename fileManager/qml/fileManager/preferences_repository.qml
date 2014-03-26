@@ -145,7 +145,7 @@ Window {
             Item {
 
                 Component.onCompleted: {
-                    destUrl.placeholderText = repository.GetPathOfCurrentRepository();
+                    destUrl.placeholderText = repository.getPathOfCurrentRepository();
                 }
                 FileDialog {
                     id: fileDialogDestinition
@@ -155,6 +155,7 @@ Window {
                         var path = fileDialogDestinition.folder.toString();
                         destUrl.placeholderText = UtilsScript.getFullStrPath(path);
                         // начинаем перемещение
+                        repository.movePathOfCurrentRepository(destUrl.placeholderText);
                     }
                     onRejected: {
                     }

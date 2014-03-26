@@ -71,7 +71,7 @@ public:
     QString             GetPathOfCurrentRepository() const;
 
     /** @brief перемещение пути текущего репозитория */
-    bool                MovePathOfCurrentRepository() const;
+    bool                MovePathOfCurrentRepository(QUrl& newDir) const;
 
 private:
     // в качестве служебных целей

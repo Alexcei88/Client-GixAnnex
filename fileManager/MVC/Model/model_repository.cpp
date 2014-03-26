@@ -258,13 +258,13 @@ QString ModelQmlAndCRepository::GetPathOfCurrentRepository() const
     }
 }
 //----------------------------------------------------------------------------------------/
-bool ModelQmlAndCRepository::MovePathOfCurrentRepository() const
+bool ModelQmlAndCRepository::MovePathOfCurrentRepository(QUrl &newDir) const
 {
     auto iterRepo = FacadeApplication::instance->currentRepository;
     if(iterRepo != FacadeApplication::instance->repository.end())
     {
         IRepository* curRepo = iterRepo->second.get();
-//        return curRepo->
+        return curRepo->MoveRepository(newDir.toString());
     }
     else{
         assert("CurrentRepo is NULL" && false);

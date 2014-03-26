@@ -67,10 +67,10 @@ public:
     Q_INVOKABLE QVariant    GetModeWorkRepositoryOfCurrentRepository() const;
 
     /** @brief возвращает полный путь текущего репозитория */
-    Q_INVOKABLE QVariant    GetPathOfCurrentRepository() const;
+    Q_INVOKABLE QVariant    getPathOfCurrentRepository() const;
 
     /** @brief перемещение пути текущего репозитория */
-    Q_INVOKABLE QVariant    MovePathOfCurrentRepository() const;
+    Q_INVOKABLE QVariant    movePathOfCurrentRepository(QUrl newDir) const;
 
 private:
     const QSharedPointer<ModelQmlAndCRepository>  model;
