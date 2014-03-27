@@ -25,6 +25,7 @@ void ParsingCommandInfo::ParsingData()
         // команда завершилась
         if(lastJSONDocument.isNull())
         {
+            return;
             assert("команда Info не верно пропарсилась " && 0);
         }
         // команда завершилась

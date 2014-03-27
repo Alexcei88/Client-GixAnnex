@@ -18,28 +18,14 @@ Rectangle {
     // чтобы выше корня репозитория не выходить
     function isSubRootRepositoryDirectory(folder)
     {
-        return contenItem.isSubRootRepositoryDirectory(folder);
+        return contenItem.get(0, true).isSubRootRepositoryDirectory(folder);
     }
     //-------------------------------------------------------------------------/
     function changeParentFolder(folder)
     {
-        contenItem.changeParentFolder(folder);
+        contenItem.get(0, true).changeParentFolder(folder);
     }
     //-------------------------------------------------------------------------/
-    // функция показа окна ожидания клонирования
-    function showWaitCommandFinish()
-    {
-        loaderWaitFinishCommand.setSource("repository/wait_finish_command.qml",
-                                          {"itemColorOverlay" : contenItem}
-                                              );
-    }
-    // функция скрытия окна ожидания клонирования
-    function hideWaitCommandFinish()
-    {
-        loaderWaitFinishCommand.setSource("");
-    }
-    //-------------------------------------------------------------------------/
-
     ControllerRepository {
         id: repository
     }
@@ -51,9 +37,8 @@ Rectangle {
     height: 62
     color: sysPal.window
 
-    property alias folderModel: contenItem.folderModel
-    property alias folderView:  contenItem.folderView
-
+    property var folderModel: 0
+    property var folderView:  0
     SplitView
     {
         id: split
@@ -69,10 +54,10 @@ Rectangle {
             Layout.maximumWidth: parent.width/4
             onSelectNewRepository:
             {
-                contenItem.changeRepository(path, name)
+                contenItem.get(0, true).changeRepository(path, name)
             }
             onSetEnableRepository: {
-                contenItem.enabled = enable;
+                contenItem.get(0, true).enabled = enable;
                 filterDir.enabled = enable;
                 if(!enable && repository.isExecuteCommandForCurrentRepository())
                 {
@@ -81,21 +66,23 @@ Rectangle {
             }
 
         }
-        DirectoryView
-        {
-            // окно ожидания выполнения команды
+
+        StackView {
+
+            property alias propertyFile: propertyFile
+
             id: contenItem
-            objectName: "directoryView"
             Layout.minimumWidth: parent.width/4
             Layout.fillWidth: true
             width: 3 * parent.width/5
-            onShowPropertyFile:
-            {
-                propertyFile.updateData(folder, currentName )
-            }
-            Loader {
-                id: loaderWaitFinishCommand
-                anchors.fill: parent
+
+            initialItem: Qt.resolvedUrl("DirectoryView.qml");
+
+            Component.onCompleted: {
+                var item = get(0, true);
+                propertyFile.folderView = item.folderView;
+                windowContent.folderView = item.folderView;
+                windowContent.folderModel = item.folderModel;
             }
         }
 
@@ -108,8 +95,6 @@ Rectangle {
             Layout.maximumWidth: 2 * parent.width/5
             color: sysPal.window
 
-            // инициализация представления
-            folderView: windowContent.folderView
         }
     }
 }

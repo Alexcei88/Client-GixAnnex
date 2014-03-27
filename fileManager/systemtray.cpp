@@ -131,7 +131,7 @@ bool SystemTray::HideWindowWaitCommand() const
     if(mainView)
     {
         QObjectList parent = mainView->rootObject()->children();
-        QList<QObject*> object = parent[1]->findChildren<QObject*>(QString("windowContent"));
+        QList<QObject*> object = parent[1]->findChildren<QObject*>(QString("directoryView"));
         assert(object.size() > 0);
         return QMetaObject::invokeMethod(object[0], "hideWaitCommandFinish", Qt::BlockingQueuedConnection);
     }

@@ -13,6 +13,8 @@ import Message 1.0
 import "utils.js" as UtilsScript
 
 FocusScope{
+
+    objectName: "directoryView"
     //-------------------------------------------------------------------------/
     // ПОЛЬЗОВАТЕЛЬСКИЕ КЛАССЫ MVC
     ControllerIcons {
@@ -30,6 +32,10 @@ FocusScope{
     // сигнал, что нужно показать свойства у директории
     signal showPropertyFile(var folder, var currentName)
 
+    onShowPropertyFile:
+    {
+        propertyFile.updateData(folder, currentName)
+    }
     //------------------------------------------------------------------------/
     // сигнал о смене родительской директории
     signal changeRepository(string path, string name)
@@ -99,7 +105,8 @@ FocusScope{
         id: menudirectory
         onOpenDirectory:
         {
-            errorRectangle.setSource(Qt.resolvedUrl("panelerrorexecutecommand.qml"));
+//            errorRectangle.setSource(Qt.resolvedUrl("panelerrorexecutecommand.qml"));
+            showWaitCommandFinish();
             if(view.currentItem && dirModel.isFolder(dirModel.index))
             {
                 var fileName = view.currentItem.curFileName;
@@ -112,12 +119,12 @@ FocusScope{
         }
         onGetContentDirectory:
         {
+            hideWaitCommandFinish();
             if(view.currentItem)
                 repository.getContentDirectory(view.currentItem.curFileName);
         }
         onDropContentDirectory:
         {
-            errorRectangle.setSource(Qt.resolvedUrl("repository/no_error_input_field.qml"));
             if(view.currentItem)
                 repository.dropContentDirectory(view.currentItem.curFileName);
         }
@@ -132,6 +139,20 @@ FocusScope{
             }
         }
     }
+    // функция показа окна ожидания клонирования
+    function showWaitCommandFinish()
+    {
+        loaderWaitFinishCommand.setSource("repository/wait_finish_command.qml",
+                                          {"itemColorOverlay" : focusScope}
+                                              );
+    }
+    // функция скрытия окна ожидания клонирования
+    function hideWaitCommandFinish()
+    {
+        loaderWaitFinishCommand.setSource("");
+    }
+    //-------------------------------------------------------------------------/
+
     NewFolderListModel
     {
         property int lastIndex: -1
@@ -152,17 +173,12 @@ FocusScope{
     width: 100
     height: 62
 
-    Loader {
-        id: errorRectangle
-        width: parent.width
-
-    }
-
     BorderImage {
+        id: borderImage
         anchors.bottom: parent.bottom
         anchors.right: parent.right
         anchors.left: parent.left
-        anchors.top: errorRectangle.bottom
+        anchors.top: parent.top
         source: Settings.style + "/../Base/images/editbox.png"
         border { left: 4; top: 4; right: 4; bottom: 4 }
         BorderImage {
@@ -186,7 +202,7 @@ FocusScope{
         anchors.right: parent.right
         anchors.left: parent.left
         anchors.bottom: parent.bottom
-        anchors.top: errorRectangle.bottom
+        anchors.top: parent.top
         anchors.bottomMargin: 1
 
         GridView
@@ -414,4 +430,8 @@ FocusScope{
             }
         }   // end GridView
     } // end ScrollView
+    Loader {
+        id: loaderWaitFinishCommand
+        anchors.fill: parent
+    }
 }
