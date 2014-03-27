@@ -27,11 +27,28 @@ FocusScope {
             // выводим окно предупреждения о завершении некоторых задач
             if(!message.showWarningMessage("Warning", "You are disabling synchronization the repository. \n <b>All tasks</b> except the current one, <b> will be canceled </b>."))
             {
+                menuRepository.enabled = true;
                 return;
             }
+
         }
         repository.setEnableRepository(enabled)
         setEnableRepository(enabled)
+    }
+    function disabledContextMenu()
+    {
+        menuRepository.enabled = false;
+        switchEnable.enabled = false;
+        removeRepository.enabled = false;
+        preferencesRepository.enabled = false;
+    }
+
+    function enabledContextMenu()
+    {
+        menuRepository.enabled = true;
+        switchEnable.enabled = true;
+        removeRepository.enabled = true;
+        preferencesRepository.enabled = true;
     }
 
     MessageBox{
@@ -77,10 +94,13 @@ FocusScope {
         }
     }
 
-    SystemPalette { id: sysPal }
+    Loader {
+        id: preferencesLoader
+        height: 500
+        width: 4000
+    }
 
     id: focusScope
-
     ColumnLayout {
         id: mainListRepoColumn
         anchors.top: parent.top
@@ -140,8 +160,23 @@ FocusScope {
                         }
                     }
                 }
+                Action
+                {
+                    id: preferencesRepository
+                    text: "&Preferences"
+                    onTriggered:
+                    {
+                        if(viewModel.currentItem)
+                        {
+                            console.log("Window create")
+                            preferencesLoader.setSource("preferences_repository.qml");
+                        }
+                    }
+                }
+
                 MenuItem { action: switchEnable }
                 MenuItem { action: removeRepository }
+                MenuItem { action: preferencesRepository }
             }
 
             GridView

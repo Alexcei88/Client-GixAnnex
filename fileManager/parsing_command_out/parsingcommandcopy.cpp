@@ -22,7 +22,7 @@ void ParsingCommandCopy::ParsingData()
             const QJsonDocument& doc = (*it);
             if(!lastJSONDocument.isNull())
             {
-                if(doc.object().take("file").toString() != lastJSONDocument.object().take("file").toString())
+                if(doc.object().value("file").toString() != lastJSONDocument.object().value("file").toString())
                 {
                     // документ не был в обработке, запускаем
                     StartCopyContentFile(doc);
@@ -54,7 +54,7 @@ void ParsingCommandCopy::StartCopyContentFile(const QJsonDocument &doc)
 {
     assert(!startCopy && "Предыдущий ресурс еще не скопировался, и началось новое копирование. Что то пошло не так!!!");
     startCopy = true;
-    nameFileGetContent = doc.object().take("file").toString();
+    nameFileGetContent = doc.object().value("file").toString();
     analizeCommandCopy->StartCopyContentFile(nameFileGetContent);
 }
 //----------------------------------------------------------------------------------------/

@@ -24,9 +24,12 @@ void FacadeShellCommand::InitClass()
 {
     // заполняем список команд
     // с низким приоритетом
-    listCommandPriorityLow << "get" << "drop" << "git rm" << "direct" << "indirect";
+    listCommandPriorityLow << "get" << "drop" << "git rm"
+                           << "direct" << "indirect"
+                              ;
     // с высоким приоритетом
-    listCommandPriorityHigh << "clone" << "sync" << "whereis" << "rm";
+    listCommandPriorityHigh << "clone" << "sync" << "whereis" << "rm"
+                            << "Info";
 }
 //----------------------------------------------------------------------------------------/
 FacadeShellCommand* FacadeShellCommand::GetInstance()

@@ -175,7 +175,13 @@ public:
     virtual GANN_DEFINE::RESULT_EXEC_PROCESS SetDirectMode(const bool& direct);
 
     /**
-    @brief Взять состояние, в котором находиться репозиторий
+    @brief взять статус репозитория
+    @return 0 - нет ошибок
+    */
+    virtual GANN_DEFINE::RESULT_EXEC_PROCESS GetInfo() const;
+
+    /**
+    @brief Взять directMode, в котором находиться репозиторий
     */
     bool                GetDirectMode() const { return paramRepo.directMode; }
 
@@ -200,6 +206,9 @@ public:
     /** @brief Изменение  рабочей директории */
     void                ChangeCurrentDirectory(const QString& curDir);
 
+    /** @brief Изменение корневого пути репозитория */
+    GANN_DEFINE::RESULT_EXEC_PROCESS MoveRepository(const QString& newDir);
+
     /** @brief Обновить параметры синхронизации у текущей директории
         Функция дергается из потока синхронизации иконок, чтобы получить последние параметры синхронизации
     */
@@ -221,6 +230,7 @@ public:
     /** @brief смена режима доступа репозитория(прямого/обратного) */
     void                OnChangeDirectMode(const bool mode);
     void                OnErrorChangeDirectMode(const QString& error);
+
 
 protected:
 

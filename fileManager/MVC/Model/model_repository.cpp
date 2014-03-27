@@ -66,7 +66,7 @@ void ModelQmlAndCRepository::SetEnableRepository(bool enable)
             connectionFacadeShellCommand = QObject::connect(FacadeShellCommand::GetInstance(), &FacadeShellCommand::FinishWaitCommand, [&]()
             {
                 // меняем по истечению времени
-                this->ChangeEnabledRepository(willEnableRepository);
+                this->ChangeEnabledRepository(willEnableRepository, true);
             });
         }
         else
@@ -222,17 +222,54 @@ bool ModelQmlAndCRepository::DirIsSubRootDirRepository(const QString& dir) const
     return false;
 }
 //----------------------------------------------------------------------------------------/
-const QString& ModelQmlAndCRepository::GetLastError() const
-{
-    return FacadeApplication::getInstance()->lastError;
-}
-//----------------------------------------------------------------------------------------/
 const QString ModelQmlAndCRepository::GetFullPathFileConfigRepositories() const
 {
     const QString fileName = "ganx-repository.xml";
     const QString fullPath = QDir::homePath() + "/.config/GitAnnexClient/" + fileName;
     assert(QFile::exists(fullPath));
     return fullPath;
+}
+//----------------------------------------------------------------------------------------/
+bool ModelQmlAndCRepository::GetDirectModeWorkRepositoryOfCurrentRepository() const
+{
+    auto iterRepo = FacadeApplication::instance->currentRepository;
+    if(iterRepo != FacadeApplication::instance->repository.end())
+    {
+        IRepository* curRepo = iterRepo->second.get();
+        return curRepo->GetDirectMode();
+    }
+    else{
+        assert("CurrentRepo is NULL" && false);
+        return false;
+    }
+}
+//----------------------------------------------------------------------------------------/
+QString ModelQmlAndCRepository::GetPathOfCurrentRepository() const
+{
+    auto iterRepo = FacadeApplication::instance->currentRepository;
+    if(iterRepo != FacadeApplication::instance->repository.end())
+    {
+        IRepository* curRepo = iterRepo->second.get();
+        return curRepo->GetLocalURL();
+    }
+    else{
+        assert("CurrentRepo is NULL" && false);
+        return "";
+    }
+}
+//----------------------------------------------------------------------------------------/
+bool ModelQmlAndCRepository::MovePathOfCurrentRepository(QUrl &newDir) const
+{
+    auto iterRepo = FacadeApplication::instance->currentRepository;
+    if(iterRepo != FacadeApplication::instance->repository.end())
+    {
+        IRepository* curRepo = iterRepo->second.get();
+        return curRepo->MoveRepository(newDir.toString());
+    }
+    else{
+        assert("CurrentRepo is NULL" && false);
+        return "";
+    }
 }
 //----------------------------------------------------------------------------------------/
 void ModelQmlAndCRepository::ChangeEnabledRepository(const bool enable, const bool hideWaitWindow) const
@@ -244,15 +281,17 @@ void ModelQmlAndCRepository::ChangeEnabledRepository(const bool enable, const bo
         enable ? curRepo->SetState(IRepository::Synced) : curRepo->SetState(IRepository::Disable_sincing);
         // пересохраняем настройки конфиг-файла
         FacadeApplication::instance->SaveOptionsRepository(iterRepo->second.get()->GetLocalURL());
+
+        if(hideWaitWindow)
+        {
+            // нужно еще скрыть окно
+            FacadeApplication::instance->systemTray->HideWindowWaitCommand();
+        }
         // перезагружаем представление
         FacadeApplication::instance->systemTray->ReLoadListRepository();
         // даем команду обновить состояние иконок
         FacadeApplication::instance->ReleaseThreadSyncIcons();
 
-        if(hideWaitWindow)
-        {
-            // нужно еще скрыть окно
-        }
         QObject::disconnect(connectionFacadeShellCommand);
 
     }

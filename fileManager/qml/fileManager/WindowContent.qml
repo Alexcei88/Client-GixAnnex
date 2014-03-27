@@ -10,6 +10,8 @@ import "propertyFile"
 
 Rectangle {
 
+    objectName: "windowContent"
+
     // СВО-ВА, ФУНКЦИИ И СИГНАЛЫ
     //-------------------------------------------------------------------------/
     // функция проверки нахождения свойства folder в пределах корневого пути репозитория
@@ -75,10 +77,6 @@ Rectangle {
                 if(!enable && repository.isExecuteCommandForCurrentRepository())
                 {
                     showWaitCommandFinish();
-                }
-                else
-                {
-                    hideWaitCommandFinish();
                 }
             }
 

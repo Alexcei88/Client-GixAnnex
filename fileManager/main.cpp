@@ -30,6 +30,12 @@ int main(int argc, char *argv[])
         flush(std::cout);
         return 1;
     }
+
+    if(!QSystemTrayIcon::supportsMessages()) {
+        printf("Message not supports!!! Programma will close!");
+        flush(std::cout);
+        return 1;
+    }
     // при закрытии последнего окна приложение работу не завершает, оно будет висеть в трее
     QApplication::setQuitOnLastWindowClosed(false);
 
@@ -82,6 +88,12 @@ int main(int argc, char *argv[])
     windowTray.SetAddRepoView(&cloneRepoViewer);
     windowTray.SetPreferencesApplicationView(&preferencesAppViewer);
     facadeApp->SetSystemTray(&windowTray);
+
+
+    windowTray.ShowMessageNotification("Test", "ffffffvv");
+    windowTray.ShowMessageNotification("Test", "ffffffvv");
+    windowTray.ShowMessageNotification("Test", "ffffffvv");
+    windowTray.ShowMessageNotification("Test", "ffffffvv");
 
     atexit(Exit);
     return app.exec();

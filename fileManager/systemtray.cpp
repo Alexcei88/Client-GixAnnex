@@ -2,6 +2,7 @@
 #include <QQuickItem>
 #include <QList>
 #include <iostream>
+#include <assert.h>
 
 //----------------------------------------------------------------------------------------/
 SystemTray::SystemTray():
@@ -74,6 +75,14 @@ void SystemTray::QuitProgramm()
     qApp->quit();
 }
 //----------------------------------------------------------------------------------------/
+void SystemTray::ShowMessageNotification(  const QString& title
+                                         , const QString& message
+                                         , QSystemTrayIcon::MessageIcon icon
+                                         , int millisecondsTimeoutHint) const
+{
+    trayIcon->showMessage(title, message);
+}
+//----------------------------------------------------------------------------------------/
 void SystemTray::CloseAddRepository() const
 {
     if(addRepoView)
@@ -114,6 +123,17 @@ bool SystemTray::ResultAddRepository(const QString& text) const
     {
         QObjectList parent = addRepoView->rootObject()->findChildren<QObject*>("StackView");
         return QMetaObject::invokeMethod(parent[0], "resultClone", Q_ARG(QVariant, text));
+    }
+}
+//----------------------------------------------------------------------------------------/
+bool SystemTray::HideWindowWaitCommand() const
+{
+    if(mainView)
+    {
+        QObjectList parent = mainView->rootObject()->children();
+        QList<QObject*> object = parent[1]->findChildren<QObject*>(QString("windowContent"));
+        assert(object.size() > 0);
+        return QMetaObject::invokeMethod(object[0], "hideWaitCommandFinish", Qt::BlockingQueuedConnection);
     }
     return false;
 }

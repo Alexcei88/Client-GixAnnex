@@ -12,10 +12,12 @@ ParsingCommandClone::ParsingCommandClone(boost::shared_ptr<AnalyzeCommand::Analy
     QString unsucces = "(fatal: )(.*)";
     // причина ошибки
     QString error = "(error: )(.*)";
+    QString error1 = "(ssh: )(.*)";
 
     listRegExpPossible.push_back(succes);
     listRegExpPossible.push_back(unsucces);
     listRegExpPossible.push_back(error);
+    listRegExpPossible.push_back(error1);
 }
 //----------------------------------------------------------------------------------------/
 void ParsingCommandClone::ParsingData()
@@ -33,7 +35,7 @@ void ParsingCommandClone::ParsingData()
                 QString errorString;
 
                 errorString += regExp.cap(1);
-                errorString += regExp.cap(2);
+                errorString += (regExp.cap(2) + "<br>");
                 // если возможно, то пытаемся найти причину ошибки
                 regExp.setPattern(listRegExpPossible[2]);
                 for(int j = 0; j < dataStdOut.size(); ++j)
@@ -42,7 +44,18 @@ void ParsingCommandClone::ParsingData()
                     if(regExp.indexIn(str) != -1)
                     {
                         errorString += regExp.cap(1);
-                        errorString += regExp.cap(2);
+                        errorString += (regExp.cap(2) + "<br>");
+                    }
+                }
+                // если возможно, то пытаемся найти причину ошибки
+                regExp.setPattern(listRegExpPossible[3]);
+                for(int j = 0; j < dataStdOut.size(); ++j)
+                {
+                    const QString str = dataStdOut[j];
+                    if(regExp.indexIn(str) != -1)
+                    {
+                        errorString += regExp.cap(1);
+                        errorString += (regExp.cap(2) + "<br>");
                     }
                 }
                 analizeCommandClone->WasErrorToClone(errorString);
@@ -50,6 +63,7 @@ void ParsingCommandClone::ParsingData()
                 return;
             }
         }
+
         // если нет, то ищем директорию, куда скопировали
         const QString str = dataStdOut.at(0);
         regExp.setPattern(listRegExpPossible[0]);

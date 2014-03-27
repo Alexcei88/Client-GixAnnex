@@ -19,10 +19,16 @@ public:
     inline void         SetAddRepoView(QQuickView* view) { this->addRepoView = view; }
     inline void         SetPreferencesApplicationView(QQuickView* view) { this->preferencesAppRepoView = view; }
 
+    /** @brief Показать системное уведомление */
+    void                ShowMessageNotification(  const QString& title
+                                                , const QString& message
+                                                , QSystemTrayIcon::MessageIcon icon = QSystemTrayIcon::Information
+                                                , int millisecondsTimeoutHint = 10000) const;
+
     /** @brief Закрыть окно добавления репозитория */
     void                CloseAddRepository() const;
 
-    /** @brief Закрыть окно со свойствами приложения */
+    /** @brief Закрыть окно со свойствами приложения */   
     void                ClosePreferencesApplication() const;
 
     /** @brief Перезагрузить модель со списком репозиториев */
@@ -33,6 +39,8 @@ public:
 
     /** @brief Сообщаем, что клонирование завершилось */
     bool                ResultAddRepository(const QString& text) const;
+    /** @brief Скрыть окно завершения окончания команды */
+    bool                HideWindowWaitCommand() const;
 
 public slots:
     /** @brief Нажатия по иконке мышью */
