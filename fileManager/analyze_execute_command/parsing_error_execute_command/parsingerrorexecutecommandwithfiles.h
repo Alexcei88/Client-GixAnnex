@@ -32,8 +32,9 @@ public:
     bool                ModificationErrorGettingContentFile(const QStringList& lastWasActionFiles);
 
 private:
+
     /** @brief Мэп файлов ошибок с идентификаторами
-        @details каждый вид ошибок содержит список ошибок, который идентифицируется строкой описания ошибки
+        @details каждый вид ошибок содержит список ошибок, который идентифицируется названием файла
     */
     QMap <ErrorType, QMap<QString, QList<AnalizeDirOnActionPrivate> > > errorFiles;
 

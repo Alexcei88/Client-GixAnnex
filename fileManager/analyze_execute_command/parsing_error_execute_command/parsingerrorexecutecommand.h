@@ -7,6 +7,7 @@
 #include "define.h"
 #include "analyze_execute_command/analizediraction.h"
 
+#include <boost/function.hpp>
 namespace AnalyzeCommand
 {
     // базовый класс для парсинга ошибок, получаемых при выполнении команд
@@ -41,8 +42,8 @@ protected:
 
 private:
 
-    /** @brief мэп функции-решений для каждой ошибки */
-    QMap <ErrorType, int>     funcSolution;
+    /** @brief мэп функций-callback-ов для возможных решений ошибок */
+    QMap <ErrorType, boost::function<void (const QString&)> > funcErrorSolution;
 
 };
 
