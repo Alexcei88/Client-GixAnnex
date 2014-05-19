@@ -54,9 +54,8 @@ const QString ResourceGenerator::GetResourcePathDirectoryView(const QMimeType& t
         std::cout<<"КРИТИЧЕСКАЯ ОШИБКА!!! Нет ресурса с иконкой для отображения mimetype "
                  <<type.name().toStdString().c_str()<<". Это критическая ошибка."
                  "Программа будет закрыта."<<std::endl;
-#ifndef DEBUG
-        exit(1);
-#endif
+        qApp->quit();
+        return "";
     }
 }
 //----------------------------------------------------------------------------------------/

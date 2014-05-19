@@ -101,7 +101,7 @@ void FacadeApplication::LoadRepositories()
 {
     QDomDocument doc;   
 
-    QFile fileRepoConfig(GetPathToFileConfig());
+    QFile fileRepoConfig(GetPathToFileConfigRepositories());
     if(!fileRepoConfig.open(QIODevice::ReadOnly))
     {
         printf("ERROR: Unable to open config file. List repositories was not loaded!!!");
@@ -110,9 +110,9 @@ void FacadeApplication::LoadRepositories()
     }
     if(!doc.setContent(&fileRepoConfig))
     {
-        printf("ERROR: file parsing error!!!");
+        printf("CRITICAL ERROR: file parsing error!!!");
         fileRepoConfig.close();
-        exit(1);
+        systemTray->QuitProgramm();
         return;
     }
 
@@ -159,8 +159,7 @@ void FacadeApplication::LoadRepositories()
             QDomAttr attrModeRepo = nodeModeMap.namedItem("directMode").toAttr();
 
             // актуализируем данные репозитория
-            const bool directMode = attrModeRepo.value().toInt();
-            tempRepo->SetDirectMode(directMode);
+            tempRepo->GetInfo();
         }
 
         repository[localUrl] = std::move(tempRepo);
@@ -176,7 +175,7 @@ void FacadeApplication::SaveRepository(const QString& localURL, const QString& r
 {
     QDomDocument doc;
 
-    QFile fileRepoConfig(GetPathToFileConfig());
+    QFile fileRepoConfig(GetPathToFileConfigRepositories());
     if(!fileRepoConfig.open(QIODevice::ReadWrite))
     {
         std::cout<<fileRepoConfig.errorString().toStdString().c_str()<<std::endl;
@@ -250,7 +249,7 @@ void FacadeApplication::SaveOptionsRepository(const QString& localURL)
 {
     QDomDocument doc;
 
-    QFile fileRepoConfig(GetPathToFileConfig());
+    QFile fileRepoConfig(GetPathToFileConfigRepositories());
 
     if(!fileRepoConfig.open(QIODevice::ReadWrite))
     {
@@ -325,7 +324,7 @@ void FacadeApplication::DeleteRepository(const QString& localURL)
 {
     QDomDocument doc;
 
-    QFile fileRepoConfig(GetPathToFileConfig());
+    QFile fileRepoConfig(GetPathToFileConfigRepositories());
 
     if(!doc.setContent(&fileRepoConfig))
     {
@@ -471,7 +470,7 @@ void FacadeApplication::ChangeCurrentRepository(const QString& dir)
     }
 }
 //----------------------------------------------------------------------------------------/
-const QString FacadeApplication::GetPathToFileConfig() const
+const QString FacadeApplication::GetPathToFileConfigRepositories() const
 {
     // в linux путь следующий: homeDirecoty/.config/GitAnnexClient/ganx-repository.xml
     const QString fileName = "ganx-repository.xml";
@@ -502,17 +501,17 @@ const QString FacadeApplication::GetPathToFileConfig() const
     if(!QFile::exists(dir.path() + "/" + fileName))
     {
         // создаем пустой конфигурационный файл
-        GenerateEmptyFileConfig(dir.path() + "/" + fileName);
+        GenerateEmptyFileConfigRepositories(dir.path() + "/" + fileName);
     }
     return dir.path() + "/" + fileName;
 }
 //----------------------------------------------------------------------------------------/
-void FacadeApplication::GenerateEmptyFileConfig(const QString file) const
+void FacadeApplication::GenerateEmptyFileConfigRepositories(const QString file) const
 {
     QFile fileRepoConfig(file);
     if (fileRepoConfig.open(QIODevice::WriteOnly | QIODevice::Append))
     {
-        printf("Will Empty config file");
+        printf("Will generate empty config repository file");
 
         QDomDocument doc;
         doc.setContent(QString("<?xml version=\'1.0\' encoding=\'UTF-8\'?>\n<reporegistry>\n</reporegistry>"));

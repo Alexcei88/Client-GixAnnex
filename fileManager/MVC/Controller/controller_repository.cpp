@@ -74,14 +74,24 @@ QVariant ControllerRepository::dirIsSubRootDirRepository(QUrl dir) const
     return model->DirIsSubRootDirRepository(dir.toLocalFile());
 }
 //----------------------------------------------------------------------------------------/
-const QVariant ControllerRepository::getLastError() const
-{
-    return model->GetLastError();
-}
-//----------------------------------------------------------------------------------------/
 const QVariant ControllerRepository::GetPathRepoConfig() const
 {
     return model->GetFullPathFileConfigRepositories();
+}
+//----------------------------------------------------------------------------------------/
+QVariant ControllerRepository::GetModeWorkRepositoryOfCurrentRepository() const
+{
+    return model->GetDirectModeWorkRepositoryOfCurrentRepository();
+}
+//----------------------------------------------------------------------------------------/
+QVariant ControllerRepository::getPathOfCurrentRepository() const
+{
+    return model->GetPathOfCurrentRepository();
+}
+//----------------------------------------------------------------------------------------/
+QVariant ControllerRepository::movePathOfCurrentRepository(QUrl newDir) const
+{
+    return model->MovePathOfCurrentRepository(newDir);
 }
 //----------------------------------------------------------------------------------------/
 

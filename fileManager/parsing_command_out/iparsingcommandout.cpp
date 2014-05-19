@@ -113,7 +113,7 @@ bool IParsingCommandOut::IsEndMiniCommand(const QJsonDocument& doc, bool& ok) co
     QJsonObject object = doc.object();
     if(object.find(keyEndDoc) != object.end())
     {
-        ok = object.take(keyEndDoc).toBool();
+        ok = object.value(keyEndDoc).toBool();
         return true;
     }
     ok = false;
@@ -265,6 +265,11 @@ QString IParsingCommandOut::ProcessingErrorString(const QString& str, const QJso
         case QJsonParseError::IllegalValue: // неверное значение, поэтому приравниваем пустую строку
             // strJSONData не трогаем
             retStr = ""; break;
+
+        case QJsonParseError::TerminationByNumber:
+            retStr.remove(offset, str.length() - offset);
+            strJSONData = retStr;
+            retStr += "}";break;
 
         default:
             assert("При парсинге JSON-строки произошла неизвестная ошибка." && false);

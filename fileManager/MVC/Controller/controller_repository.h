@@ -63,8 +63,14 @@ public:
     /** @brief явяеться ли выбранный путь поддиректорией корневого пути репозитория*/
     Q_INVOKABLE QVariant    dirIsSubRootDirRepository(QUrl dir) const;
 
-    /** @brief возвращает последнее сообщение об ошибке */
-    Q_INVOKABLE const QVariant getLastError() const;
+    /** @brief возвращает режим работы репозитория*/
+    Q_INVOKABLE QVariant    GetModeWorkRepositoryOfCurrentRepository() const;
+
+    /** @brief возвращает полный путь текущего репозитория */
+    Q_INVOKABLE QVariant    getPathOfCurrentRepository() const;
+
+    /** @brief перемещение пути текущего репозитория */
+    Q_INVOKABLE QVariant    movePathOfCurrentRepository(QUrl newDir) const;
 
 private:
     const QSharedPointer<ModelQmlAndCRepository>  model;

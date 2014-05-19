@@ -13,13 +13,10 @@ import Message 1.0
 import "utils.js" as UtilsScript
 
 FocusScope{
+
+    objectName: "directoryView"
     //-------------------------------------------------------------------------/
     // ПОЛЬЗОВАТЕЛЬСКИЕ КЛАССЫ MVC
-
-    ControllerRepository {
-        id: repository
-    }
-
     ControllerIcons {
         id: contrIcons
     }
@@ -35,6 +32,10 @@ FocusScope{
     // сигнал, что нужно показать свойства у директории
     signal showPropertyFile(var folder, var currentName)
 
+    onShowPropertyFile:
+    {
+        propertyFile.updateData(folder, currentName)
+    }
     //------------------------------------------------------------------------/
     // сигнал о смене родительской директории
     signal changeRepository(string path, string name)
@@ -102,7 +103,10 @@ FocusScope{
     ContextMenu
     {
         id: menudirectory
-        onOpenDirectory: {
+        onOpenDirectory:
+        {
+//            errorRectangle.setSource(Qt.resolvedUrl("panelerrorexecutecommand.qml"));
+            showWaitCommandFinish();
             if(view.currentItem && dirModel.isFolder(dirModel.index))
             {
                 var fileName = view.currentItem.curFileName;
@@ -115,6 +119,7 @@ FocusScope{
         }
         onGetContentDirectory:
         {
+            hideWaitCommandFinish();
             if(view.currentItem)
                 repository.getContentDirectory(view.currentItem.curFileName);
         }
@@ -134,29 +139,19 @@ FocusScope{
             }
         }
     }
-
-    id: focusScope
-    width: 100
-    height: 62
-
-    BorderImage {
-        anchors.fill: parent
-        source: Settings.style + "/../Base/images/editbox.png"
-        border { left: 4; top: 4; right: 4; bottom: 4 }
-        BorderImage {
-            anchors.fill: parent
-            anchors.margins: -1
-            anchors.topMargin: -2
-            anchors.rightMargin: 0
-            anchors.bottomMargin: 1
-            source: Settings.style + "/../Base/images/focusframe.png"
-            visible: if(focusScope.activeFocus || menudirectory.isPopup)
-                         true;
-                     else
-                        false;
-            border { left: 4; top: 4; right: 4; bottom: 4 }
-        }
+    // функция показа окна ожидания клонирования
+    function showWaitCommandFinish()
+    {
+        loaderWaitFinishCommand.setSource("repository/wait_finish_command.qml",
+                                          {"itemColorOverlay" : focusScope}
+                                              );
     }
+    // функция скрытия окна ожидания клонирования
+    function hideWaitCommandFinish()
+    {
+        loaderWaitFinishCommand.setSource("");
+    }
+    //-------------------------------------------------------------------------/
 
     NewFolderListModel
     {
@@ -174,18 +169,43 @@ FocusScope{
         }
     }
 
+    id: focusScope
+    width: 100
+    height: 62
+
+    BorderImage {
+        id: borderImage
+        anchors.bottom: parent.bottom
+        anchors.right: parent.right
+        anchors.left: parent.left
+        anchors.top: parent.top
+        source: Settings.style + "/../Base/images/editbox.png"
+        border { left: 4; top: 4; right: 4; bottom: 4 }
+        BorderImage {
+            anchors.fill: parent
+            anchors.margins: -1
+            anchors.topMargin: -1
+            anchors.rightMargin: 0
+            anchors.bottomMargin: 1
+            source: Settings.style + "/../Base/images/focusframe.png"
+            visible: if(focusScope.activeFocus || menudirectory.isPopup)
+                         true;
+                     else
+                        false;
+            border { left: 4; top: 4; right: 4; bottom: 4 }
+        }
+    }
     ScrollView
     {
         id: scrollView
         anchors.fill: parent
-        width: parent.width
         anchors.bottomMargin: 1
+
         GridView
         {
             objectName: "gridView";
             id: view
             model: dirModel
-            width: parent.width
 
             anchors.fill: parent
             anchors.margins: 15
@@ -405,4 +425,8 @@ FocusScope{
             }
         }   // end GridView
     } // end ScrollView
+    Loader {
+        id: loaderWaitFinishCommand
+        anchors.fill: parent
+    }
 }

@@ -21,7 +21,7 @@ void ParsingCommandDrop::ParsingData()
             const QJsonDocument& doc = (*it);
             if(!lastJSONDocument.isNull())
             {
-                if(doc.object().take("file").toString() != lastJSONDocument.object().take("file").toString())
+                if(doc.object().value("file").toString() != lastJSONDocument.object().value("file").toString())
                 {
                     // документ не был в обработке, запускаем
                     StartDropContentFile(doc);
@@ -53,7 +53,7 @@ void ParsingCommandDrop::StartDropContentFile(const QJsonDocument &doc)
 {
     assert(!startDrop && "Предыдущий ресурс еще не удалился, и началось новое удаление. Что то пошло не так!!!");
     startDrop = true;
-    nameFileGetContent = doc.object().take("file").toString();
+    nameFileGetContent = doc.object().value("file").toString();
     analizeCommandDrop->StartDropContentFile(nameFileGetContent);
 }
 //----------------------------------------------------------------------------------------/

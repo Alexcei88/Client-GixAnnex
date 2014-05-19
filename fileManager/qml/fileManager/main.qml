@@ -88,7 +88,6 @@ Rectangle
             }
         }
 
-
         WindowContent
         {
             visible: parent.visible

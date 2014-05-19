@@ -6,15 +6,21 @@
 #include <QList>
 #include <QMap>
 #include <QDir>
+#include <QMetaMethod>
 
 // std stuff
 #include <atomic>
+#include <memory>
 
 #include "define.h"
+#include "managerrestartcommand.h"
 
 /*
  * КЛАСС ФАСАД, В КОТОРОМ СОБИРАЕТСЯ ВСЯ ИНФА ДЛЯ АНАЛИЗА ПО ХОДУ ВЫПОЛНЕНИЯ КОМАНД
 */
+
+
+const char* BoolChar();
 
 class IRepository;
 
@@ -29,7 +35,6 @@ class AnalyzeExecuteCommandDrop;
 class FacadeAnalyzeCommand
 {
 public:
-    FacadeAnalyzeCommand();
     FacadeAnalyzeCommand(IRepository* repository);
 
     ~FacadeAnalyzeCommand();
@@ -70,15 +75,18 @@ public:
     /** @brief есть ли ошибка получения контента в текущей директории(или сам текущий файл) в текущий момент времени */
     bool                IsErrorDroppingContentFileDir(const QString& file) const;
 
-    //-------------------  CHANGE DIRECT MODE --------------------------------/
+    //-------------------  CHANGE DIRECT MODE --------------------------------/    
     void                ErrorChangeDirectMode();
     void                ChangeDirectMode(const bool& mode);
-
     /** @brief функция выполнения дополнительных действий в классах анализа хода выполнения команд у текущей команды
      * данную функцию дергать только из потока синхронизации иконок либо по окончании команды, тк она может быть математически затратной
      * \details например, объединение списка файлов в одну директорию(и наоборот)
     */
     void                ExecuteAddActionForAnalizeCommand();
+
+    /** @brief Функция перезапуска команды */
+    //----------------------------------------------------------------------------------------/
+    bool ReStartCommand(const QString& command, const QVariant arg0);
 
     /** @brief Содержит ли директория файл(в том числе и в поддиректориях) */
     static bool         DirContainsFile(const QString& dir, const QString& file);
@@ -108,6 +116,8 @@ private:
     static QFileInfo    fileInfo;
     // репозиторий, с которым работает данный класс
     IRepository*        repository;
+    // класс-обертка для перезапуска команд в репозитории
+    std::unique_ptr<ManagerRestartCommand> managerRestartCommand;
 };
 
 }

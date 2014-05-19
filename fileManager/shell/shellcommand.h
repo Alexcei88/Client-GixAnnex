@@ -73,14 +73,16 @@ public:
     /** @brief Перемещение файла на удаленный сервер */
     GANN_DEFINE::RESULT_EXEC_PROCESS MoveFileToOtherRepository(const QString& file, const QString& nameRepository = "origin");
 
+    /** @brief Обновить состояние репозитория */
+    GANN_DEFINE::RESULT_EXEC_PROCESS GetInfoRepository(AnalyzeCommand::FacadeAnalyzeCommand* facade) const;
+
     inline const QString getLocalURL() const { return localURL; }
 
 private:
     const QString   baseCommand;
 
-    /** @brief путь, откуда запускаеться shell */
+    /** @brief путь, откуда запускается shell */
     QString         localURL;
-
 };
 
 #endif // SHELLCOMMAND_H

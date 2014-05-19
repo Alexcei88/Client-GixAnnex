@@ -33,7 +33,6 @@ void IRepository::InitClass()
     paramRepo.autosync = true;
     paramRepo.autosyncContent = true;
     paramRepo.currentState = "Synced";
-    paramRepo.directMode = true;
 
     // init Q_Enums
     const QMetaObject &mo = staticMetaObject;
@@ -67,6 +66,7 @@ RESULT_EXEC_PROCESS IRepository::StartWatchRepository()
     QStringList listPath;
     GetListDirectoriesOnDirectory(localURL, listPath);
     watcher.addPaths(listPath);
+
     return NO_ERROR;
 }
 //----------------------------------------------------------------------------------------/
@@ -104,12 +104,23 @@ RESULT_EXEC_PROCESS IRepository::StopWatchRepository()
 //----------------------------------------------------------------------------------------/
 GANN_DEFINE::RESULT_EXEC_PROCESS IRepository::SetDirectMode(const bool& direct)
 {
-    paramRepo.directMode = direct;
     shellCommand->SetWorkingDirectory(localURL);
     RESULT_EXEC_PROCESS result = shellCommand->SetDirectMode(direct, facadeAnalyzeCommand.get());
     if(result != NO_ERROR)
     {
         printf("Error SetDirectMode repositories: %s \n", localURL.toStdString().c_str());
+        return result;
+    }
+    return result;
+}
+//----------------------------------------------------------------------------------------/
+GANN_DEFINE::RESULT_EXEC_PROCESS IRepository::GetInfo() const
+{
+    shellCommand->SetWorkingDirectory(localURL);
+    RESULT_EXEC_PROCESS result = shellCommand->GetInfoRepository(facadeAnalyzeCommand.get());
+    if(result != NO_ERROR)
+    {
+        printf("Error Info repositories: %s \n", localURL.toStdString().c_str());
         return result;
     }
     return result;
@@ -173,6 +184,21 @@ void IRepository::ChangeCurrentDirectory(const QString& curDir)
         paramTemp.currentState = CalculateStateFileDir(*iterator);
 
         paramSyncFileDir[*iterator] = paramTemp;
+    }
+}
+//----------------------------------------------------------------------------------------/
+GANN_DEFINE::RESULT_EXEC_PROCESS IRepository::MoveRepository(const QString& newDir)
+{
+    bool result = QFile::copy(localURL, newDir + "/FFFFF/");
+    if(result)
+    {
+        localURL = newDir;
+        return NO_ERROR;
+    }
+    else
+    {
+        printf("Error move repository: %s \n", newDir.toStdString().c_str());
+        return ERROR_EXECUTE;
     }
 }
 //----------------------------------------------------------------------------------------/

@@ -29,7 +29,6 @@ public:
     void                CloseAddRepository() const;
 
     /** @brief Закрыть окно со свойствами приложения */   
-    void                CancelCloneRepository() const;
     void                ClosePreferencesApplication() const;
 
     /** @brief Перезагрузить модель со списком репозиториев */
@@ -42,6 +41,9 @@ public:
     bool                ResultAddRepository(const QString& text) const;
     /** @brief Скрыть окно завершения окончания команды */
     bool                HideWindowWaitCommand() const;
+
+    /** @brief  Сообщаем, что была получена ошибка */
+    bool                SendErrorToView(const QString& description, const QString& nameRepository) const;
 
 public slots:
     /** @brief Нажатия по иконке мышью */

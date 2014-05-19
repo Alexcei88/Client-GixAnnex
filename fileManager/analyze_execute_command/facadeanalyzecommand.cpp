@@ -18,12 +18,9 @@ std::unique_ptr<std::atomic_flag> FacadeAnalyzeCommand::atomicFlagExecuteCommand
         std::unique_ptr<std::atomic_flag>(new std::atomic_flag(ATOMIC_FLAG_INIT));
 QFileInfo FacadeAnalyzeCommand::fileInfo;
 //----------------------------------------------------------------------------------------/
-FacadeAnalyzeCommand::FacadeAnalyzeCommand():
-    repository(0l)
-{}
-//----------------------------------------------------------------------------------------/
 FacadeAnalyzeCommand::FacadeAnalyzeCommand(IRepository* repository):
     repository(repository)
+  , managerRestartCommand(new ManagerRestartCommand(repository))
 {}
 //----------------------------------------------------------------------------------------/
 FacadeAnalyzeCommand::~FacadeAnalyzeCommand()
@@ -146,25 +143,31 @@ bool FacadeAnalyzeCommand::IsErrorDroppingContentFileDir(const QString& file) co
 void FacadeAnalyzeCommand::ErrorChangeDirectMode()
 {
     if(repository)
-    {
         repository->OnErrorChangeDirectMode("fffff");
-    }
 }
 //----------------------------------------------------------------------------------------/
 void FacadeAnalyzeCommand::ChangeDirectMode(const bool& mode)
 {
     if(repository)
-    {
         repository->OnChangeDirectMode(mode);
-    }
 }
 //----------------------------------------------------------------------------------------/
 void FacadeAnalyzeCommand::ExecuteAddActionForAnalizeCommand()
 {
     if(currentAnalyzeExecuteCommand)
-    {
         currentAnalyzeExecuteCommand->ExecuteAddActionForAnalizeExecuteCommand();
+}
+//----------------------------------------------------------------------------------------/
+bool FacadeAnalyzeCommand::ReStartCommand(const QString& command, const QVariant arg0)
+{
+    const QMetaObject* metaObject = managerRestartCommand->metaObject();
+    std::cout<<metaObject->methodCount()<<std::endl;
+    for(int i = metaObject->methodOffset(); i < metaObject->methodCount(); ++i)
+    {
+        std::cout<<QString::fromLatin1(metaObject->method(i).name()).toStdString()<<std::endl;
     }
+
+    QMetaObject::invokeMethod(managerRestartCommand.get(), "setDirectMode", Q_ARG(QVariant, arg0));
 }
 //----------------------------------------------------------------------------------------/
 bool FacadeAnalyzeCommand::DirContainsFile(const QString& dir, const QString& file)

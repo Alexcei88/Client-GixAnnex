@@ -89,8 +89,10 @@ protected:
     const QString       keyEndDoc;
 
 private:
-    /** @brief функция фильтр строки, которая отбрасывает все, что не относиться к JSON-формату */
-    void                FilterInputString(const QString &str);
+    /** @brief функция фильтр строки, которая либо преобразует в JSON формат, либо уже готовый JSON
+        преобразует
+        */
+    virtual void        FilterInputString(const QString &str);
 
     /** @brief функция обработки ошибок в парсинге JSON
     \details обрабатывает ошибки и заполняет поле класса strJSONData

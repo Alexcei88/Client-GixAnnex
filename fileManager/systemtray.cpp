@@ -80,6 +80,7 @@ void SystemTray::ShowMessageNotification(  const QString& title
                                          , QSystemTrayIcon::MessageIcon icon
                                          , int millisecondsTimeoutHint) const
 {
+    Q_UNUSED(millisecondsTimeoutHint)
     trayIcon->showMessage(title, message);
 }
 //----------------------------------------------------------------------------------------/
@@ -123,6 +124,7 @@ bool SystemTray::ResultAddRepository(const QString& text) const
     {
         QObjectList parent = addRepoView->rootObject()->findChildren<QObject*>("StackView");
         return QMetaObject::invokeMethod(parent[0], "resultClone", Q_ARG(QVariant, text));
+    }
 }
 //----------------------------------------------------------------------------------------/
 bool SystemTray::HideWindowWaitCommand() const
@@ -130,9 +132,22 @@ bool SystemTray::HideWindowWaitCommand() const
     if(mainView)
     {
         QObjectList parent = mainView->rootObject()->children();
-        QList<QObject*> object = parent[1]->findChildren<QObject*>(QString("windowContent"));
+        QList<QObject*> object = parent[1]->findChildren<QObject*>(QString("directoryView"));
         assert(object.size() > 0);
         return QMetaObject::invokeMethod(object[0], "hideWaitCommandFinish", Qt::BlockingQueuedConnection);
+    }
+    return false;
+}
+//----------------------------------------------------------------------------------------/
+bool SystemTray::SendErrorToView(const QString& description, const QString& nameRepository) const
+{
+    if(mainView)
+    {
+        QObjectList parent = mainView->rootObject()->children();
+        QList<QObject*> object = parent[1]->findChildren<QObject*>(QString("contentItemView"));
+        assert(object.size() > 0);
+        return QMetaObject::invokeMethod(object[0], "appendError", Qt::BlockingQueuedConnection, Q_ARG(QVariant, description),
+                                                                                                 Q_ARG(QVariant, nameRepository));
     }
     return false;
 }

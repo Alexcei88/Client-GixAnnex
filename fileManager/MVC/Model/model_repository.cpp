@@ -222,17 +222,54 @@ bool ModelQmlAndCRepository::DirIsSubRootDirRepository(const QString& dir) const
     return false;
 }
 //----------------------------------------------------------------------------------------/
-const QString& ModelQmlAndCRepository::GetLastError() const
-{
-    return FacadeApplication::getInstance()->lastError;
-}
-//----------------------------------------------------------------------------------------/
 const QString ModelQmlAndCRepository::GetFullPathFileConfigRepositories() const
 {
     const QString fileName = "ganx-repository.xml";
     const QString fullPath = QDir::homePath() + "/.config/GitAnnexClient/" + fileName;
     assert(QFile::exists(fullPath));
     return fullPath;
+}
+//----------------------------------------------------------------------------------------/
+bool ModelQmlAndCRepository::GetDirectModeWorkRepositoryOfCurrentRepository() const
+{
+    auto iterRepo = FacadeApplication::instance->currentRepository;
+    if(iterRepo != FacadeApplication::instance->repository.end())
+    {
+        IRepository* curRepo = iterRepo->second.get();
+        return curRepo->GetDirectMode();
+    }
+    else{
+        assert("CurrentRepo is NULL" && false);
+        return false;
+    }
+}
+//----------------------------------------------------------------------------------------/
+QString ModelQmlAndCRepository::GetPathOfCurrentRepository() const
+{
+    auto iterRepo = FacadeApplication::instance->currentRepository;
+    if(iterRepo != FacadeApplication::instance->repository.end())
+    {
+        IRepository* curRepo = iterRepo->second.get();
+        return curRepo->GetLocalURL();
+    }
+    else{
+        assert("CurrentRepo is NULL" && false);
+        return "";
+    }
+}
+//----------------------------------------------------------------------------------------/
+bool ModelQmlAndCRepository::MovePathOfCurrentRepository(QUrl &newDir) const
+{
+    auto iterRepo = FacadeApplication::instance->currentRepository;
+    if(iterRepo != FacadeApplication::instance->repository.end())
+    {
+        IRepository* curRepo = iterRepo->second.get();
+        return curRepo->MoveRepository(newDir.toString());
+    }
+    else{
+        assert("CurrentRepo is NULL" && false);
+        return "";
+    }
 }
 //----------------------------------------------------------------------------------------/
 void ModelQmlAndCRepository::ChangeEnabledRepository(const bool enable, const bool hideWaitWindow) const

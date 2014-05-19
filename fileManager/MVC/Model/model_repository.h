@@ -61,11 +61,17 @@ public:
     /** @brief Является ли выбранный путь поддиректорией корневого пути репозитория */
     bool                DirIsSubRootDirRepository(const QString& dir) const;
 
-    /** @brief возвращает последнее сообщение об ошибке */
-    const QString&      GetLastError() const;
-
     /** @brief возвращает полный путь до файла конфигурации */
-    const QString GetFullPathFileConfigRepositories() const;
+    const QString       GetFullPathFileConfigRepositories() const;
+
+    /** @brief возвращает режим работы репозитория*/
+    bool                GetDirectModeWorkRepositoryOfCurrentRepository() const;
+
+    /** @brief возвращает полный путь текущего репозитория */
+    QString             GetPathOfCurrentRepository() const;
+
+    /** @brief перемещение пути текущего репозитория */
+    bool                MovePathOfCurrentRepository(QUrl& newDir) const;
 
 private:
     // в качестве служебных целей
