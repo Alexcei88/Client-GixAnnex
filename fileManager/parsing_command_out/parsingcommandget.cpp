@@ -14,12 +14,6 @@ ParsingCommandGet::ParsingCommandGet(boost::shared_ptr<AnalyzeCommand::AnalyzeEx
   , analizeCommandGet(analyzeCommand)
 {}
 //----------------------------------------------------------------------------------------/
-void ParsingCommandGet::FilterInputString(const QString &str)
-{
-
-}
-//----------------------------------------------------------------------------------------/
-
 void ParsingCommandGet::ParsingData()
 {
     // команда стартовала, но еще не завершилась
