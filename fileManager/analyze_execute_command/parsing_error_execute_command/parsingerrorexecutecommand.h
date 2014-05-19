@@ -6,8 +6,9 @@
 
 #include "define.h"
 #include "analyze_execute_command/analizediraction.h"
-
+#include "../repository/irepository.h"
 #include <boost/function.hpp>
+
 namespace AnalyzeCommand
 {
     // базовый класс для парсинга ошибок, получаемых при выполнении команд
@@ -40,11 +41,40 @@ protected:
     /** @brief мэп строковых идентификаторов ошибок */
     QMap <ErrorType, QString> errorIdDescription;
 
-private:
+    // начало выполнения команды
+    virtual void        StartExecuteCommand() = 0;
+    // конец выполнения команды
+    virtual void        EndExecuteCommand() = 0;
+
+    struct Error
+    {
+        // команда, при которой возникла ошибка
+        const QString executeCommand;
+        // репозиторий, в котором возникла ошибка
+        const IRepository* const repository;
+        Error(const QString& execute, const IRepository* repository):
+            executeCommand(execute)
+          , repository(repository)
+        {}
+
+        bool operator < (const Error& error1) const
+        {
+            return this->executeCommand < error1.executeCommand;
+        }
+    };
+
+    // описание ошибки для вьювера
+    struct ErrorDescriptionView
+    {
+        // текстовое описание ошибки(заголовок)
+        QString errorDescription;
+    };
+
+    /** @brief мэп описаловок ошибок для вьювера */
+    QMap<ErrorType, ErrorDescriptionView> errorDescriptionView;
 
     /** @brief мэп функций-callback-ов для возможных решений ошибок */
-    QMap <ErrorType, boost::function<void (const QString&)> > funcErrorSolution;
-
+    QMap <ErrorType, boost::function<void (const QString& file)> > funcErrorSolution;
 };
 
 }

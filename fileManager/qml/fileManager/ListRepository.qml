@@ -87,7 +87,6 @@ FocusScope {
                     lastIndex = 0;
                     viewModel.currentIndex = -1;
                     // у нас нет больше репозиториев для показа
-                    //selectNewRepository(" ", " ");
                     setEnableRepository(false);
                 }
             }
@@ -302,6 +301,7 @@ FocusScope {
                             hoverEnabled: true
 
                             onClicked: {
+                                contenItem.hideErrorView();
                                 if(viewModel.currentIndex !== model.index)
                                 {
                                     // выбрали новый репозиторий

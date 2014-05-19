@@ -80,6 +80,7 @@ void SystemTray::ShowMessageNotification(  const QString& title
                                          , QSystemTrayIcon::MessageIcon icon
                                          , int millisecondsTimeoutHint) const
 {
+    Q_UNUSED(millisecondsTimeoutHint)
     trayIcon->showMessage(title, message);
 }
 //----------------------------------------------------------------------------------------/
@@ -134,6 +135,19 @@ bool SystemTray::HideWindowWaitCommand() const
         QList<QObject*> object = parent[1]->findChildren<QObject*>(QString("directoryView"));
         assert(object.size() > 0);
         return QMetaObject::invokeMethod(object[0], "hideWaitCommandFinish", Qt::BlockingQueuedConnection);
+    }
+    return false;
+}
+//----------------------------------------------------------------------------------------/
+bool SystemTray::SendErrorToView(const QString& description, const QString& nameRepository) const
+{
+    if(mainView)
+    {
+        QObjectList parent = mainView->rootObject()->children();
+        QList<QObject*> object = parent[1]->findChildren<QObject*>(QString("contentItemView"));
+        assert(object.size() > 0);
+        return QMetaObject::invokeMethod(object[0], "appendError", Qt::BlockingQueuedConnection, Q_ARG(QVariant, description),
+                                                                                                 Q_ARG(QVariant, nameRepository));
     }
     return false;
 }

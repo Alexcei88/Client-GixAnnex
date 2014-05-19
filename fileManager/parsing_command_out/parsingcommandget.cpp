@@ -72,7 +72,8 @@ void ParsingCommandGet::ErrorGetContentFile(const QJsonDocument &doc)
     auto it = object.find("note");
     if(it != object.end())
     {
-        descriptionError["reason"] = (*it).toString();
+//        descriptionError["reason"] = (*it).toString();
+        descriptionError["reason"] = "not available";
     }
     else {
         descriptionError["reason"] = "";

@@ -42,6 +42,9 @@ public:
     /** @brief Скрыть окно завершения окончания команды */
     bool                HideWindowWaitCommand() const;
 
+    /** @brief  Сообщаем, что была получена ошибка */
+    bool                SendErrorToView(const QString& description, const QString& nameRepository) const;
+
 public slots:
     /** @brief Нажатия по иконке мышью */
     void                ActivateTray(QSystemTrayIcon::ActivationReason reason);

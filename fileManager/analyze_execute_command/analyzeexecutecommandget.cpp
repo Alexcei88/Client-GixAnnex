@@ -39,7 +39,7 @@ AnalyzeExecuteCommandGet::~AnalyzeExecuteCommandGet()
 void AnalyzeExecuteCommandGet::StartExecuteCommand()
 {
     AnalyzeExecuteCommand::StartExecuteCommand();
-
+    errorGettingContentFile->StartExecuteCommand();
     if(!modeStart)
     {
         // определеяем файлы, у которого контент уже получен
@@ -50,6 +50,7 @@ void AnalyzeExecuteCommandGet::StartExecuteCommand()
 void AnalyzeExecuteCommandGet::EndExecuteCommand(const bool wasExecute)
 {
     AnalyzeExecuteCommand::EndExecuteCommand(wasExecute);
+    errorGettingContentFile->EndExecuteCommand();
     // сообщаем фасаду, что команда выполнена
     facadeAnalyzeCommand.RemoveGetContentFileQueue(this);
 
@@ -108,7 +109,7 @@ void AnalyzeExecuteCommandGet::ErrorGetContentFile(const QString& file, const QM
         gettingContentFileQueue->filesWasAction[fullPathFile] = "";
 
     // помещаем файл в класс ошибок
-    errorGettingContentFile->AddFileWithError(fullPathFile, error["reason"], description);
+    errorGettingContentFile->AddFileWithError(fullPathFile, error["reason"], description, facadeAnalyzeCommand.GetRepository());
 }
 //----------------------------------------------------------------------------------------/
 void AnalyzeExecuteCommandGet::SetPathGetContent(const QString& file)

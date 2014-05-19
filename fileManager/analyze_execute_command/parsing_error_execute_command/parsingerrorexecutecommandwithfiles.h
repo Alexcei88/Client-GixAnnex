@@ -5,18 +5,21 @@
 
 namespace AnalyzeCommand
 {
-typedef QMap<QString, QList<AnalizeDirOnActionPrivate> > mapListAnalizeDir;
-
 class ParsingErrorExecuteCommandWithFiles : public ParsingErrorExecuteCommand
 {
+    typedef QMap<ParsingErrorExecuteCommand::Error, AnalizeDirOnActionPrivate> mapAnalizeDir;
+
 public:
     ParsingErrorExecuteCommandWithFiles();
 
     /** @brief Добавление файла с ошибкой
         @param file - полный путь к файлу
         @param error - строка с ошибкой
+        @param description - описание ошибки
     */
-    void                AddFileWithError(const QString& file, const QString& error, const QString& description);
+    void                AddFileWithError(  const QString& file, const QString& error
+                                         , const QString& description
+                                         , const IRepository* repository);
 
     /** @brief Есть ли заданный файл в векторе ошибок
         @param file - полный путь к файлу
@@ -31,12 +34,26 @@ public:
     */
     bool                ModificationErrorGettingContentFile(const QStringList& lastWasActionFiles);
 
+    // начало выполнения новой команды
+    virtual void        StartExecuteCommand();
+    // конец выполнения команды
+    virtual void        EndExecuteCommand();
 private:
 
     /** @brief Мэп файлов ошибок с идентификаторами
-        @details каждый вид ошибок содержит список ошибок, который идентифицируется названием файла
+        @details каждый вид ошибок содержит список ошибок, который идентифицируется строкой-описания
     */
-    QMap <ErrorType, QMap<QString, QList<AnalizeDirOnActionPrivate> > > errorFiles;
+    QMap <ErrorType, mapAnalizeDir> errorFiles;
+
+    /** @brief Мэп файлов ошибок за последнюю сессию */
+    QMap <ErrorType, mapAnalizeDir> errorFilesLastSession;
+
+    /** @brief Добавление файла с ошибкой
+        @param file - полный путь к файлу
+        @param error - строка с ошибкой
+        @param description - описание ошибки
+    */
+    void                AddFileWithError(const QMap <ErrorType, mapAnalizeDir>& mapSession);
 
 };
 }

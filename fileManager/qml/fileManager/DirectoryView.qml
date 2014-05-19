@@ -198,11 +198,7 @@ FocusScope{
     ScrollView
     {
         id: scrollView
-        width: parent.width
-        anchors.right: parent.right
-        anchors.left: parent.left
-        anchors.bottom: parent.bottom
-        anchors.top: parent.top
+        anchors.fill: parent
         anchors.bottomMargin: 1
 
         GridView
@@ -210,7 +206,6 @@ FocusScope{
             objectName: "gridView";
             id: view
             model: dirModel
-            width: parent.width
 
             anchors.fill: parent
             anchors.margins: 15

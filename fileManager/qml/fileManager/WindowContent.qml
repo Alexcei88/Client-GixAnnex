@@ -39,6 +39,22 @@ Rectangle {
 
     property var folderModel: 0
     property var folderView:  0
+
+    //-------------------------------------------------------------------------/
+//    // функция показа окна ожидания клонирования
+//    function showWaitCommandFinish()
+//    {
+//        loaderWaitFinishCommand.setSource("repository/wait_finish_command.qml",
+//                                          {"itemColorOverlay" : contenItem}
+//                                          );
+//    }
+//    // функция скрытия окна ожидания клонирования
+//    function hideWaitCommandFinish()
+//    {
+//        loaderWaitFinishCommand.setSource("");
+//    }
+//    //-------------------------------------------------------------------------/
+
     SplitView
     {
         id: split
@@ -67,7 +83,42 @@ Rectangle {
 
         }
 
-        StackView {
+        StackView
+        {
+            // стэк вью с главной частю экрана
+            objectName: "contentItemView"
+
+            // модель ошибки
+            ListModel {
+                id: modelAllError
+            }
+
+            // добавление в модель новой ошибки
+            function appendError(description, nameRepository)
+            {
+                modelAllError.append({"description" : description,
+                                      "nameRepo" : nameRepository
+                                     });
+                showErrorView();
+            }
+            // показать окно с ошибками
+            function showErrorView()
+            {
+                if(contenItem.currentItem.objectName != "errorView")
+                {
+                    contenItem.push({ item: Qt.resolvedUrl("ErrorView.qml"), destroyOnPop: true,
+                                properties: { modelError: modelAllError}
+                                });
+                }
+            }
+
+            function hideErrorView()
+            {
+                if(contenItem.currentItem.objectName == "errorView")
+                {
+                    contenItem.pop();
+                }
+            }
 
             property alias propertyFile: propertyFile
 
@@ -78,12 +129,18 @@ Rectangle {
 
             initialItem: Qt.resolvedUrl("DirectoryView.qml");
 
-            Component.onCompleted: {
+            Component.onCompleted:
+            {
                 var item = get(0, true);
                 propertyFile.folderView = item.folderView;
                 windowContent.folderView = item.folderView;
                 windowContent.folderModel = item.folderModel;
             }
+//            Loader {
+//                id: loaderWaitFinishCommand
+//                anchors.fill: parent
+//            }
+
         }
 
         // Вывод информации о файле(директории)

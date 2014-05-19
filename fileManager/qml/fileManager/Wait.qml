@@ -16,12 +16,12 @@ Item
 
         RowLayout
         {
-	    anchor.centerIn: parent 
+            anchors.centerIn: parent
             ProgressBar{
                 id: progressBar
                 indeterminate: true
                 value: 1
-                widht: parent.width/5
+                width: parent.width/5
             }
         }
     }

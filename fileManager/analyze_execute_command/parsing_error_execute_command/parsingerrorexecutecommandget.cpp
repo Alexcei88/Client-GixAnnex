@@ -14,7 +14,8 @@ ParsingErrorExecuteCommandGet::~ParsingErrorExecuteCommandGet()
 //----------------------------------------------------------------------------------------/
 void ParsingErrorExecuteCommandGet::FillErrorIdDescription()
 {   
-    errorIdDescription[ErrorType::GET_UNAVAIBLE_CONTENT] = "not avaible";
+    // ресурс недоступен
+    errorIdDescription[ErrorType::GET_UNAVAIBLE_CONTENT] = "not available";
 
     auto callbackSolution = [&](const QString& file)->void {
         std::cout<<"1"<<std::endl;
@@ -22,5 +23,7 @@ void ParsingErrorExecuteCommandGet::FillErrorIdDescription()
     };
     funcErrorSolution[ErrorType::GET_UNAVAIBLE_CONTENT] = callbackSolution;
 
+    ErrorDescriptionView desciptionView;
+    errorDescriptionView[ErrorType::GET_UNAVAIBLE_CONTENT] = desciptionView;
 }
 //----------------------------------------------------------------------------------------/
