@@ -7,12 +7,19 @@
 #include <QJsonObject>
 #include <QMap>
 
+//----------------------------------------------------------------------------------------/
 ParsingCommandGet::ParsingCommandGet(boost::shared_ptr<AnalyzeCommand::AnalyzeExecuteCommandGet> analyzeCommand) :
     IParsingCommandOut(analyzeCommand)
   , startGet(false)
   , analizeCommandGet(analyzeCommand)
 {}
 //----------------------------------------------------------------------------------------/
+void ParsingCommandGet::FilterInputString(const QString &str)
+{
+
+}
+//----------------------------------------------------------------------------------------/
+
 void ParsingCommandGet::ParsingData()
 {
     // команда стартовала, но еще не завершилась
